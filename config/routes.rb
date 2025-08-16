@@ -11,4 +11,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  post "/start", to: "rooms#create"
+  post "/register", to: "users#create"
+  get "/users/:id", to: "users#show"
+  post "/vote", to: "vote#update"
+  post "/submit_answer", to: "submission#create"
 end
