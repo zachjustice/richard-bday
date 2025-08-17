@@ -8,11 +8,15 @@ class SessionsController < ApplicationController
   def create
     room = Room.find_by(params.permit(:code))
     if room.nil?
-      redirect_to new_session_path, alert: "Try another email address or password."
+      return redirect_to new_session_path, alert: "Wrong room code."
     end
 
     if user = User.find_by(name: params[:name], room_id: room.id)
-      # if user = User.authenticate_by(params.permit(:name, :room))
+      return redirect_to new_session_path, alert: "Someone in this room already has that name."
+    end
+
+    user = User.new(name: params[:name], room_id: room.id)
+    if user.save
       session[:user_id] = user.id
       puts("Setting user #{session[:user_id]}")
       start_new_session_for user
