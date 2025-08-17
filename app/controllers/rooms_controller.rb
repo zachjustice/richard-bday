@@ -1,4 +1,6 @@
 class RoomsController < ApplicationController
+  include ActionController::Live
+
   def show
     @room = Room.find(current_user.room_id)
     @users = User.where(room_id: @room.id)

@@ -1,0 +1,10 @@
+class JoinRoomJob < ApplicationJob
+  def perform(user)
+    puts("rooms:#{user.room_id}:new-user")
+    ActionCable.server.broadcast(
+      "rooms:#{user.room_id}:new-user",
+      { newUser: user.name }
+      # room: RoomsController.render(partial: "rooms/room", locals: { user: user })
+    )
+  end
+end

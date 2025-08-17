@@ -1,5 +1,4 @@
 require_relative "boot"
-require_relative "../lib/middleware/validate_auth_header"
 
 require "rails/all"
 

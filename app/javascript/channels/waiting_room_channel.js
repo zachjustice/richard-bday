@@ -1,19 +1,13 @@
-// Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
-import "@hotwired/turbo-rails"
-import "controllers"
-import $ from 'jquery';
-import { createConsumer } from "@rails/actioncable"
-// import "channels"
 // import consumer from "./consumer"
-
-// export for others scripts to use
-window.$ = $;
-window.jQuery = $;
-
-console.log('application.js')
 console.log('waiting room');
+import { createConsumer } from "@rails/actioncable"
 
-createConsumer().subscriptions.create("WaitingRoomChannel", {
+export default createConsumer()
+
+consumer.subscriptions.create("WaitingRoomChannel", {
+  collection: function() {
+    return $("[data-channel='waiting-room']");
+  },
   connected: function() {
     // FIXME: While we wait for cable subscriptions to always be finalized before sending messages
     return setTimeout(() => {
@@ -22,15 +16,14 @@ createConsumer().subscriptions.create("WaitingRoomChannel", {
     }, 1000);
   },
   received: function(data) {
-    console.log('data', data)
-    return $("[data-channel='waiting-room']").append(`<li>${data.newUser}`)
+    return this.collection().append(data.comment); //unless @userIsCurrentUser(data.comment)
   },
   userIsCurrentUser: function(comment) {
     return $(comment).attr('data-user-id') === $('meta[name=current-user]').attr('id');
   },
   followCurrentMessage: function() {
-    const roomId = $("[data-channel='waiting-room']").data('room-id')
-    if (roomId) {
+    var roomId;
+    if (roomId = this.collection().data('room-id')) {
       return this.perform('follow', {
         room_id: roomId
       });

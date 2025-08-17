@@ -3,4 +3,6 @@ class User < ApplicationRecord
 
   validates :name, presence: true
   validates :room_id, presence: true
+
+  after_commit { JoinRoomJob.perform_later(self) }
 end
