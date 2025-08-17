@@ -4,6 +4,7 @@ class JoinRoomJob < ApplicationJob
     ActionCable.server.broadcast(
       "rooms:#{user.room_id}:new-user",
       { newUser: user.name }
+      # TODO: return html?
       # room: RoomsController.render(partial: "rooms/room", locals: { user: user })
     )
   end
