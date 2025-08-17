@@ -3,7 +3,7 @@
 </h1>
 <h2 id="room">
 </h2>
-<ul id="waiting-room" data-channel="waiting-room" data-room-id="<%= @room.id %>">
+<ul id="waiting-room" data-controller="room" data-channel="waiting-room" data-room-id="<%= @room.id %>">
   <% @users.each do |user| %>
     <li><%= user.name %></div>
   <% end %>
