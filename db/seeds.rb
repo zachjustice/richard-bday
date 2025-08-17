@@ -7,3 +7,14 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+r = Room.find_or_create_by!(code: "bday")
+zach = User.new(name: "Zach", room_id: r.id).save
+richard = User.new(name: "Richard", room_id: r.id).save
+
+p = Prompt.new(description: "What is an ADJECTIVE for something smelly?").save
+
+zachs_answer = Answer.new(prompt_id: p.id, room_id: r.id, user_id: zach.id, text: "fishy")
+richards_answer = Answer.new(prompt_id: p.id, room_id: r.id, user_id: richard.id, text: "gross")
+
+Vote.new(user_id: zach.id, answer_id: zachs_answer)
+Vote.new(user_id: richard.id, answer_id: richards_answer)
