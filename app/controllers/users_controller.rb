@@ -12,26 +12,32 @@ class UsersController < ApplicationController
   end
 
   def show
-    current_user = request.env["current_user"]
-
-    @user = User.find(params[:id])
-    if current_user && current_user.id == @user.id
-      render json: {
-        id: @user.id,
-        name: @user.name,
-        room: @user.room
-      }
+    puts("Current user #{session[:user_id]}")
+    puts("Current user #{current_user}")
+    user = User.find_by_id(params[:id] || current_user.id)
+    if current_user && user && current_user.id == user.id
+      # render json: {
+      #   id: user.id,
+      #   name: user.name,
+      #   room: user.room_id
+      # }
+      @user = user
     else
       unauthorized
     end
   end
 
   private
-    def unauthorized
-        render json: { "message": "Unauthorized" }, status: :unauthorized
-    end
 
-    def user_params
-      params.expect(user: [ :name, :room ])
-    end
+  def current_user
+    @current_user ||= User.find_by_id(session[:user_id])
+  end
+
+  def unauthorized
+      render json: { "message": "Unauthorized" }, status: :unauthorized
+  end
+
+  def user_params
+    params.expect(user: [ :name, :room ])
+  end
 end
