@@ -1,0 +1,10 @@
+<div data-controller="prompt">
+  <h3>
+    Thank you! These people are done:
+  </h3>
+  <ul id="users-with-submitted-answers">
+    <% @users_with_submitted_answers.each do |user| %>
+      <li><%= user %></li>
+    <% end %>
+  </ul>
+</div>

@@ -3,8 +3,9 @@
     <%= @prompt.description %>
   </h3>
 
-  <%= form_with url: "rooms/#{@current_room.id}/answer", method: :post do |form| %>
-    <%= form.text_field :answer, required: true, autocomplete: "off", placeholder: "Enter your answer..." %><br>
-    <%= form.submit "submit" %>
+  <%= form_with url: "/answer", method: :post do |form| %>
+    <%= form.hidden_field :prompt_id, required: true, value: @prompt.id %><br>
+    <%= form.text_field :text, required: true, autocomplete: "off", placeholder: "Enter your answer..." %><br>
+    <%= form.submit "Submit" %>
   <% end %>
 </div>

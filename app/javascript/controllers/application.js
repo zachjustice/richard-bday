@@ -22,11 +22,10 @@ class MessageHub {
   }
 
   register(eventType, callback) {
-    console.log("registering...")
+    console.log(`registering ${eventType}`)
     if (!this.listeners[eventType]) {
       this.listeners[eventType] = []
     }
-    console.log("registered")
     this.listeners[eventType].push(callback)
     return this.listeners[eventType].length - 1
   }
