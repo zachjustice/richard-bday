@@ -2,4 +2,9 @@
   <h3>
     <%= @prompt.description %>
   </h3>
+
+  <%= form_with url: "rooms/#{@current_room.id}/answer", method: :post do |form| %>
+    <%= form.text_field :answer, required: true, autocomplete: "off", placeholder: "Enter your answer..." %><br>
+    <%= form.submit "submit" %>
+  <% end %>
 </div>
