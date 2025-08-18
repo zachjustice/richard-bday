@@ -26,7 +26,13 @@ module Authentication
     end
 
     def find_session_by_cookie
-      Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      if cookies.signed[:session_id]
+        session = Session.find_by(id: cookies.signed[:session_id])
+        @current_user = User.find_by(id: session.user_id)
+        return session
+      end
+
+      nil
     end
 
     def request_authentication
@@ -46,6 +52,8 @@ module Authentication
     end
 
     def terminate_session
+      ActionCable.server.disconnect(current_user: @current_user)
+      @current_user = nil
       Current.session.destroy
       cookies.delete(:session_id)
     end
