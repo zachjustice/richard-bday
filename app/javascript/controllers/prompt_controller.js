@@ -7,9 +7,9 @@ export default class extends Controller {
       console.log("RoomMessageHub:PromptController:Listener:AnswerSubmitted", event)
       return $("#users-with-submitted-answers").append(`<li>${event.user}</li>`)
     })
-    this.listenerBId = RoomMessageHub.register(EventType.NextPrompt, (event) => {
-      console.log("RoomMessageHub:PromptController:Listener:NextPrompt", event)
-      window.location.href = `/prompts/${event.prompt}`
+    this.listenerBId = RoomMessageHub.register(EventType.StartVoting, (event) => {
+      console.log("RoomMessageHub:PromptController:Listener:StartVoting", event)
+      window.location.href = `/prompts/${event.prompt}/voting`
     })
   }
 

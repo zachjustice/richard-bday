@@ -41,7 +41,8 @@ class MessageHub {
   }
 
   deregister(eventType, index) {
-    this.listeners[eventType].splice(index, 1)
+    // hacky; improve
+    this.listeners[eventType][index] = () => {}
   }
 }
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_17_222301) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_18_024821) do
   create_table "answers", force: :cascade do |t|
     t.integer "prompt_id", null: false
     t.integer "user_id", null: false
@@ -59,7 +59,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_17_222301) do
     t.integer "answer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "room_id", null: false
+    t.integer "prompt_id", null: false
     t.index ["answer_id"], name: "index_votes_on_answer_id"
+    t.index ["prompt_id"], name: "index_votes_on_prompt_id"
+    t.index ["room_id"], name: "index_votes_on_room_id"
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
@@ -69,5 +73,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_17_222301) do
   add_foreign_key "sessions", "users"
   add_foreign_key "users", "rooms"
   add_foreign_key "votes", "answers"
+  add_foreign_key "votes", "prompts"
+  add_foreign_key "votes", "rooms"
   add_foreign_key "votes", "users"
 end

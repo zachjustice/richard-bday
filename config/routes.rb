@@ -21,8 +21,11 @@ Rails.application.routes.draw do
 
   get "/prompts/:id", to: "prompts#show"
   get "/prompts/:id/waiting", to: "prompts#waiting"
+  get "/prompts/:id/voting", to: "prompts#voting"
+  get "/prompts/:id/results", to: "prompts#results"
 
   post "/answer", to: "answers#create"
+  post "/vote", to: "votes#create"
 
   post "/vote", to: "vote#update"
   post "/submit_answer", to: "submission#create"
