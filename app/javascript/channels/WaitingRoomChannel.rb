@@ -1,4 +1,4 @@
-class WaitingRoomChannel < ApplicationCable::Channel
+class RoomChannel < ApplicationCable::Channel
   def follow(data)
     puts("FOLLOW! #{data}")
     stop_all_streams

@@ -5,7 +5,8 @@ class SessionsController < ApplicationController
   def new
     # check for current session before allowing user to start a new session.
     # i.e. if user hits back or revisits this page.
-    if session[:user_id]
+    session_id = cookies.signed[:session_id]
+    if session_id && Session.find_by(id: session_id)
       redirect_to after_authentication_url
     end
   end

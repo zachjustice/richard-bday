@@ -8,3 +8,7 @@
     <li><%= user.name %></div>
   <% end %>
 </ul>
+
+<%= form_with url: "rooms/#{@room.id}/start", method: :post do |form| %>
+  <%= form.submit "Start" %>
+<% end %>

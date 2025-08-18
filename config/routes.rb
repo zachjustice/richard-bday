@@ -1,9 +1,7 @@
 Rails.application.routes.draw do
   mount RailsEventStore::Browser => "/res" if Rails.env.development?
   resource :session
-  # resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  root to: "rooms#show"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
@@ -13,11 +11,16 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
-  post "/start", to: "rooms#create"
+  root to: "rooms#show"
+
+  post "/rooms/:id/start", to: "rooms#start"
+  post "/create", to: "rooms#create"
+
   post "/register", to: "users#create"
   get "/users/:id", to: "users#show"
+
+  get "/prompts/:id", to: "prompts#show"
+
   post "/vote", to: "vote#update"
   post "/submit_answer", to: "submission#create"
 end

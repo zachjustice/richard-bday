@@ -6,7 +6,7 @@ console.log('Room Controller')
 export default class extends Controller {
   connect() {
     console.log('Room Controller. connect')
-    createConsumer().subscriptions.create("WaitingRoomChannel", {
+    createConsumer().subscriptions.create("RoomChannel", {
       connected: function () {
         // FIXME: While we wait for cable subscriptions to always be finalized before sending messages
         return setTimeout(() => {
@@ -17,7 +17,11 @@ export default class extends Controller {
       },
       received: function (data) {
         console.log('received', data)
-        return $("[data-channel='waiting-room']").append(`<li>${data.newUser}`)
+        if (data.messageType == "NextPrompt") {
+          window.location.href = `/prompts/${data.prompt}`
+        } else if (data.messageType == "NewUser") {
+          return $("[data-channel='waiting-room']").append(`<li>${data.newUser}`)
+        }
       },
       userIsCurrentUser: function (comment) {
         return $(comment).attr('data-user-id') === $('meta[name=current-user]').attr('id');
