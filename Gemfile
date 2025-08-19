@@ -62,7 +62,7 @@ group :test do
   gem "selenium-webdriver"
 end
 gem "rails_event_store", "~> 2.17.1"
-gem "coffee-rails", "~> 4.2"
+gem "coffee-rails", "~> 5.0"
 gem "jquery-rails"
 gem "turbolinks", "~> 5"
 
