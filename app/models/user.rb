@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  belongs_to :room
   has_many :sessions, dependent: :destroy
 
   validates :name, presence: true

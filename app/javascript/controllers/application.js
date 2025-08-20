@@ -27,7 +27,6 @@ class MessageHub {
       this.listeners[eventType] = []
     }
     this.listeners[eventType].push(callback)
-    return this.listeners[eventType].length - 1
   }
 
   emit(eventType, event) {
@@ -38,11 +37,6 @@ class MessageHub {
     this.listeners[eventType].forEach(callback => {
       callback(event) 
     });
-  }
-
-  deregister(eventType, index) {
-    // hacky; improve
-    this.listeners[eventType][index] = () => {}
   }
 }
 
@@ -61,20 +55,6 @@ createConsumer().subscriptions.create("RoomChannel", {
     console.log('received', data)
 
     RoomMessageHub.emit(data.messageType, data)
-    // if (data.messageType == "NewUser") {
-    //   console.log("new user", data.name)
-    // } else if (data.messageType == "NextPrompt") {
-    // } else if (data.messageType == "AnswerSubmitted") {
-    //   console.log("Answer Submitted", data.name)
-    // } else if (data.messageType == "StartVoting") {
-    //   window.location.href = `/prompts/${data.prompt}/voting`
-    // } else if (data.messageType == "VoteSubmitted") {
-    //   console.log("Vote Submitted", data.name)
-    // } else if (data.messageType == "VotingDone") {
-    //   window.location.href = `/prompts/${data.prompt}/results`
-    // } else {
-    //   console.error("This shouldn't happen.", data)
-    // }
   },
   followCurrentMessage: function () {
     const roomId = $('meta[name=room]').attr('id')

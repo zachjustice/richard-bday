@@ -8,13 +8,13 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 r = Room.find_or_create_by!(code: "bday")
-zach = User.new(name: "Zach", room_id: r.id).save
-richard = User.new(name: "Richard", room_id: r.id).save
+zach = User.find_or_create_by!(name: "Zach", room: r)
+richard = User.find_or_create_by!(name: "Richard", room: r)
 
-p = Prompt.new(description: "What is an ADJECTIVE for something smelly?").save
+p = Prompt.find_or_create_by!(description: "What is an ADJECTIVE for something smelly?")
 
-zachs_answer = Answer.new(prompt_id: p.id, room_id: r.id, user_id: zach.id, text: "fishy")
-richards_answer = Answer.new(prompt_id: p.id, room_id: r.id, user_id: richard.id, text: "gross")
+zachs_answer = Answer.find_or_create_by!(prompt: p, room: r, user: zach, text: "fishy")
+richards_answer = Answer.find_or_create_by!(prompt: p, room: r, user: richard, text: "gross")
 
-Vote.new(user_id: zach.id, answer_id: zachs_answer, prompt_id: p.id, room_id: r.id)
-Vote.new(user_id: richard.id, answer_id: richards_answer, prompt_id: p.id, room_id: r.id)
+Vote.find_or_create_by!(user: zach, answer: zachs_answer, prompt: p, room: r)
+Vote.find_or_create_by!(user: richard, answer: richards_answer, prompt: p, room: r)

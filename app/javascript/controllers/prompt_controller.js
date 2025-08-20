@@ -14,7 +14,5 @@ export default class extends Controller {
   }
 
   disconnect() {
-    RoomMessageHub.deregister(EventType.NewUser, this.listenerAId)
-    RoomMessageHub.deregister(EventType.StartVoting, this.listenerBId)
   }
 }
