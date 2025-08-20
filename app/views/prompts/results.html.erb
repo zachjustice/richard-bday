@@ -1,0 +1,10 @@
+<div data-controller="prompt-results">
+  <h3>
+    Waiting on results. These people have votes so far.
+  </h3>
+  <ul id="votes">
+    <% @votes.each do |vote| %>
+      <li><%= vote.user.name %></li>
+    <% end %>
+  </ul>
+</div>

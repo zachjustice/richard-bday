@@ -16,5 +16,5 @@ p = Prompt.new(description: "What is an ADJECTIVE for something smelly?").save
 zachs_answer = Answer.new(prompt_id: p.id, room_id: r.id, user_id: zach.id, text: "fishy")
 richards_answer = Answer.new(prompt_id: p.id, room_id: r.id, user_id: richard.id, text: "gross")
 
-Vote.new(user_id: zach.id, answer_id: zachs_answer)
-Vote.new(user_id: richard.id, answer_id: richards_answer)
+Vote.new(user_id: zach.id, answer_id: zachs_answer, prompt_id: p.id, room_id: r.id)
+Vote.new(user_id: richard.id, answer_id: richards_answer, prompt_id: p.id, room_id: r.id)

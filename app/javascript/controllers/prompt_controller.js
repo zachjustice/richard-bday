@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    this.listenerId = RoomMessageHub.register(EventType.AnswerSubmitted, (event) => {
+    this.listenerAId = RoomMessageHub.register(EventType.AnswerSubmitted, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:AnswerSubmitted", event)
       return $("#users-with-submitted-answers").append(`<li>${event.user}</li>`)
     })
@@ -14,6 +14,7 @@ export default class extends Controller {
   }
 
   disconnect() {
-    RoomMessageHub.deregister(EventType.NewUser, this.listenerId)
+    RoomMessageHub.deregister(EventType.NewUser, this.listenerAId)
+    RoomMessageHub.deregister(EventType.StartVoting, this.listenerBId)
   }
 }

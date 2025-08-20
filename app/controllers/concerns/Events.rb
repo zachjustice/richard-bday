@@ -23,4 +23,12 @@ class Events
   def self.create_start_voting_event(prompt_id)
       { messageType: MessageType::StartVoting, prompt: prompt_id }
   end
+
+  def self.create_vote_submitted_event(vote)
+      { messageType: MessageType::VoteSubmitted, prompt: vote.prompt_id, user: vote.user.name }
+  end
+
+  def self.create_voting_done_event(vote)
+      { messageType: MessageType::VotingDone, prompt: vote.prompt_id }
+  end
 end
