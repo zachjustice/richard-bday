@@ -55,7 +55,7 @@ createConsumer().subscriptions.create("RoomChannel", {
       console.log('connecting...')
       this.followCurrentMessage();
       return this.installPageChangeCallback();
-    }, 1000);
+    }, 500);
   },
   received: function (data) {
     console.log('received', data)
@@ -92,7 +92,7 @@ createConsumer().subscriptions.create("RoomChannel", {
     if (!this.installedPageChangeCallback) {
       this.installedPageChangeCallback = true;
       return $(document).on('turbolinks:load', function () {
-        return App.comments.followCurrentMessage();
+        return this.followCurrentMessage();
       });
     }
   }

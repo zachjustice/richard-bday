@@ -10,8 +10,8 @@ export default class extends Controller {
     })
     this.listenerDId = RoomMessageHub.register(EventType.VotingDone, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:VotingDone", event)
-      // basically refresh the page, let the controller show the new correct view
-      window.location.href = `/prompts/${event.prompt}/results`
+      // refresh the page, let the controller show the new correct view
+      window.location.reload();
     })
   }
 

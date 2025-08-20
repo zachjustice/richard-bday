@@ -1,7 +1,7 @@
 <div>
-  <h3>
+  <h2>
     <%= @prompt.description %>
-  </h3>
+  </h2>
 
   <%= form_with url: "/answer", method: :post do |form| %>
     <%= form.hidden_field :prompt_id, required: true, value: @prompt.id %><br>

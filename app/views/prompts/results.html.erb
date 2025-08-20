@@ -1,4 +1,7 @@
 <div data-controller="prompt-results">
+      <h2>
+        <%= @prompt.description %>
+      </h2>
       <h3>
         <% if @winners.size == 0 %>
           Waiting on results. These people have voted so far.
