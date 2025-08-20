@@ -1,10 +1,38 @@
 <div data-controller="prompt-results">
-  <h3>
-    Waiting on results. These people have votes so far.
-  </h3>
-  <ul id="votes">
-    <% @votes.each do |vote| %>
-      <li><%= vote.user.name %></li>
-    <% end %>
-  </ul>
+      <h3>
+        <% if @winners.size == 0 %>
+          Waiting on results. These people have voted so far.
+        <% elsif @winners.size == 1 %>
+          Winner!!!
+        <% elsif @winners.size > 1 %>
+          Tie!!! Richard, choose a winner!!!
+        <% end %>
+      </h3>
+
+      <% if @winners.size > 0 %>
+        <%# Display answers and show voted for them %>
+        <table>
+          <tr>
+            <th>Winner?</th>
+            <th>Answer</th>
+            <th>Author</th>
+            <th>Votes</th>
+          </tr>
+          <% @answers_by_id.map do |id, answer| %>
+            <tr>
+              <td><%= @winners.include?(answer) ? "X" : "" %></td>
+              <td><%= answer.text %></td>
+              <td><%= answer.user.name %></td>
+              <td><%= @votes_by_answer[id]&.map { |v| v.user.name }&.join(', ') %></td>
+            </tr>
+          <% end %>
+        </table>
+      <% else %>
+        <%# No winner- display votes so far %>
+        <ul id="votes">
+          <% @votes.each do |vote| %>
+            <li><%= vote.user.name %></li>
+          <% end %>
+        </ul>
+      <% end %>
 </div>
