@@ -3,18 +3,16 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    this.listenerAId = RoomMessageHub.register(EventType.NewUser, (event) => {
+    RoomMessageHub.register(EventType.NewUser, (event) => {
       console.log("RoomMessageHub:RoomController:Listener:NewUser", event)
       return $("[data-channel='waiting-room']").append(`<li>${event.newUser}</li>`)
     })
 
-    this.listenerBId = RoomMessageHub.register(EventType.NextPrompt, (event) => {
+    RoomMessageHub.register(EventType.NextPrompt, (event) => {
       console.log("RoomMessageHub:RoomController:Listener:NextPrompt", event)
       window.location.href = `/prompts/${event.prompt}`
     })
   }
   disconnect() {
-    RoomMessageHub.deregister(EventType.NewUser, this.listenerAId)
-    RoomMessageHub.deregister(EventType.NewUser, this.listenerBId)
   }
 }

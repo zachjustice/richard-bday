@@ -2,6 +2,7 @@ import { Application } from "@hotwired/stimulus"
 import { createConsumer } from "@rails/actioncable"
 
 const application = Application.start()
+console.log("Application starting...")
 
 // Configure Stimulus development experience
 application.debug = false

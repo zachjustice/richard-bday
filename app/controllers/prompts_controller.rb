@@ -1,5 +1,16 @@
 class PromptsController < ApplicationController
   def show
+    exists = Answer.exists?(
+      prompt_id: params[:id],
+      user_id: @current_user.id,
+      room_id: @current_room.id
+    )
+
+    # User already submitted an answer for this prompt; redirect to next page
+    if exists
+      redirect_to controller: "prompts", action: "waiting", id: params[:id]
+    end
+
     @prompt = Prompt.find_by(params.permit(:id))
   end
 

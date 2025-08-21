@@ -7,5 +7,4 @@ import $ from 'jquery';
 window.$ = $;
 window.jQuery = $;
 
-console.log('application.js')
 import "@rails/request.js"
