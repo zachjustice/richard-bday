@@ -1,0 +1,9 @@
+<div data-controller="prompt">
+  <h2><%= @prompt.description %></h2>
+  <p><i>Vote for your favorite:</i></p>
+  <%= form_with url: "/vote", method: :post do |form| %>
+    <%= form.hidden_field :prompt_id, required: true, value: @prompt.id %><br>
+    <%= form.collection_radio_buttons :answer_id, @answers, :id, :text %>
+    <%= form.submit "Submit" %>
+  <% end %>
+</div>

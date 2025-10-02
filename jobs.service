@@ -1,0 +1,16 @@
+[Unit]
+Description=Jobs service
+Requires=network.target
+
+[Service]
+Type=simple
+User=rails
+Group=rails
+WorkingDirectory=/home/rails/richard-bday
+ExecStart=/bin/bash -lc 'RAILS_ENV=production bin/jobs'
+TimeoutSec=30s
+RestartSec=30s
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

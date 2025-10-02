@@ -1,0 +1,17 @@
+[Unit]
+Description=RichardBdayApp
+Requires=network.target
+
+[Service]
+Type=simple
+User=rails
+Group=rails
+WorkingDirectory=/home/rails/richard-bday
+ExecStart=/bin/bash -lc 'bundle exec puma'
+# ExecStart=/bin/bash -lc 'rails s -e production'
+TimeoutSec=30s
+RestartSec=30s
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

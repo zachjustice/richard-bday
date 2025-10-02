@@ -1,0 +1,7 @@
+<div id="results" data-controller="prompt-results">
+  <% if @status != "Results" %>
+    <p id="waiting-on-results"><i>Waiting on votes to be submitted...</i></p>
+  <% else %>
+    <h3 id="done">See the big screen for the Winner!</h3>
+  <% end %>
+</div>
