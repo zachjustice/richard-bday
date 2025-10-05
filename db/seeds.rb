@@ -8,32 +8,37 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 prompts = [
-  "The correct number of beers to drink on a bachelor trip. (Number)",
-  "A reasonable number of pairs of underwear to bring on a 3 day trip. (Number)",
-  "Describe the temperament of an ideal racing horse. (Phrase)",
-  "How would you describe the personality of cats to someone who didn't know what they are. (Phrase)",
-  "Most normal activity for a senile elder. (Verb)",
-  "Best way to calm a wild animal. (Verb)",
-  "The latest new attraction coming to your nearest playground that's got everyone talking. (Phrase; Begin with verb)",
-  "Profession (Noun)",
-  "Something the prior profession is known for (Phrase; being with verb)",
-  "Taboo topics in Dungeon & Dragons (Verb or Noun)",
-  "How Richard gets kicked out of the next dinner party (Phrase; begin with verb)",
-  "The puzzle that gets Richard banned from /r/puzzles (Noun phrase)",
-  "Historical figure most likely to be in heaven (Noun)",
-  "Cosmo's secret 13th way to REALLY please your partner (Verb phrase; Verb ending in -ing)",
-  "The place with the worst public bathrooms (Place)",
-  "Best way to get thrown out of an Applebee's (Verb phrase)",
-  "How Paula's mother unexpectedly saves the day at Paula and Richard's wedding (Verb phrase)",
-  "How many times Paula has hit Richard. (Number)",
-  "The correct number of cats for a house. (Number)"
-].map do |name|
-  Prompt.find_or_create_by!(description: name)
+  [ "What is the sexiest animal?", [ "animal", "noun" ] ],
+  [ "What is the worst adjective for a cup of coffee?", [ "drink", "adjective" ] ],
+  [ "What is the worst thing to say to a child that is sad their fish died?", [ "phrase" ] ]
+].map do |name, tags|
+  Prompt.find_or_create_by!(description: name, tags: tags.join(","))
 end
+
+s = Story.find_or_create_by!(original_text: "I loved my pet dog. My favorite think about her was that she was fluffy. But when she died after many years, my husband said \"I don't like dogs.\"", text: "todo")
+
+blanks = [
+  [ "animal", "noun" ],
+  [ "drink", "adjective" ],
+  [ "phrase" ]
+].map do |tags|
+  Blank.find_or_create_by!(story: s, tags: tags.join)
+end
+
+s.update(text: "I loved my pet {#{blanks[0].id}}." + \
+ " My favorite thing about her was that she was {#{blanks[1].id}}." + \
+ " But when she died after many years, my husband said \"{#{blanks[2].id}}\"."
+)
 
 r = Room.find_or_create_by!(code: "36485blahblahblah")
 r.update!(status: RoomStatus::WaitingRoom, current_prompt_index: 0)
 User.find_or_create_by!(name: "Admin", room: r)
+
+g = Game.find_or_create_by(story: s, room: r)
+
+prompts.zip(blanks).map do |p, b|
+  GamePrompt.find_or_create_by!(prompt: p, blank: b, game: g)
+end
 
 r = Room.find_or_create_by!(code: "bday")
 r.update!(status: RoomStatus::WaitingRoom, current_prompt_index: 0)
