@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  story_id: one
+  room_id: one
+
+two:
+  story_id: two
+  room_id: two
