@@ -1,22 +1,32 @@
+<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
 <div data-controller="rooms-status">
   <h2>Room Code: "<%= @room.code %>"</h2>
 
   <div>
     <% if @status == "WaitingRoom" %>
-      <h3>Waiting for other players to join:</h3>
-      <ul id="waiting-room">
-        <% if @users.empty? %>
-          <%# First element is deleted when the first user joins %>
-          <li id="no-users-yet"><i>No users yet</i></li>
-        <% end %>
-        <% @users.each do |user| %>
-          <li id="waiting-room-<%= user.name %>"><%= user.name %></li>
-        <% end %>
-      </ul>
-
       <%= form_with url: "/rooms/#{@room.id}/start", method: :post do |form| %>
+        <div id="stories-list-container">
+          <% if @stories.empty? %>
+            <p id="no-stories-yet"><i>Oops, something is wrong. Maybe refresh the page in a bit?</i></p>
+          <% end %>
+          <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title') %>
+        </div>
+
         <%= form.submit "Start" %>
       <% end %>
+
+      <div id="users-list-container">
+        <h3>Waiting for other players to join:</h3>
+        <ul id="waiting-room">
+          <% if @users.empty? %>
+            <%# First element is deleted when the first user joins %>
+            <li id="no-users-yet"><i>No users yet</i></li>
+          <% end %>
+          <% @users.each do |user| %>
+            <li id="waiting-room-<%= user.name %>"><%= user.name %></li>
+          <% end %>
+        </ul>
+      </div>
     <% elsif @status == "Answering" %>
       <h2>
         <%= @prompt.description %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_05_205925) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_05_220410) do
   create_table "answers", force: :cascade do |t|
     t.integer "prompt_id", null: false
     t.integer "user_id", null: false
@@ -82,6 +82,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_05_205925) do
     t.string "text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "title", null: false
+    t.index ["title"], name: "index_stories_on_title", unique: true
   end
 
   create_table "users", force: :cascade do |t|

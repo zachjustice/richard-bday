@@ -3,14 +3,26 @@ class RoomsController < ApplicationController
   include ActionController::Live
 
   def start
-    prompt_id = GamePromptOrder.prompts().first
-    ActionCable.server.broadcast(
-      "rooms:#{params[:id].to_i}",
-      Events.create_next_prompt_event(prompt_id)
-    )
-    Room.find(params[:id]).update!(status: RoomStatus::Answering, current_prompt_index: 0)
+    puts("PARAMS!", params.to_json)
+    story_id = params[:story]
+    room_id = params[:id]
 
-    redirect_to controller: "rooms", action: "status", id: params[:id]
+    game = Game.new(
+      story_id: story_id,
+      room_id: room_id
+    )
+
+    if game.save
+      Room.find(room_id).update!(status: RoomStatus::Answering, current_prompt_index: 0)
+      prompt_id = GamePromptOrder.prompts().first
+      ActionCable.server.broadcast(
+        "rooms:#{room_id.to_i}",
+        Events.create_next_prompt_event(prompt_id)
+      )
+      redirect_to controller: "rooms", action: "status", id: room_id
+    else
+      redirect_to controller: "rooms", action: "status", id: room_id, alert: "Couldn't start game."
+    end
   end
 
   def next
@@ -34,6 +46,10 @@ class RoomsController < ApplicationController
     @current_room = @room # Normally this is set by the session, but this is an unauthenticated page
     @status = @room.status
     @current_prompt_id = GamePromptOrder.prompts()[@room.current_prompt_index]
+
+    if @status == RoomStatus::WaitingRoom
+      @stories = Story.all
+    end
 
     @users = User.where(room: @room)
     @prompt = Prompt.find(@current_prompt_id)

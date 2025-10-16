@@ -12,15 +12,8 @@ class UsersController < ApplicationController
   end
 
   def show
-    puts("Current user #{session[:user_id]}")
-    puts("Current user #{current_user}")
     user = User.find_by_id(params[:id] || current_user.id)
     if current_user && user && current_user.id == user.id
-      # render json: {
-      #   id: user.id,
-      #   name: user.name,
-      #   room: user.room_id
-      # }
       @user = user
     else
       unauthorized

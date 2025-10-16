@@ -15,7 +15,18 @@ prompts = [
   Prompt.find_or_create_by!(description: name, tags: tags.join(","))
 end
 
-s = Story.find_or_create_by!(original_text: "I loved my pet dog. My favorite think about her was that she was fluffy. But when she died after many years, my husband said \"I don't like dogs.\"", text: "todo")
+[
+  [ "A Ship in the Night", "TODO1", "TODO1" ],
+  [ "Death Becomes Her", "TODO2", "TODO2" ]
+].each do |title, original_text, text|
+  Story.find_or_create_by!(title:, original_text:, text:)
+end
+
+original_story = "I loved my pet dog. My favorite think about her was that she was fluffy. But when she died after many years, my husband said \"I don't like dogs.\""
+s = Story.find_by(original_text: original_story)
+if s.nil?
+  s = Story.create(title: "My Dog", original_text: original_story, text: "todo")
+end
 
 blanks = [
   [ "animal", "noun" ],
