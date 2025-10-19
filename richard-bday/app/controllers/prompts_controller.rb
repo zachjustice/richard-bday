@@ -36,7 +36,7 @@ class PromptsController < ApplicationController
     end
 
     @prompt = Prompt.find_by(params.permit(:id))
-    @answers = Answer.where(room_id: @current_room.id, prompt_id: params[:id]).filter{|a| a.user.id != @current_user.id }
+    @answers = Answer.where(room_id: @current_room.id, prompt_id: params[:id]).filter { |a| a.user.id != @current_user.id }
   end
 
   def results
