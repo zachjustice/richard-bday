@@ -35,13 +35,15 @@ class PromptsController < ApplicationController
     end
 
     @game_prompt = GamePrompt.find_by(params.permit(:id))
-    @answers = Answer.where(game_id: @current_room.current_game_id, game_prompt_id: params[:id])
+    @answers = Answer.where(game_id: @current_room.current_game_id, game_prompt_id: params[:id]).reject do |ans|
+      ans.user_id == @current_user.id
+    end
   end
 
   def results
     @status = @current_room.status
-    current_game_prompt_id = @current_room.current_game.current_game_prompt.id
-    if @status != RoomStatus::Results && @status != RoomStatus::Voting
+    current_game_prompt_id = @current_room&.current_game&.current_game_prompt&.id
+    if @status == RoomStatus::Answering
       redirect_to controller: "prompts", action: "show", id: current_game_prompt_id
     end
   end

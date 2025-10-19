@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get "/rooms/:id/status", to: "rooms#status"
   post "/rooms/:id/start", to: "rooms#start"
   post "/rooms/:id/next", to: "rooms#next"
+  post "/rooms/:id/end_game", to: "rooms#end_game"
 
   post "/register", to: "users#create"
   get "/users/:id", to: "users#show"

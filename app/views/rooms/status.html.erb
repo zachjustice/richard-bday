@@ -3,7 +3,7 @@
   <h2>Room Code: "<%= @room.code %>"</h2>
 
   <div>
-    <% if @status == "WaitingRoom" %>
+    <% if @status == RoomStatus::WaitingRoom %>
       <%= form_with url: "/rooms/#{@room.id}/start", method: :post do |form| %>
         <div id="stories-list-container">
           <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title') %>
@@ -24,7 +24,7 @@
           <% end %>
         </ul>
       </div>
-    <% elsif @status == "Answering" %>
+    <% elsif @status == RoomStatus::Answering %>
       <h2>
         <%= @game_prompt.prompt.description %>
       </h2>
@@ -39,7 +39,7 @@
           <li id="submitted-answer-<%= user %>"><%= user %></li>
         <% end %>
       </ul>
-    <% elsif @status == "Voting" %>
+    <% elsif @status == RoomStatus::Voting %>
       <h2>
         <%= @game_prompt.prompt.description %>
       </h2>
@@ -55,7 +55,7 @@
           <li id="vote-<%= vote.user.name %>"><%= vote.user.name %></li>
         <% end %>
       </ul>
-    <% elsif @status == "Results" %>
+    <% elsif @status == RoomStatus::Results %>
       <h3>Results</h3>
 
       <% if @winners.size == 1 %>
@@ -86,6 +86,14 @@
       <%# Nav to next prompt %>
       <%= form_with url: "/rooms/#{@room.id}/next", method: :post do |form| %>
         <%= form.submit "Next" %>
+      <% end %>
+    <% elsif @status == RoomStatus::FinalResults%>
+      <% @story.each do |sentence| %>
+        <p><%= sentence %></p>
+      <% end %>
+
+      <%= form_with url: "/rooms/#{@room.id}/end_game", method: :post do |form| %>
+        <%= form.submit "New Game?" %>
       <% end %>
     <% end %>
   </div>

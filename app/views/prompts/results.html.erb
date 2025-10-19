@@ -1,5 +1,9 @@
 <div id="results" data-controller="prompt-results">
-  <% if @status != RoomStatus::Results %>
+  <% if @status == RoomStatus::FinalResults %>
+    <h3 id="done">See the big screen for the final results!</h3>
+  <% elsif @status == RoomStatus::WaitingRoom %>
+    <p id="waiting-room"><i>Waiting for a new game to start...</i></p>
+  <% elsif @status != RoomStatus::Results %>
     <p id="waiting-on-results"><i>Waiting on votes to be submitted...</i></p>
   <% else %>
     <h3 id="done">See the big screen for the Winner!</h3>

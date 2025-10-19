@@ -2,11 +2,18 @@
 <%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
 
 <div data-controller="prompt">
-  <h2><%= @game_prompt.prompt.description %></h2>
+  <h3><%= @game_prompt.prompt.description %></h3>
   <p><i>Vote for your favorite:</i></p>
   <%= form_with url: "/vote", method: :post do |form| %>
-    <%= form.hidden_field :game_prompt_id, required: true, value: @game_prompt.id %><br>
-    <%= form.collection_radio_buttons :answer_id, @answers, :id, :text %>
+    <%= form.hidden_field :game_prompt_id, required: true, value: @game_prompt.id %>
+    <div class="radio-group">
+      <%= form.collection_radio_buttons :answer_id, @answers, :id, :text do |b| %>
+        <div class="radio-option">
+          <%= b.radio_button %>
+          <%= b.label %>
+        </div>
+      <% end %>
+    </div>
     <%= form.submit "Submit" %>
   <% end %>
 </div>

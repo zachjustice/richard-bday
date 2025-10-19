@@ -13,7 +13,7 @@ class RoomsController < ApplicationController
     )
     if !game.save
       flash.notice = "Couldn't start game: #{game.errors.full_messages}"
-      redirect_to controller: "rooms", action: "status", id: room_id
+      return redirect_to controller: "rooms", action: "status", id: room_id
     end
 
     first_game_prompt_id = create_game_prompts(story, game).first.id
@@ -34,7 +34,8 @@ class RoomsController < ApplicationController
     current_game_prompt_order = room.current_game.current_game_prompt.order
     next_game_prompt_id = GamePrompt.find_by(game_id: room.current_game_id, order: current_game_prompt_order + 1)&.id
     if next_game_prompt_id.nil?
-      return redirect_to controller: "rooms", action: "birthday", id: params[:id]
+      room.update!(status: RoomStatus::FinalResults)
+      return redirect_to controller: "rooms", action: "status", id: params[:id]
     end
 
     ActionCable.server.broadcast(
@@ -53,7 +54,7 @@ class RoomsController < ApplicationController
 
     @users = User.where(room_id: @room.id)
     @status = @room.status
-    if @status != RoomStatus::WaitingRoom
+    if [ RoomStatus::Answering, RoomStatus::Voting, RoomStatus::Results ].include?(@status)
       @game_prompt = @room.current_game.current_game_prompt
 
       @answers = Answer.where(game_prompt_id: @game_prompt.id)
@@ -64,29 +65,49 @@ class RoomsController < ApplicationController
       }
 
       @votes = Vote.where(game_prompt_id: @game_prompt.id)
+    end
+
+    # Only calculate winners if all the votes are in. Front-end will use existence of @winners to determine if voting is done.
+    if @status == RoomStatus::Results
       @votes_by_answer = {}
       most_votes = -1
       @winners = []
 
-      # Only calculate winners if all the votes are in. Front-end will use existence of @winners to determine if voting is done.
-      if @status == RoomStatus::Results
-        @votes.each do |vote|
-          if @votes_by_answer[vote.answer_id].nil?
-            @votes_by_answer[vote.answer_id] = []
-          end
-          @votes_by_answer[vote.answer_id].push(vote)
-          if @votes_by_answer[vote.answer_id].size > most_votes
-            most_votes = @votes_by_answer[vote.answer_id].size
-            @winners = [ @answers_by_id[vote.answer_id] ]
-          elsif @votes_by_answer[vote.answer_id].size == most_votes
-            @winners.push(@answers_by_id[vote.answer_id])
-          end
+      @votes.each do |vote|
+        if @votes_by_answer[vote.answer_id].nil?
+          @votes_by_answer[vote.answer_id] = []
         end
-
-        # I don't have good tie-break logic, so just choose at random
-        # TODO replace with points.
-        @winners[rand(@winners.length)].update!(won: true) unless @winners.empty?
+        @votes_by_answer[vote.answer_id].push(vote)
+        if @votes_by_answer[vote.answer_id].size > most_votes
+          most_votes = @votes_by_answer[vote.answer_id].size
+          @winners = [ @answers_by_id[vote.answer_id] ]
+        elsif @votes_by_answer[vote.answer_id].size == most_votes
+          @winners.push(@answers_by_id[vote.answer_id])
+        end
       end
+
+      # I don't have good tie-break logic, so just choose at random
+      # TODO replace with points.
+      @winners[rand(@winners.length)].update!(won: true) unless @winners.empty?
+    end
+
+    if @status == RoomStatus::FinalResults
+      story_text = @current_room.current_game.story.text
+      blank_id_to_answer_text = Answer.where(game_id: @current_room.current_game, won: true).reduce({}) do |result, ans|
+        result["{#{ans.game_prompt.blank.id}}"] = ans.text
+        result
+      end
+      # TODO: validation the story looks good. Check there's no {\d+} strings and all blanks appear in the text
+      replacement_regex = /\{\d+\}/
+      complete_story = story_text.gsub(replacement_regex, blank_id_to_answer_text)
+      includes_leftover_regex = complete_story.match?(replacement_regex)
+      missing_answers = blank_id_to_answer_text.values.reject { |ans| complete_story.include?(ans) }
+      if includes_leftover_regex || !missing_answers.empty?
+        error_part1 = includes_leftover_regex ? "[LEFTOVER_REGEX]" : ""
+        error_part2 = !missing_answers.empty? ? "[MISSING_ANSWERS]" : ""
+        logger.error("[RoomController#status] Generated invalid story! #{error_part1}#{error_part2} missing_answers: `#{missing_answers.to_json}`, StoryId: #{@current_room.current_game.story.id}, story_text: `#{story_text}`, complete_story: `#{complete_story}`")
+      end
+      @story = complete_story.split(".").map { |s| s.strip + "."  }
     end
   end
 
@@ -121,33 +142,16 @@ class RoomsController < ApplicationController
     end
   end
 
-  def birthday
-    story_template = """
-    Richard was born on [REDACTED] to his loving parents Kirk and Lisa. He weighed %s lbs %s oz,
-    and was described by the doctors and nurses as %s. As a baby, Richard was %s. For example, he
-    would only %s when you %s.
-
-    As a toddler and child, Richard loved to play on the playground. His favorite activity was %s.
-    One day, he met some other children on the playground Eli, Michael, Claire, and John. On the playground,
-    they pretended to be %s and %s. They had a great time and became friends forever.
-
-    As they grew up, Richard, Eli, Michael, John and Claire stayed friends. One day, Michael and Eli
-    met Paula at the Lucky Dog. Paula heard them talking about %s in Dungeons and Dragons, and asked to
-    join their D&D group. When Paula first met Richard, she was instantly smitten when Richard %s.
-    After that, it was impossible for them to not fall madly in love and get married.
-
-    Together they pursued their dreams. Richard became a famous puzzle maker when he got on the news for
-    %s. Paula's voice acting won world-wide acclaim when she performed a parody of %s %s.
-
-    They also had many adventures together. There most unforgettable trip was in %s when Richard %s and
-    Paula had to %s. They would always cherish the memories they shared together.
-
-    Finally, after many years together, Richard and Paula died together at the age of %s surrounded by
-    their %s cats.
-    """
-    answers = Answer.where(room_id: params[:id], won: true).map { |p| p.text }
-    complete_story = story_template % answers
-    @story = complete_story.split(".").map { |s| s.strip + "."  }
+  def end_game
+    current_room = Room.find(params[:id])
+    current_room.current_game.update!(
+      current_game_prompt: nil
+    )
+    current_room.update!(
+      status: RoomStatus::WaitingRoom,
+      current_game: nil
+    )
+    redirect_to controller: "rooms", action: "status", id: params[:id]
   end
 
   private

@@ -3,4 +3,5 @@
     Answering = "Answering"
     Voting = "Voting"
     Results = "Results"
+    FinalResults = "FinalResults"
   end
