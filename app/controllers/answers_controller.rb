@@ -1,9 +1,9 @@
 class AnswersController < ApplicationController
   def create
     exists = Answer.exists?(
-      prompt_id: params[:prompt_id],
+      game_prompt_id: params[:prompt_id],
       user_id: @current_user.id,
-      room_id: @current_room.id
+      game_id: @current_room.current_game_id
     )
 
     # If the user has already submitted an answer for the prompt and room, then skip saving a new answer
@@ -12,15 +12,15 @@ class AnswersController < ApplicationController
     if !exists
       ans = Answer.new(
         text: params[:text],
-        prompt_id: params[:prompt_id],
+        game_prompt_id: params[:prompt_id],
         user_id: @current_user.id,
-        room_id: @current_room.id
+        game_id: @current_room.current_game_id
       )
-      successful = ans.save
+      ans.save!
     end
 
     users_in_room = User.where(room_id: @current_room.id).count
-    submitted_answers = Answer.where(prompt_id: params[:prompt_id], room_id: @current_room.id).count
+    submitted_answers = Answer.where(game_prompt_id: params[:prompt_id], game_id: @current_room.current_game_id).count
     redirect_to_voting = submitted_answers >= users_in_room
 
     # All answers have been collected, time to vote

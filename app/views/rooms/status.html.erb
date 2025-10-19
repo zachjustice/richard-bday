@@ -1,4 +1,4 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+<%= tag.div(flash[:notice], style: "color:red") if flash[:notice] %>
 <div data-controller="rooms-status">
   <h2>Room Code: "<%= @room.code %>"</h2>
 
@@ -6,9 +6,6 @@
     <% if @status == "WaitingRoom" %>
       <%= form_with url: "/rooms/#{@room.id}/start", method: :post do |form| %>
         <div id="stories-list-container">
-          <% if @stories.empty? %>
-            <p id="no-stories-yet"><i>Oops, something is wrong. Maybe refresh the page in a bit?</i></p>
-          <% end %>
           <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title') %>
         </div>
 
@@ -29,7 +26,7 @@
       </div>
     <% elsif @status == "Answering" %>
       <h2>
-        <%= @prompt.description %>
+        <%= @game_prompt.prompt.description %>
       </h2>
       <p><i>Answer on your device</i></p>
 
@@ -44,7 +41,7 @@
       </ul>
     <% elsif @status == "Voting" %>
       <h2>
-        <%= @prompt.description %>
+        <%= @game_prompt.prompt.description %>
       </h2>
       <p><i>Vote for the best answer on your device!</i></p>
 

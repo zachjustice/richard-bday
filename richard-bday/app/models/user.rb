@@ -5,5 +5,5 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :room_id, presence: true
 
-  after_commit { JoinRoomJob.perform_now(self) }
+  after_commit(on: :create) { JoinRoomJob.perform_now(self) }
 end

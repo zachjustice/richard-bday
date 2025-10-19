@@ -4,5 +4,5 @@ class Vote < ApplicationRecord
   belongs_to :prompt
   belongs_to :room
 
-  after_commit { VoteSubmittedJob.perform_now(self) }
+  after_commit(on: :create) { VoteSubmittedJob.perform_now(self) }
 end

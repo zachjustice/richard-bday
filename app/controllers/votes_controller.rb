@@ -1,9 +1,10 @@
 class VotesController < ApplicationController
   def create
     exists = Vote.exists?(
-      prompt_id: params[:prompt_id],
+      answer_id: params[:answer_id],
       user_id: @current_user.id,
-      room_id: @current_room.id
+      game_id: @current_room.current_game_id,
+      game_prompt_id: params[:game_prompt_id]
     )
 
     # If the user has already voted for the prompt and room, then skip saving a new answer
@@ -12,21 +13,21 @@ class VotesController < ApplicationController
     if !exists
       vote = Vote.new(
         answer_id: params[:answer_id],
-        prompt_id: params[:prompt_id],
         user_id: @current_user.id,
-        room_id: @current_room.id
+        game_id: @current_room.current_game_id,
+        game_prompt_id: params[:game_prompt_id]
       )
       successful = vote.save
     end
 
     users_in_room = User.where(room_id: @current_room.id).count
-    submitted_votes = Vote.where(prompt_id: params[:id], room_id: @current_room.id).count
+    submitted_votes = Vote.where(game_id: @current_room.current_game_id).count
     redirect_to_results = submitted_votes >= users_in_room
 
     if successful || exists || redirect_to_results
-      redirect_to controller: "prompts", action: "results", id: params[:prompt_id]
+      redirect_to controller: "prompts", action: "results", id: params[:game_prompt_id]
     else
-      redirect_to controller: "prompts", action: "show", id: params[:prompt_id]
+      redirect_to controller: "prompts", action: "show", id: params[:game_prompt_id]
     end
   end
 end

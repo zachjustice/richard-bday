@@ -3,40 +3,46 @@ class RoomsController < ApplicationController
   include ActionController::Live
 
   def start
-    puts("PARAMS!", params.to_json)
     story_id = params[:story]
     room_id = params[:id]
 
+    story = Story.find(story_id)
     game = Game.new(
       story_id: story_id,
-      room_id: room_id
+      room_id: room_id,
     )
-
-    if game.save
-      Room.find(room_id).update!(status: RoomStatus::Answering, current_prompt_index: 0)
-      prompt_id = GamePromptOrder.prompts().first
-      ActionCable.server.broadcast(
-        "rooms:#{room_id.to_i}",
-        Events.create_next_prompt_event(prompt_id)
-      )
+    if !game.save
+      flash.notice = "Couldn't start game: #{game.errors.full_messages}"
       redirect_to controller: "rooms", action: "status", id: room_id
-    else
-      redirect_to controller: "rooms", action: "status", id: room_id, alert: "Couldn't start game."
     end
+
+    first_game_prompt_id = create_game_prompts(story, game).first.id
+
+    game.update!(current_game_prompt_id: first_game_prompt_id)
+    Room.find(room_id).update!(status: RoomStatus::Answering, current_game_id: game.id)
+
+    ActionCable.server.broadcast(
+      "rooms:#{room_id.to_i}",
+      Events.create_next_prompt_event(first_game_prompt_id)
+    )
+    redirect_to controller: "rooms", action: "status", id: room_id
   end
 
   def next
     room = Room.find(params[:id])
-    next_prompt_id = GamePromptOrder.prompts()[room.current_prompt_index + 1]
-    if next_prompt_id.nil?
+    # TODO updated, but might wrong!!
+    current_game_prompt_order = room.current_game.current_game_prompt.order
+    next_game_prompt_id = GamePrompt.find_by(game_id: room.current_game_id, order: current_game_prompt_order + 1)&.id
+    if next_game_prompt_id.nil?
       return redirect_to controller: "rooms", action: "birthday", id: params[:id]
     end
 
     ActionCable.server.broadcast(
       "rooms:#{params[:id].to_i}",
-      Events.create_next_prompt_event(next_prompt_id)
+      Events.create_next_prompt_event(next_game_prompt_id)
     )
-    Room.find(params[:id]).update!(status: RoomStatus::Answering, current_prompt_index: room.current_prompt_index + 1)
+    Room.find(params[:id]).update!(status: RoomStatus::Answering)
+    room.current_game.update!(current_game_prompt_id: next_game_prompt_id)
 
     redirect_to controller: "rooms", action: "status", id: params[:id]
   end
@@ -44,54 +50,54 @@ class RoomsController < ApplicationController
   def status
     @room = Room.find(params[:id])
     @current_room = @room # Normally this is set by the session, but this is an unauthenticated page
+
+    @users = User.where(room_id: @room.id)
     @status = @room.status
-    @current_prompt_id = GamePromptOrder.prompts()[@room.current_prompt_index]
+    if @status != RoomStatus::WaitingRoom
+      @game_prompt = @room.current_game.current_game_prompt
 
-    if @status == RoomStatus::WaitingRoom
-      @stories = Story.all
-    end
+      @answers = Answer.where(game_prompt_id: @game_prompt.id)
+      @users_with_submitted_answers = @answers.map { |r| r.user.name }
+      @answers_by_id = @answers.reduce({}) { |result, curr|
+        result[curr.id] = curr
+        result
+      }
 
-    @users = User.where(room: @room)
-    @prompt = Prompt.find(@current_prompt_id)
+      @votes = Vote.where(game_prompt_id: @game_prompt.id)
+      @votes_by_answer = {}
+      most_votes = -1
+      @winners = []
 
-    @answers = Answer.where(prompt_id: @prompt.id, room_id: @room.id)
-    @users_with_submitted_answers = @answers.map { |r| r.user.name }
-    @answers_by_id = @answers.reduce({}) { |result, curr|
-      result[curr.id] = curr
-      result
-    }
-
-    @votes = Vote.where(prompt: @prompt, room: @room)
-    @votes_by_answer = {}
-    most_votes = -1
-    @winners = []
-
-    # Only calculate winners if all the votes are in. Front-end will use existence of @winners to determine if voting is done.
-    if @status == RoomStatus::Results
-      @votes.each do |vote|
-        if @votes_by_answer[vote.answer_id].nil?
-          @votes_by_answer[vote.answer_id] = []
+      # Only calculate winners if all the votes are in. Front-end will use existence of @winners to determine if voting is done.
+      if @status == RoomStatus::Results
+        @votes.each do |vote|
+          if @votes_by_answer[vote.answer_id].nil?
+            @votes_by_answer[vote.answer_id] = []
+          end
+          @votes_by_answer[vote.answer_id].push(vote)
+          if @votes_by_answer[vote.answer_id].size > most_votes
+            most_votes = @votes_by_answer[vote.answer_id].size
+            @winners = [ @answers_by_id[vote.answer_id] ]
+          elsif @votes_by_answer[vote.answer_id].size == most_votes
+            @winners.push(@answers_by_id[vote.answer_id])
+          end
         end
-        @votes_by_answer[vote.answer_id].push(vote)
-        if @votes_by_answer[vote.answer_id].size > most_votes
-          most_votes = @votes_by_answer[vote.answer_id].size
-          @winners = [ @answers_by_id[vote.answer_id] ]
-        elsif @votes_by_answer[vote.answer_id].size == most_votes
-          @winners.push(@answers_by_id[vote.answer_id])
-        end
+
+        # I don't have good tie-break logic, so just choose at random
+        # TODO replace with points.
+        @winners[rand(@winners.length)].update!(won: true) unless @winners.empty?
       end
-
-      @winners[rand(@winners.length)].update!(won: true) unless @winners.empty?
     end
   end
 
   def show
-    @users = User.where(room: @current_room)
+    @users = User.where(room_id: @current_room.id)
     # Redirect to the current prompt if the game for this room has advanced beyond the first prompt (index 0)
     if @current_room.status == RoomStatus::Answering
-      redirect_to controller: "prompts", action: "show", id: GamePromptOrder.prompts()[@current_room.current_prompt_index]
-    elsif @current_room.current_prompt_index > 0
-      redirect_to controller: "prompts", action: "show", id: GamePromptOrder.prompts()[@current_room.current_prompt_index]
+      redirect_to controller: "prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
+      # TODO [room.current_prompt_index refactor] this elsif statement did the same thing as above. not sure why.
+      # elsif @current_room.current_prompt_index > 0
+      #  redirect_to controller: "prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
     end
   end
 
@@ -109,7 +115,9 @@ class RoomsController < ApplicationController
     if room.save
       redirect_to controller: "rooms", action: "status", id: room.id
     else
-      redirect_to controller: "rooms", action: "create", alert: "Failed."
+      logger.error "Failed to create room: #{room.errors.messages.to_json}"
+      flash.notice = "Failed to create room: #{room.errors.full_messages.to_json}"
+      redirect_to controller: "rooms", action: "create"
     end
   end
 
@@ -154,5 +162,27 @@ class RoomsController < ApplicationController
 
   def room_params
     params.expect(room: [ :code ])
+  end
+
+  def create_game_prompts(story, game)
+    blanks = Blank.where(story_id: story.id)
+    prompts = blanks.map do |b|
+      # TODO: this will need to be more sophisticated
+      # What if 2 blanks have the same tags. We want different prompts.
+      # Do all prompt tags and blank tags need to match? required tags? optional tags? duplicate entries with different tags?
+      Prompt.find_by(tags: b.tags)
+    end
+    puts("blanks.size", blanks.size)
+    game_prompts = blanks.zip(prompts, (0...blanks.size)).map do |blank, prompt, order|
+      puts("gameprompt:", blank.id, prompt.id, order)
+      GamePrompt.new(
+        game: game,
+        prompt: prompt,
+        blank: blank,
+        order: order
+      )
+    end
+    !game_prompts.map(&:save!)
+    game_prompts
   end
 end

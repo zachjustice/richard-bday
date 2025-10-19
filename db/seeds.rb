@@ -33,7 +33,7 @@ blanks = [
   [ "drink", "adjective" ],
   [ "phrase" ]
 ].map do |tags|
-  Blank.find_or_create_by!(story: s, tags: tags.join)
+  Blank.find_or_create_by!(story: s, tags: tags.join(","))
 end
 
 s.update(text: "I loved my pet {#{blanks[0].id}}." + \
@@ -41,24 +41,32 @@ s.update(text: "I loved my pet {#{blanks[0].id}}." + \
  " But when she died after many years, my husband said \"{#{blanks[2].id}}\"."
 )
 
+# Support the hacky solution for room creation where we start a user session for the first user in the DB.
 r = Room.find_or_create_by!(code: "36485blahblahblah")
-r.update!(status: RoomStatus::WaitingRoom, current_prompt_index: 0)
+r.update!(status: RoomStatus::WaitingRoom)
 User.find_or_create_by!(name: "Admin", room: r)
+
+
 
 g = Game.find_or_create_by(story: s, room: r)
 
-prompts.zip(blanks).map do |p, b|
-  GamePrompt.find_or_create_by!(prompt: p, blank: b, game: g)
+order = 0
+game_prompts = prompts.zip(blanks).map do |p, b|
+  gp = GamePrompt.find_or_create_by!(prompt: p, blank: b, game: g, order: order)
+  order += 1
+  gp
 end
+g.update!(current_game_prompt_id: game_prompts.first.id)
+
 
 r = Room.find_or_create_by!(code: "bday")
-r.update!(status: RoomStatus::WaitingRoom, current_prompt_index: 0)
+r.update!(status: RoomStatus::WaitingRoom, current_game_id: g.id)
 zach = User.find_or_create_by!(name: "Zach", room: r)
 richard = User.find_or_create_by!(name: "Richard", room: r)
 
-p = prompts.first
-zachs_answer = Answer.find_or_create_by!(prompt: p, room: r, user: zach, text: "fishy")
-richards_answer = Answer.find_or_create_by!(prompt: p, room: r, user: richard, text: "gross")
+game_prompt = game_prompts.first
+zachs_answer = Answer.find_or_create_by!(game_prompt: game_prompt, game: g, user: zach, text: "fishy")
+richards_answer = Answer.find_or_create_by!(game_prompt: game_prompt, game: g, user: richard, text: "gross")
 
-Vote.find_or_create_by!(user: zach, answer: zachs_answer, prompt: p, room: r)
-Vote.find_or_create_by!(user: richard, answer: richards_answer, prompt: p, room: r)
+Vote.find_or_create_by!(user: zach, answer: zachs_answer, game: g, game_prompt: game_prompt)
+Vote.find_or_create_by!(user: richard, answer: richards_answer, game: g, game_prompt: game_prompt)

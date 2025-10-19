@@ -1,9 +1,9 @@
 class PromptsController < ApplicationController
   def show
     exists = Answer.exists?(
-      prompt_id: params[:id],
+      game_prompt_id: params[:id],
       user_id: @current_user.id,
-      room_id: @current_room.id
+      game_id: @current_room.current_game_id
     )
 
     # User already submitted an answer for this prompt; redirect to next page
@@ -11,11 +11,11 @@ class PromptsController < ApplicationController
       return redirect_to controller: "prompts", action: "waiting", id: params[:id]
     end
 
-    @prompt = Prompt.find_by(params.permit(:id))
+    @game_prompt = GamePrompt.find_by(params.permit(:id))
   end
 
   def waiting
-    @prompt = Prompt.find_by(params.permit(:id))
+    @game_prompt = GamePrompt.find_by(params.permit(:id))
 
     # All answers have been collected, time to vote
     if @current_room.status == RoomStatus::Voting
@@ -25,9 +25,8 @@ class PromptsController < ApplicationController
 
   def voting
     exists = Vote.exists?(
-      prompt_id: params[:id],
       user_id: @current_user.id,
-      room_id: @current_room.id
+      game_prompt_id: params[:id]
     )
 
     # All answers have been collected, time to vote
@@ -35,15 +34,15 @@ class PromptsController < ApplicationController
       return redirect_to controller: "prompts", action: "results", id: params[:id]
     end
 
-    @prompt = Prompt.find_by(params.permit(:id))
-    @answers = Answer.where(room_id: @current_room.id, prompt_id: params[:id])
+    @game_prompt = GamePrompt.find_by(params.permit(:id))
+    @answers = Answer.where(game_id: @current_room.current_game_id, game_prompt_id: params[:id])
   end
 
   def results
     @status = @current_room.status
-    current_prompt_id = GamePromptOrder.prompts()[@current_room.current_prompt_index]
+    current_game_prompt_id = @current_room.current_game.current_game_prompt.id
     if @status != RoomStatus::Results && @status != RoomStatus::Voting
-      redirect_to controller: "prompts", action: "show", id: current_prompt_id
+      redirect_to controller: "prompts", action: "show", id: current_game_prompt_id
     end
   end
 end

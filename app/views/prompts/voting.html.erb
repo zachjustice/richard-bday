@@ -1,8 +1,11 @@
+<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+
 <div data-controller="prompt">
-  <h2><%= @prompt.description %></h2>
+  <h2><%= @game_prompt.prompt.description %></h2>
   <p><i>Vote for your favorite:</i></p>
   <%= form_with url: "/vote", method: :post do |form| %>
-    <%= form.hidden_field :prompt_id, required: true, value: @prompt.id %><br>
+    <%= form.hidden_field :game_prompt_id, required: true, value: @game_prompt.id %><br>
     <%= form.collection_radio_buttons :answer_id, @answers, :id, :text %>
     <%= form.submit "Submit" %>
   <% end %>

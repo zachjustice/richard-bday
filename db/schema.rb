@@ -10,17 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_05_220410) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_19_010534) do
   create_table "answers", force: :cascade do |t|
-    t.integer "prompt_id", null: false
     t.integer "user_id", null: false
-    t.integer "room_id", null: false
     t.string "text", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["prompt_id", "room_id", "user_id"], name: "index_answers_on_prompt_id_and_room_id_and_user_id", unique: true
-    t.index ["prompt_id"], name: "index_answers_on_prompt_id"
-    t.index ["room_id"], name: "index_answers_on_room_id"
+    t.integer "game_prompt_id", null: false
+    t.integer "game_id", null: false
+    t.boolean "won"
+    t.index ["game_id"], name: "index_answers_on_game_id"
+    t.index ["game_prompt_id", "game_id", "user_id"], name: "index_answers_on_game_prompt_id_and_game_id_and_user_id", unique: true
+    t.index ["game_prompt_id", "user_id"], name: "index_game_prompts_on_game_prompt_id_and_room_id_and_user_id", unique: true
+    t.index ["game_prompt_id"], name: "index_answers_on_game_prompt_id"
     t.index ["user_id"], name: "index_answers_on_user_id"
   end
 
@@ -38,7 +40,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_05_220410) do
     t.datetime "updated_at", null: false
     t.integer "prompt_id", null: false
     t.integer "blank_id", null: false
+    t.integer "order", null: false
     t.index ["blank_id"], name: "index_game_prompts_on_blank_id"
+    t.index ["game_id", "prompt_id", "blank_id", "order"], name: "index_game_prompts_on_game_prompt_blank_order", unique: true
     t.index ["game_id"], name: "index_game_prompts_on_game_id"
     t.index ["prompt_id"], name: "index_game_prompts_on_prompt_id"
   end
@@ -48,6 +52,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_05_220410) do
     t.integer "room_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "current_game_prompt_id"
+    t.index ["current_game_prompt_id"], name: "index_games_on_current_game_prompt_id"
     t.index ["room_id"], name: "index_games_on_room_id"
     t.index ["story_id"], name: "index_games_on_story_id"
   end
@@ -63,9 +69,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_05_220410) do
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "current_prompt_index", default: 0, null: false
     t.string "status", default: "WaitingRoom"
+    t.integer "current_game_id"
     t.index ["code"], name: "index_rooms_on_code", unique: true
+    t.index ["current_game_id"], name: "index_rooms_on_current_game_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -100,28 +107,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_05_220410) do
     t.integer "answer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "room_id", null: false
-    t.integer "prompt_id", null: false
+    t.integer "game_id", null: false
+    t.integer "game_prompt_id", null: false
     t.index ["answer_id"], name: "index_votes_on_answer_id"
-    t.index ["prompt_id", "room_id", "user_id"], name: "index_votes_on_prompt_id_and_room_id_and_user_id", unique: true
-    t.index ["prompt_id"], name: "index_votes_on_prompt_id"
-    t.index ["room_id"], name: "index_votes_on_room_id"
+    t.index ["game_id", "user_id", "answer_id"], name: "index_votes_on_game_id_and_user_id_and_answer_id", unique: true
+    t.index ["game_id"], name: "index_votes_on_game_id"
+    t.index ["game_prompt_id"], name: "index_votes_on_game_prompt_id"
+    t.index ["user_id", "answer_id"], name: "index_votes_on_room_id_and_user_id_and_answer_id", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
-  add_foreign_key "answers", "prompts"
-  add_foreign_key "answers", "rooms"
+  add_foreign_key "answers", "game_prompts"
+  add_foreign_key "answers", "games"
   add_foreign_key "answers", "users"
   add_foreign_key "blanks", "stories"
   add_foreign_key "game_prompts", "blanks"
+  add_foreign_key "game_prompts", "games"
   add_foreign_key "game_prompts", "prompts"
-  add_foreign_key "game_prompts", "stories", column: "game_id"
+  add_foreign_key "games", "game_prompts", column: "current_game_prompt_id"
   add_foreign_key "games", "rooms"
   add_foreign_key "games", "stories"
+  add_foreign_key "rooms", "games", column: "current_game_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "users", "rooms"
   add_foreign_key "votes", "answers"
-  add_foreign_key "votes", "prompts"
-  add_foreign_key "votes", "rooms"
+  add_foreign_key "votes", "game_prompts"
+  add_foreign_key "votes", "games"
   add_foreign_key "votes", "users"
 end

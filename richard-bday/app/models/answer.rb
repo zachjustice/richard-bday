@@ -5,5 +5,5 @@ class Answer < ApplicationRecord
 
   has_many :votes, dependent: :destroy
 
-  after_commit { AnswerSubmittedJob.perform_now(self) }
+  after_commit(on: :create) { AnswerSubmittedJob.perform_now(self) }
 end
