@@ -103,6 +103,7 @@ This document outlines the expectations, coding standards, and general conventio
 ## Communication Style
 - Write comments and documentation in plain, professional language.
 - Explain *why* something exists, not *what* it does (code should explain itself).
+- Output from Claude explaining changes should be succinct and concise. 
 
 ---
 

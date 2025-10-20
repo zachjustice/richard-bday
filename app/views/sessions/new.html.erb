@@ -1,9 +1,62 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+<%= stylesheet_link_tag "login-page", "data-turbo-track": "reload" %>
 
-<%= form_with url: session_path do |form| %>
-  <%= form.text_field :name, required: true, autofocus: true, autocomplete: "off", placeholder: "Enter a username", value: params[:username] %><br>
-  <%= form.text_field :code, required: true, autocomplete: "off", placeholder: "Enter the room code", maxlength: 72 %><br>
-  <%= form.submit "Sign in" %>
-<% end %>
-<br>
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-icon">🎮</div>
+      <h1 class="login-title">Join the Game</h1>
+      <p class="login-subtitle">Enter your details to start playing</p>
+    </div>
+
+    <% if flash[:alert] %>
+      <div class="alert-message">
+        <span class="alert-icon">⚠️</span>
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <% if flash[:notice] %>
+      <div class="notice-message">
+        <span class="notice-icon">✓</span>
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <%= form_with url: session_path, class: "login-form" do |form| %>
+      <div class="form-group">
+        <label for="name" class="form-label">
+          <span class="label-icon">👤</span>
+          Username
+        </label>
+        <%= form.text_field :name,
+            id: "name",
+            required: true,
+            autofocus: true,
+            autocomplete: "off",
+            placeholder: "What should we call you?",
+            value: params[:username],
+            class: "form-input" %>
+      </div>
+
+      <div class="form-group">
+        <label for="code" class="form-label">
+          <span class="label-icon">🔑</span>
+          Room Code
+        </label>
+        <%= form.text_field :code,
+            id: "code",
+            required: true,
+            autocomplete: "off",
+            placeholder: "Enter room code",
+            maxlength: 72,
+            class: "form-input room-code-input" %>
+      </div>
+
+      <%= form.submit "Join Game", class: "submit-button" %>
+    <% end %>
+
+    <div class="login-footer">
+      <p class="footer-text">Ready to create stories together?</p>
+    </div>
+  </div>
+</div>

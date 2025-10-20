@@ -1,0 +1,21 @@
+<% fun_facts = [
+  { icon: "🐙", text: "Octopuses have three hearts and no feelings!" },
+  { icon: "🌟", text: "A day on Mars is longer than a year on Mars!" },
+  { icon: "🦒", text: "Giraffes only need 15 minutes of sleep per day!" },
+  { icon: "🌊", text: "The ocean produces over 99% of Earth's fish!" },
+  { icon: "🪐", text: "Saturn's rings are made of diamond dust!" },
+  { icon: "🐝", text: "Bees can recognize human faces, but only if they're scientific researchers!" },
+  { icon: "🌲", text: "Do trees talk to each other?" },
+  { icon: "🌙", text: "The Moon is slowly getting closer to Earth!" },
+  { icon: "🦈", text: "Sharks have been around longer than dinosaurs!" },
+  { icon: "⚡", text: "Lightning strikes Earth 5,000 times per second!" }
+] %>
+
+<div class="waiting-messages" data-controller="cycling-messages">
+  <% fun_facts.each_with_index do |fact, index| %>
+    <div class="message-card <%= 'active' if index == 0 %>" data-cycling-messages-target="message">
+      <span class="message-icon"><%= fact[:icon] %></span>
+      <p class="message-text"><%= fact[:text] %></p>
+    </div>
+  <% end %>
+</div>

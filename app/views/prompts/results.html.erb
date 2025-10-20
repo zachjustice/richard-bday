@@ -1,11 +1,44 @@
-<div id="results" data-controller="prompt-results">
-  <% if @status == RoomStatus::FinalResults %>
-    <h3 id="done">See the big screen for the final results!</h3>
-  <% elsif @status == RoomStatus::WaitingRoom %>
-    <p id="waiting-room"><i>Waiting for a new game to start...</i></p>
-  <% elsif @status != RoomStatus::Results %>
-    <p id="waiting-on-results"><i>Waiting on votes to be submitted...</i></p>
-  <% else %>
-    <h3 id="done">See the big screen for the Winner!</h3>
-  <% end %>
+<%= stylesheet_link_tag "prompt-results", "data-turbo-track": "reload" %>
+
+<div id="results" data-controller="prompt-results" class="prompt-results-container">
+  <div class="prompt-results-card">
+    <% if @status == RoomStatus::FinalResults %>
+      <div class="status-display final-results">
+        <div class="status-icon">🏆</div>
+        <h2 class="status-title">Game Complete!</h2>
+        <p class="status-message">Check the big screen for the final results!</p>
+      </div>
+    <% elsif @status == RoomStatus::WaitingRoom %>
+      <div class="status-display waiting-room">
+        <div class="status-icon">🎮</div>
+        <h2 class="status-title">Between Games</h2>
+        <p class="status-message">Waiting for a new game to start...</p>
+        <%= render "shared/fun_facts" %>
+      </div>
+    <% elsif @status != RoomStatus::Results %>
+      <div class="status-display waiting-votes">
+        <div class="waiting-animation">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring spinner-ring-2"></div>
+          <div class="spinner-ring spinner-ring-3"></div>
+          <span class="waiting-icon">📊</span>
+        </div>
+        <h2 class="status-title">Counting Votes</h2>
+        <p class="status-message">Waiting for everyone to vote...</p>
+        <%= render "shared/fun_facts" %>
+      </div>
+    <% else %>
+      <div class="status-display results-ready">
+        <div class="status-icon">🎉</div>
+        <h2 class="status-title">Round Complete!</h2>
+        <p class="status-message">Check the big screen for the winner!</p>
+      </div>
+    <% end %>
+
+    <div class="progress-dots">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  </div>
 </div>

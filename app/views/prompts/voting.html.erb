@@ -1,19 +1,43 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+<%= stylesheet_link_tag "prompt-voting", "data-turbo-track": "reload" %>
 
-<div data-controller="prompt">
-  <h3><%= @game_prompt.prompt.description %></h3>
-  <p><i>Vote for your favorite:</i></p>
-  <%= form_with url: "/vote", method: :post do |form| %>
-    <%= form.hidden_field :game_prompt_id, required: true, value: @game_prompt.id %>
-    <div class="radio-group">
-      <%= form.collection_radio_buttons :answer_id, @answers, :id, :text do |b| %>
-        <div class="radio-option">
-          <%= b.radio_button %>
-          <%= b.label %>
-        </div>
-      <% end %>
+<div data-controller="prompt" class="prompt-voting-container">
+  <div class="prompt-voting-card">
+    <% if flash[:alert] %>
+      <div class="alert-message">
+        <span class="alert-icon">⚠️</span>
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <% if flash[:notice] %>
+      <div class="notice-message">
+        <span class="notice-icon">✓</span>
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <div class="voting-header">
+      <div class="voting-icon">🗳️</div>
+      <h2 class="voting-title"><%= @game_prompt.prompt.description %></h2>
+      <p class="voting-subtitle">Vote for your favorite answer!</p>
     </div>
-    <%= form.submit "Submit" %>
-  <% end %>
+
+    <%= form_with url: "/vote", method: :post, class: "voting-form" do |form| %>
+      <%= form.hidden_field :game_prompt_id, required: true, value: @game_prompt.id %>
+
+      <div class="answers-list">
+        <%= form.collection_radio_buttons :answer_id, @answers, :id, :text do |b| %>
+          <label class="answer-option">
+            <%= b.radio_button class: "answer-radio" %>
+            <div class="answer-content">
+              <span class="answer-checkmark">✓</span>
+              <p class="answer-text"><%= b.text %></p>
+            </div>
+          </label>
+        <% end %>
+      </div>
+
+      <%= form.submit "Submit Vote", class: "submit-button" %>
+    <% end %>
+  </div>
 </div>
