@@ -1,100 +1,22 @@
-<%= tag.div(flash[:notice], style: "color:red") if flash[:notice] %>
-<div data-controller="rooms-status">
-  <h2>Room Code: "<%= @room.code %>"</h2>
+<%= render "rooms/status/header" %>
+
+<div data-controller="rooms-status" class="status-content">
+  <%= tag.div(flash[:notice], class: "error-notice") if flash[:notice] %>
 
   <div>
-    <% if @status == RoomStatus::WaitingRoom %>
-      <%= form_with url: "/rooms/#{@room.id}/start", method: :post do |form| %>
-        <div id="stories-list-container">
-          <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title') %>
-        </div>
-
-        <%= form.submit "Start" %>
-      <% end %>
-
-      <div id="users-list-container">
-        <h3>Waiting for other players to join:</h3>
-        <ul id="waiting-room">
-          <% if @users.empty? %>
-            <%# First element is deleted when the first user joins %>
-            <li id="no-users-yet"><i>No users yet</i></li>
-          <% end %>
-          <% @users.each do |user| %>
-            <li id="waiting-room-<%= user.name %>"><%= user.name %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% elsif @status == RoomStatus::Answering %>
-      <h2>
-        <%= @game_prompt.prompt.description %>
-      </h2>
-      <p><i>Answer on your device</i></p>
-
-      <h3>
-        These people are done:
-      </h3>
-
-      <ul id="users-with-submitted-answers">
-        <% @users_with_submitted_answers.each do |user| %>
-          <li id="submitted-answer-<%= user %>"><%= user %></li>
-        <% end %>
-      </ul>
-    <% elsif @status == RoomStatus::Voting %>
-      <h2>
-        <%= @game_prompt.prompt.description %>
-      </h2>
-      <p><i>Vote for the best answer on your device!</i></p>
-
-      <h3>
-        These people have voted so far:
-      </h3>
-
-      <%# No winner- display votes so far %>
-      <ul id="votes">
-        <% @votes.each do |vote| %>
-          <li id="vote-<%= vote.user.name %>"><%= vote.user.name %></li>
-        <% end %>
-      </ul>
-    <% elsif @status == RoomStatus::Results %>
-      <h3>Results</h3>
-
-      <% if @winners.size == 1 %>
-        Winner: <b><%= @winners.first.user.name %></b>
-      <% elsif @winners.size > 1 %>
-        Tie!!! Richard, choose a winner!!!
-        <p><%= @winners.map {|w| w.user.name}.join(', ') %></p>
-      <% end %>
-
-      <%# Display answers and show who voted for them %>
-      <table>
-        <tr>
-          <th>Won?</th>
-          <th>Answer</th>
-          <th>Author</th>
-          <th>Votes</th>
-        </tr>
-        <% @answers_by_id.map do |id, answer| %>
-          <tr>
-            <td><%= @winners.include?(answer) ? "X" : "" %></td>
-            <td><%= answer.text %></td>
-            <td><%= answer.user.name %></td>
-            <td><%= @votes_by_answer[id]&.map { |v| v.user.name }&.join(', ') %></td>
-          </tr>
-        <% end %>
-      </table>
-
-      <%# Nav to next prompt %>
-      <%= form_with url: "/rooms/#{@room.id}/next", method: :post do |form| %>
-        <%= form.submit "Next" %>
-      <% end %>
-    <% elsif @status == RoomStatus::FinalResults%>
-      <% @story.each do |sentence| %>
-        <p><%= sentence %></p>
-      <% end %>
-
-      <%= form_with url: "/rooms/#{@room.id}/end_game", method: :post do |form| %>
-        <%= form.submit "New Game?" %>
-      <% end %>
+    <% case @status %>
+    <% when RoomStatus::WaitingRoom %>
+      <%= render "rooms/status/waiting_room" %>
+    <% when RoomStatus::Answering %>
+      <%= render "rooms/status/answering" %>
+    <% when RoomStatus::Voting %>
+      <%= render "rooms/status/voting" %>
+    <% when RoomStatus::Results %>
+      <%= render "rooms/status/results" %>
+    <% when RoomStatus::FinalResults %>
+      <%= render "rooms/status/final_results" %>
     <% end %>
   </div>
 </div>
+
+<%= render "rooms/status/footer" %>
