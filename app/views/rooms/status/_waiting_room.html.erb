@@ -2,7 +2,7 @@
   <div class="waiting-room-card">
     <div class="waiting-room-grid">
       <div class="stories-section">
-        <h3>Choose a Story</h3>
+        <h3>Stories</h3>
         <%= form_with url: "/rooms/#{@room.id}/start", method: :post, class: "story-form" do |form| %>
           <div id="stories-list-container">
             <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title'), class: 'story-select' %>
@@ -12,7 +12,7 @@
       </div>
 
       <div class="users-section">
-        <h3>Players in Room</h3>
+        <h3>Players</h3>
         <div id="users-list-container">
           <ul id="waiting-room" class="players-list">
             <% if @users.empty? %>
