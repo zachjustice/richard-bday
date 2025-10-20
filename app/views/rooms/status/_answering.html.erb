@@ -1,14 +1,38 @@
-<h2>
-  <%= @game_prompt.prompt.description %>
-</h2>
-<p><i>Answer on your device</i></p>
+<div class="answering-container">
+  <div class="answering-card">
+    <div class="prompt-section">
+      <div class="prompt-icon">💭</div>
+      <h2 class="prompt-text"><%= @game_prompt.prompt.description %></h2>
+      <p class="prompt-instruction">Answer on your device</p>
+    </div>
 
-<h3>
-  These people are done:
-</h3>
+    <div class="progress-section">
+      <h3>Submission Progress</h3>
+      <div class="progress-grid">
+        <div class="progress-stats">
+          <div class="stat-card stat-completed">
+            <span class="stat-icon">✓</span>
+            <span class="stat-number"><%= @users_with_submitted_answers.count %></span>
+            <span class="stat-label">Completed</span>
+          </div>
+          <div class="stat-card stat-waiting">
+            <span class="stat-icon">⏳</span>
+            <span class="stat-number"><%= @users.count - @users_with_submitted_answers.count %></span>
+            <span class="stat-label">Waiting</span>
+          </div>
+        </div>
 
-<ul id="users-with-submitted-answers">
-  <% @users_with_submitted_answers.each do |user| %>
-    <li id="submitted-answer-<%= user %>"><%= user %></li>
-  <% end %>
-</ul>
+        <div class="completed-users">
+          <ul id="users-with-submitted-answers" class="completed-list">
+            <% if @users_with_submitted_answers.empty? %>
+              <li class="no-submissions"><i>Waiting for submissions...</i></li>
+            <% end %>
+            <% @users_with_submitted_answers.each do |user| %>
+              <li id="submitted-answer-<%= user %>" class="completed-user"><%= user %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

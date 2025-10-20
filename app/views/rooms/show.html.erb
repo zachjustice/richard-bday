@@ -1,8 +1,20 @@
-<div data-controller="room">
-  <h1>
-    Hello <%= @current_user.name %>!
-  </h1>
-  <p>
-    <i> Waiting for other players to join...</i>
-  </p>
+<%= stylesheet_link_tag "room-lobby", "data-turbo-track": "reload" %>
+
+<div data-controller="room" class="room-lobby-container">
+  <div class="room-lobby-card">
+    <div class="lobby-header">
+      <div class="lobby-icon">🎲</div>
+      <h1 class="lobby-title">Welcome, <%= @current_user.name %>!</h1>
+      <p class="lobby-subtitle">Get ready for an amazing story adventure</p>
+    </div>
+
+    <div class="waiting-section">
+      <div class="waiting-animation">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring pulse-ring-delay"></div>
+        <span class="waiting-icon">⏳</span>
+      </div>
+      <p class="waiting-text">Waiting for other players to join...</p>
+    </div>
+  </div>
 </div>

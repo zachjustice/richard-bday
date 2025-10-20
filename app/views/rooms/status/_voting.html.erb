@@ -1,15 +1,39 @@
-<h2>
-  <%= @game_prompt.prompt.description %>
-</h2>
-<p><i>Vote for the best answer on your device!</i></p>
+<div class="voting-container">
+  <div class="voting-card">
+    <div class="prompt-section">
+      <div class="prompt-icon">🗳️</div>
+      <h2 class="prompt-text"><%= @game_prompt.prompt.description %></h2>
+      <p class="prompt-instruction">Vote for the best answer on your device!</p>
+    </div>
 
-<h3>
-  These people have voted so far:
-</h3>
+    <div class="voting-progress-section">
+      <div class="voting-grid">
+        <div class="voting-stats-container">
+          <h3>Voting Progress</h3>
+          <div class="voting-stat-card">
+            <span class="stat-icon">🎯</span>
+            <span class="stat-number"><%= @votes.count %></span>
+            <span class="stat-label">Votes Cast</span>
+          </div>
+          <div class="voting-stat-card">
+            <span class="stat-icon">⏳</span>
+            <span class="stat-number"><%= @users.count - @votes.count %></span>
+            <span class="stat-label">Remaining</span>
+          </div>
+        </div>
 
-<%# No winner- display votes so far %>
-<ul id="votes">
-  <% @votes.each do |vote| %>
-    <li id="vote-<%= vote.user.name %>"><%= vote.user.name %></li>
-  <% end %>
-</ul>
+        <div class="voters-section">
+          <h3>Voted</h3>
+          <ul id="votes" class="voters-list">
+            <% if @votes.empty? %>
+              <li class="no-votes"><i>Waiting for votes...</i></li>
+            <% end %>
+            <% @votes.each do |vote| %>
+              <li id="vote-<%= vote.user.name %>" class="voter-item"><%= vote.user.name %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

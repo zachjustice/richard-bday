@@ -1,31 +1,48 @@
-<h3>Results</h3>
+<div class="results-container">
+  <div class="results-card">
+    <% if @winners.size == 1 %>
+      <div class="winner-announcement">
+        <div class="winner-icon">🏆</div>
+        <h2 class="winner-text">Winner: <%= @winners.first.user.name %></h2>
+      </div>
+    <% elsif @winners.size > 1 %>
+      <div class="tie-announcement">
+        <div class="tie-icon">🤝</div>
+        <h2 class="tie-text">It's a Tie!</h2>
+        <p class="tie-players"><%= @winners.map {|w| w.user.name}.join(' • ') %></p>
+      </div>
+    <% end %>
 
-<% if @winners.size == 1 %>
-  Winner: <b><%= @winners.first.user.name %></b>
-<% elsif @winners.size > 1 %>
-  Tie!!! Richard, choose a winner!!!
-  <p><%= @winners.map {|w| w.user.name}.join(', ') %></p>
-<% end %>
+    <div class="results-section">
+      <h3>All Answers</h3>
+      <div class="answers-list">
+        <% @answers_by_id.each do |id, answer| %>
+          <div class="answer-card <%= @winners.include?(answer) ? 'answer-winner' : '' %>">
+            <div class="answer-text"><%= answer.text %></div>
+            <div class="answer-meta">
+              <span class="answer-author"><%= answer.user.name %></span>
+              <span class="answer-votes">
+                <span class="votes-icon">🎯</span>
+                <span class="votes-count"><%= @votes_by_answer[id]&.count || 0 %></span>
+              </span>
+            </div>
+            <% if @votes_by_answer[id]&.any? %>
+              <div class="answer-voters">
+                <span class="voters-label">Voted by:</span>
+                <div class="voters-tags">
+                  <% @votes_by_answer[id].each do |vote| %>
+                    <span class="voter-tag"><%= vote.user.name %></span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
 
-<%# Display answers and show who voted for them %>
-<table>
-  <tr>
-    <th>Won?</th>
-    <th>Answer</th>
-    <th>Author</th>
-    <th>Votes</th>
-  </tr>
-  <% @answers_by_id.map do |id, answer| %>
-    <tr>
-      <td><%= @winners.include?(answer) ? "X" : "" %></td>
-      <td><%= answer.text %></td>
-      <td><%= answer.user.name %></td>
-      <td><%= @votes_by_answer[id]&.map { |v| v.user.name }&.join(', ') %></td>
-    </tr>
-  <% end %>
-</table>
-
-<%# Nav to next prompt %>
-<%= form_with url: "/rooms/#{@room.id}/next", method: :post do |form| %>
-  <%= form.submit "Next" %>
-<% end %>
+    <%= form_with url: "/rooms/#{@room.id}/next", method: :post, class: "next-form" do |form| %>
+      <%= form.submit "Next Round", class: "next-button" %>
+    <% end %>
+  </div>
+</div>

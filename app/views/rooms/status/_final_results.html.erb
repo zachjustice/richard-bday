@@ -1,7 +1,26 @@
-<% @story.each do |sentence| %>
-  <p><%= sentence %></p>
-<% end %>
+<div class="final-results-container">
+  <div class="final-results-card">
+    <div class="story-header">
+      <div class="story-icon">📖</div>
+      <h2 class="story-title"><%= @current_room.current_game.story.title %></h2>
+      <div class="story-authors">
+        <span class="authors-label">Written by:</span>
+        <div class="authors-list">
+          <% @users.each do |user| %>
+            <span class="author-tag"><%= user.name %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
 
-<%= form_with url: "/rooms/#{@room.id}/end_game", method: :post do |form| %>
-  <%= form.submit "New Game?" %>
-<% end %>
+    <div class="story-content">
+      <% @story.each do |sentence| %>
+        <p class="story-sentence"><%= sentence %></p>
+      <% end %>
+    </div>
+
+    <%= form_with url: "/rooms/#{@room.id}/end_game", method: :post, class: "new-game-form" do |form| %>
+      <%= form.submit "Start New Game", class: "new-game-button" %>
+    <% end %>
+  </div>
+</div>
