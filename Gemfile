@@ -67,3 +67,7 @@ gem "jquery-rails"
 gem "turbolinks", "~> 5"
 
 gem "requestjs-rails"
+
+gem "ruby-lsp-rails", "~> 0.4.8"
+
+gem "minitest-stub_any_instance", "~> 1.0"

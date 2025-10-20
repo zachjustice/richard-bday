@@ -11,5 +11,17 @@ module ActiveSupport
     fixtures :all
 
     # Add more helper methods to be used by all tests here...
+
+    # Helper method to authenticate as a user in integration tests
+    def resume_session_as(code, name)
+      post "/sessions/resume", params: {
+        code: code,
+        name: name
+      }
+    end
+
+    def end_session
+      delete "/session"
+    end
   end
 end

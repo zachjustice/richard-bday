@@ -171,6 +171,7 @@ GEM
     matrix (0.4.3)
     mini_mime (1.1.5)
     minitest (5.25.5)
+    minitest-stub_any_instance (1.0.3)
     msgpack (1.8.0)
     net-imap (0.5.9)
       date
@@ -272,6 +273,8 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.0)
+    rbs (3.9.5)
+      logger
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
@@ -309,6 +312,12 @@ GEM
       rubocop (>= 1.72)
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
+    ruby-lsp (0.26.1)
+      language_server-protocol (~> 3.17.0)
+      prism (>= 1.2, < 2.0)
+      rbs (>= 3, < 5)
+    ruby-lsp-rails (0.4.8)
+      ruby-lsp (>= 0.26.0, < 0.27.0)
     ruby-progressbar (1.13.0)
     ruby_event_store (2.17.1)
       concurrent-ruby (~> 1.0, >= 1.1.6)
@@ -414,12 +423,14 @@ DEPENDENCIES
   jbuilder
   jquery-rails
   kamal
+  minitest-stub_any_instance (~> 1.0)
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.1)
   rails_event_store (~> 2.17.1)
   requestjs-rails
   rubocop-rails-omakase
+  ruby-lsp-rails (~> 0.4.8)
   selenium-webdriver
   solid_cable
   solid_cache

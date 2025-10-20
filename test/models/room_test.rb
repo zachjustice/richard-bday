@@ -1,7 +1,8 @@
 require "test_helper"
 
 class RoomTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  test "Create Room" do
+    r = Room.new(code: "asdf")
+    assert r.save
+  end
 end

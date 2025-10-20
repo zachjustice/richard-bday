@@ -1,11 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  prompt_id: one
-  user_id: one
-  text: MyString
+  game_prompt: one
+  game: one
+  user: one
+  text: Cat
 
 two:
-  prompt_id: two
-  user_id: two
-  text: MyString
+  game_prompt: two
+  game: one
+  user: two
+  text: Happy

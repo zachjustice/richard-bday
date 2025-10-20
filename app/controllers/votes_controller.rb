@@ -1,9 +1,7 @@
 class VotesController < ApplicationController
   def create
     exists = Vote.exists?(
-      answer_id: params[:answer_id],
       user_id: @current_user.id,
-      game_id: @current_room.current_game_id,
       game_prompt_id: params[:game_prompt_id]
     )
 

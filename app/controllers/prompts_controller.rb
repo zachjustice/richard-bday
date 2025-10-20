@@ -33,7 +33,6 @@ class PromptsController < ApplicationController
     if exists
       return redirect_to controller: "prompts", action: "results", id: params[:id]
     end
-
     @game_prompt = GamePrompt.find_by(params.permit(:id))
     @answers = Answer.where(game_id: @current_room.current_game_id, game_prompt_id: params[:id]).reject do |ans|
       ans.user_id == @current_user.id

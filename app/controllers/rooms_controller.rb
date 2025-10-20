@@ -30,7 +30,6 @@ class RoomsController < ApplicationController
 
   def next
     room = Room.find(params[:id])
-    # TODO updated, but might wrong!!
     current_game_prompt_order = room.current_game.current_game_prompt.order
     next_game_prompt_id = GamePrompt.find_by(game_id: room.current_game_id, order: current_game_prompt_order + 1)&.id
     if next_game_prompt_id.nil?
@@ -116,9 +115,6 @@ class RoomsController < ApplicationController
     # Redirect to the current prompt if the game for this room has advanced beyond the first prompt (index 0)
     if @current_room.status == RoomStatus::Answering
       redirect_to controller: "prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
-      # TODO [room.current_prompt_index refactor] this elsif statement did the same thing as above. not sure why.
-      # elsif @current_room.current_prompt_index > 0
-      #  redirect_to controller: "prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
     end
   end
 
@@ -176,9 +172,7 @@ class RoomsController < ApplicationController
       # Do all prompt tags and blank tags need to match? required tags? optional tags? duplicate entries with different tags?
       Prompt.find_by(tags: b.tags)
     end
-    puts("blanks.size", blanks.size)
     game_prompts = blanks.zip(prompts, (0...blanks.size)).map do |blank, prompt, order|
-      puts("gameprompt:", blank.id, prompt.id, order)
       GamePrompt.new(
         game: game,
         prompt: prompt,

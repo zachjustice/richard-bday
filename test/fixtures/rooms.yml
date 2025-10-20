@@ -1,7 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+admin:
+  code: admin
+  status: WaitingRoom
+
 one:
-  code: MyString
+  code: test
+  status: WaitingRoom
 
 two:
-  code: MyString
+  code: room
+  status: WaitingRoom

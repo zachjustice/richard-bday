@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  allow_unauthenticated_access only: %i[ new create ]
+  allow_unauthenticated_access only: %i[ new create resume ]
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_url, alert: "Try again later." }
 
   def new
@@ -9,6 +9,31 @@ class SessionsController < ApplicationController
     if session_id && Session.find_by(id: session_id)
       redirect_to after_authentication_url
     end
+  end
+
+  def resume
+    # check for current session before allowing user to start a new session.
+    # i.e. if user hits back or revisits this page.
+    if session[:user_id]
+      return redirect_to after_authentication_url
+    end
+
+    # Get room
+    room = Room.find_by(params.permit(:code))
+    if room.nil?
+      return redirect_to new_session_path, alert: "Wrong room code."
+    end
+
+    user = User.find_by(name: params[:name], room_id: room.id)
+    if user.nil?
+      return redirect_to new_session_path, alert: "Wrong user name."
+    end
+
+    session[:user_id] = user.id
+    @current_user = user
+    @current_room = room
+    start_new_session_for user
+    redirect_to after_authentication_url
   end
 
   def create
@@ -34,7 +59,6 @@ class SessionsController < ApplicationController
       @current_user = user
       @current_room = room
       start_new_session_for user
-      puts ("after_authentication_url: #{after_authentication_url}")
       redirect_to after_authentication_url
     else
       redirect_to new_session_path, alert: "Someone in this room already has that name."

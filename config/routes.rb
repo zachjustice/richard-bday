@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   mount RailsEventStore::Browser => "/res" if Rails.env.development?
   resource :session
+  post "/sessions/resume", to: "sessions#resume"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -15,10 +16,10 @@ Rails.application.routes.draw do
 
   get "/rooms/create", to: "rooms#create"
   post "/rooms/create", to: "rooms#_create"
-  get "/rooms/:id/status", to: "rooms#status"
-  post "/rooms/:id/start", to: "rooms#start"
-  post "/rooms/:id/next", to: "rooms#next"
-  post "/rooms/:id/end_game", to: "rooms#end_game"
+  get "/rooms/:id/status", to: "rooms#status", as: :room_status
+  post "/rooms/:id/start", to: "rooms#start", as: :start_room
+  post "/rooms/:id/next", to: "rooms#next", as: :next_room
+  post "/rooms/:id/end_game", to: "rooms#end_game", as: :end_room_game
 
   post "/register", to: "users#create"
   get "/users/:id", to: "users#show"
@@ -29,8 +30,7 @@ Rails.application.routes.draw do
   get "/prompts/:id/results", to: "prompts#results"
 
   post "/answer", to: "answers#create"
-  post "/vote", to: "votes#create"
+  post "/vote", to: "votes#create", as: :votes
 
   post "/vote", to: "vote#update"
-  post "/submit_answer", to: "submission#create"
 end

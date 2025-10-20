@@ -1,13 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  original_text: MyString
-  string,: MyString
-  text: MyString
-  string: MyString
+  title: Test Story
+  original_text: Once upon a time there was a {1} and a {2}.
+  text: Once upon a time there was a {1} and a {2}.
 
 two:
-  original_text: MyString
-  string,: MyString
-  text: MyString
-  string: MyString
+  title: Another Story
+  original_text: The {1} went to the {2}.
+  text: The {1} went to the {2}.

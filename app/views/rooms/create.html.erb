@@ -1,8 +1,15 @@
-<%= tag.div(flash[:notice], style: "color:red") if flash[:notice] %>
-<div>
-  <h1>Collaborative Fill-in-the-Blank Stories</h1>
-  <p>Click "Start" to get started.</p>
-  <%= form_with url: "/rooms/create", method: :post do |form| %>
-    <%= form.submit "Start" %>
-  <% end %>
+<div class="create-page">
+  <div class="create-card">
+    <%= tag.div(flash[:notice], class: "error-notice") if flash[:notice] %>
+
+    <div class="create-content">
+      <div class="emoji-header">✨📝🎨</div>
+      <h1 class="create-title">Collaborative Fill-in-the-Blank Stories</h1>
+      <p class="create-subtitle">Answer prompts with your friends to create stories!</p>
+
+      <%= form_with url: "/rooms/create", method: :post, class: "create-form" do |form| %>
+        <%= form.submit "New Game", class: "create-button" %>
+      <% end %>
+    </div>
+  </div>
 </div>
