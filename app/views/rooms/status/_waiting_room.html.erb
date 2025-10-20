@@ -1,0 +1,30 @@
+<div class="waiting-room-container">
+  <div class="waiting-room-card">
+    <div class="waiting-room-grid">
+      <div class="stories-section">
+        <h3>Choose a Story</h3>
+        <%= form_with url: "/rooms/#{@room.id}/start", method: :post, class: "story-form" do |form| %>
+          <div id="stories-list-container">
+            <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title'), class: 'story-select' %>
+          </div>
+          <%= form.submit "Start Game", class: "start-button" %>
+        <% end %>
+      </div>
+
+      <div class="users-section">
+        <h3>Players in Room</h3>
+        <div id="users-list-container">
+          <ul id="waiting-room" class="players-list">
+            <% if @users.empty? %>
+              <%# First element is deleted when the first user joins %>
+              <li id="no-users-yet" class="no-players"><i>No users yet</i></li>
+            <% end %>
+            <% @users.each do |user| %>
+              <li id="waiting-room-<%= user.name %>" class="player-item"><%= user.name %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

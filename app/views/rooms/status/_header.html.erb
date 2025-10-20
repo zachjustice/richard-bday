@@ -1,0 +1,22 @@
+<header class="status-header">
+  <div class="header-left">
+    <div class="app-logo">
+      <span class="logo-emoji">📝✨</span>
+      <span class="app-name">Blanksies</span>
+    </div>
+  </div>
+
+  <div class="header-center">
+    <%= render_status_badge(@status) %>
+  </div>
+
+  <div class="header-right" data-controller="copy-code">
+    <div class="room-code-container">
+      <span class="room-code-label">Room Code:</span>
+      <span class="room-code-display"><%= @room.code.upcase %></span>
+      <button class="copy-button" data-room-code="<%= @room.code.upcase %>" data-action="click->copy-code#copy" title="Copy room code">
+        📋
+      </button>
+    </div>
+  </div>
+</header>

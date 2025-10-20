@@ -1,0 +1,15 @@
+<h2>
+  <%= @game_prompt.prompt.description %>
+</h2>
+<p><i>Vote for the best answer on your device!</i></p>
+
+<h3>
+  These people have voted so far:
+</h3>
+
+<%# No winner- display votes so far %>
+<ul id="votes">
+  <% @votes.each do |vote| %>
+    <li id="vote-<%= vote.user.name %>"><%= vote.user.name %></li>
+  <% end %>
+</ul>

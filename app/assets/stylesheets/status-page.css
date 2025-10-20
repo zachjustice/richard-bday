@@ -1,0 +1,341 @@
+/* Status Page Header Styles */
+.status-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-8);
+  background: var(--gradient-primary-simple);
+  color: var(--text-on-primary);
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  width: 100%;
+  margin: 0;
+}
+
+.header-left,
+.header-center,
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-left {
+  flex: 1;
+  min-width: var(--min-width-sm);
+}
+
+.header-center {
+  flex: 1;
+  justify-content: center;
+  min-width: var(--min-width-md);
+}
+
+.header-right {
+  flex: 1;
+  justify-content: flex-end;
+  min-width: var(--min-width-md);
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.logo-emoji {
+  font-size: var(--font-size-2xl);
+}
+
+.app-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.game-status-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(255, 255, 255, 0.2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(10px);
+}
+
+.status-icon {
+  font-size: var(--font-size-xl);
+}
+
+.status-text {
+  font-weight: var(--font-weight-semibold);
+  font-size: 0.95rem;
+}
+
+.room-code-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(255, 255, 255, 0.2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(10px);
+}
+
+.room-code-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.room-code-display {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 2px;
+}
+
+.copy-button {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+}
+
+.copy-button:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.copy-button:active {
+  transform: scale(0.95);
+}
+
+/* Status Page Footer Styles */
+.status-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-fixed);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-8);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.footer-left,
+.footer-center,
+.footer-right {
+  display: flex;
+  align-items: center;
+}
+
+.footer-left {
+  flex: 1;
+  min-width: var(--min-width-sm);
+}
+
+.footer-center {
+  flex: 1;
+  justify-content: center;
+  min-width: var(--min-width-md);
+}
+
+.footer-right {
+  flex: 1;
+  justify-content: flex-end;
+  min-width: var(--min-width-sm);
+}
+
+.player-counter,
+.round-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-medium);
+}
+
+.counter-icon,
+.progress-icon {
+  font-size: var(--font-size-xl);
+}
+
+.counter-text,
+.progress-text {
+  font-size: 0.95rem;
+}
+
+.branding {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-tertiary);
+}
+
+/* Status Content Area */
+.status-content {
+  padding: var(--space-8);
+  flex: 1;
+}
+
+.status-content .error-notice {
+  background: var(--color-error-light);
+  color: var(--color-error);
+  padding: 0.75rem var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-4);
+  text-align: center;
+}
+
+/* Waiting Room Styles */
+.waiting-room-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-8);
+}
+
+.waiting-room-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-2xl);
+  padding: var(--space-8);
+  max-width: var(--max-width-card-lg);
+  width: 100%;
+}
+
+.waiting-room-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .waiting-room-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.stories-section,
+.users-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.stories-section h3,
+.users-section h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.story-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.story-select {
+  padding: 0.75rem;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  transition: border-color var(--transition-normal);
+}
+
+.story-select:focus {
+  outline: none;
+  border-color: var(--color-primary-purple);
+}
+
+.start-button {
+  padding: 0.875rem var(--space-6);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  background: var(--gradient-primary-simple);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-md);
+}
+
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.players-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.player-item {
+  padding: 0.75rem var(--space-4);
+  background: var(--gradient-primary-tint);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.no-players {
+  padding: 0.75rem var(--space-4);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+  .status-header,
+  .status-footer {
+    padding: var(--space-4);
+  }
+
+  .status-content {
+    padding: var(--space-4);
+  }
+
+  .header-left,
+  .header-center,
+  .header-right,
+  .footer-left,
+  .footer-center,
+  .footer-right {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .header-right {
+    order: -1;
+  }
+
+  .app-name {
+    font-size: var(--font-size-base);
+  }
+
+  .room-code-display {
+    font-size: var(--font-size-md);
+  }
+}

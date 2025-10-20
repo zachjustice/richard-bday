@@ -1,0 +1,14 @@
+<h2>
+  <%= @game_prompt.prompt.description %>
+</h2>
+<p><i>Answer on your device</i></p>
+
+<h3>
+  These people are done:
+</h3>
+
+<ul id="users-with-submitted-answers">
+  <% @users_with_submitted_answers.each do |user| %>
+    <li id="submitted-answer-<%= user %>"><%= user %></li>
+  <% end %>
+</ul>

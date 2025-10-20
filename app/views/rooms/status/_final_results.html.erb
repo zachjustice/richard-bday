@@ -1,0 +1,7 @@
+<% @story.each do |sentence| %>
+  <p><%= sentence %></p>
+<% end %>
+
+<%= form_with url: "/rooms/#{@room.id}/end_game", method: :post do |form| %>
+  <%= form.submit "New Game?" %>
+<% end %>

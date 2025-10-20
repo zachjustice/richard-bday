@@ -1,0 +1,85 @@
+/* Buttons */
+button,
+input[type="submit"],
+input[type="button"] {
+  display: block;
+  background-color: var(--color-blue-500);
+  color: var(--text-on-primary);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+  background-color: var(--color-blue-700);
+}
+
+/* Forms */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+}
+
+form input[type='radio'] {
+  display: block;
+}
+
+form input[type='textarea'] {
+  width: 95%;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+  accent-color: var(--color-blue-500);
+  transform: scale(1.2);
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+nav a {
+  padding: var(--space-2);
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+@media (min-width: 768px) {
+  nav {
+    flex-direction: row;
+  }
+
+  nav a {
+    padding: 0.75rem var(--space-4);
+  }
+}
