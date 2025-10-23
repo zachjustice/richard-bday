@@ -60,6 +60,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "cuprite"  # Headless Chrome driver using Chrome DevTools Protocol
 end
 gem "rails_event_store", "~> 2.17.1"
 gem "coffee-rails", "~> 4.2"

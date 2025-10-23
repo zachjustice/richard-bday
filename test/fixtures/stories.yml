@@ -2,8 +2,8 @@
 
 one:
   title: Test Story
-  original_text: Once upon a time there was a {1} and a {2}.
-  text: Once upon a time there was a {1} and a {2}.
+  original_text: Once upon a time there was a BLANK1 creature who was very BLANK2.
+  text: Once upon a time there was a BLANK1 creature who was very BLANK2.
 
 two:
   title: Another Story

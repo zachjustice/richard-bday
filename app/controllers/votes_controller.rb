@@ -8,6 +8,7 @@ class VotesController < ApplicationController
     # If the user has already voted for the prompt and room, then skip saving a new answer
     # --> Direct the user to the appropirate page.
     successful = false
+    error = nil
     if !exists
       vote = Vote.new(
         answer_id: params[:answer_id],
@@ -16,6 +17,7 @@ class VotesController < ApplicationController
         game_prompt_id: params[:game_prompt_id]
       )
       successful = vote.save
+      error = vote.errors
     end
 
     users_in_room = User.where(room_id: @current_room.id).count
@@ -25,6 +27,7 @@ class VotesController < ApplicationController
     if successful || exists || redirect_to_results
       redirect_to controller: "prompts", action: "results", id: params[:game_prompt_id]
     else
+      flash[:alert] = error.full_messages
       redirect_to controller: "prompts", action: "show", id: params[:game_prompt_id]
     end
   end

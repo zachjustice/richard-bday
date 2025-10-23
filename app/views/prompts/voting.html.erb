@@ -28,7 +28,7 @@
       <div class="answers-list">
         <%= form.collection_radio_buttons :answer_id, @answers, :id, :text do |b| %>
           <label class="answer-option">
-            <%= b.radio_button class: "answer-radio" %>
+            <%= b.radio_button name: 'answer_id', value: :id, class: "answer-radio" %>
             <div class="answer-content">
               <span class="answer-checkmark">✓</span>
               <p class="answer-text"><%= b.text %></p>

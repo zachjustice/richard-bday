@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
   root to: "rooms#show"
 
-  get "/rooms/create", to: "rooms#create"
+  get "/rooms/create", to: "rooms#create", as: :create_room
   post "/rooms/create", to: "rooms#_create"
   get "/rooms/:id/status", to: "rooms#status", as: :room_status
   post "/rooms/:id/start", to: "rooms#start", as: :start_room
