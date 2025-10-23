@@ -4,13 +4,21 @@
   <div class="prompt-results-card">
     <% if @status == RoomStatus::FinalResults %>
       <div class="status-display final-results">
-        <div class="status-icon">🏆</div>
+        <div class="waiting-animation">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring spinner-ring-2"></div>
+          <div class="spinner-ring spinner-ring-3"></div>
+        </div>
         <h2 class="status-title">Game Complete!</h2>
         <p class="status-message">Check the big screen for the final results!</p>
       </div>
     <% elsif @status == RoomStatus::WaitingRoom %>
       <div class="status-display waiting-room">
-        <div class="status-icon">🎮</div>
+        <div class="waiting-animation">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring spinner-ring-2"></div>
+          <div class="spinner-ring spinner-ring-3"></div>
+        </div>
         <h2 class="status-title">Between Games</h2>
         <p class="status-message">Waiting for a new game to start...</p>
         <%= render "shared/fun_facts" %>
@@ -21,7 +29,6 @@
           <div class="spinner-ring"></div>
           <div class="spinner-ring spinner-ring-2"></div>
           <div class="spinner-ring spinner-ring-3"></div>
-          <span class="waiting-icon">📊</span>
         </div>
         <h2 class="status-title">Counting Votes</h2>
         <p class="status-message">Waiting for everyone to vote...</p>
@@ -29,16 +36,16 @@
       </div>
     <% else %>
       <div class="status-display results-ready">
-        <div class="status-icon">🎉</div>
         <h2 class="status-title">Round Complete!</h2>
         <p class="status-message">Check the big screen for the winner!</p>
       </div>
+
+      <div class="progress-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
     <% end %>
 
-    <div class="progress-dots">
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-    </div>
   </div>
 </div>

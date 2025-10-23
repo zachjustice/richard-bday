@@ -8,14 +8,14 @@ export default class extends Controller {
       console.log("RoomMessageHub:RoomController:Listener:NewUser", event)
       $("#no-users-yet").remove()
       if ($(`#waiting-room-${event.NewUser}`).length === 0) {
-        $("#waiting-room").append(`<li id="waiting-room-${event.NewUser}">${event.newUser}</li>`)
+        // $("#waiting-room").append(`<li id="waiting-room-${event.NewUser}">${event.newUser}</li>`)
       }
     })
 
     RoomMessageHub.register(EventType.AnswerSubmitted, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:AnswerSubmitted", event)
       if ($(`#submitted-answer-${event.user}`).length === 0) {
-        $("#users-with-submitted-answers").append(`<li id="submitted-answer-${event.user}">${event.user}</li>`)
+        // $("#users-with-submitted-answers").append(`<li id="submitted-answer-${event.user}">${event.user}</li>`)
       }
     })
 
@@ -28,7 +28,7 @@ export default class extends Controller {
       // user has voted; is on their /results page
       console.log("RoomMessageHub:PromptController:Listener:VoteSubmitted", event)
       if ($(`#vote-${event.user}`).length === 0) {
-        $("#votes").append(`<li id="vote-${event.user}">${event.user}</li>`)
+        // $("#votes").append(`<li id="vote-${event.user}">${event.user}</li>`)
       }
     })
 

@@ -8,7 +8,7 @@ export default class extends Controller {
       $('#waiting-on-results').remove()
       // TODO tell the winner they won
       if ($('#done').length === 0) {
-        $("#results").append(`<h3 id="done">See the big screen for the Winner!</h3>`)
+        // $("#results").append(`<h3 id="done">See the big screen for the Winner!</h3>`)
       }
     })
 

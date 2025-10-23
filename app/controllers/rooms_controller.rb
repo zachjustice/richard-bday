@@ -96,7 +96,7 @@ class RoomsController < ApplicationController
         result["{#{ans.game_prompt.blank.id}}"] = ans.text
         result
       end
-      # TODO: validation the story looks good. Check there's no {\d+} strings and all blanks appear in the text
+
       replacement_regex = /\{\d+\}/
       complete_story = story_text.gsub(replacement_regex, blank_id_to_answer_text)
       includes_leftover_regex = complete_story.match?(replacement_regex)

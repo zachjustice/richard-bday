@@ -6,7 +6,7 @@ console.log("Application starting...")
 
 // Configure Stimulus development experience
 application.debug = false
-window.Stimulus   = application
+window.Stimulus = application
 
 const EventType = Object.freeze({
   NewUser: "NewUser",
