@@ -9,7 +9,10 @@
       <div class="tie-announcement">
         <div class="tie-icon">🤝</div>
         <h2 class="tie-text">It's a Tie!</h2>
-        <p class="tie-players"><%= @winners.map {|w| w.user.name}.join(' • ') %></p>
+        <p class="tie-players">Winner chosen randomly</p>
+        <p class="tie-players"><%= @winners.map {|w| 
+        "#{w.user.name}#{w.id == @winner.id ? '*' : ''}"
+        }.join(' • ') %></p>
       </div>
     <% end %>
 
@@ -19,8 +22,8 @@
         <% @answers_by_id.each do |id, answer| %>
           <div class="answer-card <%= @winners.include?(answer) ? 'answer-winner' : '' %>">
             <div class="answer-text-and-author">
-              <span class="answer-text"><%= answer.text %></span>
-              <span class="answer-author">- <%= answer.user.name %></span>
+              <span class="answer-text"><%= answer.text %> <%= @winner.id == id  ? '🏆' : '' %></span>
+              <span class="answer-author"><%= answer.user.name %></span>
             </div>
             <div class="answer-meta">
               <% if @votes_by_answer[id]&.any? %>
@@ -31,7 +34,7 @@
                     <span class="voters-label">
                       <%= @votes_by_answer[id]&.count %> 
                       <%= @votes_by_answer[id]&.count > 1? 'Votes:' : 'Vote:'%> 
-                      </span>
+                    </span>
                     <div class="voters-tags">
                       <% @votes_by_answer[id].each do |vote| %>
                         <span class="voter-tag"><%= vote.user.name %></span>

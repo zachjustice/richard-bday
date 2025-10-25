@@ -4,7 +4,7 @@ class Helpers
   end
 
   def self.create_answers(room, answers)
-    room.reload!
+    room.reload
     g = room.current_game
     gp = g.current_game_prompt
 
@@ -27,14 +27,14 @@ class Helpers
     end
   end
 
-  def self.create_votes(room, num_votes)
-    room.reload!
+  def self.create_votes(room, num_votes, tie = false)
+    room.reload
     g = room.current_game
     gp = g.current_game_prompt
     answers = Answer.where(
       game: g,
       game_prompt: gp,
-    )
+    ).to_a
 
     User.where(room: room).each do |u|
       if num_votes > 0
@@ -48,7 +48,7 @@ class Helpers
             game: g,
             game_prompt: gp,
             user: u,
-            answer: answers.sample
+            answer: tie ? answers.pop : answer.sample
           )
           num_votes -= 1
         end

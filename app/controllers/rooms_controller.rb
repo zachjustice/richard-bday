@@ -88,7 +88,14 @@ class RoomsController < ApplicationController
 
       # I don't have good tie-break logic, so just choose at random
       # TODO replace with points.
-      @winners[rand(@winners.length)].update!(won: true) unless @winners.empty?
+      @winner = Answer.where(
+        game_prompt: @room.current_game.current_game_prompt,
+        won: true
+      ).first
+      if @winner.nil?
+        @winner = @winners[@winner_idx]
+        @winner.update!(won: true)
+      end
     end
 
     if @status == RoomStatus::FinalResults
