@@ -24,6 +24,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -60,6 +61,7 @@
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -101,9 +103,12 @@
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -166,10 +171,6 @@
   border-radius: var(--radius-xl);
   transition: all var(--transition-normal);
   outline: none;
-}
-
-.answer-input {
-  min-height: 80px;
 }
 
 .form-input::placeholder {
@@ -283,10 +284,6 @@
     font-size: var(--font-size-sm);
   }
 
-  .answer-input {
-    min-height: 60px;
-  }
-
   .submit-button {
     padding: var(--space-4) var(--space-6);
     font-size: var(--font-size-base);
@@ -311,6 +308,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .prompt-answer-card,
   .alert-message,
   .notice-message,

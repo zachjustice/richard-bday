@@ -24,6 +24,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -50,16 +51,20 @@
 .lobby-icon {
   font-size: var(--font-size-6xl);
   margin-bottom: var(--space-4);
-  animation: rotate 4s ease-in-out infinite;
+  animation: rotate 5s ease-in-out infinite;
 }
 
 @keyframes rotate {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: rotate(0deg);
   }
+
   25% {
     transform: rotate(-15deg);
   }
+
   75% {
     transform: rotate(15deg);
   }
@@ -121,6 +126,7 @@
     transform: scale(0.8);
     opacity: 1;
   }
+
   100% {
     transform: scale(1.8);
     opacity: 0;
@@ -135,12 +141,16 @@
 }
 
 @keyframes swing {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: rotate(0deg);
   }
+
   25% {
     transform: rotate(20deg);
   }
+
   75% {
     transform: rotate(-20deg);
   }
@@ -152,16 +162,6 @@
   color: var(--text-secondary);
   margin: 0;
   text-align: center;
-  animation: fade 2s ease-in-out infinite;
-}
-
-@keyframes fade {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
 }
 
 /* Lobby Info Cards */
@@ -268,6 +268,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .room-lobby-card,
   .lobby-icon,
   .pulse-ring,
