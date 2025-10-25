@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
   def resume
     # check for current session before allowing user to start a new session.
     # i.e. if user hits back or revisits this page.
-    code = paras[:code]&.downcase
+    code = params[:code]&.downcase
     room = Room.find_by(code)
     if room.nil?
       return redirect_to new_session_path, alert: "Wrong room code."
