@@ -9,6 +9,8 @@
 }
 
 .prompt-answer-card {
+  /* This component has a top border which will visually overflow outside the component without "overflow: hidden" */
+  overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-3xl);
   box-shadow: var(--shadow-2xl);

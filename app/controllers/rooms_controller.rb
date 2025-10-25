@@ -93,7 +93,7 @@ class RoomsController < ApplicationController
         won: true
       ).first
       if @winner.nil?
-        @winner = @winners[@winner_idx]
+        @winner = @winners.sample
         @winner.update!(won: true)
       end
     end

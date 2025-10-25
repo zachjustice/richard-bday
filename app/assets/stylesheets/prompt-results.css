@@ -9,6 +9,8 @@
 }
 
 .prompt-results-card {
+  /* This component has a top border which will visually overflow outside the component without "overflow: hidden" */
+  overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-3xl);
   box-shadow: var(--shadow-2xl);
@@ -75,62 +77,11 @@
   font-style: italic;
 }
 
-/* Waiting Animation for votes */
-.waiting-votes .waiting-animation {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 140px;
-  height: 140px;
-  margin: 0 auto var(--space-6);
-}
-
-.spinner-ring {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 4px solid transparent;
-  border-top-color: var(--color-primary-purple);
-  border-radius: 50%;
-  animation: spin 2s linear infinite;
-}
-
-.spinner-ring-2 {
-  width: 80%;
-  height: 80%;
-  border-top-color: var(--color-primary-deep-purple);
-  animation-duration: 1.5s;
-  animation-direction: reverse;
-}
-
-.spinner-ring-3 {
-  width: 60%;
-  height: 60%;
-  border-top-color: var(--color-primary-pink);
-  animation-duration: 1s;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.waiting-icon {
-  font-size: var(--font-size-5xl);
-  position: relative;
-  z-index: 1;
-}
-
 /* Waiting Messages - Reused Component */
 .waiting-messages {
   position: relative;
   min-height: 120px;
+  height: fit-content;
   margin-bottom: var(--space-6);
   display: flex;
   align-items: center;
@@ -271,7 +222,6 @@
 @media (prefers-reduced-motion: reduce) {
 
   .prompt-results-card,
-  .spinner-ring,
   .message-card,
   .message-icon,
   .dot {

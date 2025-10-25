@@ -221,15 +221,13 @@
 }
 
 .waiting-room-card {
+  overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   padding: var(--space-8);
   max-width: var(--max-width-card-lg);
   width: 100%;
-  border-top: 4px solid transparent;
-  border-image: var(--gradient-primary-simple) 1;
-  border-image-slice: 1;
   position: relative;
 }
 
@@ -393,13 +391,13 @@
 }
 
 .answering-card {
+  overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   padding: var(--space-8);
   max-width: var(--max-width-card-lg);
   width: 100%;
-  border-top: 4px solid transparent;
   position: relative;
 }
 
@@ -620,6 +618,7 @@
 }
 
 .voting-card {
+  overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
@@ -760,6 +759,7 @@
 }
 
 .results-card {
+  overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
@@ -864,10 +864,10 @@
 }
 
 .answer-card {
+  overflow: hidden;
   padding: var(--space-5);
   background: var(--bg-primary);
   border-radius: var(--radius-lg);
-  border: 2px solid rgba(102, 126, 234, 0.2);
   transition: all var(--transition-normal);
   display: flex;
   flex-direction: row;
@@ -999,6 +999,7 @@
 }
 
 .final-results-card {
+  overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
