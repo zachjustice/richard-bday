@@ -6,10 +6,7 @@ export default class extends Controller {
   connect() {
     RoomMessageHub.register(EventType.NewUser, (event) => {
       console.log("RoomMessageHub:RoomController:Listener:NewUser", event)
-      $("#no-users-yet").remove()
-      if ($(`#waiting-room-${event.NewUser}`).length === 0) {
-        // $("#waiting-room").append(`<li id="waiting-room-${event.NewUser}">${event.newUser}</li>`)
-      }
+      // TODO implement adding user t othe waiting room
     })
 
     RoomMessageHub.register(EventType.AnswerSubmitted, (event) => {
