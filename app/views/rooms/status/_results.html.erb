@@ -18,24 +18,29 @@
       <div class="answers-list">
         <% @answers_by_id.each do |id, answer| %>
           <div class="answer-card <%= @winners.include?(answer) ? 'answer-winner' : '' %>">
-            <div class="answer-text"><%= answer.text %></div>
-            <div class="answer-meta">
+            <div class="answer-text-and-author">
+              <span class="answer-text"><%= answer.text %></span>
               <span class="answer-author"><%= answer.user.name %></span>
-              <span class="answer-votes">
-                <span class="votes-icon">🎯</span>
-                <span class="votes-count"><%= @votes_by_answer[id]&.count || 0 %></span>
-              </span>
             </div>
-            <% if @votes_by_answer[id]&.any? %>
-              <div class="answer-voters">
-                <span class="voters-label">Voted by:</span>
-                <div class="voters-tags">
-                  <% @votes_by_answer[id].each do |vote| %>
-                    <span class="voter-tag"><%= vote.user.name %></span>
-                  <% end %>
+            <div class="answer-meta">
+              <% if @votes_by_answer[id]&.any? %>
+                <div class="answer-voters">
+                  <% if @votes_by_answer[id]&.count == 0 %>
+                    <span class="voters-label">0 Votes</span>
+                  <% else%>
+                    <span class="voters-label">
+                      <%= @votes_by_answer[id]&.count %> 
+                      <%= @votes_by_answer[id]&.count > 1? 'Votes:' : 'Vote:'%> 
+                      </span>
+                    <div class="voters-tags">
+                      <% @votes_by_answer[id].each do |vote| %>
+                        <span class="voter-tag"><%= vote.user.name %></span>
+                      <% end %>
+                    </div>
+                  <% end%>
                 </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
           </div>
         <% end %>
       </div>
