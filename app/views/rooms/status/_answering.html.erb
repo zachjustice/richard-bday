@@ -7,16 +7,14 @@
     </div>
 
     <div class="progress-section">
-      <h3>Submission Progress</h3>
+      <h3>Progress</h3>
       <div class="progress-grid">
         <div class="progress-stats">
           <div class="stat-card stat-completed">
-            <span class="stat-icon">✓</span>
             <span class="stat-number"><%= @users_with_submitted_answers.count %></span>
             <span class="stat-label">Completed</span>
           </div>
           <div class="stat-card stat-waiting">
-            <span class="stat-icon">⏳</span>
             <span class="stat-number"><%= @users.count - @users_with_submitted_answers.count %></span>
             <span class="stat-label">Waiting</span>
           </div>
@@ -24,11 +22,13 @@
 
         <div class="completed-users">
           <ul id="users-with-submitted-answers" class="completed-list">
-            <% if @users_with_submitted_answers.empty? %>
-              <li class="no-submissions"><i>Waiting for submissions...</i></li>
-            <% end %>
-            <% @users_with_submitted_answers.each do |user| %>
-              <li id="submitted-answer-<%= user %>" class="completed-user"><%= user %></li>
+            <% @users.each do |user| %>
+              <li 
+                id="submitted-answer-<%= user %>" 
+                class=<%= @users_with_submitted_answers.include?(user.name) ? "completed-user" : "answering-user" %>
+              >
+                <%= user.name %>
+              </li>
             <% end %>
           </ul>
         </div>

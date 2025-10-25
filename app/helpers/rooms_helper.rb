@@ -11,7 +11,7 @@ module RoomsHelper
     when RoomStatus::Results
       { icon: "🏆", text: "Results" }
     when RoomStatus::FinalResults
-      { icon: "🎉", text: "Final Story" }
+      { icon: "📜", text: "Final Story" }
     else
       { icon: "❓", text: "Unknown" }
     end

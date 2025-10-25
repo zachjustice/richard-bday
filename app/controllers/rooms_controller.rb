@@ -64,6 +64,7 @@ class RoomsController < ApplicationController
       }
 
       @votes = Vote.where(game_prompt_id: @game_prompt.id)
+      @users_with_vote = @votes.map { |v| v.user.name }
     end
 
     # Only calculate winners if all the votes are in. Front-end will use existence of @winners to determine if voting is done.

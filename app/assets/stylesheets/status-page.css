@@ -473,11 +473,6 @@
   gap: var(--space-2);
 }
 
-.progress-section h3::before {
-  /* content: '📊';
-  font-size: var(--font-size-2xl); */
-}
-
 .progress-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -525,10 +520,6 @@
   border: 2px solid rgba(251, 146, 60, 0.3);
 }
 
-.stat-icon {
-  font-size: var(--font-size-2xl);
-}
-
 .stat-number {
   font-size: 2.5rem;
   font-weight: var(--font-weight-bold);
@@ -569,6 +560,17 @@
   animation: slideIn 0.3s ease-out;
 }
 
+.answering-user {
+  padding: var(--space-4);
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(251, 146, 60, 0.25) 100%);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  border-left: 3px solid rgb(251, 146, 60);
+  transition: all var(--transition-fast);
+  animation: slideIn 0.3s ease-out;
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -591,6 +593,18 @@
 .completed-user:hover {
   transform: translateX(4px);
   box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.answering-user::before {
+  content: '- ';
+  margin-right: var(--space-2);
+  color: rgba(251, 146, 60);
+  font-weight: var(--font-weight-bold);
+}
+
+.answering-user:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.3);
 }
 
 .no-submissions {
@@ -883,16 +897,16 @@
 
 .answer-text {
   display: block;
-  font-size: var(--font-size-5xl);
+  font-size: var(--font-size-2xl);
   color: var(--text-primary);
   line-height: var(--line-height-tight);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
 }
 
 .answer-author {
   display: block;
   font-size: var(--font-size-lg);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-medium);
 }

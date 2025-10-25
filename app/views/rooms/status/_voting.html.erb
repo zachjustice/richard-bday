@@ -6,30 +6,29 @@
       <p class="prompt-instruction">Vote for the best answer on your device!</p>
     </div>
 
-    <div class="voting-progress-section">
-      <div class="voting-grid">
-        <div class="voting-stats-container">
-          <h3>Voting Progress</h3>
-          <div class="voting-stat-card">
-            <span class="stat-icon">🎯</span>
+    <div class="progress-section">
+      <h3>Voting Progress</h3>
+      <div class="progress-grid">
+        <div class="progress-stats">
+          <div class="stat-card stat-completed">
             <span class="stat-number"><%= @votes.count %></span>
-            <span class="stat-label">Votes Cast</span>
+            <span class="stat-label">Completed</span>
           </div>
-          <div class="voting-stat-card">
-            <span class="stat-icon">⏳</span>
+          <div class="stat-card stat-waiting">
             <span class="stat-number"><%= @users.count - @votes.count %></span>
-            <span class="stat-label">Remaining</span>
+            <span class="stat-label">Waiting</span>
           </div>
         </div>
 
-        <div class="voters-section">
-          <h3>Voted</h3>
-          <ul id="votes" class="voters-list">
-            <% if @votes.empty? %>
-              <li class="no-votes"><i>Waiting for votes...</i></li>
-            <% end %>
-            <% @votes.each do |vote| %>
-              <li id="vote-<%= vote.user.name %>" class="voter-item"><%= vote.user.name %></li>
+        <div class="completed-users">
+          <ul id="users-with-submitted-answers" class="completed-list">
+            <% @users.each do |user| %>
+              <li 
+                id="submitted-answer-<%= user %>" 
+                class=<%= @users_with_vote.include?(user.name) ? "completed-user" : "answering-user" %>
+              >
+                <%= user.name %>
+              </li>
             <% end %>
           </ul>
         </div>

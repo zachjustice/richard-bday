@@ -14,13 +14,13 @@
     <% end %>
 
     <div class="results-section">
-      <h3>All Answers</h3>
+      <h3>Answers</h3>
       <div class="answers-list">
         <% @answers_by_id.each do |id, answer| %>
           <div class="answer-card <%= @winners.include?(answer) ? 'answer-winner' : '' %>">
             <div class="answer-text-and-author">
               <span class="answer-text"><%= answer.text %></span>
-              <span class="answer-author"><%= answer.user.name %></span>
+              <span class="answer-author">- <%= answer.user.name %></span>
             </div>
             <div class="answer-meta">
               <% if @votes_by_answer[id]&.any? %>
