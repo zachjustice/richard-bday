@@ -186,6 +186,8 @@
 /* Status Content Area */
 .status-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .status-content .error-notice {
@@ -198,19 +200,24 @@
   text-align: center;
 }
 
+.status-content-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .status-page-spacing {
   padding: var(--space-16);
   padding-bottom: var(--space-32);
-}
-
-/* Waiting Room Styles */
-.waiting-room-container {
+  flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: var(--space-8);
+  align-items: flex-start;
+}
+
+/* Waiting Room Page Styles */
+.waiting-room-container {
   background: linear-gradient(135deg, #f8f4ff 0%, #fff4f9 100%);
-  min-height: 60vh;
 }
 
 .waiting-room-card {
@@ -281,13 +288,13 @@
 }
 
 .stories-section h3::before {
-  content: '📚';
-  font-size: var(--font-size-2xl);
+  /* content: '📚';
+  font-size: var(--font-size-2xl); */
 }
 
 .users-section h3::before {
-  content: '👥';
-  font-size: var(--font-size-2xl);
+  /* content: '👥';
+  font-size: var(--font-size-2xl); */
 }
 
 .story-form {
@@ -364,8 +371,8 @@
 }
 
 .player-item::before {
-  content: '🎮';
-  margin-right: var(--space-2);
+  /* content: '🎮';
+  margin-right: var(--space-2); */
 }
 
 .player-item:hover {
@@ -382,11 +389,7 @@
 
 /* Answering Page Styles */
 .answering-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background: linear-gradient(135deg, #f0f4ff 0%, #f8f4ff 100%);
-  min-height: 60vh;
 }
 
 .answering-card {
@@ -471,8 +474,8 @@
 }
 
 .progress-section h3::before {
-  content: '📊';
-  font-size: var(--font-size-2xl);
+  /* content: '📊';
+  font-size: var(--font-size-2xl); */
 }
 
 .progress-grid {
@@ -599,11 +602,7 @@
 
 /* Voting Page Styles */
 .voting-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background: linear-gradient(135deg, #fff4f0 0%, #f0f4ff 100%);
-  min-height: 60vh;
 }
 
 .voting-card {
@@ -743,11 +742,7 @@
 
 /* Results Page Styles */
 .results-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
   background: linear-gradient(135deg, #fff9f0 0%, #f0fff4 100%);
-  min-height: 60vh;
 }
 
 .results-card {
@@ -986,11 +981,7 @@
 
 /* Final Results Page Styles */
 .final-results-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
   background: linear-gradient(135deg, #fff4f9 0%, #f8f4ff 100%);
-  min-height: 60vh;
 }
 
 .final-results-card {
@@ -1021,12 +1012,6 @@
   border-radius: var(--radius-xl);
   background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
   border: 2px solid rgba(240, 147, 251, 0.2);
-}
-
-.story-icon {
-  font-size: 4rem;
-  margin-bottom: var(--space-4);
-  animation: float 3s ease-in-out infinite;
 }
 
 .story-title {
@@ -1207,10 +1192,6 @@
 
   .final-results-card {
     padding: var(--space-6);
-  }
-
-  .story-icon {
-    font-size: 3rem;
   }
 
   .story-title {
