@@ -6,13 +6,13 @@ export default class extends Controller {
   connect() {
     RoomMessageHub.register(EventType.NewUser, (event) => {
       console.log("RoomMessageHub:RoomController:Listener:NewUser", event)
-      // TODO implement adding user t othe waiting room
+      // DOM update handled automatically by Turbo Streams
     })
 
     RoomMessageHub.register(EventType.AnswerSubmitted, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:AnswerSubmitted", event)
       if ($(`#submitted-answer-${event.user}`).length === 0) {
-        // $("#users-with-submitted-answers").append(`<li id="submitted-answer-${event.user}">${event.user}</li>`)
+        // $("#users-with-status-list").append(`<li id="submitted-answer-${event.user}">${event.user}</li>`)
       }
     })
 

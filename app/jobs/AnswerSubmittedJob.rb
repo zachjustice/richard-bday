@@ -1,6 +1,14 @@
 class AnswerSubmittedJob < ApplicationJob
   def perform(answer)
     room = answer.game.room
+
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "rooms:#{room.id}:answers",
+      target: "user_list_user_#{answer.user.id}",
+      partial: "rooms/partials/user_with_status_item",
+      locals: { user: answer.user, completed: true }
+    )
+
     ActionCable.server.broadcast(
       "rooms:#{room.id.to_i}",
       Events.create_answer_submitted_event(answer.user.name)
