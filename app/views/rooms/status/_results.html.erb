@@ -31,10 +31,6 @@
                   <% if @votes_by_answer[id]&.count == 0 %>
                     <span class="voters-label">0 Votes</span>
                   <% else%>
-                    <span class="voters-label">
-                      <%= @votes_by_answer[id]&.count %> 
-                      <%= @votes_by_answer[id]&.count > 1? 'Votes:' : 'Vote:'%> 
-                    </span>
                     <div class="voters-tags">
                       <% @votes_by_answer[id].each do |vote| %>
                         <span class="voter-tag"><%= vote.user.name %></span>
