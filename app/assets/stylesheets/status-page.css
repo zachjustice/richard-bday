@@ -185,7 +185,6 @@
 
 /* Status Content Area */
 .status-content {
-  padding: var(--space-8);
   flex: 1;
 }
 
@@ -197,6 +196,11 @@
   font-size: var(--font-size-sm);
   margin-bottom: var(--space-4);
   text-align: center;
+}
+
+.status-page-spacing {
+  padding: var(--space-16);
+  padding-bottom: var(--space-32);
 }
 
 /* Waiting Room Styles */
@@ -381,7 +385,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--space-8);
   background: linear-gradient(135deg, #f0f4ff 0%, #f8f4ff 100%);
   min-height: 60vh;
 }
@@ -599,7 +602,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--space-8);
   background: linear-gradient(135deg, #fff4f0 0%, #f0f4ff 100%);
   min-height: 60vh;
 }
@@ -670,11 +672,6 @@
   gap: var(--space-2);
 }
 
-.voting-stats-container h3::before {
-  content: '📊';
-  font-size: var(--font-size-2xl);
-}
-
 .voting-stat-card {
   display: flex;
   flex-direction: column;
@@ -732,11 +729,6 @@
   animation: slideIn 0.3s ease-out;
 }
 
-.voter-item::before {
-  content: '🎯 ';
-  margin-right: var(--space-2);
-}
-
 .voter-item:hover {
   transform: translateX(4px);
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
@@ -754,7 +746,6 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: var(--space-8);
   background: linear-gradient(135deg, #fff9f0 0%, #f0fff4 100%);
   min-height: 60vh;
 }
@@ -998,7 +989,6 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: var(--space-8);
   background: linear-gradient(135deg, #fff4f9 0%, #f8f4ff 100%);
   min-height: 60vh;
 }
@@ -1131,8 +1121,9 @@
     padding: var(--space-4);
   }
 
-  .status-content {
+  .status-page-spacing {
     padding: var(--space-4);
+    padding-bottom: var(--space-8);
   }
 
   .header-left,
@@ -1191,10 +1182,6 @@
     padding: var(--space-4);
   }
 
-  .results-container {
-    padding: var(--space-4);
-  }
-
   .results-card {
     padding: var(--space-6);
   }
@@ -1216,10 +1203,6 @@
   .answer-meta {
     flex-wrap: wrap;
     gap: var(--space-2);
-  }
-
-  .final-results-container {
-    padding: var(--space-4);
   }
 
   .final-results-card {
