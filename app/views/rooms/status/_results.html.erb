@@ -1,17 +1,17 @@
 <div class="status-page-spacing results-container">
   <div class="results-card">
-    <% if @winners.size == 1 %>
+    <% if winners.size == 1 %>
       <div class="winner-announcement">
         <div class="winner-icon">🏆</div>
-        <h2 class="winner-text">Winner: <%= @winners.first.user.name %></h2>
+        <h2 class="winner-text">Winner: <%= winners.first.user.name %></h2>
       </div>
-    <% elsif @winners.size > 1 %>
+    <% elsif winners.size > 1 %>
       <div class="tie-announcement">
         <div class="tie-icon">🤝</div>
         <h2 class="tie-text">It's a Tie!</h2>
         <p class="tie-players">Winner chosen randomly</p>
-        <p class="tie-players"><%= @winners.map {|w| 
-        "#{w.user.name}#{w.id == @winner.id ? '*' : ''}"
+        <p class="tie-players"><%= winners.map {|w| 
+        "#{w.user.name}#{w.id == winner.id ? '*' : ''}"
         }.join(' • ') %></p>
       </div>
     <% end %>
@@ -19,20 +19,20 @@
     <div class="results-section">
       <h3>Answers</h3>
       <div class="answers-list">
-        <% @answers_by_id.each do |id, answer| %>
-          <div class="answer-card <%= @winners.include?(answer) ? 'answer-winner' : '' %>">
+        <% answers_by_id.each do |id, answer| %>
+          <div class="answer-card <%= winners.include?(answer) ? 'answer-winner' : '' %>">
             <div class="answer-text-and-author">
-              <span class="answer-text"><%= answer.text %> <%= @winner.id == id  ? '🏆' : '' %></span>
+              <span class="answer-text"><%= answer.text %> <%= winner.id == id  ? '🏆' : '' %></span>
               <span class="answer-author"><%= answer.user.name %></span>
             </div>
             <div class="answer-meta">
-              <% if @votes_by_answer[id]&.any? %>
+              <% if votes_by_answer[id]&.any? %>
                 <div class="answer-voters">
-                  <% if @votes_by_answer[id]&.count == 0 %>
+                  <% if votes_by_answer[id]&.count == 0 %>
                     <span class="voters-label">0 Votes</span>
                   <% else%>
                     <div class="voters-tags">
-                      <% @votes_by_answer[id].each do |vote| %>
+                      <% votes_by_answer[id].each do |vote| %>
                         <span class="voter-tag"><%= vote.user.name %></span>
                       <% end %>
                     </div>
@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <%= form_with url: "/rooms/#{@room.id}/next", method: :post, class: "next-form" do |form| %>
+    <%= form_with url: "/rooms/#{room.id}/next", method: :post, class: "next-form" do |form| %>
       <%= form.submit "Next Round", class: "next-button" %>
     <% end %>
   </div>

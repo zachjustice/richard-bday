@@ -14,18 +14,17 @@ export default class extends Controller {
 
     RoomMessageHub.register(EventType.StartVoting, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:StartVoting", event)
-      location.reload();
+      // DOM update handled automatically by Turbo Streams
     })
 
     RoomMessageHub.register(EventType.VoteSubmitted, (event) => {
-      // user has voted and is on their /results page
       console.log("RoomMessageHub:PromptController:Listener:VoteSubmitted", event)
+      // DOM update handled automatically by Turbo Streams
     })
 
     RoomMessageHub.register(EventType.VotingDone, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:VotingDone", event)
-      // refresh the page, let the controller show the new correct view
-      window.location.reload();
+      // DOM update handled automatically by Turbo Streams
     })
   }
 }

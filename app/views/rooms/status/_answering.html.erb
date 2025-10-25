@@ -1,10 +1,10 @@
-<%= turbo_stream_from "rooms:#{@room.id}:answers" %>
+<%= turbo_stream_from "rooms:#{room.id}:answers" %>
 
 <div class="status-page-spacing answering-container">
   <div class="answering-card">
     <div class="prompt-section">
       <div class="prompt-icon">💭</div>
-      <h2 class="prompt-text"><%= @game_prompt.prompt.description %></h2>
+      <h2 class="prompt-text"><%= game_prompt.prompt.description %></h2>
       <p class="prompt-instruction">Answer on your device</p>
     </div>
 
@@ -13,19 +13,19 @@
       <div class="progress-grid">
         <div class="progress-stats">
           <div class="stat-card stat-completed">
-            <span class="stat-number"><%= @users_with_submitted_answers.count %></span>
+            <span class="stat-number"><%= users_with_submitted_answers.count %></span>
             <span class="stat-label">Completed</span>
           </div>
           <div class="stat-card stat-waiting">
-            <span class="stat-number"><%= @users.count - @users_with_submitted_answers.count %></span>
+            <span class="stat-number"><%= users.count - users_with_submitted_answers.count %></span>
             <span class="stat-label">Waiting</span>
           </div>
         </div>
 
         <div class="completed-users">
           <ul id="users-with-status-list" class="users-list-with-status">
-            <% @users.each do |user| %>
-              <%= render "rooms/partials/user_with_status_item", user: user, completed: @users_with_submitted_answers.include?(user.name) %>
+            <% users.each do |user| %>
+              <%= render "rooms/partials/user_with_status_item", user: user, completed: users_with_submitted_answers.include?(user.name) %>
             <% end %>
           </ul>
         </div>

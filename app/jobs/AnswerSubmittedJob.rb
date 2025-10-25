@@ -24,6 +24,18 @@ class AnswerSubmittedJob < ApplicationJob
     submitted_answers = Answer.where(game_prompt_id: answer.game_prompt_id).count
     if submitted_answers >= users_in_room && room.status == RoomStatus::Answering
       room.update!(status: RoomStatus::Voting)
+
+      # Broadcast Turbo Stream to update the status page to voting view
+      status_data = RoomStatusService.new(room.id).call
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{room.id}:status",
+        action: :update,
+        target: "status-content-inner",
+        partial: "rooms/status/voting",
+        locals: status_data
+      )
+
+      # Keep ActionCable broadcast for backward compatibility
       ActionCable.server.broadcast(
         "rooms:#{room.id.to_i}",
         Events.create_start_voting_event(answer.game_prompt_id)

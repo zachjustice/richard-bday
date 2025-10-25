@@ -1,11 +1,11 @@
 <div class="status-page-spacing final-results-container">
   <div class="final-results-card">
     <div class="story-header">
-      <h2 class="story-title"><%= @current_room.current_game.story.title %></h2>
+      <h2 class="story-title"><%= current_room.current_game.story.title %></h2>
       <div class="story-authors">
         <span class="authors-label">Written by:</span>
         <div class="authors-list">
-          <% @users.each do |user| %>
+          <% users.each do |user| %>
             <span class="author-tag"><%= user.name %></span>
           <% end %>
         </div>
@@ -13,12 +13,12 @@
     </div>
 
     <div class="story-content">
-      <% @story.each do |sentence| %>
+      <% story.each do |sentence| %>
         <p class="story-sentence"><%= sentence %></p>
       <% end %>
     </div>
 
-    <%= form_with url: "/rooms/#{@room.id}/end_game", method: :post, class: "new-game-form" do |form| %>
+    <%= form_with url: "/rooms/#{room.id}/end_game", method: :post, class: "new-game-form" do |form| %>
       <%= form.submit "Start New Game", class: "new-game-button" %>
     <% end %>
   </div>

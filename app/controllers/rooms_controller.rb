@@ -48,74 +48,24 @@ class RoomsController < ApplicationController
   end
 
   def status
-    @room = Room.find(params[:id])
-    @current_room = @room # Normally this is set by the session, but this is an unauthenticated page
+    status_data = RoomStatusService.new(params[:id]).call
+    @status_data = status_data
 
-    @users = User.where(room_id: @room.id)
-    @status = @room.status
-    if [ RoomStatus::Answering, RoomStatus::Voting, RoomStatus::Results ].include?(@status)
-      @game_prompt = @room.current_game.current_game_prompt
-
-      @answers = Answer.where(game_prompt_id: @game_prompt.id)
-      @users_with_submitted_answers = @answers.map { |r| r.user.name }
-      @answers_by_id = @answers.reduce({}) { |result, curr|
-        result[curr.id] = curr
-        result
-      }
-
-      @votes = Vote.where(game_prompt_id: @game_prompt.id)
-      @users_with_vote = @votes.map { |v| v.user.name }
-    end
-
-    # Only calculate winners if all the votes are in. Front-end will use existence of @winners to determine if voting is done.
-    if @status == RoomStatus::Results
-      @votes_by_answer = {}
-      most_votes = -1
-      @winners = []
-
-      @votes.each do |vote|
-        if @votes_by_answer[vote.answer_id].nil?
-          @votes_by_answer[vote.answer_id] = []
-        end
-        @votes_by_answer[vote.answer_id].push(vote)
-        if @votes_by_answer[vote.answer_id].size > most_votes
-          most_votes = @votes_by_answer[vote.answer_id].size
-          @winners = [ @answers_by_id[vote.answer_id] ]
-        elsif @votes_by_answer[vote.answer_id].size == most_votes
-          @winners.push(@answers_by_id[vote.answer_id])
-        end
-      end
-
-      # I don't have good tie-break logic, so just choose at random
-      # TODO replace with points.
-      @winner = Answer.where(
-        game_prompt: @room.current_game.current_game_prompt,
-        won: true
-      ).first
-      if @winner.nil?
-        @winner = @winners.sample
-        @winner.update!(won: true)
-      end
-    end
-
-    if @status == RoomStatus::FinalResults
-      story_text = @current_room.current_game.story.text
-      blank_id_to_answer_text = Answer.where(game_id: @current_room.current_game, won: true).reduce({}) do |result, ans|
-        result["{#{ans.game_prompt.blank.id}}"] = ans.text
-        result
-      end
-
-      replacement_regex = /\{\d+\}/
-      complete_story = story_text.gsub(replacement_regex, blank_id_to_answer_text)
-      includes_leftover_regex = complete_story.match?(replacement_regex)
-      missing_answers = blank_id_to_answer_text.values.reject { |ans| complete_story.include?(ans) }
-      if includes_leftover_regex || !missing_answers.empty?
-        error_part1 = includes_leftover_regex ? "[LEFTOVER_REGEX]" : ""
-        error_part2 = !missing_answers.empty? ? "[MISSING_ANSWERS]" : ""
-        logger.error("[RoomController#status] Generated invalid story! #{error_part1}#{error_part2} missing_answers: `#{missing_answers.to_json}`, StoryId: #{@current_room.current_game.story.id}, story_text: `#{story_text}`, complete_story: `#{complete_story}`")
-      end
-      @story = complete_story.split(".").map { |s| s.strip + "."  }
-    end
+    @room = status_data[:room]
+    # Normally this is set by the session, but this is an unauthenticated page
+    @current_room = status_data[:current_room]
+    @users = status_data[:users]
+    @status = status_data[:status]
+    @game_prompt = status_data[:game_prompt]
+    @answers = status_data[:answers]
+    @users_with_submitted_answers = status_data[:users_with_submitted_answers]
+    @answers_by_id = status_data[:answers_by_id]
+    @votes = status_data[:votes]
+    @users_with_vote = status_data[:users_with_vote]
+    @votes_by_answer = status_data[:votes_by_answer]
+    @winners = status_data[:winners]
+    @winner = status_data[:winner]
+    @story = status_data[:story]
   end
 
   def show

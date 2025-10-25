@@ -1,22 +1,23 @@
 <%= stylesheet_link_tag "status-page", "data-turbo-track": "reload" %>
+<%= turbo_stream_from "rooms:#{@room.id}:status" %>
 
 <%= render "rooms/status/header" %>
 
 <div data-controller="rooms-status" class="status-content">
   <%= tag.div(flash[:notice], class: "error-notice") if flash[:notice] %>
 
-  <div class="status-content-inner">
+  <div id="status-content-inner" class="status-content-inner">
     <% case @status %>
     <% when RoomStatus::WaitingRoom %>
-      <%= render "rooms/status/waiting_room" %>
+      <%= render partial: "rooms/status/waiting_room", locals: @status_data %>
     <% when RoomStatus::Answering %>
-      <%= render "rooms/status/answering" %>
+      <%= render partial: "rooms/status/answering", locals: @status_data %>
     <% when RoomStatus::Voting %>
-      <%= render "rooms/status/voting" %>
+      <%= render partial: "rooms/status/voting", locals: @status_data %>
     <% when RoomStatus::Results %>
-      <%= render "rooms/status/results" %>
+      <%= render partial: "rooms/status/results", locals: @status_data %>
     <% when RoomStatus::FinalResults %>
-      <%= render "rooms/status/final_results" %>
+      <%= render partial: "rooms/status/final_results", locals: @status_data %>
     <% end %>
   </div>
 </div>
