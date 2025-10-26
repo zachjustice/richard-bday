@@ -220,13 +220,35 @@
   background: linear-gradient(135deg, #f8f4ff 0%, #fff4f9 100%);
 }
 
+.waiting-room-content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  gap: var(--space-8)
+}
+
+.qr-code {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--text-secondary);
+  align-items: center;
+}
+
+#qr-code {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+}
+
 .waiting-room-card {
   overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
   padding: var(--space-8);
-  max-width: var(--max-width-card-lg);
+  max-width: var(--max-width-card-xl);
   width: 100%;
   position: relative;
 }
@@ -283,16 +305,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-}
-
-.stories-section h3::before {
-  /* content: '📚';
-  font-size: var(--font-size-2xl); */
-}
-
-.users-section h3::before {
-  /* content: '👥';
-  font-size: var(--font-size-2xl); */
 }
 
 .story-form {

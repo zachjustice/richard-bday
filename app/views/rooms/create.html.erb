@@ -12,6 +12,10 @@
       <%= form_with url: "/rooms/create", method: :post, class: "create-form" do |form| %>
         <%= form.submit "New Game", class: "create-button" %>
       <% end %>
+
+      <span class="join-game-link">
+        <%= link_to "Join a game instead", new_session_path %>
+      </span>
     </div>
   </div>
 </div>

@@ -1,9 +1,9 @@
-<%= stylesheet_link_tag "status-page", "data-turbo-track": "reload" %>
+<%= stylesheet_link_tag "room-status", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@room.id}:status" %>
 
 <%= render "rooms/status/header" %>
 
-<div data-controller="rooms-status" class="status-content">
+<div data-controller="room-status" class="status-content">
   <%= tag.div(flash[:notice], class: "error-notice") if flash[:notice] %>
 
   <div id="status-content-inner" class="status-content-inner">

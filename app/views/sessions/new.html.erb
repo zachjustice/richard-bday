@@ -43,7 +43,8 @@
           <span class="label-icon">🔑</span>
           Room Code
         </label>
-        <%= form.text_field :code,
+        <%= form.text_field :code, 
+            value: params[:code],
             id: "code",
             required: true,
             autocomplete: "off",

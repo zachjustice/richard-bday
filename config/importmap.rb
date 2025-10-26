@@ -9,3 +9,6 @@ pin "jquery" # @3.7.1
 
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin_all_from "app/javascript/channels", under: "channels"
+
+pin "@hotwired/turbo", to: "@hotwired--turbo.js" # @8.0.18
+pin "@nuintun/qrcode", to: "@nuintun--qrcode.js" # @5.0.2

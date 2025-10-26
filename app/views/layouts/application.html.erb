@@ -22,7 +22,7 @@
     <%= stylesheet_link_tag 'application', "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <meta name="current-user" id="<%= @current_user.try(:id) %>">
-    <meta name="room" id="<%= @current_room.try(:id) %>">
+    <meta name="room" id="<%= @current_room.try(:id) %>" code="<%= @current_room.try(:code) %>">
   </head>
 
   <body>

@@ -143,6 +143,7 @@
   --max-width-container: 1200px;
   --max-width-card: 500px;
   --max-width-card-lg: 900px;
+  --max-width-card-xl: 1200px;
 
   /* Transitions */
   --transition-fast: 0.2s ease;

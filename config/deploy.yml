@@ -12,6 +12,7 @@ servers:
     hosts:
       - 174.138.60.116
     cmd: bin/jobs
+  # TODO figure out how to do standalone cable deployments
   # cable:
   #   hosts:
   #     - 174.138.60.116
