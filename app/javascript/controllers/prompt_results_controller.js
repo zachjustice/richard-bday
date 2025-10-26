@@ -12,6 +12,11 @@ export default class extends Controller {
       console.log("RoomMessageHub:RoomController:Listener:NextPrompt", event)
       Turbo.visit(`/prompts/${event.prompt}`)
     })
+
+    RoomMessageHub.register(EventType.FinalResults, (event) => {
+      console.log("RoomMessageHub:RoomController:Listener:FinalResults", event)
+      Turbo.visit(`/prompts/${event.prompt}/results`)
+    })
   }
 
   disconnect() {

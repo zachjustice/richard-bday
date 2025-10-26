@@ -34,17 +34,21 @@ class RoomsController < ApplicationController
     next_game_prompt_id = GamePrompt.find_by(game_id: room.current_game_id, order: current_game_prompt_order + 1)&.id
     if next_game_prompt_id.nil?
       room.update!(status: RoomStatus::FinalResults)
-      return redirect_to controller: "rooms", action: "status", id: params[:id]
+      ActionCable.server.broadcast(
+        "rooms:#{params[:id].to_i}",
+        Events.create_final_results_event(next_game_prompt_id)
+      )
+      redirect_to controller: "rooms", action: "status", id: params[:id]
+    else
+      ActionCable.server.broadcast(
+        "rooms:#{params[:id].to_i}",
+        Events.create_next_prompt_event(next_game_prompt_id)
+      )
+      Room.find(params[:id]).update!(status: RoomStatus::Answering)
+      room.current_game.update!(current_game_prompt_id: next_game_prompt_id)
+
+      redirect_to controller: "rooms", action: "status", id: params[:id]
     end
-
-    ActionCable.server.broadcast(
-      "rooms:#{params[:id].to_i}",
-      Events.create_next_prompt_event(next_game_prompt_id)
-    )
-    Room.find(params[:id]).update!(status: RoomStatus::Answering)
-    room.current_game.update!(current_game_prompt_id: next_game_prompt_id)
-
-    redirect_to controller: "rooms", action: "status", id: params[:id]
   end
 
   def status
