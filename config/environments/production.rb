@@ -28,11 +28,11 @@ Rails.application.configure do
   config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # TODO SSL
-  # config.force_ssl = true
+  # TODO fix - force_ssl false bc of wss self-signed certs error
+  config.force_ssl = true
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
@@ -58,6 +58,9 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.perform_deliveries = false
+  config.action_mailer.delivery_method = :test
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
 
@@ -86,10 +89,14 @@ Rails.application.configure do
   #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
   # ]
   #
+
   # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-  config.action_cable.url = "ws://#{ENV['HOST']}/cable"
-  config.action_cable.allowed_request_origins = [ "http://#{ENV['HOST']}" ]
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # config.action_cable.mount_path = nil
+  config.action_cable.url = "wss://#{ENV['HOST']}/cable"
+  config.action_cable.allowed_request_origins = [ "https://#{ENV['HOST']}" ] # "174.138.60.116", "localhost"
   config.hosts << ENV["HOST"]
   config.hosts << "localhost"
+  config.hosts << "174.138.60.116"
 end
