@@ -23,6 +23,7 @@ class VoteSubmittedJob < ApplicationJob
     users_in_room = User.where(room_id: room.id).count
     submitted_votes = Vote.where(game_prompt_id: vote.game_prompt_id).count
 
+    # Check if its time to view the results!
     if submitted_votes >= users_in_room && room.status == RoomStatus::Voting
       room.update!(status: RoomStatus::Results)
 

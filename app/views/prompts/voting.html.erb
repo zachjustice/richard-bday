@@ -1,4 +1,5 @@
 <%= stylesheet_link_tag "prompt-voting", "data-turbo-track": "reload" %>
+<%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 
 <div data-controller="prompt" class="prompt-voting-container">
   <div class="prompt-voting-card">

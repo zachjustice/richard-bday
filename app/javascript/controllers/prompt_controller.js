@@ -5,13 +5,14 @@ export default class extends Controller {
   connect() {
     RoomMessageHub.register(EventType.NewPrompt, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:NewPrompt", event)
-      // refresh the page, let the controller show the new correct view
-      window.location.href = `/prompts/${event.prompt}`
+      // Should these actions happen server side?
+      Turbo.visit(`/prompts/${event.prompt}`)
     })
 
     RoomMessageHub.register(EventType.StartVoting, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:StartVoting", event)
-      window.location.href = `/prompts/${event.prompt}/voting`
+      // Should these actions happen server side?
+      Turbo.visit(`/prompts/${event.prompt}/voting`)
     })
   }
 

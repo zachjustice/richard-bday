@@ -1,4 +1,5 @@
 <%= stylesheet_link_tag "prompt-answer", "data-turbo-track": "reload" %>
+<%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 
 <div class="prompt-answer-container">
   <div class="prompt-answer-card">

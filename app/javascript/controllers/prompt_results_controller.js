@@ -5,16 +5,12 @@ export default class extends Controller {
   connect() {
     RoomMessageHub.register(EventType.VotingDone, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:VotingDone", event)
-      $('#waiting-on-results').remove()
-      // TODO tell the winner they won
-      if ($('#done').length === 0) {
-        // $("#results").append(`<h3 id="done">See the big screen for the Winner!</h3>`)
-      }
+      Turbo.visit(`/prompts/${event.prompt}/results`)
     })
 
     RoomMessageHub.register(EventType.NextPrompt, (event) => {
       console.log("RoomMessageHub:RoomController:Listener:NextPrompt", event)
-      window.location.href = `/prompts/${event.prompt}`
+      Turbo.visit(`/prompts/${event.prompt}`)
     })
   }
 

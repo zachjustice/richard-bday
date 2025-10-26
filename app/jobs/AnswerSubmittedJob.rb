@@ -22,6 +22,8 @@ class AnswerSubmittedJob < ApplicationJob
 
     users_in_room = User.where(room: room).count
     submitted_answers = Answer.where(game_prompt_id: answer.game_prompt_id).count
+
+    # Check if its time to start voting!
     if submitted_answers >= users_in_room && room.status == RoomStatus::Answering
       room.update!(status: RoomStatus::Voting)
 
