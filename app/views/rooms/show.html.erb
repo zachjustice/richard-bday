@@ -1,5 +1,5 @@
 <%= stylesheet_link_tag "room-lobby", "data-turbo-track": "reload" %>
-<%= turbo_stream_from "rooms:#{@room.id}:nav-updates" %>
+<%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 
 <div data-controller="room" class="room-lobby-container">
   <div class="room-lobby-card">

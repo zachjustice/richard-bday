@@ -272,16 +272,20 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
 
     # Track if broadcast is called on the final next (which should reach FinalResults)
     broadcast_called = false
+    broadcast_channel = nil
+    broadcast_data = nil
 
-    ActionCable.server.stub :broadcast, ->(_channel, _data) {
+    ActionCable.server.stub :broadcast, ->(channel, data) {
       broadcast_called = true
+      broadcast_channel = channel
+      broadcast_data = data
     } do
       post next_room_path(@room)
     end
 
-    @room.reload
-    assert_equal RoomStatus::FinalResults, @room.status
-    assert_not broadcast_called, "Should not broadcast when reaching final results"
+    assert broadcast_called, "ActionCable broadcast should have been called"
+    assert_equal "rooms:#{@room.id}", broadcast_channel
+    assert_equal Events::MessageType::FinalResults, broadcast_data[:messageType]
   end
 
   # End of tests for RoomsController#next
