@@ -17,6 +17,8 @@ export default class extends Controller {
       console.log("RoomMessageHub:RoomController:Listener:FinalResults", event)
       Turbo.visit(`/prompts/${event.prompt}/results`)
     })
+
+    // TODO: handle refreshing the page when/if a new game is started
   }
 
   disconnect() {

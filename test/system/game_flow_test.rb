@@ -38,6 +38,7 @@ class GameFlowTest < ApplicationSystemTestCase
     # Verify all players appear in the waiting room
     using_session(:host) do
       visit "/rooms/#{room.id}/status"
+      connect_turbo_cable_stream_sources
       assert_text "Player1"
       assert_text "Player2"
     end
@@ -80,6 +81,7 @@ class GameFlowTest < ApplicationSystemTestCase
 
     using_session(:host) do
       visit "/rooms/#{room.id}/status"
+      connect_turbo_cable_stream_sources
       assert_text "Vote"
     end
 
@@ -113,6 +115,7 @@ class GameFlowTest < ApplicationSystemTestCase
     # Step 6: View results and advance to next prompt
     using_session(:host) do
       visit "/rooms/#{room.id}/status"
+      connect_turbo_cable_stream_sources
       assert_text "Results"
 
       click_button "Next"
@@ -182,6 +185,7 @@ class GameFlowTest < ApplicationSystemTestCase
 
     using_session(:host) do
       visit "/rooms/#{room.id}/status"
+      connect_turbo_cable_stream_sources
       assert_text "Results"
       click_button "Next"
 
@@ -194,6 +198,7 @@ class GameFlowTest < ApplicationSystemTestCase
 
     # Step 9: End game
     using_session(:host) do
+      connect_turbo_cable_stream_sources
       click_button "Start New Game"
       assert_text "Waiting"
     end
