@@ -31,8 +31,6 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     assert_select "body", text: /Player1/
     assert_select "body", text: /Player2/
 
-    puts "✓ Step 1: Room status page displays both players"
-
     # Step 2: Start the game (as Player 1 / host)
 
     post start_room_path(@room), params: { story: @story.id }
@@ -46,16 +44,12 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     first_prompt = game.current_game_prompt
     assert_equal 0, first_prompt.order
 
-    puts "✓ Step 2: Game started successfully, first prompt is active"
-
     # Step 3: Player 1 submits answer to first prompt
     post answer_path, params: { text: "unicorn", prompt_id: first_prompt.id }
     assert_redirected_to "/prompts/#{first_prompt.id}/waiting"
 
     answer1 = Answer.find_by(user: @player1, game_prompt: first_prompt)
     assert_equal "unicorn", answer1.text
-
-    puts "✓ Step 3: Player 1 submitted answer"
 
     # Step 4: Player 2 submits answer to first prompt
     end_session
@@ -68,16 +62,12 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     answer2 = Answer.find_by(user: @player2, game_prompt: first_prompt)
     assert_equal "dragon", answer2.text
 
-    puts "✓ Step 4: Player 2 submitted answer, voting phase started"
-
     # Step 5: Verify voting page displays answers
     get "/prompts/#{first_prompt.id}/voting"
     assert_response :success
     # Player 2 should see Player 1's answer but not their own
     assert_select "body", text: /unicorn/
     assert_select "body", text: /dragon/, count: 0  # Own answer should not appear
-
-    puts "✓ Step 5: Voting page displays other players' answers"
 
     # Step 6: Player 2 votes for Player 1's answer
     post votes_path, params: { answer_id: answer1.id, game_prompt_id: first_prompt.id }
@@ -96,8 +86,6 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     vote1 = Vote.find_by(user: @player1, answer: answer2)
     assert_not_nil vote1
 
-    puts "✓ Step 6: Both players voted"
-
     # Step 7: Verify results page shows votes
     @room.reload
     @room.update!(status: RoomStatus::Results)
@@ -111,8 +99,6 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     # One answer should be marked as winner
     assert_equal 1, Answer.where(game_prompt: first_prompt, won: true).count
 
-    puts "✓ Step 7: Results displayed with winner"
-
     # Step 8: Advance to next prompt
     post next_room_path(@room)
     assert_redirected_to room_status_path(@room)
@@ -122,8 +108,6 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     second_prompt = game.current_game_prompt
     assert_equal 1, second_prompt.order
     assert_equal RoomStatus::Answering, @room.status
-
-    puts "✓ Step 8: Advanced to second prompt"
 
     # Quick second round: both players submit answers
     end_session
@@ -147,8 +131,6 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     # Mark one as winner (simulate results)
     answer1_p2.update!(won: true)
 
-    puts "✓ Completed second round of answers and voting"
-
     # Step 9: Advance to final results (no more prompts)
     post next_room_path(@room)
     assert_redirected_to room_status_path(@room)
@@ -163,8 +145,6 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     # Story should contain winning answers
     # (exact text depends on which answers won)
 
-    puts "✓ Step 9: Final results page displays complete story"
-
     # Step 10: End game and return to waiting room
     post end_room_game_path(@room)
     assert_redirected_to room_status_path(@room)
@@ -172,9 +152,5 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     @room.reload
     assert_equal RoomStatus::WaitingRoom, @room.status
     assert_nil @room.current_game_id
-
-    puts "✓ Step 10: Game ended, returned to waiting room"
-
-    puts "\n🎉 Complete game flow test passed!"
   end
 end
