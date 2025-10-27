@@ -13,7 +13,6 @@ class GameFlowTest < ApplicationSystemTestCase
   end
 
   test "complete game flow from room creation to final story" do
-    skip "Skipping system test for since its failing on GitHub Actions"
     # Step 1: Create a room
     room = nil
 
@@ -59,7 +58,7 @@ class GameFlowTest < ApplicationSystemTestCase
 
     # Player1 submits answer
     using_session(:player1) do
-      visit root_path
+      visit show_room_path
       fill_in "text", with: "unicorn"
       click_button "Submit"
       assert_text "Waiting"
@@ -67,7 +66,7 @@ class GameFlowTest < ApplicationSystemTestCase
 
     # Player2 submits answer (last one)
     using_session(:player2) do
-      visit root_path
+      visit show_room_path
       fill_in "text", with: "dragon"
       click_button "Submit"
 
@@ -134,7 +133,7 @@ class GameFlowTest < ApplicationSystemTestCase
     # Step 7: Complete second round (second prompt)
     # Player1 submits answer in round 2
     using_session(:player1) do
-      visit root_path
+      visit show_room_path
       fill_in "text", with: "sparkly"
       click_button "Submit"
       assert_text "Waiting"
@@ -142,7 +141,7 @@ class GameFlowTest < ApplicationSystemTestCase
 
     # Player2 submits answer in round 2
     using_session(:player2) do
-      visit root_path
+      visit show_room_path
       fill_in "text", with: "fluffy"
       click_button "Submit"
       assert_text "Vote"

@@ -12,8 +12,9 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  root to: "rooms#show"
+  root to: "rooms#create"
 
+  get "/rooms", to: "rooms#show", as: :show_room
   get "/rooms/create", to: "rooms#create", as: :create_room
   post "/rooms/create", to: "rooms#_create"
   get "/rooms/:id/status", to: "rooms#status", as: :room_status

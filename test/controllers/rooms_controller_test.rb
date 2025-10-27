@@ -298,7 +298,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     @room.update!(status: RoomStatus::Answering)
     @room.reload
 
-    get root_path
+    get show_room_path
 
     current_prompt = @room.current_game.current_game_prompt
     assert_redirected_to controller: "prompts", action: "show", id: current_prompt.id
@@ -308,7 +308,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     # Set room to WaitingRoom status
     @room.update!(status: RoomStatus::WaitingRoom)
 
-    get root_path
+    get show_room_path
 
     assert_response :success
   end
@@ -350,7 +350,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     Room.stub :new, Room.new(code: nil) do
       post "/rooms/create"
 
-      assert_redirected_to "/rooms/create"
+      assert_redirected_to "/"
       assert flash[:notice].present?
       assert_match(/Failed to create room/, flash[:notice])
     end

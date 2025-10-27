@@ -73,7 +73,6 @@ class RoomsController < ApplicationController
   end
 
   def show
-    @users = User.where(room_id: @current_room.id)
     # Redirect to the current prompt if the game for this room has advanced beyond the first prompt (index 0)
     if @current_room.status == RoomStatus::Answering
       redirect_to controller: "prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
