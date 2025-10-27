@@ -5,10 +5,9 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @room = rooms(:one)
     @story = stories(:one)
-    @user = users(:one)
 
     # Set up the user in the room and authenticate
-    @user.update!(room_id: @room.id)
+    @user = User.create!(name: "Creator", room_id: @room.id, role: User::CREATOR)
     resume_session_as(@room.code, @user.name)
   end
 
@@ -359,6 +358,25 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
   # End of tests for RoomsController#_create
 
   #################################################
+  # Tests for RoomsController#_create with role-based functionality
+  #################################################
+
+  test "_create should create a Creator user for the room creator" do
+    assert_difference("User.count", 1) do
+      post "/rooms/create"
+    end
+
+    room = Room.last
+    creator_user = User.last
+
+    assert_equal User::CREATOR, creator_user.role
+    assert_equal room.id, creator_user.room_id
+    assert_match(/\ACreator-[a-z]{4}\z/, creator_user.name)
+  end
+
+  # End of tests for RoomsController#_create with role-based functionality
+
+  #################################################
   # Tests for RoomsController#end_game
   #################################################
 
@@ -482,4 +500,31 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
   end
 
   # End of tests for RoomsController#status
+
+  #################################################
+  # Tests for RoomsController#status authorization
+  #################################################
+
+  test "status should allow access for room Creator" do
+    room = Room.create!(code: "test1", status: RoomStatus::WaitingRoom)
+    creator = User.create!(name: "Creator-test1", room: room, role: User::CREATOR)
+
+    resume_session_as(room.code, creator.name)
+    get room_status_path(room)
+
+    assert_response :success
+  end
+
+  test "status should deny access for non-Creator users" do
+    room = Room.create!(code: "test3", status: RoomStatus::WaitingRoom)
+    player = User.create!(name: "Player3", room: room, role: User::PLAYER)
+
+    resume_session_as(room.code, player.name)
+    get room_status_path(room)
+
+    assert_redirected_to root_path
+    assert_equal "Only the room creator can view this page", flash[:alert]
+  end
+
+  # End of tests for RoomsController#status authorization
 end

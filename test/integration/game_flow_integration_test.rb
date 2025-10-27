@@ -16,6 +16,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
 
     # Create a fresh room for testing
     @room = Room.create!(code: "test#{rand(1000)}", status: RoomStatus::WaitingRoom)
+    @creator = User.create!(name: "Creator", room: @room, role: User::CREATOR)
 
     # Create two players
     @player1 = User.create!(name: "Player1", room: @room)
@@ -24,7 +25,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
 
   test "complete game flow from start to finish" do
     # Step 1: Authenticate as Player 1 and verify room status page shows both players
-    resume_session_as(@room.code, @player1.name)
+    resume_session_as(@room.code, @creator.name)
 
     get room_status_path(@room)
     assert_response :success
@@ -45,6 +46,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 0, first_prompt.order
 
     # Step 3: Player 1 submits answer to first prompt
+    resume_session_as(@room.code, @player1.name)
     post answer_path, params: { text: "unicorn", prompt_id: first_prompt.id }
     assert_redirected_to "/prompts/#{first_prompt.id}/waiting"
 
@@ -87,6 +89,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     assert_not_nil vote1
 
     # Step 7: Verify results page shows votes
+    resume_session_as(@room.code, @creator.name)
     @room.reload
     @room.update!(status: RoomStatus::Results)
 
@@ -139,6 +142,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal RoomStatus::FinalResults, @room.status
 
     # Verify final results page shows complete story
+    resume_session_as(@room.code, @creator.name)
     get room_status_path(@room)
     assert_response :success
     assert_select "body", text: /#{@story.title}/

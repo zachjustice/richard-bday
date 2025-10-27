@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_19_010534) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_26_010599) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -98,6 +98,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_19_010534) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "room_id", null: false
+    t.string "role", default: "Player"
     t.index ["room_id", "name"], name: "index_users_on_room_id_and_name", unique: true
     t.index ["room_id"], name: "index_users_on_room_id"
   end
