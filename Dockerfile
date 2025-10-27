@@ -35,8 +35,13 @@ RUN apt-get update -qq && \
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+# Install dependencies, including private repositories via access token (then remove bundle cache with exposed GITHUB_TOKEN)
+RUN --mount=type=secret,id=GITHUB_TOKEN \
+  BUNDLE_GITHUB__COM=x-access-token:$(cat /run/secrets/GITHUB_TOKEN) \
+  bundle install && \
+  rm -rf /usr/local/bundle/cache
+#RUN bundle install && \
+RUN rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
 # Copy application code
