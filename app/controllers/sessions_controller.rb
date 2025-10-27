@@ -10,6 +10,9 @@ class SessionsController < ApplicationController
   end
 
   def resume
+    # Disable resume endpoint in production
+    raise ActionController::RoutingError, "Not Found" if Rails.env.production?
+
     # check for current session before allowing user to start a new session.
     # i.e. if user hits back or revisits this page.
     code = params[:code]&.downcase
