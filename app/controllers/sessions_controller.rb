@@ -3,12 +3,10 @@ class SessionsController < ApplicationController
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_url, alert: "Try again later." }
 
   def new
-    # check for current session before allowing user to start a new session.
-    # i.e. if user hits back or revisits this page.
-    # session_id = cookies.signed[:session_id]
-    # if session_id && Session.find_by(id: session_id)
-    #   redirect_to after_authentication_url
-    # end
+    session_id = cookies.signed[:session_id]
+    if session_id
+      @room = Session.find(session_id).user.room
+    end
   end
 
   def resume
@@ -33,14 +31,17 @@ class SessionsController < ApplicationController
   end
 
   def create
-    # check for current session before allowing user to start a new session.
-    # i.e. if user hits back or revisits this page.
-    if session[:user_id]
-      return redirect_to after_authentication_url
+    # TODO: prevents users from joining the same game twice
+    # Get room
+    session_id = cookies.signed[:session_id]
+    code = params[:code]&.downcase
+    if session_id
+      room = Session.find(session_id).user.room
+      if room.code == code
+        return redirect_to after_authentication_url
+      end
     end
 
-    # Get room
-    code = params[:code]&.downcase
     room = Room.find_by(code: code)
     if room.nil?
       return redirect_to new_session_path, alert: "Wrong room code."

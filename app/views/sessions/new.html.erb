@@ -5,7 +5,17 @@
     <div class="login-header">
       <div class="login-icon">🎮</div>
       <h1 class="login-title">Join the Game</h1>
-      <p class="login-subtitle">Enter your details to start playing</p>
+      <div class="rejoin-game-link login-subtitle">
+          <% if @room&.current_game&.current_game_prompt %>
+            <span>It looks like you're already in a game.</span>
+            <%= link_to "Rejoin?", controller: "prompts", action: "show", id: @room.current_game.current_game_prompt %>
+          <% elsif @room.present? %>
+            <span>It looks like you're already in a game.</span>
+            <%= link_to "Rejoin?", controller: "rooms", action: "show" %>
+          <% else %>
+            <p class="login-subtitle">Enter your details to start playing</p>
+          <% end %>
+      </div>
     </div>
 
     <% if flash[:alert] %>
@@ -21,6 +31,7 @@
         <%= flash[:notice] %>
       </div>
     <% end %>
+
 
     <%= form_with url: session_path, class: "login-form" do |form| %>
       <div class="form-group">
