@@ -9,11 +9,11 @@ window.Stimulus = application
 
 // TODO: need to figure out how to get @hotwired/turbo imported and added to the import map.
 //       then I should be able to trigger navigate events server side by broadcasting an update to `room:#{id}:nav-updates`
-import { StreamActions } from "@hotwired/turbo"
-StreamActions.navigate = function () {
-  const url = this.getAttribute("url")
-  Turbo.visit(url)
-}
+// import { StreamActions } from "@hotwired/turbo"
+// StreamActions.navigate = function () {
+//   const url = this.getAttribute("url")
+//   Turbo.visit(url)
+// }
 
 const EventType = Object.freeze({
   NewUser: "NewUser",

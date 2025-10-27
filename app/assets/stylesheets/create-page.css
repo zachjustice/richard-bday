@@ -116,12 +116,6 @@
   margin-bottom: var(--space-4);
 }
 
-.join-game-link a {
-  color: var(--text-secondary);
-  text-decoration: underline;
-  font-style: italic;
-}
-
 @media (min-width: 768px) {
   .create-card {
     padding: var(--space-16) var(--space-12);
