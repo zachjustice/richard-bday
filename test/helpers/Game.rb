@@ -8,7 +8,7 @@ class Helpers
     g = room.current_game
     gp = g.current_game_prompt
 
-    User.where(room: room).each do |u|
+    User.players.where(room: room).each do |u|
       if answers.size
         missing = Answer.where(
           game: g,
@@ -36,7 +36,7 @@ class Helpers
       game_prompt: gp,
     ).to_a
 
-    User.where(room: room).each do |u|
+    User.players.where(room: room).each do |u|
       if num_votes > 0
         missing = Vote.where(
           game: g,

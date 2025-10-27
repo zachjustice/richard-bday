@@ -52,6 +52,12 @@ class RoomsController < ApplicationController
   end
 
   def status
+    room = Room.find(params[:id])
+    unless @current_user&.role == User::CREATOR && @current_user.room_id == room.id
+      flash[:alert] = "Only the room creator can view this page"
+      return redirect_to root_path
+    end
+
     status_data = RoomStatusService.new(params[:id]).call
     @status_data = status_data
 
@@ -73,6 +79,10 @@ class RoomsController < ApplicationController
   end
 
   def show
+<<<<<<< HEAD
+=======
+    @users = User.players.where(room_id: @current_room.id)
+>>>>>>> creator and users?
     # Redirect to the current prompt if the game for this room has advanced beyond the first prompt (index 0)
     if @current_room.status == RoomStatus::Answering
       redirect_to controller: "prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
@@ -88,10 +98,23 @@ class RoomsController < ApplicationController
     code = (0...4).map { ("a".."z").to_a[rand(26)] }.join
     room = Room.new(code: code)
 
-    # todo grab first user to use as an 'admin' user. ideally there'd be user types, but hack.
-    start_new_session_for User.find(1)
     if room.save
-      redirect_to controller: "rooms", action: "status", id: room.id
+      # Create a temporary Creator user for the room creator
+      creator_name = "Creator-#{code}"
+      creator_user = User.new(
+        name: creator_name,
+        room_id: room.id,
+        role: User::CREATOR
+      )
+
+      if creator_user.save
+        start_new_session_for creator_user
+        redirect_to controller: "rooms", action: "status", id: room.id
+      else
+        logger.error "Failed to create creator user: #{creator_user.errors.messages.to_json}"
+        flash.notice = "Failed to create room: #{creator_user.errors.full_messages.to_json}"
+        redirect_to controller: "rooms", action: "create"
+      end
     else
       logger.error "Failed to create room: #{room.errors.messages.to_json}"
       flash.notice = "Failed to create room: #{room.errors.full_messages.to_json}"

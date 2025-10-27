@@ -20,7 +20,7 @@ class VoteSubmittedJob < ApplicationJob
       return
     end
 
-    users_in_room = User.where(room_id: room.id).count
+    users_in_room = User.players.where(room_id: room.id).count
     submitted_votes = Vote.where(game_prompt_id: vote.game_prompt_id).count
 
     # Check if its time to view the results!

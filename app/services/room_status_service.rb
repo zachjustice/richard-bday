@@ -15,7 +15,7 @@ class RoomStatusService
   private
 
   def fetch_users
-    User.where(room_id: @room.id)
+    User.players.where(room_id: @room.id)
   end
 
   def status_specific_data

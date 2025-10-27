@@ -20,7 +20,7 @@ class VotesController < ApplicationController
       error = vote.errors
     end
 
-    users_in_room = User.where(room_id: @current_room.id).count
+    users_in_room = User.players.where(room_id: @current_room.id).count
     submitted_votes = Vote.where(game_id: @current_room.current_game_id).count
     redirect_to_results = submitted_votes >= users_in_room
 
