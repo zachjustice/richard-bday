@@ -1,0 +1,90 @@
+<div class="copyright-page">
+  <div class="copyright-content">
+    <h1>Copyright Notice</h1>
+    
+    <div class="copyright-text">
+      <p><strong>© <%= Date.current.year %> Blanksies</strong></p>
+      
+      <p>All rights reserved. This application and its contents are protected by copyright law.</p>
+      
+      <h2>Intellectual Property</h2>
+      <p>The following elements are protected by copyright:</p>
+      <ul>
+        <li>Application code and software architecture</li>
+        <li>User interface design and layout</li>
+        <li>Game mechanics and rules</li>
+        <li>Original content and text</li>
+        <li>Graphics, images, and visual elements</li>
+      </ul>
+      
+      <h2>Permitted Use</h2>
+      <p>You may use this application for personal, non-commercial purposes only. Any unauthorized reproduction, distribution, or modification is strictly prohibited.</p>
+      
+      <h2>Third-Party Content</h2>
+      <p>This application may contain content from third parties. Such content is used under appropriate licenses and remains the property of their respective owners.</p>
+      
+      <h2>Contact</h2>
+      <p>For questions regarding copyright or licensing, please contact the application administrator.</p>
+      
+      <div class="copyright-footer">
+        <p><em>Last updated: <%= Date.current.strftime("%B %d, %Y") %></em></p>
+        <%= link_to "← Back to Game", root_path, class: "back-link" %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .copyright-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+  
+  .copyright-content h1 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .copyright-content h2 {
+    color: #555;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .copyright-text ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .copyright-text li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .copyright-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .back-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .back-link:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+</style>

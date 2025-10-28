@@ -34,4 +34,7 @@ Rails.application.routes.draw do
   post "/vote", to: "votes#create", as: :votes
 
   post "/vote", to: "vote#update"
+
+  # Copyright page
+  get "/copyright", to: "copyright#show", as: :copyright
 end
