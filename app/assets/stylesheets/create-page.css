@@ -122,6 +122,14 @@
   text-decoration: underline;
 }
 
+.babble a {
+  font-size: small;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: var(--gradient-primary);
+}
+
 @media (min-width: 768px) {
   .create-card {
     padding: var(--space-16) var(--space-12);
