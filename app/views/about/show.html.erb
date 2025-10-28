@@ -1,0 +1,71 @@
+<div class="about-page">
+  <div class="about-content">
+    <h1>About</h1>
+    
+    <div class="about-text">
+      <p>Made by Zach Justice.</p>
+      <p>For crawlers and goofs: <a href="/babble">/babble</a></p>
+    </div>
+    
+    <div class="about-footer">
+      <%= link_to "← Back to Game", root_path, class: "back-link" %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .about-page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    text-align: center;
+  }
+  
+  .about-content h1 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .about-text {
+    margin-bottom: 3rem;
+  }
+  
+  .about-text p {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .about-text a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .about-text a:hover {
+    text-decoration: underline;
+  }
+  
+  .about-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #ddd;
+  }
+  
+  .back-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .back-link:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+</style>

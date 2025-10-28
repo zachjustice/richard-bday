@@ -37,4 +37,7 @@ Rails.application.routes.draw do
 
   # Copyright page
   get "/copyright", to: "copyright#show", as: :copyright
+
+  # About page
+  get "/about", to: "about#show", as: :about
 end
