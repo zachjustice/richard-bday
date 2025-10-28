@@ -122,11 +122,17 @@
   text-decoration: underline;
 }
 
-.babble a {
-  font-size: small;
+.links {
   position: absolute;
   bottom: 0;
   right: 0;
+  font-size: small;
+  color: var(--gradient-primary);
+  margin-right: var(--space-1);
+}
+
+.links a {
+  font-size: small;
   color: var(--gradient-primary);
 }
 
