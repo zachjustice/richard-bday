@@ -1,6 +1,7 @@
 require_relative "boot"
 
 require "rails/all"
+require_relative "../app/middleware/bot_blocker_middleware"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -23,5 +24,8 @@ module RichardBday
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Before authentication look-ups or controllers, check if this request is fishy
+    config.middleware.insert_before ActionDispatch::Executor, BotBlockerMiddleware
   end
 end
