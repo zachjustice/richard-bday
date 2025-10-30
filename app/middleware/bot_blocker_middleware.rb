@@ -1,27 +1,45 @@
-module BotDetection
-  extend ActiveSupport::Concern
+class BotBlockerMiddleware
+  def initialize(app)
+    @app = app
+    @bot_path = "404-v2.html"
+    @invalid_extensions = [ "html", "php", "env", "git", "envrc", "old", "log" ]
+    @invalid_paths = [
+      "phpinfo", "cgi-bin", "bins", "geoserver", "webui", "geoip",
+      "boaform", "actuator/health", "developmentserver/metadatauploader", "manager/html"
+    ] + @invalid_extensions.map { |ext| ".#{ext}" }
+  end
 
-  included do
-    before_action :redirect_bots_to_babble
+  def call(env)
+    request = Rack::Request.new(env)
+    path = request.path.to_s
+
+    # Redirect AI bots and Firefox AI early, before Rails
+    if ai_bot_detected?(request) || firefox_ai_detected?(request)
+      location = "https://#{request.host}/babble"
+      return [ 301, { "Location" => location, "Cache-Control" => "no-cache, no-store" }, [] ]
+    end
+
+    if fishy_path?(path)
+      body = File.read(Rails.public_path.join(@bot_path))
+      return [ 200, {
+        "Content-Type" => "text/html; charset=utf-8",
+        "Cache-Control" => "no-cache, no-store"
+      }, [ body ] ]
+    end
+
+    @app.call(env)
   end
 
   private
 
-  def redirect_bots_to_babble
-    # Check for AI bot user agents
-    if ai_bot_detected?
-      redirect_to "http://#{request.host}/babble", status: :moved_permanently
-    end
+  def fishy_path?(path)
+    return true if @invalid_paths.any? { |needle| path.include?(needle) }
 
-    # Check for Firefox AI summaries
-    if firefox_ai_detected?
-      redirect_to "http://#{request.host}/babble", status: :moved_permanently
-    end
+    @invalid_extensions.any? { |ext| path.include?(".#{ext}") }
   end
 
-  def ai_bot_detected?
+  def ai_bot_detected?(request)
     user_agent = request.user_agent.to_s.downcase
-
     ai_bot_patterns = [
       "addsearchbot", "ai2bot", "ai2bot-dolma", "aihitbot", "amazonbot", "andibot",
       "anthropic-ai", "applebot", "applebot-extended", "awario", "bedrockbot",
@@ -45,11 +63,11 @@ module BotDetection
       "timpibot", "velenpublicwebcrawler", "wardbot", "webzio-extended", "wpbot",
       "yak", "yandexadditional", "yandexadditionalbot", "youbot"
     ]
-
     ai_bot_patterns.any? { |pattern| user_agent.include?(pattern) }
   end
 
-  def firefox_ai_detected?
-    request.headers["X-Firefox-AI"]&.downcase == "1"
+  def firefox_ai_detected?(request)
+    header = request.get_header("HTTP_X_FIREFOX_AI")
+    header && header.to_s.downcase == "1"
   end
 end

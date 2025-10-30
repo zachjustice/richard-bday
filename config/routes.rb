@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  mount RailsEventStore::Browser => "/res" if Rails.env.development?
   resource :session
   post "/sessions/resume", to: "sessions#resume" unless Rails.env.production?
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -40,4 +39,7 @@ Rails.application.routes.draw do
 
   # About page
   get "/about", to: "about#show", as: :about
+
+  # Handle 404s
+  match "*unmatched", to: "application#not_found_method", via: :all
 end
