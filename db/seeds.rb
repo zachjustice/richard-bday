@@ -279,38 +279,3 @@ stories =  [
 # seed_example_data
 puts("Creating stories")
 stories.each { |s| create_story(s) }
-"The most vexing part of the King of England's day.",
-"A wrong answer for the name of an ancient culture on your high school history quiz.",
-"The worst job to have in ancient rome.",
-"The worst person to run into at a party.",
-"Adjective your grand uncle uses for a pride parade.",
-"What a five year old thinks is the worst part of having a day job.",
-"A new form of bullying invented by cruel tweens.",
-"Suprsingly, this activity is most likely to make everyone hate you.",
-"The most complicated thing about being a toddler",
-"You want to be the next best-selling author for young adults. What CATCHY NICKNAME do you use for the evil organization that controls the world?",
-"You want to be the next best-selling author for young adults. What CATCHY NICKNAME do you use for the scrappy band of rebels that's going to save the world",
-
-"Your love interest is a 10, but has a pet _____",
-"Oh no! The wings you just ate were covered in ghost pepper hot sauce, but the only thing you have to drink is _____",
-"Stranded on this snowy mountain, our choices for food are _____ or cannibalism. Guess we're choosing cannibalism.",
-"Growing up my parents, said I could choose between being a lawyer, doctor, or _____",
-"What is a verb to describe the sound or reaction you make when you stub your toe?",
-"This year, this mythical beast is the heartthrob of all the teen girl: _____.",
-"A phrase you can say to try and sound wise that's actually dumb",
-
-"What is a made-up title of an academic essay about sex that was required reading in your college english class?",
-"What would be the worst possible name for a literary critic or academic author?",
-"Historians have found a long-lost Shakespearean play. Surprisingly, its named: _____",
-"What is the worst adjective to describe a Radical Movement's Agenda?",
-"What theme does your English teacher insist is in this play, but no matter how much you look, you can’t find it?",
-"What is your neighbor’s most annoying hobby?",
-
-"Name a fictional fast-food restaurant.",
-"Name a food item this restaurant sells.",
-"What's the BEST adjective to describe this food item?",
-"What's the WORST adjective to describe this food item?",
-"The city with the worst public bathrooms",
-"How your drunk aunt got arrested in Applebee's.",
-"The name of the president of this restaurant chain",
-"Famous catchphrase for this restaurant",
