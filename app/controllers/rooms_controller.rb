@@ -66,6 +66,7 @@ class RoomsController < ApplicationController
     @current_room = status_data[:current_room]
     @users = status_data[:users]
     @status = status_data[:status]
+    @total_game_prompts = status_data[:total_game_prompts]
     @game_prompt = status_data[:game_prompt]
     @answers = status_data[:answers]
     @users_with_submitted_answers = status_data[:users_with_submitted_answers]

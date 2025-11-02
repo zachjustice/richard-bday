@@ -7,7 +7,11 @@
   <div id="status-content-inner" class="status-content-inner">
     <div class="status-page-card">
       <% if @room.current_game.present? %>
-        <%= render "rooms/status/sidebar", room: @room %>
+        <%= render "rooms/status/sidebar", 
+        room: @room,
+        total_prompts: @total_game_prompts,
+        current_prompt_order: @room.current_game.current_game_prompt&.order
+        %>
       <% end %>
       <% case @status %>
       <% when RoomStatus::WaitingRoom %>

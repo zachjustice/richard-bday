@@ -8,7 +8,8 @@ class RoomStatusService
       room: @room,
       current_room: @room,
       users: fetch_users,
-      status: @room.status
+      status: @room.status,
+      total_game_prompts: GamePrompt.where(game: @room.current_game).count
     }.merge(status_specific_data)
   end
 
