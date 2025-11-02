@@ -1,0 +1,39 @@
+<%
+  game_prompts = GamePrompt.where(game_id: room.current_game_id).order(:order)
+  total_prompts = game_prompts.count
+  current_prompt_order = room.current_game.current_game_prompt&.order
+%>
+<aside class="game-progress-sidebar">
+  <div class="sidebar-header">
+    <h3 class="sidebar-title">Game Status</h3>
+  </div>
+  <div class="rounds-list">
+    <p class="round-counter">Round <%= current_prompt_order + 1 %> of <%= total_prompts %></p>
+    <% 
+      room_statuses = [
+        { icon: "✏️", text: "Answering", status: RoomStatus::Answering },
+        { icon: "🗳️", text: "Voting", status: RoomStatus::Voting },
+        { icon: "🏆", text: "Results", status: RoomStatus::Results },
+      ]
+      room_statuses.each_with_index do |curr, index| 
+    %>
+    <% 
+        is_current = curr[:status] == room.status
+        is_completed = index < (room_statuses.find_index{|rs| rs[:status] == room.status} || room_statuses.size)
+      %>
+    <div class="game-status-badge <%= is_completed ? 'completed-game-phase' : nil %> <%= is_current ? 'current-game-phase' : nil %>">
+      <% if is_completed %>
+        <span class="status-icon">✔️</span>
+      <% else %>
+        <span class="status-icon"><%= curr[:icon] %></span>
+      <% end %>
+      <span class="status-text"><%= curr[:text] %></span>
+    </div>
+  <% end %>
+  <div class="separator"></div>
+  <div class="game-status-badge <%= room.status == RoomStatus::FinalResults ? 'current-game-phase' : nil %>">
+    <span class="status-icon">📜</span>
+    <span class="status-text">Final Story</span>
+  </div>
+</div>
+</aside>

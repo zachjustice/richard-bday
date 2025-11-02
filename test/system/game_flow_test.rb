@@ -200,7 +200,8 @@ class GameFlowTest < ApplicationSystemTestCase
     using_session(:host) do
       connect_turbo_cable_stream_sources
       click_button "Start New Game"
-      assert_text "Waiting"
+      assert_text "Stories"
+      assert_text "Players"
     end
   end
 

@@ -5,17 +5,19 @@
     </div>
   </div>
 
-  <div class="header-center">
-    <%= render_status_badge(@status) %>
-  </div>
-
-  <div class="header-right" data-controller="copy-code">
-    <div class="room-code-container">
+  <div class="header-center" >
+    <div class="room-code-container" data-controller="copy-code">
       <span class="room-code-label">Room Code:</span>
       <span class="room-code-display"><%= @room.code.upcase %></span>
       <button class="copy-button" data-room-code="<%= @room.code.upcase %>" data-action="click->copy-code#copy" title="Copy room code">
         📋
       </button>
     </div>
+  </div>
+
+  <div class="header-right">
+    <span class="text-xl">
+      ⚙️
+    </span>
   </div>
 </header>

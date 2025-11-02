@@ -132,6 +132,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    htmlbeautifier (1.4.3)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.2.2)
@@ -384,6 +385,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   cuprite
   debug
+  htmlbeautifier (~> 1.4)
   importmap-rails
   jbuilder
   jquery-rails

@@ -327,3 +327,7 @@
     width: 50%;
   }
 }
+
+.separator {
+  border-top: 2px dashed var(--border-light)
+}

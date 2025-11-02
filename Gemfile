@@ -71,3 +71,5 @@ gem "requestjs-rails"
 gem "ruby-lsp-rails", "~> 0.4.8"
 
 gem "minitest-stub_any_instance", "~> 1.0"
+
+gem "htmlbeautifier", "~> 1.4"

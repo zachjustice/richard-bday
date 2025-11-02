@@ -1,10 +1,10 @@
 class Helpers
-  def self.create_player(room, name)
-    User.find_or_create_by!(room: room, name: name)
+  def self.create_player(room_id, name)
+    User.find_or_create_by!(room_id: room_id, name: name)
   end
 
-  def self.create_answers(room, answers)
-    room.reload
+  def self.create_answers(room_id, answers)
+    room = Room.find(room_id)
     g = room.current_game
     gp = g.current_game_prompt
 
@@ -27,8 +27,8 @@ class Helpers
     end
   end
 
-  def self.create_votes(room, num_votes, tie = false)
-    room.reload
+  def self.create_votes(room_id, num_votes, tie = false)
+    room = Room.find(room_id)
     g = room.current_game
     gp = g.current_game_prompt
     answers = Answer.where(
@@ -48,7 +48,7 @@ class Helpers
             game: g,
             game_prompt: gp,
             user: u,
-            answer: tie ? answers.pop : answer.sample
+            answer: tie ? answers.pop : answers.sample
           )
           num_votes -= 1
         end

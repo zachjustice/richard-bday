@@ -198,22 +198,22 @@ stories =  [
   {
     title: "A Fable on Gluttony",
     original_text: "A VERY HUNGRY FOX, seeing some bread and meat left by shepherds in the hollow of an oak, crept into the hole and made a hearty meal. When he finished, he was so full that he was not able to get out, and began to groan and lament his fate. Another Fox passing by heard his cries, and coming up, inquired the cause of his complaining. On learning what had happened, he said to him, “Ah, you will have to remain there, my friend, until you become such as you were when you crept in, and then you will easily get out.”",
-    text: "A VERY HUNGRY {1}, seeing some {2} and {3} left by {4} in the hollow of an oak, crept into the hole and made a hearty meal. When they finished, she was so full that she was not able to get out, and began to {5} and lament her fate. Another {6} passing by heard their cries, and coming up, inquired the cause of his complaining. On learning what had happened, it said to her, “{7}”",
+    text: "A VERY HUNGRY {1}, seeing some {2} and {3} left by a {4} in the hollow of an oak, crept into the hole and made a hearty meal. When she finished, she was so full that she was not able to get out, and began to {5} and lament her fate. Another {6} passing by heard her cries, and coming up, inquired the cause of her complaining. On learning what had happened, it said to her, “{7}”",
     prompts: [
       [
         "Your love interest is a 10, but has a pet _____",
         [ "noun", "animal", "aesops_fable" ]
       ],
       [
-        "Oh no! The wings you just ate were covered in ghost pepper hot sauce, but the only thing you have to drink is _____",
+        "Oh no! The wings you ate were covered in ghost pepper hot sauce, but the only thing you have to drink is _____.",
         [ "noun", "drink", "aesops_fable" ]
       ],
       [
-        "Stranded on this snowy mountain, our choices for food are _____ or cannibalism. Guess we're choosing cannibalism.",
+        "Stranded on this snowy mountain, our choices for food are _____ or cannibalism. Guess we're choosing cannibalism!",
         [ "noun", "food", "aesops_fable" ]
       ],
       [
-        "Growing up my parents, said I could choose between being a lawyer, doctor, or _____",
+        "Growing up, my parents said I could choose between being a lawyer, doctor, or _____.",
         [ "noun", "career", "aesops_fable" ]
       ],
       [
@@ -225,7 +225,7 @@ stories =  [
         [ "noun", "animal", "aesops_fable" ]
       ],
       [
-        "A phrase you can say to try and sound wise that's actually dumb",
+        "A phrase you can say to try and sound wise that's actually dumb.",
         [ "phrase", "dumb_wise", "aesops_fable" ]
       ]
     ]

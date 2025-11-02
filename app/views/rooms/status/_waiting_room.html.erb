@@ -1,39 +1,31 @@
 <%= turbo_stream_from "rooms:#{room.id}:users" %>
 
-<div class="status-page-spacing waiting-room-container">
-  <div class="waiting-room-content">
-    <div class="waiting-room-card">
-      <div class="waiting-room-grid">
-        <div class="stories-section">
-          <h3>Stories</h3>
-          <%= form_with url: "/rooms/#{room.id}/start", method: :post, class: "story-form" do |form| %>
-            <div id="stories-list-container">
-              <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title'), class: 'story-select' %>
-            </div>
-            <%= form.submit "Start Game", class: "start-button" %>
-          <% end %>
+<div class="room-content-card">
+  <div class="waiting-room-grid">
+    <div class="stories-section">
+      <h3>Stories</h3>
+      <%= form_with url: "/rooms/#{room.id}/start", method: :post, class: "story-form" do |form| %>
+        <div id="stories-list-container">
+          <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title'), class: 'story-select' %>
         </div>
+        <%= form.submit "Start Game", class: "start-button" %>
+      <% end %>
+    </div>
 
-        <div class="users-section">
-          <h3>Players</h3>
-          <div id="users-list-container">
-            <ul id="waiting-room" class="players-list">
-              <% if users.empty? %>
-                <%# First element is deleted when the first user joins %>
-                <li id="no-users-yet" class="no-players"><i>No users yet</i></li>
-              <% end %>
-              <% users.each do |user| %>
-                <%= render "rooms/partials/user_list_item", user: user %>
-              <% end %>
-            </ul>
-          </div>
-        </div>
+    <div class="users-section">
+      <h3>Players</h3>
+      <div id="users-list-container">
+        <ul id="waiting-room" class="players-list">
+          <% if users.empty? %>
+            <%# First element is deleted when the first user joins %>
+            <li id="no-users-yet" class="no-players"><i>No users yet</i></li>
+          <% end %>
+          <% users.each do |user| %>
+            <%= render "rooms/partials/user_list_item", user: user %>
+          <% end %>
+        </ul>
       </div>
     </div>
-    <div class="qr-code">
-      <span>Scan the QR code to join the game:</span>
-      <img id="qr-code" src="">
-      <span>Or visit <a href="https://blanksies.zachjustice.dev">blanksies.zachjustice.dev</a></span>
-    </div>
-  <div>
+  </div>
+
 </div>
