@@ -18,34 +18,27 @@ class RoomsController < ApplicationController
 
     first_game_prompt_id = create_game_prompts(story, game).first.id
 
-    game.update!(current_game_prompt_id: first_game_prompt_id)
-    Room.find(room_id).update!(status: RoomStatus::Answering, current_game_id: game.id)
+    room = Room.find(room_id)
+    room.update!(current_game_id: game.id)
 
-    ActionCable.server.broadcast(
-      "rooms:#{room_id.to_i}",
-      Events.create_next_prompt_event(first_game_prompt_id)
-    )
+    move_to_next_game_prompt(room, first_game_prompt_id)
     redirect_to controller: "rooms", action: "status", id: room_id
   end
 
   def next
     room = Room.find(params[:id])
+    prev_game_prompt_id = room.current_game.current_game_prompt_id
     current_game_prompt_order = room.current_game.current_game_prompt.order
     next_game_prompt_id = GamePrompt.find_by(game_id: room.current_game_id, order: current_game_prompt_order + 1)&.id
     if next_game_prompt_id.nil?
       room.update!(status: RoomStatus::FinalResults)
       ActionCable.server.broadcast(
         "rooms:#{params[:id].to_i}",
-        Events.create_final_results_event(next_game_prompt_id)
+        Events.create_final_results_event(prev_game_prompt_id)
       )
       redirect_to controller: "rooms", action: "status", id: params[:id]
     else
-      ActionCable.server.broadcast(
-        "rooms:#{params[:id].to_i}",
-        Events.create_next_prompt_event(next_game_prompt_id)
-      )
-      Room.find(params[:id]).update!(status: RoomStatus::Answering)
-      room.current_game.update!(current_game_prompt_id: next_game_prompt_id)
+      move_to_next_game_prompt(room, next_game_prompt_id)
 
       redirect_to controller: "rooms", action: "status", id: params[:id]
     end
@@ -58,7 +51,7 @@ class RoomsController < ApplicationController
       return redirect_to root_path
     end
 
-    status_data = RoomStatusService.new(params[:id]).call
+    status_data = RoomStatusService.new(room).call
     @status_data = status_data
 
     @room = status_data[:room]
@@ -129,10 +122,30 @@ class RoomsController < ApplicationController
       status: RoomStatus::WaitingRoom,
       current_game: nil
     )
+    ActionCable.server.broadcast(
+      "rooms:#{current_room.id}",
+      Events.create_new_game_event(current_room.id)
+    )
     redirect_to controller: "rooms", action: "status", id: params[:id]
   end
 
+  def waiting_for_new_game
+  end
+
   private
+
+  def move_to_next_game_prompt(room, next_game_prompt_id)
+    ActionCable.server.broadcast(
+      "rooms:#{room.id}",
+      Events.create_next_prompt_event(next_game_prompt_id)
+    )
+    room.update!(status: RoomStatus::Answering)
+    next_game_phase_time = Time.now + room.time_to_answer_seconds + GameConstants::COUNTDOWN_FORGIVENESS_SECONDS
+    room.current_game.update!(current_game_prompt_id: next_game_prompt_id, next_game_phase_time: next_game_phase_time)
+
+    # Start timer for answers
+    AnsweringTimesUpJob.set(wait_until: next_game_phase_time).perform_later(room, next_game_prompt_id)
+  end
 
   def current_user
     @current_user ||= User.find_by_id(session[:user_id])

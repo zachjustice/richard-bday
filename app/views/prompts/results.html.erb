@@ -1,7 +1,6 @@
 <%= stylesheet_link_tag "prompt-results", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-
-<div id="results" data-controller="prompt-results" class="prompt-results-container">
+<div id="results" data-controller="prompt" class="prompt-results-container">
   <div class="prompt-results-card">
     <% if @status == RoomStatus::FinalResults %>
       <div class="status-display final-results">
@@ -40,13 +39,11 @@
         <h2 class="status-title">Round Complete!</h2>
         <p class="status-message">Check the big screen for the winner!</p>
       </div>
-
       <div class="progress-dots">
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
       </div>
     <% end %>
-
   </div>
 </div>

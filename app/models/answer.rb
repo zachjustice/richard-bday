@@ -1,4 +1,5 @@
 class Answer < ApplicationRecord
+  DEFAULT_ANSWER = "poop"
   belongs_to :game_prompt
   belongs_to :user
   belongs_to :game

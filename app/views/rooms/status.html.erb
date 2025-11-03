@@ -1,30 +1,29 @@
 <%= stylesheet_link_tag "room-status", "data-turbo-track": "reload" %>
-<%= stylesheet_link_tag "game-progress-sidebar", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@room.id}:status" %>
 <%= render "rooms/status/header" %>
 <div class="status-content" data-controller="room-status">
   <%= tag.div(flash[:notice], class: "error-notice") if flash[:notice] %>
   <div id="status-content-inner" class="status-content-inner">
     <div class="status-page-card">
-      <% if @room.current_game.present? %>
-        <%= render "rooms/status/sidebar", 
-        room: @room,
-        total_prompts: @total_game_prompts,
-        current_prompt_order: @room.current_game.current_game_prompt&.order
-        %>
-      <% end %>
-      <% case @status %>
-      <% when RoomStatus::WaitingRoom %>
-        <%= render partial: "rooms/status/waiting_room", locals: @status_data %>
-      <% when RoomStatus::Answering %>
-        <%= render partial: "rooms/status/answering", locals: @status_data %>
-      <% when RoomStatus::Voting %>
-        <%= render partial: "rooms/status/voting", locals: @status_data %>
-      <% when RoomStatus::Results %>
-        <%= render partial: "rooms/status/results", locals: @status_data %>
-      <% when RoomStatus::FinalResults %>
-        <%= render partial: "rooms/status/final_results", locals: @status_data %>
-      <% end %>
+      <div id="turbo-target-sidebar">
+        <% if @room.current_game.present? %>
+          <%= render partial: "rooms/status/sidebar", locals: @status_data %>
+        <% end %>
+      </div>
+      <div id="turbo-target-status-page" class="status-page-card">
+        <% case @status %>
+        <% when RoomStatus::WaitingRoom %>
+          <%= render partial: "rooms/status/waiting_room", locals: @status_data %>
+        <% when RoomStatus::Answering %>
+          <%= render partial: "rooms/status/answering", locals: @status_data %>
+        <% when RoomStatus::Voting %>
+          <%= render partial: "rooms/status/voting", locals: @status_data %>
+        <% when RoomStatus::Results %>
+          <%= render partial: "rooms/status/results", locals: @status_data %>
+        <% when RoomStatus::FinalResults %>
+          <%= render partial: "rooms/status/final_results", locals: @status_data %>
+        <% end %>
+      </div>
     </div>
     <% if @room.status == RoomStatus::WaitingRoom %>
       <div class="qr-code">
@@ -35,4 +34,3 @@
     <% end %>
   </div>
 </div>
-<%= render "rooms/status/footer" %>

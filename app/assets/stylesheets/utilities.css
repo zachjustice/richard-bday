@@ -4,6 +4,10 @@
  */
 
 /* Layout Utilities */
+.hidden {
+  display: none;
+}
+
 .flex {
   display: flex;
 }

@@ -7,6 +7,7 @@ class Events
     VoteSubmitted = "VoteSubmitted"
     VotingDone =  "VotingDone"
     FinalResults = "FinalResults"
+    NewGame = "NewGame"
   end
 
   def self.create_user_joined_room_event(user_name)
@@ -29,11 +30,15 @@ class Events
       { messageType: MessageType::VoteSubmitted, prompt: vote.game_prompt_id, user: vote.user.name }
   end
 
-  def self.create_voting_done_event(vote)
-      { messageType: MessageType::VotingDone, prompt: vote.game_prompt_id }
+  def self.create_voting_done_event(game_prompt_id)
+      { messageType: MessageType::VotingDone, prompt: game_prompt_id }
   end
 
   def self.create_final_results_event(game_prompt_id)
       { messageType: MessageType::FinalResults, prompt: game_prompt_id }
+  end
+
+  def self.create_new_game_event(room_id)
+      { messageType: MessageType::NewGame, room: room_id }
   end
 end

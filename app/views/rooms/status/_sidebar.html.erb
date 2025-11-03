@@ -1,29 +1,28 @@
-<aside class="game-progress-sidebar">
+<%= stylesheet_link_tag "game-progress-sidebar", "data-turbo-track": "reload" %>
+<div id="game-progress-sidebar" class="game-progress-sidebar">
   <div class="sidebar-header">
     <h3 class="sidebar-title">Game Status</h3>
   </div>
   <div class="rounds-list">
-    <p class="round-counter">Round <%= room.current_game.current_game_prompt.order + 1 %> of <%= total_prompts %></p>
-    <% 
-      RoomsHelper::GAME_PHASES.each_with_index do |curr, index| 
-    %>
-    <% 
-        is_current = curr[:status] == room.status
-        is_completed = index < (RoomsHelper::GAME_PHASES.find_index{|rs| rs[:status] == room.status} || RoomsHelper::GAME_PHASES.size)
-      %>
-    <div class="game-status-badge <%= is_completed ? 'completed-game-phase' : nil %> <%= is_current ? 'current-game-phase' : nil %>">
-      <% if is_completed %>
-        <span class="status-icon">✔️</span>
-      <% else %>
-        <span class="status-icon"><%= curr[:icon] %></span>
-      <% end %>
-      <span class="status-text"><%= curr[:text] %></span>
+    <p class="round-counter">Round <%= room.current_game.current_game_prompt.order + 1 %> of <%= total_game_prompts %></p>
+    <% RoomsHelper::GAME_PHASES.each_with_index do |curr, index| %>
+      <% 
+          is_current = curr[:status] == room.status
+          is_completed = index < (RoomsHelper::GAME_PHASES.find_index{|rs| rs[:status] == room.status} || RoomsHelper::GAME_PHASES.size)
+        %>
+      <div class="game-status-badge <%= is_completed ? 'completed-game-phase' : nil %> <%= is_current ? 'current-game-phase' : nil %>">
+        <% if is_completed %>
+          <span class="status-icon">✔️</span>
+        <% else %>
+          <span class="status-icon"><%= curr[:icon] %></span>
+        <% end %>
+        <span class="status-text"><%= curr[:text] %></span>
+      </div>
+    <% end %>
+    <div class="separator"></div>
+    <div class="game-status-badge <%= room.status == RoomStatus::FinalResults ? 'current-game-phase' : nil %>">
+      <span class="status-icon">📜</span>
+      <span class="status-text">Final Story</span>
     </div>
-  <% end %>
-  <div class="separator"></div>
-  <div class="game-status-badge <%= room.status == RoomStatus::FinalResults ? 'current-game-phase' : nil %>">
-    <span class="status-icon">📜</span>
-    <span class="status-text">Final Story</span>
   </div>
 </div>
-</aside>

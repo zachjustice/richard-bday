@@ -1,6 +1,5 @@
 <%= stylesheet_link_tag "prompt-waiting", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-
 <div data-controller="prompt" class="prompt-waiting-container">
   <div class="prompt-waiting-card">
     <div class="waiting-header">
@@ -13,7 +12,6 @@
       <h2 class="waiting-title">Answer Submitted</h2>
       <p class="waiting-subtitle">Waiting for everyone to submit answers...</p>
     </div>
-
     <%= render "shared/fun_facts" %>
   </div>
 </div>

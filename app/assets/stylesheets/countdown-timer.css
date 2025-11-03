@@ -1,0 +1,87 @@
+/* Countdown Timer Component */
+.countdown-timer {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+}
+
+.countdown-timer-svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.countdown-timer-circle-bg {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.1);
+  stroke-width: 6;
+}
+
+.countdown-timer-circle {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke 0.3s ease;
+}
+
+/* Color phases */
+.countdown-timer[data-phase="green"] .countdown-timer-circle {
+  stroke: #22c55e;
+}
+
+.countdown-timer[data-phase="orange"] .countdown-timer-circle {
+  stroke: #f97316;
+}
+
+.countdown-timer[data-phase="red"] .countdown-timer-circle {
+  stroke: #ef4444;
+}
+
+/* Flash animation when time is up */
+.countdown-timer[data-phase="zero"] .countdown-timer-circle-bg {
+  stroke: #ef4444;
+  animation: flashRed 1s ease-in-out infinite;
+}
+
+.countdown-timer[data-phase="zero"] .countdown-timer-display {
+  color: #ef4444;
+  animation: flashRed 1s ease-in-out infinite;
+}
+
+.countdown-timer-display {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+/* Responsive sizing for header placement */
+@media (max-width: 640px) {
+  .countdown-timer {
+    width: 60px;
+    height: 60px;
+  }
+
+  .countdown-timer-display {
+    font-size: var(--font-size-base);
+  }
+
+  .countdown-timer-circle-bg,
+  .countdown-timer-circle {
+    stroke-width: 5;
+  }
+}
+
+@keyframes flashRed {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}

@@ -1,0 +1,16 @@
+<%= stylesheet_link_tag "waiting-for-new-game", "data-turbo-track": "reload" %>
+<%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+<div id="results" data-controller="prompt"  class="prompt-results-container">
+  <div class="prompt-results-card">
+    <div class="status-display">
+      <div class="waiting-animation">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring spinner-ring-2"></div>
+        <div class="spinner-ring spinner-ring-3"></div>
+      </div>
+      <h2 class="status-title">Between Games</h2>
+      <p class="status-message">Waiting for a new game to start...</p>
+      <%= render "shared/fun_facts" %>
+    </div>
+  </div>
+</div>

@@ -3,16 +3,31 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    RoomMessageHub.register(EventType.NewPrompt, (event) => {
-      console.log("RoomMessageHub:PromptController:Listener:NewPrompt", event)
-      // Should these actions happen server side?
-      Turbo.visit(`/prompts/${event.prompt}`)
-    })
-
     RoomMessageHub.register(EventType.StartVoting, (event) => {
       console.log("RoomMessageHub:PromptController:Listener:StartVoting", event)
       // Should these actions happen server side?
       Turbo.visit(`/prompts/${event.prompt}/voting`)
+    })
+
+    RoomMessageHub.register(EventType.VotingDone, (event) => {
+      console.log("RoomMessageHub:PromptController:Listener:VotingDone", event)
+      Turbo.visit(`/prompts/${event.prompt}/results`)
+    })
+
+    RoomMessageHub.register(EventType.NextPrompt, (event) => {
+      console.log("RoomMessageHub:RoomController:Listener:NextPrompt", event)
+      Turbo.visit(`/prompts/${event.prompt}`)
+    })
+
+    RoomMessageHub.register(EventType.FinalResults, (event) => {
+      console.log("RoomMessageHub:RoomController:Listener:FinalResults", event)
+      Turbo.visit(`/prompts/${event.prompt}/results`)
+    })
+
+    RoomMessageHub.register(EventType.NewGame, (event) => {
+      console.log("RoomMessageHub:PromptController:Listener:NewGame", event)
+      // Should these actions happen server side?
+      Turbo.visit(`/rooms/${event.room}/waiting_for_new_game`)
     })
   }
 

@@ -740,34 +740,9 @@
 }
 
 /* Results Page Styles */
-.results-container {
-  background: linear-gradient(135deg, #fff9f0 0%, #f0fff4 100%);
-}
-
-.results-card {
-  overflow: hidden;
-  background: var(--bg-primary);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-2xl);
-  padding: var(--space-8);
-  max-width: 900px;
-  width: 100%;
-  position: relative;
-}
-
-.results-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--gradient-primary-simple);
-  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-}
-
 .winner-announcement,
-.tie-announcement {
+.tie-announcement,
+.no-winners-announcement {
   text-align: center;
   padding: var(--space-8);
   margin-bottom: var(--space-8);
@@ -785,8 +760,14 @@
   border: 2px solid rgba(251, 146, 60, 0.3);
 }
 
+.no-winners-announcement {
+  background: linear-gradient(135deg, rgba(251, 60, 60, 0.1) 0%, rgba(251, 60, 60, 0.2) 100%);
+  border: 2px solid rgba(251, 60, 60, 0.3);
+}
+
 .winner-icon,
-.tie-icon {
+.tie-icon,
+.no-winners-icon {
   font-size: 4rem;
   margin-bottom: var(--space-4);
   animation: bounce 1s ease-in-out;
@@ -813,14 +794,16 @@
 }
 
 .winner-text,
-.tie-text {
+.tie-text,
+.no-winners-text {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--text-primary);
   margin: 0;
 }
 
-.tie-players {
+.tie-players,
+.no-winners-players {
   font-size: var(--font-size-lg);
   color: var(--text-secondary);
   margin-top: var(--space-2);

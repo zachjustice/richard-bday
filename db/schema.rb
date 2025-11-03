@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_26_010599) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_03_024559) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -53,6 +53,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_26_010599) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "current_game_prompt_id"
+    t.datetime "next_game_phase_time"
     t.index ["current_game_prompt_id"], name: "index_games_on_current_game_prompt_id"
     t.index ["room_id"], name: "index_games_on_room_id"
     t.index ["story_id"], name: "index_games_on_story_id"
@@ -71,6 +72,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_26_010599) do
     t.datetime "updated_at", null: false
     t.string "status", default: "WaitingRoom"
     t.integer "current_game_id"
+    t.integer "time_to_answer_seconds", default: 60, null: false
+    t.integer "time_to_vote_seconds", default: 60, null: false
     t.index ["code"], name: "index_rooms_on_code", unique: true
     t.index ["current_game_id"], name: "index_rooms_on_current_game_id"
   end

@@ -1,32 +1,26 @@
 <%= stylesheet_link_tag "prompt-answer", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-
-<div class="prompt-answer-container">
+<div class="prompt-answer-container" data-controller="prompt">
   <div class="prompt-answer-card">
     <% if flash[:alert] %>
       <div class="alert-message">
-        <span class="alert-icon">⚠️</span>
-        <%= flash[:alert] %>
-      </div>
+        <span class="alert-icon">⚠️</span> <%= flash[:alert] %> </div>
+    <% end %> <% if flash[:notice] %>
+      <div class="notice-message"> <span class="notice-icon">✓</span> <%= flash[:notice] %> </div>
     <% end %>
-
-    <% if flash[:notice] %>
-      <div class="notice-message">
-        <span class="notice-icon">✓</span>
-        <%= flash[:notice] %>
-      </div>
-    <% end %>
-
     <div class="prompt-display">
       <div class="prompt-icon">💭</div>
       <h2 class="prompt-text"><%= @game_prompt.prompt.description %></h2>
       <p class="prompt-hint">Next, players vote on their favorite answer</p>
     </div>
-
-    <div class="answer-form-section">
+    <div class="answer-form-section"
+         data-controller="auto-submitter"
+         <%# autosubmit 5 seconds before the actual timeline %>
+         data-auto-submitter-duration-value="<%= @current_room.current_game.next_game_phase_time - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS - Time.now %>"
+         data-auto-submitter-display-at-value="<%= @current_room.current_game.next_game_phase_time - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS - 10.seconds %>" 
+    >
       <%= form_with url: "/answer", method: :post, class: "answer-form" do |form| %>
         <%= form.hidden_field :prompt_id, required: true, value: @game_prompt.id %>
-
         <div class="form-group">
           <label for="answer-text" class="form-label">
             Answer
@@ -38,7 +32,14 @@
               placeholder: "...",
               class: "form-input answer-input" %>
         </div>
-
+        <% if @current_room&.current_game&.next_game_phase_time %>
+          <div class="auto-submitter hidden" data-auto-submitter-target="container">
+            Auto-submitting 
+            <span class="auto-submitter-display" data-auto-submitter-target="display">
+              in 10
+            </span>
+          </div>
+        <% end %>
         <%= form.submit "Submit Answer", class: "submit-button" %>
       <% end %>
     </div>

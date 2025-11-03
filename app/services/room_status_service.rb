@@ -1,6 +1,16 @@
 class RoomStatusService
-  def initialize(room_id)
-    @room = Room.find(room_id)
+  # TODO: replace the service with query helpers in each view.
+  # I think that's a better pattern. Place the data as close as possible to the view.
+  # For example, each partial and view would do something like this at the top of the page:
+  # <% x, y, z = Queries.call(page: :my_current_page) %>
+  def initialize(room)
+    if room.is_a?(Integer)
+      @room = Room.find(room)
+    elsif room.is_a?(Room)
+      @room = room
+    else
+      raise "Invalid parameter. 'room': #{room}."
+    end
   end
 
   def call
@@ -76,6 +86,14 @@ class RoomStatusService
     if winner.nil? && winners.any?
       winner = winners.sample
       winner.update!(won: true)
+    else
+      # No one voted. Set the answer to "poop"
+      Answer.new(
+        game: @room.current_game,
+        game_prompt: @room.current_game.current_game_prompt,
+        user: User.creator.find_by(room: @room),
+        text: Answer::DEFAULT_ANSWER
+      )
     end
 
     {

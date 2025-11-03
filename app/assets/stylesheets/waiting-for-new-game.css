@@ -1,3 +1,4 @@
+
 /* Prompt Results Page Styles */
 .prompt-results-container {
   min-height: 100vh;
@@ -44,22 +45,14 @@
   border-radius: var(--radius-3xl) var(--radius-3xl) 0 0;
 }
 
-/* Status Display */
 .status-display {
   text-align: center;
   margin-bottom: var(--space-8);
 }
 
-@keyframes bounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-15px);
-  }
+.waiting-animation {
+  width: 120px;
+  height: 120px;
 }
 
 .status-title {
@@ -75,44 +68,6 @@
   color: var(--text-secondary);
   margin: 0 0 var(--space-8) 0;
   font-style: italic;
-}
-
-
-/* Progress Dots */
-.progress-dots {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-3);
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  background: var(--color-primary-purple);
-  border-radius: 50%;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-.dot:nth-child(2) {
-  animation-delay: 0.3s;
-}
-
-.dot:nth-child(3) {
-  animation-delay: 0.6s;
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.5);
-    opacity: 0.5;
-  }
 }
 
 /* Responsive Design */

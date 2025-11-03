@@ -23,6 +23,7 @@ const EventType = Object.freeze({
   VoteSubmitted: "VoteSubmitted",
   VotingDone: "VotingDone",
   FinalResults: "FinalResults",
+  NewGame: "NewGame",
 })
 
 class MessageHub {

@@ -9,6 +9,7 @@ class User < ApplicationRecord
   validates :room_id, presence: true
 
   scope :players, -> { where(role: PLAYER) }
+  scope :creator, -> { where(role: CREATOR) }
 
   after_commit(on: :create) { JoinRoomJob.perform_later(self) }
 end

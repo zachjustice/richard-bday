@@ -1,30 +1,18 @@
 <%= turbo_stream_from "rooms:#{room.id}:votes" %>
 <div class="room-content-card">
   <div class="prompt-section">
-    <div class="prompt-icon">🗳️</div>
+    <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
     <h2 class="prompt-text">Vote for the best answer on your device!</h2>
     <p class="prompt-instruction"><%= game_prompt.prompt.description %></p>
   </div>
   <div class="progress-section">
     <h3>Voting Progress</h3>
-    <div class="progress-grid">
-      <div class="progress-stats">
-        <div class="stat-card stat-completed">
-          <span class="stat-number"><%= votes.count %></span>
-          <span class="stat-label">Completed</span>
-        </div>
-        <div class="stat-card stat-waiting">
-          <span class="stat-number"><%= users.count - votes.count %></span>
-          <span class="stat-label">Waiting</span>
-        </div>
-      </div>
-      <div class="completed-users">
-        <ul id="users-with-status-list" class="users-list-with-status">
-          <% users.each do |user| %>
-            <%= render "rooms/partials/user_with_status_item", user: user, completed: users_with_vote.include?(user.name) %>
-          <% end %>
-        </ul>
-      </div>
+    <div class="completed-users">
+      <ul id="users-with-status-list" class="users-list-with-status">
+        <% users.each do |user| %>
+          <%= render "rooms/partials/user_with_status_item", user: user, completed: users_with_vote.include?(user.name) %>
+        <% end %>
+      </ul>
     </div>
   </div>
 </div>

@@ -13,35 +13,44 @@
       "#{w.user.name}#{w.id == winner.id ? '*' : ''}"
       }.join(' • ') %></p>
     </div>
-  <% end %>
-  <div class="results-section">
-    <h3>Answers</h3>
-    <div class="answers-list">
-      <% answers_by_id.each do |id, answer| %>
-        <div class="answer-card <%= winners.include?(answer) ? 'answer-winner' : '' %>">
-          <div class="answer-text-and-author">
-            <span class="answer-text"><%= answer.text %> <%= winner.id == id  ? '🏆' : '' %></span>
-            <span class="answer-author"><%= answer.user.name %></span>
-          </div>
-          <div class="answer-meta">
-            <% if votes_by_answer[id]&.any? %>
-              <div class="answer-voters">
-                <% if votes_by_answer[id]&.count == 0 %>
-                  <span class="voters-label">0 Votes</span>
-                <% else%>
-                  <div class="voters-tags">
-                    <% votes_by_answer[id].each do |vote| %>
-                      <span class="voter-tag"><%= vote.user.name %></span>
-                    <% end %>
-                  </div>
-                <% end%>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
+  <% elsif winners.size == 0 %>
+    <div class="no-winners-announcement">
+      <div class="no-winners-icon">❌</div>
+      <h2 class="no-winners-text">No votes!</h2>
+      <p class="no-winners-players">Answer set to "poop."</p>
+      <p class="no-winners-players">Be more creative next time.</p>
     </div>
-  </div>
+  <% end %>
+  <% if winners.size > 0 %>
+    <div class="results-section">
+      <h3>Answers</h3>
+      <div class="answers-list">
+        <% answers_by_id.each do |id, answer| %>
+          <div class="answer-card <%= winners.include?(answer) ? 'answer-winner' : '' %>">
+            <div class="answer-text-and-author">
+              <span class="answer-text"><%= answer.text %> <%= winner.id == id  ? '🏆' : '' %></span>
+              <span class="answer-author"><%= answer.user.name %></span>
+            </div>
+            <div class="answer-meta">
+              <% if votes_by_answer[id]&.any? %>
+                <div class="answer-voters">
+                  <% if votes_by_answer[id]&.count == 0 %>
+                    <span class="voters-label">0 Votes</span>
+                  <% else%>
+                    <div class="voters-tags">
+                      <% votes_by_answer[id].each do |vote| %>
+                        <span class="voter-tag"><%= vote.user.name %></span>
+                      <% end %>
+                    </div>
+                  <% end%>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
   <%= form_with url: "/rooms/#{room.id}/next", method: :post, class: "next-form" do |form| %>
     <%= form.submit "Next Round", class: "next-button" %>
   <% end %>
