@@ -1,13 +1,11 @@
 <%= stylesheet_link_tag "room-lobby", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-
-<div data-controller="room" class="room-lobby-container">
+<div data-controller="prompt" class="room-lobby-container">
   <div class="room-lobby-card">
     <div class="lobby-header">
       <div class="lobby-icon">☺️</div>
       <h1 class="lobby-title">Welcome, <%= @current_user.name %>!</h1>
     </div>
-
     <div class="waiting-section">
       <p class="waiting-text">Waiting for other players to join...</p>
     </div>
