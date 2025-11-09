@@ -1,16 +1,16 @@
 <%= stylesheet_link_tag "fun-facts", "data-turbo-track": "reload" %>
 <% fun_facts = [
-  { icon: "🐙", text: "Octopuses have three hearts and no feelings!" },
-  { icon: "🌟", text: "A year on Mars is longer than a day on Mars!" },
-  { icon: "🦒", text: "Giraffes only need 15 minutes of sleep per day!" },
-  { icon: "🌊", text: "The ocean produces over 99% of Earth's fish!" },
+  { icon: "🐙", text: "On average, octopi have less than 8 arms!" },
+  { icon: "🌟", text: "A year on Mars is longer than a day on Earth!" },
+  { icon: "🦒", text: "Giraffe's long necks let look down on you!" },
+  { icon: "🌊", text: "The ocean holds most of the Earth's fish!" },
   { icon: "🪐", text: "Saturn's rings encompass the entire planet!" },
-  { icon: "🐝", text: "Bees can recognize human faces, but only if they're scientific researchers!" },
-  { icon: "🌲", text: "Do trees talk to each other? Did they say anything about me." },
-  { icon: "🌙", text: "The Moon is slowly getting closer to Earth!" },
+  { icon: "🐝", text: "Bees produce most of the world's honey!" },
+  { icon: "🌲", text: "Do trees talk to each other? Did they say anything about me...?" },
+  { icon: "🌙", text: "The Moon looks so small because its very far away!" },
   { icon: "🦈", text: "The average great white shark is still very scary!" },
-  { icon: "⚡", text: "Lightning strikes Earth 5 million times per second every day!" },
-  { icon: "🇺🇸", text: "Most American schools have a football field larger than their library!" },
+  { icon: "⚡", text: "Lightning strikes account for over 99% of all thunder!" },
+  { icon: "🇺🇸", text: "More than 95% of American high schools have a football field larger than its library!" },
 ].shuffle %>
 <div class="waiting-messages" data-controller="cycling-messages">
   <% fun_facts.each_with_index do |fact, index| %>
