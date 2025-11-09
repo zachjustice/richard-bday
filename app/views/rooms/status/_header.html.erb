@@ -1,4 +1,5 @@
-<header class="status-header">
+<%= stylesheet_link_tag "settings-modal", "data-turbo-track": "reload" %>
+<header class="status-header" data-controller="settings-modal">
   <div class="header-left">
     <div class="app-logo">
       <span class="app-name">Blanksies</span>
@@ -14,8 +15,12 @@
     </div>
   </div>
   <div class="header-right">
-    <span class="text-xl">
+    <button type="button" 
+            class="settings-button text-xl" 
+            data-action="click->settings-modal#toggle"
+      aria-label="Open settings">
       ⚙️
-    </span>
+    </button>
   </div>
+  <%= render "rooms/settings/settings_modal", room: @room %>
 </header>

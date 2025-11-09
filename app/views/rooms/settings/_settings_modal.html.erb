@@ -1,0 +1,22 @@
+<div id="settings-modal" 
+     class="settings-modal hidden" 
+     data-settings-modal-target="modal"
+     role="dialog"
+     aria-labelledby="settings-modal-title"
+     aria-modal="true">
+  <div class="settings-backdrop" data-action="click->settings-modal#close"></div>
+  <div class="settings-content">
+    <div class="settings-header">
+      <h2 id="settings-modal-title" class="settings-title">Room Settings</h2>
+      <button type="button" 
+              class="settings-close" 
+              data-action="click->settings-modal#close"
+        aria-label="Close settings">
+        ✕
+      </button>
+    </div>
+    <div id="settings-form">
+      <%= render "rooms/settings/settings_form", room: @room %>
+    </div>
+  </div>
+</div>

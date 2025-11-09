@@ -27,6 +27,7 @@
   /* Color Palette - Semantic */
   --color-error-light: #fee2e2;
   --color-error: #dc2626;
+  --color-success: #22c55e;
 
   /* Background Colors */
   --bg-primary: var(--color-white);

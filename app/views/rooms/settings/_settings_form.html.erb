@@ -1,0 +1,54 @@
+<% form_saved = local_assigns.fetch(:form_saved, false) %>
+<%= form_with model: room, 
+              url: update_room_settings_path(room), 
+              method: :patch,
+              data: { 
+                turbo_frame: "settings-form",
+                action: "turbo:submit-start->settings-modal#submitting turbo:submit-end->settings-modal#submitted"
+              },
+              class: "settings-form" do |form| %>
+  <% if room.errors.any? %>
+    <div class="settings-errors">
+      <% room.errors.full_messages.each do |message| %>
+        <p class="error-message"><span class="error-icon">⚠️</span> <%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+  <div class="settings-field">
+    <%= form.label :time_to_answer_seconds, class: "settings-label" do %>
+      Time to Answer (seconds)
+    <% end %>
+    <%= form.number_field :time_to_answer_seconds, 
+        min: Room::MIN_WAITING_TIME_SECONDS, 
+        max: Room::MAX_WAITING_TIME_SECONDS, 
+        class: "settings-input"
+    %>
+    <span class="settings-hint">Between <%= Room::MIN_WAITING_TIME_SECONDS %> and <%= Room::MAX_WAITING_TIME_SECONDS %> seconds</span>
+  </div>
+  <div class="settings-field">
+    <%= form.label :time_to_vote_seconds, class: "settings-label" do %>
+      Time to Vote (seconds)
+    <% end %>
+    <%= form.number_field :time_to_vote_seconds, 
+        min: Room::MIN_WAITING_TIME_SECONDS, 
+        max: Room::MAX_WAITING_TIME_SECONDS, 
+        class: "settings-input"
+    %>
+    <span class="settings-hint">Between <%= Room::MIN_WAITING_TIME_SECONDS %> and <%= Room::MAX_WAITING_TIME_SECONDS %> seconds</span>
+  </div>
+  <div class="settings-actions">
+    <%= form.submit "Save Settings", 
+        class: "settings-submit",
+        data: { settings_modal_target: "submitButton" } %>
+    <button type="button" 
+            class="settings-cancel" 
+            data-action="click->settings-modal#close">
+      Cancel
+    </button>
+  </div>
+  <% if form_saved %>
+    <div class="settings-success">
+      <p class="success-message">Settings updated successfully</p>
+    </div>
+  <% end %>
+<% end %>

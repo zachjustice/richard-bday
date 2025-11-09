@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_03_024559) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_09_025127) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -72,8 +72,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_03_024559) do
     t.datetime "updated_at", null: false
     t.string "status", default: "WaitingRoom"
     t.integer "current_game_id"
-    t.integer "time_to_answer_seconds", default: 60, null: false
-    t.integer "time_to_vote_seconds", default: 60, null: false
+    t.integer "time_to_answer_seconds", default: 180, null: false
+    t.integer "time_to_vote_seconds", default: 120, null: false
     t.index ["code"], name: "index_rooms_on_code", unique: true
     t.index ["current_game_id"], name: "index_rooms_on_current_game_id"
   end

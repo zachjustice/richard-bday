@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   post "/rooms/:id/start", to: "rooms#start", as: :start_room
   post "/rooms/:id/next", to: "rooms#next", as: :next_room
   post "/rooms/:id/end_game", to: "rooms#end_game", as: :end_room_game
+  patch "/rooms/:id/settings", to: "rooms#update_settings", as: :update_room_settings
   get "/rooms/:id/waiting_for_new_game", to: "rooms#waiting_for_new_game", as: :waiting_for_new_game
 
   post "/register", to: "users#create"

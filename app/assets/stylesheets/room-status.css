@@ -1192,3 +1192,23 @@
     text-align: left;
   }
 }
+
+/* Settings Button */
+.settings-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(10px);
+}
+
+.settings-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.settings-button:active {
+  transform: scale(0.95);
+}

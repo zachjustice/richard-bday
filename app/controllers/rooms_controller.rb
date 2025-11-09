@@ -25,6 +25,45 @@ class RoomsController < ApplicationController
     redirect_to controller: "rooms", action: "status", id: room_id
   end
 
+  def update_settings
+    room = Room.find(params[:id])
+
+    if @current_user&.role != User::CREATOR || @current_user.room_id != room.id
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "settings-form",
+            partial: "rooms/settings/settings_error",
+            locals: { error: "Only the room creator can update settings" }
+          )
+        end
+      end
+      return
+    end
+
+    if room.update(settings_params)
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "settings-form",
+            partial: "rooms/settings/settings_form",
+            locals: { room: room, form_saved: true }
+          )
+        end
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "settings-form",
+            partial: "rooms/settings/settings_form",
+            locals: { room: room, form_saved: false }
+          )
+        end
+      end
+    end
+  end
+
   def next
     room = Room.find(params[:id])
     prev_game_prompt_id = room.current_game.current_game_prompt_id
@@ -177,5 +216,9 @@ class RoomsController < ApplicationController
     end
     !game_prompts.map(&:save!)
     game_prompts
+  end
+
+  def settings_params
+    params.require(:room).permit(:time_to_answer_seconds, :time_to_vote_seconds)
   end
 end
