@@ -11,6 +11,11 @@
         </div>
         <h2 class="status-title">Game Complete!</h2>
         <p class="status-message">Check the big screen for the final results!</p>
+        <% if @current_user.role == User::NAVIGATOR %>
+          <%= form_with url: "/rooms/#{@current_room.id}/end_game", method: :post, class: "next-form" do |form| %>
+            <%= form.submit "Start New Game", class: "next-button" %>
+          <% end %>
+        <% end %>
       </div>
     <% elsif @status == RoomStatus::WaitingRoom %>
       <div class="status-display waiting-room">
@@ -39,11 +44,17 @@
         <h2 class="status-title">Round Complete!</h2>
         <p class="status-message">Check the big screen for the winner!</p>
       </div>
-      <div class="progress-dots">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
+      <% if @current_user.role == User::NAVIGATOR %>
+        <%= form_with url: "/rooms/#{@current_room.id}/next", method: :post, class: "next-form" do |form| %>
+          <%= form.submit "Next Round", class: "next-button" %>
+        <% end %>
+      <% else %>
+        <div class="progress-dots">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>

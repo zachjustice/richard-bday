@@ -41,10 +41,8 @@ class GamePhasesService
     )
   end
 
-  private
-
   # Broadcast Turbo Stream to update the status page with the given partial and status_data
-  def update_room_status_view(partial, status_data)
+  def update_room_status_view(partial, status_data, remove_sidebar = false)
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{@room.id}:status",
       action: :update,
@@ -53,12 +51,20 @@ class GamePhasesService
       locals: status_data
     )
 
-    Turbo::StreamsChannel.broadcast_action_to(
-      "rooms:#{@room.id}:status",
-      action: :update,
-      target: "turbo-target-sidebar",
-      partial: "rooms/status/sidebar",
-      locals: status_data
-    )
+    if remove_sidebar
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{@room.id}:status",
+        action: :remove,
+        target: "turbo-target-sidebar"
+      )
+    else
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{@room.id}:status",
+        action: :update,
+        target: "turbo-target-sidebar",
+        partial: "rooms/status/sidebar",
+        locals: status_data
+      )
+    end
   end
 end

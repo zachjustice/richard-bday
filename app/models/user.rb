@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   PLAYER = "Player"
+  NAVIGATOR = "Navigator"
   CREATOR = "Creator"
 
   belongs_to :room
@@ -8,7 +9,9 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :room_id, presence: true
 
-  scope :players, -> { where(role: PLAYER) }
+  # Both Player and Navigator Roles
+  scope :players, -> { where(role: [ PLAYER, NAVIGATOR ]) }
+  # when the room is created, the dashboard front-end gets is own "user" to auth requests with a role of Creator.
   scope :creator, -> { where(role: CREATOR) }
 
   after_commit(on: :create) { JoinRoomJob.perform_later(self) }

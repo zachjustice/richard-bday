@@ -115,6 +115,37 @@
   }
 }
 
+.next-form {
+  display: flex;
+  justify-content: center;
+}
+
+.next-button {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  background: var(--gradient-primary-simple);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 200px;
+}
+
+.next-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  background: var(--gradient-primary-reverse);
+}
+
+.next-button:active {
+  transform: translateY(-1px);
+}
+
 /* Responsive Design */
 @media (max-width: 640px) {
   .prompt-results-container {

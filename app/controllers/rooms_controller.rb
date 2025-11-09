@@ -64,22 +64,31 @@ class RoomsController < ApplicationController
     end
   end
 
+  # Called by the user with the navigator role (first user to join room) to advance to the next prompt.
+  # this calls needs to trigger updating the room status view, broadcast the next prompt or final results events, and redirect to the next prompt
   def next
     room = Room.find(params[:id])
     prev_game_prompt_id = room.current_game.current_game_prompt_id
     current_game_prompt_order = room.current_game.current_game_prompt.order
     next_game_prompt_id = GamePrompt.find_by(game_id: room.current_game_id, order: current_game_prompt_order + 1)&.id
+
     if next_game_prompt_id.nil?
       room.update!(status: RoomStatus::FinalResults)
+
+      status_data = RoomStatusService.new(room).call
+      GamePhasesService.new(room).update_room_status_view("rooms/status/final_results", status_data)
+
       ActionCable.server.broadcast(
         "rooms:#{params[:id].to_i}",
         Events.create_final_results_event(prev_game_prompt_id)
       )
-      redirect_to controller: "rooms", action: "status", id: params[:id]
+      redirect_to controller: "prompts", action: "results", id: prev_game_prompt_id
     else
-      move_to_next_game_prompt(room, next_game_prompt_id)
+      status_data = RoomStatusService.new(room).call
+      GamePhasesService.new(room).update_room_status_view("rooms/status/answering", status_data)
 
-      redirect_to controller: "rooms", action: "status", id: params[:id]
+      move_to_next_game_prompt(room, next_game_prompt_id)
+      redirect_to controller: "prompts", action: "show", id: next_game_prompt_id
     end
   end
 
@@ -152,20 +161,24 @@ class RoomsController < ApplicationController
     end
   end
 
+  # called by the user with the navigator role (first user to join room) to end the game.
   def end_game
     current_room = Room.find(params[:id])
-    current_room.current_game.update!(
+    current_room.current_game&.update!(
       current_game_prompt: nil
     )
     current_room.update!(
       status: RoomStatus::WaitingRoom,
       current_game: nil
     )
+
     ActionCable.server.broadcast(
       "rooms:#{current_room.id}",
       Events.create_new_game_event(current_room.id)
     )
-    redirect_to controller: "rooms", action: "status", id: params[:id]
+    status_data = RoomStatusService.new(current_room).call
+    GamePhasesService.new(current_room).update_room_status_view("rooms/status/waiting_room", status_data, true)
+    redirect_to controller: "rooms", action: "waiting_for_new_game", id: params[:id]
   end
 
   def waiting_for_new_game
@@ -188,10 +201,6 @@ class RoomsController < ApplicationController
 
   def current_user
     @current_user ||= User.find_by_id(session[:user_id])
-  end
-
-  def unauthorized
-      render json: { "message": "Unauthorized" }, status: :unauthorized
   end
 
   def room_params

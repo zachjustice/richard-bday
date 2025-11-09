@@ -51,7 +51,7 @@
       </div>
     </div>
   <% end %>
-  <%= form_with url: "/rooms/#{room.id}/next", method: :post, class: "next-form" do |form| %>
-    <%= form.submit "Next Round", class: "next-button" %>
-  <% end %>
+  <div class="mt-4">
+    <i>Hey <b><%= User.find_by(room: room, role: User::NAVIGATOR)&.name %></b>, click <b>Start New Game</b> when you're ready.</i>
+  </div>
 </div>

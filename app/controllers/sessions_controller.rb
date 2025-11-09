@@ -54,7 +54,11 @@ class SessionsController < ApplicationController
       return redirect_to new_session_path, alert: "Someone in this room already has that name."
     end
 
-    user = User.new(name: params[:name], room_id: room.id)
+    current_users = User.players.where(room_id: room.id).count
+    user_role = current_users == 0 ? User::NAVIGATOR : User::PLAYER
+    # The first user to join the room is the navigator. They are allowed to press the "next" button to advance rounds and change settings.
+    user = User.new(name: params[:name], room_id: room.id, role: user_role)
+
     if user.save
       session[:user_id] = user.id
       @current_user = user
