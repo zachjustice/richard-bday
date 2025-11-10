@@ -28,8 +28,8 @@ module Authentication
     def find_session_by_cookie
       if cookies.signed[:session_id]
         session = Session.find_by(id: cookies.signed[:session_id])
-        @current_user = User.find_by(id: session.user_id)
-        @current_room = Room.find_by(id: @current_user.room_id)
+        @current_user = User.find_by(id: session.user_id) if session
+        @current_room = Room.find_by(id: @current_user.room_id) if @current_user
         return session
       end
 

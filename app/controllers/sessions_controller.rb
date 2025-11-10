@@ -5,7 +5,8 @@ class SessionsController < ApplicationController
   def new
     session_id = cookies.signed[:session_id]
     if session_id
-      @room = Session.find(session_id).user.room
+      session = Session.find_by(id: session_id)
+      @room = session&.user&.room
     end
   end
 
