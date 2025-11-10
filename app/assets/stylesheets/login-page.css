@@ -239,8 +239,15 @@
 }
 
 .rejoin-game-link {
+  color: var(--color-success);
   text-align: center;
   margin-bottom: var(--space-2);
+}
+
+.start-game-link a {
+  color: var(--text-secondary);
+  font-style: italic;
+  text-decoration: underline;
 }
 
 /* Responsive Design */
