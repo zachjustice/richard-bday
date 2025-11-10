@@ -41,12 +41,12 @@
           <span class="label-icon">🔑</span>
           Password
         </label>
-        <%= form.text_field :code,
+        <%= form.password_field :code,
             id: "code",
             value: params[:code],
             required: true,
             autocomplete: "off",
-            placeholder: "Enter room code",
+            placeholder: "Enter password",
             maxlength: 72,
             class: "form-input room-code-input" %>
       </div>

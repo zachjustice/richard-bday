@@ -75,7 +75,7 @@ class SessionsController < ApplicationController
 
   def create_editor
     # Get room
-    code = params[:code]&.downcase
+    code = params[:code]
     room = Room.find_by(code: code)
     if room.nil?
       return redirect_to new_session_path, alert: "Wrong room code."
