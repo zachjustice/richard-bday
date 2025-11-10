@@ -1,5 +1,5 @@
 class PromptsController < ApplicationController
-  before_action :redirect_to_current_game_phase
+  before_action :redirect_to_current_game_phase, except: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt ]
 
   def show
     exists = Answer.exists?(

@@ -22,10 +22,10 @@ Rails.application.routes.draw do
   # Add to prompts routes
   get "/prompts", to: "prompts#index", as: :prompts_index
   get "/prompts/new", to: "prompts#new", as: :new_prompt
-  post "/prompts", to: "prompts#create_prompt", as: :create_prompt_path
-  get "/prompts/:id/edit", to: "prompts#edit_prompt", as: :edit_prompt
-  patch "/prompts/:id", to: "prompts#update_prompt", as: :update_prompt_path
-  delete "/prompts/:id", to: "prompts#destroy_prompt", as: :destroy_prompt_path
+  post "/prompts", to: "prompts#create_prompt", as: :create_prompt
+  get "/prompts/:id/edit", to: "prompts#edit_prompt", as: :edit
+  patch "/prompts/:id", to: "prompts#update_prompt", as: :update_prompt
+  delete "/prompts/:id", to: "prompts#destroy_prompt", as: :destroy_prompt
 
   # rooms
   get "/rooms", to: "rooms#show", as: :show_room
