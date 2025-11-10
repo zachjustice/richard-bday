@@ -14,7 +14,7 @@ module ActiveSupport
 
     # Helper method to authenticate as a user in integration tests
     def resume_session_as(code, name)
-      post "/sessions/resume", params: {
+      post "/session/resume", params: {
         code: code,
         name: name
       }

@@ -1,0 +1,7 @@
+<!-- app/views/stories/new.html.erb -->
+<%= stylesheet_link_tag "story-editor", "data-turbo-track": "reload" %>
+
+<div class="story-form-container">
+  <h1>Create New Story</h1>
+  <%= render "form", story: @story %>
+</div>

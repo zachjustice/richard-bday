@@ -102,7 +102,7 @@ def create_story(story_parts)
   blanks.each_with_index { |blank, index|
     needle = "{#{index + 1}}"
     if templated_story.include?(needle)
-      templated_story.sub!(needle, "{#{blank.id}}")
+      templated_story.gsub!(needle, "{#{blank.id}}")
     else
       raise "Error persisting story title '#{story_parts[:title]}'. Errored on index #{index}. #{blanks.size} blanks in story."
     end

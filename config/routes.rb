@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   resource :session
-  post "/sessions/resume", to: "sessions#resume" unless Rails.env.production?
+  post "/session/resume", to: "sessions#resume" unless Rails.env.production?
+  get "/session/editor", to: "sessions#editor", as: :session_editor
+  post "/session/editor", to: "sessions#create_editor", as: :create_session_editor
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -13,6 +15,19 @@ Rails.application.routes.draw do
 
   root to: "rooms#create"
 
+  resources :stories do
+    resources :blanks, only: [ :create, :update, :destroy ]
+  end
+
+  # Add to prompts routes
+  get "/prompts", to: "prompts#index", as: :prompts_index
+  get "/prompts/new", to: "prompts#new", as: :new_prompt
+  post "/prompts", to: "prompts#create_prompt", as: :create_prompt_path
+  get "/prompts/:id/edit", to: "prompts#edit_prompt", as: :edit_prompt
+  patch "/prompts/:id", to: "prompts#update_prompt", as: :update_prompt_path
+  delete "/prompts/:id", to: "prompts#destroy_prompt", as: :destroy_prompt_path
+
+  # rooms
   get "/rooms", to: "rooms#show", as: :show_room
   get "/rooms/create", to: "rooms#create", as: :create_room
   post "/rooms/create", to: "rooms#_create"

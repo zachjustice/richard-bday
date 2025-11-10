@@ -35,7 +35,6 @@ class SessionsController < ApplicationController
   end
 
   def create
-    # TODO: prevents users from joining the same game twice
     # Get room
     session_id = cookies.signed[:session_id]
     code = params[:code]&.downcase
@@ -66,6 +65,43 @@ class SessionsController < ApplicationController
       @current_room = room
       start_new_session_for user
       redirect_to after_authentication_url
+    else
+      redirect_to new_session_path, alert: "Someone in this room already has that name."
+    end
+  end
+
+  def editor
+  end
+
+  def create_editor
+    # Get room
+    code = params[:code]&.downcase
+    room = Room.find_by(code: code)
+    if room.nil?
+      return redirect_to new_session_path, alert: "Wrong room code."
+    end
+
+    # Gotta know the secret to get in here. This is set manually in production to a random secret. :)
+    if code != Room.first.code
+      return redirect_to after_authentication_url
+    end
+
+    if user = User.find_by(name: params[:name], room_id: room.id)
+      session[:user_id] = user.id
+      @current_user = user
+      @current_room = room
+      start_new_session_for user
+      return redirect_to stories_path
+    end
+
+    user = User.new(name: params[:name], room_id: room.id, role: User::EDITOR)
+
+    if user.save
+      session[:user_id] = user.id
+      @current_user = user
+      @current_room = room
+      start_new_session_for user
+      redirect_to stories_path
     else
       redirect_to new_session_path, alert: "Someone in this room already has that name."
     end

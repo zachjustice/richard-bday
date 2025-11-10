@@ -5,9 +5,12 @@
     <% if flash[:alert] %>
       <div class="alert-message">
         <span class="alert-icon">⚠️</span> <%= flash[:alert] %> </div>
-    <% end %> <% if flash[:notice] %>
+    <% end %>
+
+    <% if flash[:notice] %>
       <div class="notice-message"> <span class="notice-icon">✓</span> <%= flash[:notice] %> </div>
     <% end %>
+
     <div class="prompt-display">
       <div class="prompt-icon">💭</div>
       <h2 class="prompt-text"><%= @game_prompt.prompt.description %></h2>

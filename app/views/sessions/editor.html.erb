@@ -1,0 +1,63 @@
+<%= stylesheet_link_tag "login-page", "data-turbo-track": "reload" %>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1 class="login-title">Sign In</h1>
+    </div>
+
+    <% if flash[:alert] %>
+      <div class="alert-message">
+        <span class="alert-icon">⚠️</span>
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <% if flash[:notice] %>
+      <div class="notice-message">
+        <span class="notice-icon">✓</span>
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <%= form_with url: session_editor_path, class: "login-form" do |form| %>
+      <div class="form-group">
+        <label for="name" class="form-label">
+          <span class="label-icon">👤</span>
+          Username
+        </label>
+        <%= form.text_field :name,
+            id: "name",
+            required: true,
+            autofocus: true,
+            autocomplete: "off",
+            placeholder: "What should we call you?",
+            value: params[:username],
+            class: "form-input" %>
+      </div>
+
+      <div class="form-group">
+        <label for="code" class="form-label">
+          <span class="label-icon">🔑</span>
+          Password
+        </label>
+        <%= form.text_field :code,
+            id: "code",
+            value: params[:code],
+            required: true,
+            autocomplete: "off",
+            placeholder: "Enter room code",
+            maxlength: 72,
+            class: "form-input room-code-input" %>
+      </div>
+
+      <%= form.submit "Submit", class: "submit-button" %>
+    <% end %>
+
+    <div class="login-footer">
+      <span class="start-game-link">
+        <%= link_to "Take me Home", root_path %>
+      </span>
+    </div>
+  </div>
+</div>

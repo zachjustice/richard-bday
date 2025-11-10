@@ -1,0 +1,26 @@
+<!-- app/views/blanks/_form.html.erb -->
+<%= form_with model: blank, 
+    url: story_blanks_path(story) do |form| %>
+
+  <h3>Add New Blank</h3>
+
+  <% if blank.errors.any? %>
+    <div class="form-errors">
+      <% blank.errors.full_messages.each do |message| %>
+        <p><%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="form-field">
+    <%= form.label :tags, "Tags (comma-separated)" %>
+    <%= form.text_field :tags, 
+        placeholder: "noun,animal,funny",
+        class: "form-input" %>
+    <p class="form-hint">Tags help match prompts. Use commas to separate.</p>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit "Create Blank", class: "btn-primary btn-sm" %>
+  </div>
+<% end %>

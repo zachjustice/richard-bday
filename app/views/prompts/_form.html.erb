@@ -1,0 +1,35 @@
+<!-- app/views/prompts/_form.html.erb -->
+<%= form_with model: prompt, 
+    url: create_prompt_path,
+    class: "new-prompt-form" do |form| %>
+
+  <h3>Add New Prompt</h3>
+
+  <% if prompt.errors.any? %>
+    <div class="form-errors">
+      <% prompt.errors.full_messages.each do |message| %>
+        <p><%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="form-field">
+    <%= form.label :description, "Prompt Question" %>
+    <%= form.text_area :description, 
+        rows: 3,
+        placeholder: "What is a funny animal?",
+        class: "form-textarea" %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :tags, "Tags (comma-separated)" %>
+    <%= form.text_field :tags, 
+        placeholder: "noun,animal,funny",
+        class: "form-input" %>
+    <p class="form-hint">Tags match prompts to story blanks</p>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit "Create Prompt", class: "btn-primary" %>
+  </div>
+<% end %>

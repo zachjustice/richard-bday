@@ -1,6 +1,7 @@
 class RoomsController < ApplicationController
-  allow_unauthenticated_access only: %i[ _create create ]
   include ActionController::Live
+  allow_unauthenticated_access only: %i[ _create create ]
+  before_action :in_room?, except: %i[ _create create ]
 
   def start
     story_id = params[:story]
@@ -185,6 +186,14 @@ class RoomsController < ApplicationController
   end
 
   private
+
+  def in_room?
+    # Check if the user is in the room if a room specific page is being accessed.
+    if params[:id] && @current_user&.room_id != params[:id].to_i
+      flash[:notice] = "Navigating you to the right room..."
+      redirect_to controller: "rooms", id: @current_user&.room_id, action: "status"
+    end
+  end
 
   def move_to_next_game_prompt(room, next_game_prompt_id)
     ActionCable.server.broadcast(

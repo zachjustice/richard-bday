@@ -45,7 +45,98 @@ class PromptsController < ApplicationController
     @status = @current_room.status
   end
 
+  def index
+    @prompts = Prompt.all.order(created_at: :desc)
+  end
+
+  def new
+    @prompt = Prompt.new
+  end
+
+  def create_prompt
+    @prompt = Prompt.new(prompt_params)
+
+    if @prompt.save
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.append(
+              "prompts_list",
+              partial: "prompts/prompt",
+              locals: { prompt: @prompt }
+            ),
+            turbo_stream.replace(
+              "new_prompt_form",
+              partial: "prompts/form",
+              locals: { prompt: Prompt.new }
+            )
+          ]
+        end
+        format.html { redirect_to prompts_path, notice: "Prompt created successfully" }
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "new_prompt_form",
+            partial: "prompts/form",
+            locals: { prompt: @prompt }
+          )
+        end
+        format.html { render :new, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def edit_prompt
+    @prompt = Prompt.find(params[:id])
+  end
+
+  def update_prompt
+    @prompt = Prompt.find(params[:id])
+
+    if @prompt.update(prompt_params)
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "prompt_#{@prompt.id}",
+            partial: "prompts/prompt",
+            locals: { prompt: @prompt }
+          )
+        end
+        format.html { redirect_to prompts_path, notice: "Prompt updated successfully" }
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "prompt_#{@prompt.id}",
+            partial: "prompts/prompt_form",
+            locals: { prompt: @prompt }
+          )
+        end
+        format.html { render :edit_prompt, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def destroy_prompt
+    @prompt = Prompt.find(params[:id])
+    @prompt.destroy
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.remove("prompt_#{@prompt.id}")
+      end
+      format.html { redirect_to prompts_path, notice: "Prompt deleted successfully" }
+    end
+  end
+
   private
+
+  def prompt_params
+    params.require(:prompt).permit(:description, :tags)
+  end
 
   def redirect_to_current_game_phase
     controller = params[:controller]

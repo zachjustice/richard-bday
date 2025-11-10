@@ -1,0 +1,37 @@
+<!-- app/views/stories/edit.html.erb -->
+<%= stylesheet_link_tag "story-editor", "data-turbo-track": "reload" %>
+
+<div class="story-editor-container" data-controller="story-editor">
+  <div class="editor-header">
+    <h1>Edit Story: <%= @story.title %></h1>
+    <%= link_to "← Back to Story", story_path(@story), class: "btn-secondary" %>
+  </div>
+
+  <div class="editor-layout">
+    <!-- Left: Story Form -->
+    <div class="editor-main">
+      <div id="story_form">
+        <%= render "form", story: @story %>
+      </div>
+    </div>
+
+    <!-- Right: Blanks Panel -->
+    <div class="editor-sidebar">
+      <h2>Blanks</h2>
+      <div class="blanks-help">
+        <p>Insert blanks in your story text using <code>{blank_id}</code></p>
+        <p>Example: "Once upon a time there was a <code>{1}</code>."</p>
+      </div>
+
+      <div id="blanks_list" class="blanks-list">
+        <% @blanks.each do |blank| %>
+          <%= render "blanks/blank", blank: blank, story: @story %>
+        <% end %>
+      </div>
+
+      <div id="new_blank_form" class="new-blank-form">
+        <%= render "blanks/form", story: @story, blank: Blank.new %>
+      </div>
+    </div>
+  </div>
+</div>

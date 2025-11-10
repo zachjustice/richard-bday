@@ -1,0 +1,23 @@
+<!-- app/views/blanks/_blank_form.html.erb -->
+<%= form_with model: blank, 
+    url: story_blank_path(story, blank),
+    method: :patch,
+    class: "blank-edit-form" do |form| %>
+
+  <div class="form-field">
+    <%= form.label :tags, "Tags (comma-separated)" %>
+    <%= form.text_field :tags, 
+        placeholder: "noun,animal,funny",
+        class: "form-input" %>
+    <p class="form-hint">Examples: noun,animal,funny or adjective,colorful</p>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit "Save", class: "btn-primary btn-sm" %>
+    <button type="button" 
+            data-action="click->blank-editor#cancelEdit"
+      class="btn-secondary btn-sm">
+      Cancel
+    </button>
+  </div>
+<% end %>

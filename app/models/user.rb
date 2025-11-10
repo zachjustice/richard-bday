@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   PLAYER = "Player"
   NAVIGATOR = "Navigator"
+  EDITOR = "Editor"
   CREATOR = "Creator"
 
   belongs_to :room
@@ -15,4 +16,20 @@ class User < ApplicationRecord
   scope :creator, -> { where(role: CREATOR) }
 
   after_commit(on: :create) { JoinRoomJob.perform_later(self) }
+
+  def player?
+    [ PLAYER, NAVIGATOR ].include?(role)
+  end
+
+  def navigator?
+    role == NAVIGATOR
+  end
+
+  def editor?
+    role == EDITOR
+  end
+
+  def creator?
+    role == CREATOR
+  end
 end

@@ -1,0 +1,26 @@
+<!-- app/views/prompts/index.html.erb -->
+<%= stylesheet_link_tag "story-editor", "data-turbo-track": "reload" %>
+
+<div class="prompts-index-container">
+  <div class="prompts-header">
+    <h1>Prompts Library</h1>
+    <p class="subtitle">Manage questions used to fill story blanks</p>
+  </div>
+
+  <div class="prompts-layout">
+    <div class="prompts-main">
+      <h2>All Prompts (<%= @prompts.count %>)</h2>
+      <div id="prompts_list" class="prompts-list">
+        <% @prompts.each do |prompt| %>
+          <%= render "prompts/prompt", prompt: prompt %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="prompts-sidebar">
+      <div id="new_prompt_form">
+        <%= render "prompts/form", prompt: Prompt.new %>
+      </div>
+    </div>
+  </div>
+</div>

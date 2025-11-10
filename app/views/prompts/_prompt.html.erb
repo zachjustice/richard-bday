@@ -1,0 +1,35 @@
+<!-- app/views/prompts/_prompt.html.erb -->
+<div id="prompt_<%= prompt.id %>" class="prompt-item" data-controller="prompt-editor">
+  <div class="prompt-display" data-prompt-editor-target="display">
+    <div class="prompt-header">
+      <p class="prompt-description"><%= prompt.description %></p>
+      <div class="prompt-actions">
+        <button type="button" 
+                class="btn-icon" 
+                data-action="click->prompt-editor#edit"
+          title="Edit">
+          ✏️
+        </button>
+        <%= button_to destroy_prompt_path(prompt), 
+            method: :delete,
+            data: { turbo_confirm: "Delete this prompt?" },
+            class: "btn-icon",
+            title: "Delete" do %>
+          🗑️
+        <% end %>
+      </div>
+    </div>
+    <div class="prompt-tags">
+      <% prompt.tags_array.each do |tag| %>
+        <span class="tag"><%= tag %></span>
+      <% end %>
+    </div>
+    <p class="prompt-matches">
+      <%= pluralize(prompt.matching_blanks.count, "matching blank") %>
+    </p>
+  </div>
+
+  <div class="prompt-form" data-prompt-editor-target="form" style="display: none;">
+    <%= render "prompts/prompt_form", prompt: prompt %>
+  </div>
+</div>

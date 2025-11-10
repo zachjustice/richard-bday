@@ -1,0 +1,50 @@
+<!-- app/views/stories/show.html.erb -->
+<%= stylesheet_link_tag "story-editor", "data-turbo-track": "reload" %>
+
+<div class="story-show-container">
+  <div class="story-header">
+    <h1><%= @story.title %></h1>
+    <div class="story-actions">
+      <%= link_to "Edit Story", edit_story_path(@story), class: "btn-primary" %>
+      <%= link_to "← Back to Stories", stories_path, class: "btn-secondary" %>
+    </div>
+  </div>
+
+  <% unless @validation[:valid] %>
+    <div class="validation-errors">
+      <h3>⚠️ Story Validation Issues:</h3>
+      <% if @validation[:missing].any? %>
+        <p>Missing blanks in text: <%= @validation[:missing].map { |id| "{#{id}}" }.join(", ") %></p>
+      <% end %>
+      <% if @validation[:unused].any? %>
+        <p>Undefined blanks in text: <%= @validation[:unused].map { |id| "{#{id}}" }.join(", ") %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="story-content">
+    <h2>Story Text:</h2>
+    <div class="story-text-display">
+      <%= simple_format(@story.text) %>
+    </div>
+  </div>
+
+  <div class="story-blanks">
+    <h2>Blanks (<%= @story.blanks.count %>)</h2>
+    <div class="blanks-grid">
+      <% @story.blanks.each do |blank| %>
+        <div class="blank-card">
+          <div class="blank-id">{<%= blank.id %>}</div>
+          <div class="blank-tags">
+            <% blank.tags_array.each do |tag| %>
+              <span class="tag"><%= tag %></span>
+            <% end %>
+          </div>
+          <div class="blank-matches">
+            <%= pluralize(blank.matching_prompts.count, "matching prompt") %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

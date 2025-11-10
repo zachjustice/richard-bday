@@ -1,0 +1,24 @@
+<!-- app/views/stories/index.html.erb -->
+<%= stylesheet_link_tag "story-editor", "data-turbo-track": "reload" %>
+
+<div class="stories-index-container">
+  <div class="stories-header">
+    <h1>Stories</h1>
+    <%= link_to "Create New Story", new_story_path, class: "btn-primary" %>
+  </div>
+
+  <div class="stories-grid">
+    <% @stories.each do |story| %>
+      <div class="story-card">
+        <h3><%= story.title %></h3>
+        <p class="story-meta">
+          <%= pluralize(story.blanks.count, "blank") %>
+        </p>
+        <div class="story-actions">
+          <%= link_to "View", story_path(story), class: "btn-secondary" %>
+          <%= link_to "Edit", edit_story_path(story), class: "btn-secondary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
