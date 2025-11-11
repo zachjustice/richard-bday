@@ -85,10 +85,9 @@ class RoomsController < ApplicationController
       )
       redirect_to controller: "prompts", action: "results", id: prev_game_prompt_id
     else
+      move_to_next_game_prompt(room, next_game_prompt_id)
       status_data = RoomStatusService.new(room).call
       GamePhasesService.new(room).update_room_status_view("rooms/status/answering", status_data)
-
-      move_to_next_game_prompt(room, next_game_prompt_id)
       redirect_to controller: "prompts", action: "show", id: next_game_prompt_id
     end
   end
