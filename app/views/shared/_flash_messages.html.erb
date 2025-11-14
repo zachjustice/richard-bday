@@ -1,0 +1,39 @@
+<%= stylesheet_link_tag "flash-messages", "data-turbo-track": "reload" %>
+<!-- app/views/shared/_flash_messages.html.erb -->
+<div id="flash-messages" data-controller="flash-messages">
+  <% if flash[:notice] %>
+    <div class="flash-message flash-notice" 
+         data-flash-messages-target="message"
+         data-flash-type="notice"
+         role="alert">
+      <div class="flash-content">
+        <span class="flash-icon">✓</span>
+        <span class="flash-text"><%= flash[:notice] %></span>
+      </div>
+      <button type="button" 
+              class="flash-dismiss" 
+              data-action="click->flash-messages#dismiss"
+        aria-label="Dismiss notification">
+        ✕
+      </button>
+    </div>
+  <% end %>
+
+  <% if flash[:alert] %>
+    <div class="flash-message flash-alert" 
+         data-flash-messages-target="message"
+         data-flash-type="alert"
+         role="alert">
+      <div class="flash-content">
+        <span class="flash-icon">⚠️</span>
+        <span class="flash-text"><%= flash[:alert] %></span>
+      </div>
+      <button type="button" 
+              class="flash-dismiss" 
+              data-action="click->flash-messages#dismiss"
+        aria-label="Dismiss alert">
+        ✕
+      </button>
+    </div>
+  <% end %>
+</div>

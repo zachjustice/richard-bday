@@ -35,9 +35,27 @@ class StoriesController < ApplicationController
     @story = Story.find(params[:id])
 
     if @story.update(story_params)
+      flash[:notice] = "Story updated successfully"
+      # Turbo::StreamsChannel.broadcast_action_to(
+      #   "rooms:#{@room.id}:status",
+      #   action: :prepend,
+      #   target: "body",
+      #   partial: "shared/flash_messages"
+      # )
       respond_to do |format|
-        format.html { redirect_to story_path(@story), notice: "Story updated successfully" }
-        format.turbo_stream
+        format.html {
+          redirect_to edit_story_path(@story), notice: "Story updated successfully"
+        }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace(
+              "story_form",
+              partial: "stories/form",
+              locals: { story: @story, success: true }
+            ),
+            turbo_stream.prepend("flash-messages", partial: "shared/flash_messages")
+          ]
+        end
       end
     else
       respond_to do |format|
