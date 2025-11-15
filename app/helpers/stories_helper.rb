@@ -50,4 +50,11 @@ module StoriesHelper
       content_tag(:span, match, class: "blank-placeholder #{bg_color}", data: { blank_id: blank_id })
     end
   end
+
+  def render_story(text, blank_id_to_answer_text)
+    replacement_regex = /\{\d+\}/
+    text.gsub(replacement_regex) do |match|
+      content_tag(:span, blank_id_to_answer_text[match], class: "game-prompt-answer")
+    end
+  end
 end

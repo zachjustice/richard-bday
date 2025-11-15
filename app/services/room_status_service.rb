@@ -116,7 +116,8 @@ class RoomStatusService
     validate_story(complete_story, blank_id_to_answer_text, story_text, replacement_regex)
 
     {
-      story: complete_story.split(".").map { |s| s.strip + "." }
+      story_text: story_text,
+      blank_id_to_answer_text: blank_id_to_answer_text
     }
   end
 

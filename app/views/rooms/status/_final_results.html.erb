@@ -11,9 +11,7 @@
     </div>
   </div>
   <div class="story-content">
-    <% story.each do |sentence| %>
-      <p class="story-sentence"><%= sentence %></p>
-    <% end %>
+    <%= simple_format(render_story(story_text, blank_id_to_answer_text)) %>
   </div>
   <div class="mt-4">
     <i>Hey <b><%= User.find_by(room: room, role: User::NAVIGATOR)&.name %></b>, click <b>Start New Game</b> when you're ready.</i>
