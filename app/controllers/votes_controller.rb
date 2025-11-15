@@ -27,7 +27,7 @@ class VotesController < ApplicationController
     if successful || exists || redirect_to_results
       redirect_to controller: "prompts", action: "results", id: params[:game_prompt_id]
     else
-      flash[:alert] = error.full_messages
+      flash[:alert] = error.full_messages.join(" ")
       redirect_to controller: "prompts", action: "show", id: params[:game_prompt_id]
     end
   end

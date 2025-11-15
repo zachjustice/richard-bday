@@ -253,7 +253,9 @@
 /* Responsive Design */
 @media (max-width: 480px) {
   .login-container {
+    align-items: start;
     padding: var(--space-4);
+    padding-top: var(--space-16);
   }
 
   .login-card {

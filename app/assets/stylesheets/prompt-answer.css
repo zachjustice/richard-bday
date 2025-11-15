@@ -309,6 +309,17 @@
   }
 }
 
+/* Responsive Design */
+@media (max-width: 480px) {
+  .prompt-answer-container {
+    padding: var(--space-2);
+  }
+
+  .prompt-answer-card {
+    padding: var(--space-4);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   .prompt-answer-card,

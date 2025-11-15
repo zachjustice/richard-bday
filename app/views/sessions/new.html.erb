@@ -5,7 +5,7 @@
     <div class="login-header">
       <h1 class="login-title">Join a Game</h1>
       <div class="rejoin-game-link login-subtitle">
-        <% if @room&.current_game&.current_game_prompt %>
+        <% if @room&.current_game&.current_game_prompt && (@room.current_game.created_at - Time.now) < 1.day %>
           <span>It looks like you're already in a game.</span>
           <%= link_to "Rejoin?", controller: "prompts", action: "show", id: @room.current_game.current_game_prompt %>
         <% elsif @room.present? %>
