@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_09_025127) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_14_232245) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -88,11 +88,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_025127) do
   end
 
   create_table "stories", force: :cascade do |t|
-    t.string "original_text"
-    t.string "text"
+    t.string "original_text", default: "The original story goes here..."
+    t.string "text", default: "Your story goes here..."
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "title", null: false
+    t.boolean "published", default: false, null: false
     t.index ["title"], name: "index_stories_on_title", unique: true
   end
 

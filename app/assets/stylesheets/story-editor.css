@@ -7,8 +7,15 @@
 .story-show-container,
 .prompts-index-container {
   max-width: 1400px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   padding: var(--space-8);
+}
+
+.story-show-container {
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* Stories Index */
@@ -52,7 +59,7 @@
 
 .story-actions {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-4);
 }
 
 /* Story Editor Layout */
@@ -81,7 +88,6 @@
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   border: 2px solid var(--border-light);
-  max-height: calc(100vh - 200px);
   overflow-y: auto;
 }
 
@@ -106,6 +112,19 @@
 .form-field label {
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
+}
+
+.form-field:has(.form-checkbox) {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.form-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-primary-purple);
 }
 
 .form-input,
@@ -225,8 +244,7 @@
 .blank-id {
   font-family: 'Monaco', 'Courier New', monospace;
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary-purple);
-  background: rgba(102, 126, 234, 0.1);
+  color: var(--color-black);
   padding: 4px 8px;
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
@@ -241,7 +259,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
 }
 
 .tag {
@@ -388,11 +405,14 @@
 }
 
 .blank-card {
+  display: flex;
+  flex-direction: column;
   background: var(--bg-primary);
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   border: 2px solid var(--border-light);
   transition: all var(--transition-normal);
+  gap: var(--space-2)
 }
 
 .blank-card:hover {
@@ -423,6 +443,9 @@
 /* Prompts */
 .prompts-header {
   margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .prompts-header .subtitle {
@@ -450,13 +473,14 @@
   border: 2px solid var(--border-light);
   position: sticky;
   top: var(--space-8);
-  max-height: calc(100vh - var(--space-16));
 }
 
 .prompts-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  max-height: 100vh;
+  overflow-y: scroll;
 }
 
 .prompt-item {

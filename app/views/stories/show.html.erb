@@ -25,7 +25,8 @@
   <div class="story-content">
     <h2>Story Text:</h2>
     <div class="story-text-display">
-      <%= simple_format(@story.text) %>
+      <%# <%= simple_format(@story.text) %\> %>
+      <%= simple_format(highlight_blanks_in_text(@story.text)) %>
     </div>
   </div>
 
@@ -34,7 +35,7 @@
     <div class="blanks-grid">
       <% @story.blanks.each do |blank| %>
         <div class="blank-card">
-          <div class="blank-id">{<%= blank.id %>}</div>
+          <div class="blank-id <%= blank_id_to_bg_color(blank.id) %>">{<%= blank.id %>}</div>
           <div class="blank-tags">
             <% blank.tags_array.each do |tag| %>
               <span class="tag"><%= tag %></span>

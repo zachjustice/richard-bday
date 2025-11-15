@@ -3,30 +3,38 @@
   <div class="form-field">
     <%= form.label :title, "Story Title" %>
     <%= form.text_field :title, 
-        placeholder: "Enter a catchy title",
+        placeholder: "...",
         class: "form-input" %>
   </div>
 
-  <div class="form-field">
-    <%= form.label :text, "Story Text (with blanks)" %>
-    <%= form.text_area :text, 
-        rows: 12,
-        placeholder: "Write your story here. Use {1}, {2}, etc. for blanks.",
-        class: "form-textarea",
-        data: { 
-          story_editor_target: "text",
-          action: "input->story-editor#highlightBlanks"
-        } %>
-    <p class="form-hint">Use <code>{1}</code>, <code>{2}</code>, etc. to insert blanks</p>
-  </div>
+  <% if story.persisted? %>
+    <div class="form-field">
+      <%= form.label :text, "Story Text (with blanks)" %>
+      <%= form.text_area :text, 
+          rows: 12,
+          placeholder: "Write your story here. Use {1}, {2}, etc. for blanks.",
+          class: "form-textarea",
+          data: { 
+            story_editor_target: "text",
+            action: "input->story-editor#highlightBlanks"
+          } %>
+      <p class="form-hint">Use <code>{1}</code>, <code>{2}</code>, etc. to insert blanks</p>
+    </div>
 
-  <div class="form-field">
-    <%= form.label :original_text, "Original Text (for reference)" %>
-    <%= form.text_area :original_text, 
-        rows: 6,
-        placeholder: "Original unmodified version (optional)",
-        class: "form-textarea" %>
-  </div>
+    <div class="form-field">
+      <%= form.label :original_text, "Original Text (for reference)" %>
+      <%= form.text_area :original_text, 
+          rows: 6,
+          placeholder: "Original unmodified version (optional)",
+          class: "form-textarea" %>
+    </div>
+
+    <div class="form-field">
+      <%= form.label :published, "Publish?" %>
+      <%= form.checkbox :published, 
+          class: "form-checkbox" %>
+    </div>
+  <% end %>
 
   <div class="form-actions">
     <%= form.submit story.persisted? ? "Update Story" : "Create Story", 
