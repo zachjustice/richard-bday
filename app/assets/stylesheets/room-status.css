@@ -175,6 +175,10 @@
 }
 
 /* Status Content Area */
+.turbo-target-sidebar {
+  display: flex;
+}
+
 .status-content {
   flex: 1;
   display: flex;

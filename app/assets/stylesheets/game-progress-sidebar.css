@@ -14,14 +14,14 @@
 
 /* Sidebar */
 .game-progress-sidebar {
-  display: none;
+  display: flex;
   flex-direction: column;
+  flex: 1;
   width: 280px;
   min-width: 280px;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
   border-right: 2px solid var(--border-light);
   padding: var(--space-8);
-  max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--space-32));
   overflow-y: auto;
 }
 
@@ -54,7 +54,6 @@
   flex-direction: column;
   gap: var(--space-3);
   overflow-y: auto;
-  max-height: calc(100vh - var(--header-height) - var(--footer-height) - 200px);
   padding-right: var(--space-2);
 }
 

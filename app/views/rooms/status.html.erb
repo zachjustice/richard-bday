@@ -5,7 +5,7 @@
   <%= tag.div(flash[:notice], class: "error-notice") if flash[:notice] %>
   <div id="status-content-inner" class="status-content-inner">
     <div class="status-page-card">
-      <div id="turbo-target-sidebar">
+      <div id="turbo-target-sidebar" class="turbo-target-sidebar">
         <% if @room.current_game.present? %>
           <%= render partial: "rooms/status/sidebar", locals: @status_data %>
         <% end %>
