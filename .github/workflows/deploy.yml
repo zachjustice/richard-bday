@@ -11,10 +11,17 @@ env:
 
 jobs:
   build-and-deploy:
+    environment: continuous-deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+      attestations: write
+      id-token: write
+
+    env:
+      DOCKER_BUILDKIT: 1
+      RAILS_ENV: production
 
     steps:
     - name: Checkout repository
@@ -31,7 +38,7 @@ jobs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
-        password: ${{ secrets.GHCR_TOKEN }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Extract metadata
       id: meta
@@ -42,26 +49,19 @@ jobs:
           type=ref,event=branch
           type=sha,prefix={{branch}}-
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
+    - uses: webfactory/ssh-agent@v0.7.0
       with:
-        context: .
-        platforms: linux/amd64
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Install Kamal
-      run: |
-        gem install kamal
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
 
-    - name: Deploy to Digital Ocean
-      run: |
-        kamal deploy
+    - name: Deploy command
+      run: bundle exec kamal deploy
       env:
-        KAMAL_REGISTRY_PASSWORD: ${{ secrets.GHCR_TOKEN }}
+        KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        DEPLOY_SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         DROPLET_IP: ${{ secrets.DROPLET_IP }}

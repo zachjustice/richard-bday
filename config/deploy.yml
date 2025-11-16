@@ -84,7 +84,13 @@ asset_path: /rails/public/assets
 # Configure the image builder.
 builder:
   arch: amd64
+  arch: amd64
+  cache:
+    type: gha
+    options: mode=max
+    image: app-build-cache
   secrets:
+    - RAILS_MASTER_KEY
     - GITHUB_TOKEN
     - KAMAL_REGISTRY_PASSWORD
 
