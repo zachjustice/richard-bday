@@ -51,10 +51,21 @@ module StoriesHelper
     end
   end
 
-  def render_story(text, blank_id_to_answer_text)
+  def render_story_with_tooltips(text, blank_id_map)
     replacement_regex = /\{\d+\}/
     text.gsub(replacement_regex) do |match|
-      content_tag(:span, blank_id_to_answer_text[match], class: "game-prompt-answer")
+      answer_text, game_prompt_id = blank_id_map[match]
+
+    tag.span(
+        answer_text,
+        class: "game-prompt-answer",
+        data: {
+          controller: "prompt-tooltip",
+          action: "mouseenter->prompt-tooltip#show mouseleave->prompt-tooltip#hide",
+          prompt_tooltip_game_prompt_id_value: game_prompt_id,
+          prompt_tooltip_url_value: prompt_tooltip_path(game_prompt_id)
+        }
+      )
     end
   end
 end

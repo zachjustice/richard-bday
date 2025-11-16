@@ -20,12 +20,14 @@ Rails.application.routes.draw do
   end
 
   # Add to prompts routes
+  # TODO: separate prompts and game_prompts
   get "/prompts", to: "prompts#index", as: :prompts_index
   get "/prompts/new", to: "prompts#new", as: :new_prompt
   post "/prompts", to: "prompts#create_prompt", as: :create_prompt
   get "/prompts/:id/edit", to: "prompts#edit_prompt", as: :edit
   patch "/prompts/:id", to: "prompts#update_prompt", as: :update_prompt
   delete "/prompts/:id", to: "prompts#destroy_prompt", as: :destroy_prompt
+  get "/prompts/:id/tooltip", to: "prompts#tooltip", as: :prompt_tooltip
 
   # rooms
   get "/rooms", to: "rooms#show", as: :show_room

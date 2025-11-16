@@ -1,0 +1,139 @@
+/* Prompt Tooltip Styles */
+.prompt-tooltip {
+  position: fixed;
+  z-index: var(--z-tooltip);
+  max-width: 400px;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.prompt-tooltip.hidden {
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tooltip-loading {
+  background: var(--bg-primary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-xl);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.tooltip-content {
+  background: var(--bg-primary);
+  border: 2px solid var(--color-primary-purple);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  overflow: hidden;
+}
+
+.tooltip-header {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  padding: var(--space-4);
+  border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.tooltip-prompt {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.tooltip-answers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tooltip-answer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-fast);
+}
+
+.tooltip-answer:hover {
+  background: var(--bg-tertiary);
+}
+
+.tooltip-winner {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.15) 100%);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.answer-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.answer-author {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+}
+
+.answer-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  font-style: italic;
+  word-wrap: break-word;
+}
+
+.answer-votes {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Enhanced game prompt answer styling */
+.game-prompt-answer {
+  cursor: help;
+  border-bottom: 2px dotted var(--color-primary-purple);
+  transition: all var(--transition-fast);
+}
+
+.game-prompt-answer:hover {
+  color: var(--color-primary-purple);
+  border-bottom-style: solid;
+}
+
+/* Scrollbar styling for tooltip */
+.tooltip-answers::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tooltip-answers::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+}
+
+.tooltip-answers::-webkit-scrollbar-thumb {
+  background: var(--color-primary-purple);
+  border-radius: var(--radius-full);
+}

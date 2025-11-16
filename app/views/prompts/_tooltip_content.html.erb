@@ -1,0 +1,20 @@
+<div id="game-prompt-<%= game_prompt.id %>" class="tooltip-content">
+  <div class="tooltip-header">
+    <h4 class="tooltip-prompt"><%= game_prompt.prompt.description %></h4>
+  </div>
+  
+  <div class="tooltip-answers">
+    <% answers.sort_by { |a| -votes_by_answer[a.id]&.size.to_i }.each do |answer| %>
+      <div class="tooltip-answer <%= 'tooltip-winner' if answer.won %>">
+        <div class="answer-info">
+          <span class="answer-author"><%= answer.user.name %>:</span>
+          <span class="answer-text">"<%= answer.text %>"</span>
+        </div>
+        <div class="answer-votes">
+          <%= pluralize(votes_by_answer[answer.id]&.size || 0, 'vote') %>
+          <%= '🏆' if answer.won %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

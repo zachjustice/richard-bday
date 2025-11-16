@@ -106,7 +106,7 @@ class RoomStatusService
   def final_results_data
     story_text = @room.current_game.story.text
     blank_id_to_answer_text = Answer.where(game_id: @room.current_game, won: true).reduce({}) do |result, ans|
-      result["{#{ans.game_prompt.blank.id}}"] = ans.text
+      result["{#{ans.game_prompt.blank.id}}"] = [ ans.text, ans.game_prompt.id ]
       result
     end
 
@@ -123,7 +123,7 @@ class RoomStatusService
 
   def validate_story(complete_story, blank_id_to_answer_text, story_text, replacement_regex)
     includes_leftover_regex = complete_story.match?(replacement_regex)
-    missing_answers = blank_id_to_answer_text.values.reject { |ans| complete_story.include?(ans) }
+    missing_answers = blank_id_to_answer_text.values.reject { |ans| complete_story.include?(ans.first) }
 
     if includes_leftover_regex || !missing_answers.empty?
       error_part1 = includes_leftover_regex ? "[LEFTOVER_REGEX]" : ""

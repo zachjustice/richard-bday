@@ -1,5 +1,5 @@
 class PromptsController < ApplicationController
-  before_action :redirect_to_current_game_phase, except: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt ]
+  before_action :redirect_to_current_game_phase, except: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt, :tooltip ]
 
   def show
     exists = Answer.exists?(
@@ -43,6 +43,22 @@ class PromptsController < ApplicationController
 
   def results
     @status = @current_room.status
+  end
+
+  def tooltip
+    @game_prompt = GamePrompt.find(params[:id])
+    @answers = Answer.where(game_prompt_id: @game_prompt.id)
+    @votes = Vote.where(game_prompt_id: @game_prompt.id)
+
+    @votes_by_answer = @votes.group_by(&:answer_id)
+
+    render partial: "prompts/tooltip_content",
+          locals: {
+            game_prompt: @game_prompt,
+            answers: @answers,
+            votes_by_answer: @votes_by_answer
+          },
+          layout: false
   end
 
   def index

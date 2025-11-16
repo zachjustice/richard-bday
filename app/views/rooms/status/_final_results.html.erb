@@ -1,3 +1,4 @@
+<%= stylesheet_link_tag "prompt-tooltip", "data-turbo-track": "reload" %>
 <div class="room-content-card">
   <div class="story-header">
     <h2 class="story-title"><%= current_room.current_game.story.title %></h2>
@@ -11,7 +12,7 @@
     </div>
   </div>
   <div class="story-content">
-    <%= simple_format(render_story(story_text, blank_id_to_answer_text)) %>
+    <%= simple_format(render_story_with_tooltips(story_text, blank_id_to_answer_text), {}, sanitize: false) %>
   </div>
   <div class="mt-4">
     <i>Hey <b><%= User.find_by(room: room, role: User::NAVIGATOR)&.name %></b>, click <b>Start New Game</b> when you're ready.</i>
