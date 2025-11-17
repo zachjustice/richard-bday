@@ -7,7 +7,7 @@ class User < ApplicationRecord
   belongs_to :room
   has_many :sessions, dependent: :destroy
 
-  validates :name, presence: true
+  validates :name, presence: true, length: { maximum: 20, too_long: "is too long. Maximum is %{count} characters." }
   validates :room_id, presence: true
 
   # Both Player and Navigator Roles

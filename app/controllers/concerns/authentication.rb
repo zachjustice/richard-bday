@@ -37,12 +37,13 @@ module Authentication
     end
 
     def request_authentication
-      session[:return_to_after_authenticating] = request.url
+      # session[:return_to_after_authenticating] = request.url
       redirect_to new_session_path
     end
 
     def after_authentication_url
-      session.delete(:return_to_after_authenticating) || show_room_path
+      # session.delete(:return_to_after_authenticating) || show_room_path
+      show_room_path
     end
 
     def start_new_session_for(user)

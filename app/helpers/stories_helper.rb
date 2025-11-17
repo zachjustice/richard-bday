@@ -61,10 +61,11 @@ module StoriesHelper
 
   def render_story_with_tooltips(text, blank_id_map)
     replacement_regex = /\{\d+\}/
+    # TODO handle rules for blanks or prompts. i.e. does a blank allow for punctuation in the answer?
     text.gsub(replacement_regex) do |match|
       answer_text, game_prompt_id = blank_id_map[match]
 
-    tag.span(
+      tag.span(
         answer_text,
         class: "game-prompt-answer",
         data: {

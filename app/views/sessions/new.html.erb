@@ -20,20 +20,6 @@
       <% end %>
     </div>
 
-    <% if flash[:alert] %>
-      <div class="alert-message">
-        <span class="alert-icon">⚠️</span>
-        <%= flash[:alert] %>
-      </div>
-    <% end %>
-
-    <% if flash[:notice] %>
-      <div class="notice-message">
-        <span class="notice-icon">✓</span>
-        <%= flash[:notice] %>
-      </div>
-    <% end %>
-
     <%= form_with url: session_path, class: "login-form" do |form| %>
       <div class="form-group">
         <label for="name" class="form-label">
@@ -46,6 +32,7 @@
             autofocus: true,
             autocomplete: "off",
             placeholder: "What should we call you?",
+            maxlength: 20,
             value: params[:username],
             class: "form-input" %>
       </div>

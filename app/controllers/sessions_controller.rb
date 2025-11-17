@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   allow_unauthenticated_access only: %i[ new create resume editor create_editor ]
-  rate_limit to: 10, within: 3.minutes, only: [ :create, :create_editor, :new ], with: -> { redirect_to new_session_url, alert: "Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: %i[ new create resume editor create_editor ], with: -> { redirect_to new_session_url, alert: "Too many requests. Try again later." }
 
   def new
     session_id = cookies.signed[:session_id]
@@ -66,7 +66,7 @@ class SessionsController < ApplicationController
       start_new_session_for user
       redirect_to after_authentication_url
     else
-      redirect_to new_session_path, alert: "Someone in this room already has that name."
+      redirect_to new_session_path, alert: user.errors.full_messages.join(" ")
     end
   end
 

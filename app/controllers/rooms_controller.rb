@@ -120,10 +120,11 @@ class RoomsController < ApplicationController
     @story = status_data[:story]
   end
 
+  # TODO use specific room-waiting-room. i.e. /rooms/:id/waiting
   def show
     @users = User.players.where(room_id: @current_room.id)
     # Redirect to the current prompt if the game for this room has advanced beyond the first prompt (index 0)
-    if @current_room.status == RoomStatus::Answering
+    if @current_room.status != RoomStatus::WaitingRoom
       redirect_to controller: "prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
     end
   end
