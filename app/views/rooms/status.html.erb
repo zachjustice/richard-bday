@@ -2,6 +2,7 @@
 <%= turbo_stream_from "rooms:#{@room.id}:status" %>
 <%= render "rooms/status/header" %>
 <div class="status-content" data-controller="room-status">
+
   <%= tag.div(flash[:notice], class: "error-notice") if flash[:notice] %>
   <div id="status-content-inner" class="status-content-inner">
     <div class="status-page-card">
@@ -32,5 +33,25 @@
         <span>Or visit <a href="https://blanksies.zachjustice.dev">blanksies.zachjustice.dev</a></span>
       </div>
     <% end %>
+  </div>
+
+  <div class="audio-controls" data-controller="background-audio" data-turbo-permanent>
+    <audio 
+      data-background-audio-target="audio"
+      src="<%= asset_path('life-of-a-wandering-wizard.mp3') %>">
+    </audio>
+
+    <!-- Play / Pause Button -->
+    <button
+      data-action="background-audio#togglePlay"
+      data-background-audio-target="playButton"
+    >
+      <span data-background-audio-target="playIcon" class="icon">
+        🔊
+      </span>
+      <span data-background-audio-target="pauseIcon" class="icon pauseIcon hidden">
+        ❌
+      </span>
+    </button>
   </div>
 </div>
