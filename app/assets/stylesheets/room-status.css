@@ -1000,13 +1000,40 @@
   border-radius: var(--radius-xl);
   background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
   border: 2px solid rgba(240, 147, 251, 0.2);
+  align-items: center;
 }
 
 .story-title {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  /* centers the title text */
+}
+
+.story-title-text {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--text-primary);
-  margin: 0 0 var(--space-4) 0;
+  margin: 0;
+  /* remove default margin */
+}
+
+.read-aloud-button {
+  position: absolute;
+  right: 0;
+  /* float to the right */
+  top: 50%;
+  /* vertically center */
+  transform: translateY(-50%);
+  /* perfect vertical centering */
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  background: var(--gradient-primary-reverse);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .story-authors {
@@ -1245,7 +1272,7 @@
     padding: var(--space-6);
   }
 
-  .story-title {
+  .story-title-text {
     font-size: var(--font-size-xl);
   }
 

@@ -1,7 +1,17 @@
 <%= stylesheet_link_tag "prompt-tooltip", "data-turbo-track": "reload" %>
 <div class="room-content-card">
-  <div class="story-header">
-    <h2 class="story-title"><%= current_room.current_game.story.title %></h2>
+  <div class="story-header" 
+       data-controller="speech" 
+       data-speech-text-value="<%= render_plaintext(story_text, blank_id_to_answer_text) %>">
+    <div class="story-title">
+      <h2 class="story-title-text">
+        <%= current_room.current_game.story.title %>
+      </h2>
+      <button class="read-aloud-button" type="button" data-action="click->speech#speak">
+        🔊 Read Aloud
+      </button>
+    </div>
+
     <div class="story-authors">
       <span class="authors-label">Written by:</span>
       <div class="authors-list">
