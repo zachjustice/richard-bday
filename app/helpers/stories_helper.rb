@@ -64,7 +64,9 @@ module StoriesHelper
     # TODO handle rules for blanks or prompts. i.e. does a blank allow for punctuation in the answer?
     text.gsub(replacement_regex) do |match|
       answer_text, game_prompt_id = blank_id_map[match]
-
+      url = ''
+      if game_prompt_id 
+        url = prompt_tooltip_path(game_prompt_id) 
       tag.span(
         answer_text,
         class: "game-prompt-answer",
@@ -72,7 +74,7 @@ module StoriesHelper
           controller: "prompt-tooltip",
           action: "mouseenter->prompt-tooltip#show mouseleave->prompt-tooltip#hide",
           prompt_tooltip_game_prompt_id_value: game_prompt_id,
-          prompt_tooltip_url_value: prompt_tooltip_path(game_prompt_id)
+          prompt_tooltip_url_value: url
         }
       )
     end
