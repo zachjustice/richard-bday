@@ -1,0 +1,105 @@
+<%= stylesheet_link_tag "music-player", "data-turbo-track": "reload" %>
+<div data-controller="music-player" data-turbo-permanent>
+  <audio data-music-player-target="audio"></audio>
+
+  <!-- Music Player Button -->
+  <button 
+    class="music-player-button"
+    data-action="click->music-player#openModal"
+    title="Open Music Player">
+    🎵
+  </button>
+
+  <!-- Music Player Modal -->
+  <div 
+    class="music-player-modal hidden"
+    data-action="click->music-player#closeModal"
+    data-music-player-target="modal">
+    <div class="music-player-content">
+      <!-- Header -->
+      <div class="music-player-header">
+        <div class="music-player-title-section">
+          <h2 
+            class="music-player-song-title" 
+            data-music-player-target="songTitle">
+            No song playing
+          </h2>
+          <p class="music-player-artist">
+            <a 
+              href="#" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              data-music-player-target="artistLink">
+              <span data-music-player-target="artistName">Select a song</span>
+            </a>
+          </p>
+        </div>
+        <button 
+          class="close-modal-btn"
+          data-action="click->music-player#closeModal"
+          aria-label="Close music player">
+          ✕
+        </button>
+      </div>
+
+      <!-- Playback Controls -->
+      <div class="music-player-controls">
+        <div class="control-buttons">
+          <button 
+            class="control-btn"
+            data-action="click->music-player#previousSong"
+            title="Previous song">
+            ⏮️
+          </button>
+
+          <button 
+            class="control-btn play-pause"
+            data-action="click->music-player#togglePlay"
+            title="Play/Pause">
+            <span data-music-player-target="playIcon">▶️</span>
+            <span data-music-player-target="pauseIcon" class="hidden">⏸️</span>
+          </button>
+
+          <button 
+            class="control-btn"
+            data-action="click->music-player#nextSong"
+            title="Next song">
+            ⏭️
+          </button>
+        </div>
+        <div class="progress-times">
+          <span data-music-player-target="currentTime">0:00</span>
+          <span data-music-player-target="totalTime">0:00</span>
+        </div>
+        <div 
+            class="progress-bar-container"
+            data-music-player-target="progressBar"
+            data-action="click->music-player#seek">
+          <div 
+              class="progress-bar-fill"
+              data-music-player-target="progress">
+          </div>
+        </div>
+      </div>
+
+      <div class="music-player-search-and-song-container">
+        <!-- Search -->
+        <div class="music-player-search">
+          <input 
+              type="text"
+              class="search-input"
+              placeholder="Search songs or artists..."
+              data-music-player-target="searchInput"
+              data-action="input->music-player#search">
+        </div>
+
+        <!-- Song List -->
+        <div 
+          class="music-player-songs"
+          data-music-player-target="songList">
+          <div class="list-empty">Loading songs...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,9 @@
-<%= stylesheet_link_tag "room-status", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@room.id}:status" %>
+
+<%= stylesheet_link_tag "room-status", "data-turbo-track": "reload" %>
+
 <%= render "rooms/status/header" %>
+
 <div class="status-content" data-controller="room-status">
   <div id="status-content-inner" class="status-content-inner">
     <div class="status-page-card">
@@ -35,22 +38,6 @@
     <% end %>
   </div>
 
-  <div class="audio-controls" data-controller="background-audio" data-turbo-permanent>
-    <audio 
-      data-background-audio-target="audio"
-      src="<%= asset_path('life-of-a-wandering-wizard.mp3') %>">
-    </audio>
-
-    <button
-      data-action="background-audio#togglePlay"
-      data-background-audio-target="playButton"
-    >
-      <span data-background-audio-target="playIcon" class="icon">
-        🔊
-      </span>
-      <span data-background-audio-target="pauseIcon" class="icon pauseIcon hidden">
-        ❌
-      </span>
-    </button>
-  </div>
+  <%# Music Controls / Player %>
+  <%= render "shared/music_player" %>
 </div>

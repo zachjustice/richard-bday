@@ -53,6 +53,9 @@ Rails.application.routes.draw do
 
   post "/vote", to: "vote#update"
 
+  # Music Player
+  get "/music_player", to: "music_player#index"
+
   # Copyright page
   get "/copyright", to: "copyright#show", as: :copyright
 

@@ -1169,6 +1169,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all var(--transition-normal);
+}
+
+.audio-controls .icon:hover {
+  transform: scale(1.05);
+  background: unset;
 }
 
 .pauseIcon.hidden {

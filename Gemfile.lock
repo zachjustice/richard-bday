@@ -365,6 +365,7 @@ GEM
     unicode-emoji (4.1.0)
     uri (1.1.1)
     useragent (0.16.11)
+    wahwah (1.6.7)
     web-console (4.2.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -415,6 +416,7 @@ DEPENDENCIES
   turbo-rails
   turbolinks (~> 5)
   tzinfo-data
+  wahwah (~> 1.6)
   web-console
 
 BUNDLED WITH
