@@ -1,11 +1,13 @@
 <%= turbo_stream_from "rooms:#{room.id}:answers" %>
+
 <div class="room-content-card">
   <div class="prompt-section">
     <%# <div class="prompt-icon">💭</div>     %>
     <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
-    <h2 class="prompt-text"><%= game_prompt.prompt.description %></h2>
-    <p class="prompt-instruction">Answer on your device</p>
+    <h2 class="prompt-text">Answer the prompt on your device</h2>
+    <p class="prompt-instruction">Everyone answers the same prompt</p>
   </div>
+
   <div class="progress-section">
     <h3>Answers</h3>
     <div class="completed-users">

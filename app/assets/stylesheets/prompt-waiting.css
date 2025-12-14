@@ -1,15 +1,15 @@
 /* Prompt Waiting Page Styles */
 .prompt-waiting-container {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-6);
   background: linear-gradient(135deg, #fff9f0 0%, #f0fff4 100%);
 }
 
 .prompt-waiting-card {
   /* This component has a top border which will visually overflow outside the component without "overflow: hidden" */
+  max-height: 90vh;
   overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-3xl);

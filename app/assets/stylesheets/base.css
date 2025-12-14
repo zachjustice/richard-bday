@@ -35,10 +35,6 @@ h6 {
   line-height: var(--line-height-tight);
 }
 
-p {
-  margin-bottom: var(--space-4);
-}
-
 /* Links */
 a {
   color: var(--color-blue-500);

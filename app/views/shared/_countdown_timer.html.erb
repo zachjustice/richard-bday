@@ -8,6 +8,11 @@
   data-countdown-timer-duration-value="<%= duration %>"
   data-countdown-timer-auto-start-value="<%= auto_start %>"
   data-phase="green">
+  <div 
+    class="countdown-timer-display" 
+    data-countdown-timer-target="display">
+    0:00
+  </div>
   <svg class="countdown-timer-svg" viewBox="0 0 100 100">
     <circle 
       class="countdown-timer-circle-bg"
@@ -23,9 +28,4 @@
       data-countdown-timer-target="circle">
     </circle>
   </svg>
-  <div 
-    class="countdown-timer-display" 
-    data-countdown-timer-target="display">
-    1:00
-  </div>
 </div>

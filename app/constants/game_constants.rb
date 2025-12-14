@@ -1,3 +1,3 @@
 module GameConstants
-  COUNTDOWN_FORGIVENESS_SECONDS = 5.seconds
+  COUNTDOWN_FORGIVENESS_SECONDS = 3.seconds
 end

@@ -28,14 +28,6 @@
         <% end %>
       </div>
     </div>
-
-    <% if @room.status == RoomStatus::WaitingRoom %>
-      <div class="qr-code">
-        <span>Scan the QR code to join the game:</span>
-        <img id="qr-code" src="">
-        <span>Or visit <a href="https://blanksies.zachjustice.dev">blanksies.zachjustice.dev</a></span>
-      </div>
-    <% end %>
   </div>
 
   <%# Music Controls / Player %>

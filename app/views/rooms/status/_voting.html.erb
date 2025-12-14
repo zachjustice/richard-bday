@@ -1,12 +1,13 @@
 <%= turbo_stream_from "rooms:#{room.id}:votes" %>
+
 <div class="room-content-card">
   <div class="prompt-section">
     <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
     <h2 class="prompt-text">Vote for the best answer on your device!</h2>
-    <p class="prompt-instruction"><%= game_prompt.prompt.description %></p>
   </div>
+
   <div class="progress-section">
-    <h3>Voting Progress</h3>
+    <h3>Votes</h3>
     <div class="completed-users">
       <ul id="users-with-status-list" class="users-list-with-status">
         <% users.each do |user| %>

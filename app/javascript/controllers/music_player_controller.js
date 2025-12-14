@@ -149,21 +149,14 @@ export default class extends Controller {
     )
 
     this.songListTarget.innerHTML = filteredSongs.map(song => `
-      <div class="song-item">
+      <div class="song-item"
+            data-song-id="${song.id}"
+            data-action="click->music-player#playNow">
         <div class="song-info">
           <div class="song-title">${song.title}</div>
           <div class="song-artist">${song.artist}</div>
         </div>
         <div class="song-duration">${this.formatTime(song.duration)}</div>
-        <div class="song-actions">
-          <button 
-            class="song-action-btn play-btn"
-            data-song-id="${song.id}"
-            data-action="click->music-player#playNow"
-            title="Play now">
-            ▶️
-          </button>
-        </div>
       </div>
     `).join('')
   }

@@ -49,22 +49,22 @@ class RoomStatusService
       game_prompt: game_prompt,
       answers: answers,
       users_with_submitted_answers: answers.map { |a| a.user.name },
-      answers_by_id: answers.index_by(&:id),
       votes: votes,
       users_with_vote: votes.map { |v| v.user.name }
     }
 
     if @room.status == RoomStatus::Results
-      data.merge!(results_specific_data(answers, votes, data[:answers_by_id]))
+      data.merge!(results_specific_data(answers, votes))
     end
 
     data
   end
 
-  def results_specific_data(answers, votes, answers_by_id)
+  def results_specific_data(answers, votes)
     votes_by_answer = {}
     most_votes = -1
     winners = []
+    answers_by_id = answers.index_by(&:id)
 
     votes.each do |vote|
       votes_by_answer[vote.answer_id] ||= []
@@ -96,16 +96,22 @@ class RoomStatusService
       )
     end
 
+    answers_sorted_by_votes = answers.sort do |a, b|
+      (votes_by_answer[b.id]&.size || 0) <=> (votes_by_answer[a.id]&.size || 0)
+    end
+
     {
       votes_by_answer: votes_by_answer,
       winners: winners,
-      winner: winner
+      winner: winner,
+      answers_sorted_by_votes: answers_sorted_by_votes
     }
   end
 
   def final_results_data
     story_text = @room.current_game.story.text
-    blank_id_to_answer_text = Answer.where(game_id: @room.current_game, won: true).reduce({}) do |result, ans|
+    winning_answers = Answer.where(game_id: @room.current_game, won: true)
+    blank_id_to_answer_text = winning_answers.reduce({}) do |result, ans|
       result["{#{ans.game_prompt.blank.id}}"] = [ ans.text, ans.game_prompt.id ]
       result
     end

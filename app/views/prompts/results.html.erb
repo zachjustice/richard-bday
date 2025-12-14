@@ -10,11 +10,13 @@
           <div class="spinner-ring spinner-ring-3"></div>
         </div>
         <h2 class="status-title">Game Complete!</h2>
-        <p class="status-message">Check the big screen for the final results!</p>
         <% if @current_user.role == User::NAVIGATOR %>
+          <p class="status-message">Click 'Start New Game' when you're ready!</p>
           <%= form_with url: "/rooms/#{@current_room.id}/end_game", method: :post, class: "next-form" do |form| %>
             <%= form.submit "Start New Game", class: "next-button" %>
           <% end %>
+        <% else %>
+          <p class="status-message">Check the big screen for the final results!</p>
         <% end %>
       </div>
     <% elsif @status == RoomStatus::WaitingRoom %>
@@ -42,7 +44,7 @@
     <% else %>
       <div class="status-display results-ready">
         <h2 class="status-title">Round Complete!</h2>
-        <p class="status-message">Check the big screen for the winner!</p>
+        <p class="status-message">Check the big screen for the winner.</p>
       </div>
       <% if @current_user.role == User::NAVIGATOR %>
         <%= form_with url: "/rooms/#{@current_room.id}/next", method: :post, class: "next-form" do |form| %>

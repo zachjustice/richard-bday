@@ -1,15 +1,15 @@
 /* Prompt Answer Page Styles */
 .prompt-answer-container {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-6);
   background: linear-gradient(135deg, #f0f4ff 0%, #f8f4ff 100%);
 }
 
 .prompt-answer-card {
   /* This component has a top border which will visually overflow outside the component without "overflow: hidden" */
+  max-height: 90vh;
   overflow: hidden;
   background: var(--bg-primary);
   border-radius: var(--radius-3xl);

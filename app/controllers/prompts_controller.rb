@@ -149,9 +149,15 @@ class PromptsController < ApplicationController
   end
 
   private
+  def trim_params(permitted_params)
+    permitted_params.each do |key, value|
+      permitted_params[key] = value.strip if value.is_a?(String)
+    end
+    permitted_params
+  end
 
   def prompt_params
-    params.require(:prompt).permit(:description, :tags)
+    trim_params(params.require(:prompt).permit(:description, :tags))
   end
 
   def redirect_to_current_game_phase

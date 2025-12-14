@@ -7,22 +7,23 @@
     <div class="voting-header">
       <div class="voting-icon">🗳️</div>
       <h2 class="voting-title"><%= @game_prompt.prompt.description %></h2>
-      <p class="voting-subtitle">Vote for your favorite answer!</p>
     </div>
 
     <%= form_with url: "/vote", method: :post, class: "voting-form" do |form| %>
       <%= form.hidden_field :game_prompt_id, required: true, value: @game_prompt.id %>
 
-      <div class="answers-list">
-        <%= form.collection_radio_buttons :answer_id, @answers, :id, :text do |b| %>
-          <label class="answer-option">
-            <%= b.radio_button name: 'answer_id', value: :id, class: "answer-radio" %>
-            <div class="answer-content">
-              <span class="answer-checkmark">✓</span>
-              <p class="answer-text"><%= b.text %></p>
-            </div>
-          </label>
-        <% end %>
+      <div class="answers-list-wrapper">
+        <div class="answers-list answers-list answers-list--fade">
+          <%= form.collection_radio_buttons :answer_id, @answers, :id, :text do |b| %>
+            <label class="answer-option">
+              <%= b.radio_button name: 'answer_id', value: :id, class: "answer-radio" %>
+              <div class="answer-content">
+                <span class="answer-checkmark">✓</span>
+                <p class="answer-text"><%= b.text %></p>
+              </div>
+            </label>
+          <% end %>
+        </div>
       </div>
 
       <%= form.submit "Submit Vote", class: "submit-button" %>

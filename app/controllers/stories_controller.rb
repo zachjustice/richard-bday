@@ -78,6 +78,12 @@ class StoriesController < ApplicationController
   end
 
   private
+  def trim_params(permitted_params)
+    permitted_params.each do |key, value|
+      permitted_params[key] = value.strip if value.is_a?(String)
+    end
+    permitted_params
+  end
 
   def is_editor
     if !@current_user.editor?
@@ -86,6 +92,8 @@ class StoriesController < ApplicationController
   end
 
   def story_params
-    params.require(:story).permit(:title, :original_text, :text)
+    trim_params(
+      params.require(:story).permit(:title, :original_text, :text)
+    )
   end
 end

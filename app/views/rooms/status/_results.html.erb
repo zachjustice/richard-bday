@@ -1,57 +1,33 @@
 <div class="room-content-card">
   <% if winners.size == 1 %>
-    <div class="winner-announcement">
-      <div class="winner-icon">🏆</div>
-      <h2 class="winner-text">Winner: <%= winners.first.user.name %></h2>
-    </div>
+    <h3>Winner!</h3>
   <% elsif winners.size > 1 %>
-    <div class="tie-announcement">
-      <div class="tie-icon">🤝</div>
-      <h2 class="tie-text">It's a Tie!</h2>
-      <p class="tie-players">Winner chosen randomly</p>
-      <p class="tie-players"><%= winners.map {|w| 
-      "#{w.user.name}#{w.id == winner.id ? '*' : ''}"
-      }.join(' • ') %></p>
-    </div>
-  <% elsif winners.size == 0 %>
-    <div class="no-winners-announcement">
-      <div class="no-winners-icon">❌</div>
-      <h2 class="no-winners-text">No votes!</h2>
-      <p class="no-winners-players">Answer set to "poop."</p>
-      <p class="no-winners-players">Be more creative next time.</p>
-    </div>
+    <h3><%= winners.sizer %>-Way Tie</h3>
+  <% else %>
+    <h3>No Winner</h3>
   <% end %>
-  <% if winners.size > 0 %>
-    <div class="results-section">
-      <h3>Answers</h3>
-      <div class="answers-list">
-        <% answers_by_id.each do |id, answer| %>
-          <div class="answer-card <%= winners.include?(answer) ? 'answer-winner' : '' %>">
-            <div class="answer-text-and-author">
-              <span class="answer-text"><%= answer.text %> <%= winner.id == id  ? '🏆' : '' %></span>
-              <span class="answer-author"><%= answer.user.name %></span>
-            </div>
-            <div class="answer-meta">
-              <% if votes_by_answer[id]&.any? %>
-                <div class="answer-voters">
-                  <% if votes_by_answer[id]&.count == 0 %>
-                    <span class="voters-label">0 Votes</span>
-                  <% else%>
-                    <div class="voters-tags">
-                      <% votes_by_answer[id].each do |vote| %>
-                        <span class="voter-tag"><%= vote.user.name %></span>
-                      <% end %>
-                    </div>
-                  <% end%>
-                </div>
-              <% end %>
-            </div>
+
+  <div class="results-section">
+    <div class="answers-list">
+      <% answers_sorted_by_votes.each do |answer| %>
+        <div class="answer-card <%= winners.include?(answer) ? 'answer-winner' : '' %>">
+          <div class="answer-text-and-author">
+            <span class="answer-text"><%= answer.text %> <%= winner.id == answer.id  ? '🏆' : '' %></span>
+            <span class="answer-author"><%= answer.user.name %></span>
           </div>
-        <% end %>
-      </div>
+          <div class="answer-meta">
+            <% if votes_by_answer[answer.id]&.any? %>
+              <div class="answer-voters">
+                <div class="voters-tags">
+                  <% votes_by_answer[answer.id].each do |vote| %>
+                    <span class="voter-tag"><%= vote.user.name %></span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-  <div class="mt-4">
-    <i>Hey <b><%= User.find_by(room: room, role: User::NAVIGATOR)&.name %></b>, click <b>Start New Game</b> when you're ready.</i>
   </div>
 </div>

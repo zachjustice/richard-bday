@@ -3,7 +3,7 @@ class JoinRoomJob < ApplicationJob
     room = user.room
 
     # Broadcast Turbo Stream to append user to the waiting room list
-    Turbo::StreamsChannel.broadcast_append_to(
+    Turbo::StreamsChannel.broadcast_prepend_to(
       "rooms:#{room.id}:users",
       target: "waiting-room",
       partial: "rooms/partials/user_list_item",

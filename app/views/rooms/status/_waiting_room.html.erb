@@ -9,10 +9,16 @@
         </div>
         <%= form.submit "Start Game", class: "start-button" %>
       <% end %>
+
+      <div class="qr-code">
+        <span>Scan the QR code to join the game:</span>
+        <img id="qr-code" src="">
+        <span>Or visit <a href="https://blanksies.zachjustice.dev">blanksies.zachjustice.dev</a></span>
+      </div>
     </div>
     <div class="users-section">
-      <h3>Players</h3>
-      <div id="users-list-container">
+      <h3>Players (<%= users&.size || 0 %>)</h3>
+      <div id="users-list-container" class="users-list-container">
         <ul id="waiting-room" class="players-list">
           <% if users.empty? %>
             <%# First element is deleted when the first user joins %>

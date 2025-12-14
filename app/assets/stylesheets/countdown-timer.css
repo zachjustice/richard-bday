@@ -4,8 +4,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
 }
 
 .countdown-timer-svg {
@@ -58,6 +58,7 @@
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   user-select: none;
+  z-index: 1;
 }
 
 /* Responsive sizing for header placement */

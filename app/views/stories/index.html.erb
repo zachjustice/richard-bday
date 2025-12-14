@@ -8,13 +8,16 @@
     <%= link_to "Prompts", prompts_index_path, class: "btn-secondary" %>
   </div>
 
-  <div class="stories-grid">
+  <div class="stories-list scroll-fade-indicators">
     <% @stories.each do |story| %>
       <div class="story-card">
-        <h3><%= story.title %></h3>
-        <p class="story-meta">
-          <%= pluralize(story.blanks.count, "blank") %>
-        </p>
+        <div class="story-title-and-subtitle">
+          <h3><%= story.title %></h3>
+          <p class="story-meta">
+            <%= pluralize(story.blanks.count, "blank") %>
+          </p>
+        </div>
+
         <div class="story-actions">
           <%= link_to "View", story_path(story), class: "btn-secondary" %>
           <%= link_to "Edit", edit_story_path(story), class: "btn-secondary" %>

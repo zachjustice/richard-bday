@@ -1,3 +1,20 @@
+/* Make text bigger on the room status page since it will be displayed on TVs and larger monitors */
+@media screen and (min-width: 1240px) {
+  .status-content {
+    --font-size-xs: 0.5rem;
+    --font-size-sm: 1rem;
+    --font-size-base: 2rem;
+    --font-size-md: 2.25rem;
+    --font-size-lg: 2.5rem;
+    --font-size-xl: 2.75rem;
+    --font-size-2xl: 3rem;
+    --font-size-3xl: 4rem;
+    --font-size-4xl: 5rem;
+    --font-size-5xl: 6rem;
+    --font-size-6xl: 8rem;
+  }
+}
+
 /* Status Page Header Styles */
 .status-header {
   position: sticky;
@@ -8,7 +25,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-8);
+  padding: var(--space-1) var(--space-8);
   background: var(--gradient-primary-simple);
   color: var(--text-on-primary);
   box-shadow: var(--shadow-sm);
@@ -107,73 +124,6 @@
   transform: scale(0.95);
 }
 
-/* Status Page Footer Styles */
-.status-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: var(--z-fixed);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-8);
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border-light);
-  color: var(--text-secondary);
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  width: 100%;
-}
-
-.footer-left,
-.footer-center,
-.footer-right {
-  display: flex;
-  align-items: center;
-}
-
-.footer-left {
-  flex: 1;
-  min-width: var(--min-width-sm);
-}
-
-.footer-center {
-  flex: 1;
-  justify-content: center;
-  min-width: var(--min-width-md);
-}
-
-.footer-right {
-  flex: 1;
-  justify-content: flex-end;
-  min-width: var(--min-width-sm);
-}
-
-.player-counter,
-.round-progress {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-weight: var(--font-weight-medium);
-}
-
-.counter-icon,
-.progress-icon {
-  font-size: var(--font-size-xl);
-}
-
-.counter-text,
-.progress-text {
-  font-size: 0.95rem;
-}
-
-.branding {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-tertiary);
-}
-
 /* Status Content Area */
 .turbo-target-sidebar {
   display: flex;
@@ -199,11 +149,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: var(--space-16);
-  padding-bottom: var(--space-32);
   background: linear-gradient(135deg, #f8f4ff 0%, #fff4f9 100%);
   align-items: center;
-  gap: var(--space-8)
+  justify-content: center;
+  gap: var(--space-8);
 }
 
 .status-page-card {
@@ -211,11 +160,14 @@
   background: var(--bg-primary);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-2xl);
-  max-width: var(--max-width-card-xl);
+  max-width: 90vw;
   width: 100%;
+  max-height: 85vh;
   position: relative;
   display: flex;
   flex-direction: row;
+  flex: 1;
+  min-height: 0;
 }
 
 .status-page-card::before {
@@ -233,8 +185,19 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   padding: var(--space-8);
+  min-height: 0;
+}
+
+.room-content-card h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 /* Waiting Room Page Styles */
@@ -290,6 +253,8 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-8);
+  flex: 1;
+  min-height: 0;
 }
 
 @media (min-width: 768px) {
@@ -306,27 +271,27 @@
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   transition: all var(--transition-normal);
-}
-
-.stories-section {
+  min-height: 0;
+  overflow: hidden;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
   border: 2px solid rgba(102, 126, 234, 0.15);
 }
 
-.users-section {
-  background: linear-gradient(135deg, rgba(118, 75, 162, 0.08) 0%, rgba(118, 75, 162, 0.12) 100%);
-  border: 2px solid rgba(118, 75, 162, 0.2);
-}
-
 .stories-section h3,
 .users-section h3 {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--text-primary);
   margin-bottom: var(--space-2);
   display: flex;
   align-items: center;
   gap: var(--space-2);
+}
+
+.users-list-container {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .story-form {
@@ -383,8 +348,9 @@
 }
 
 .players-list {
+  min-height: 0;
   list-style: none;
-  padding: 0;
+  padding: var(--space-1);
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -452,7 +418,7 @@
 }
 
 .prompt-instruction {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   color: var(--text-secondary);
   font-style: italic;
   margin: 0;
@@ -463,6 +429,8 @@
   border-radius: var(--radius-xl);
   background: linear-gradient(135deg, rgba(118, 75, 162, 0.05) 0%, rgba(118, 75, 162, 0.08) 100%);
   border: 2px solid rgba(118, 75, 162, 0.15);
+  flex: 1;
+  min-height: 0;
 }
 
 .progress-section h3 {
@@ -540,37 +508,40 @@
 .completed-users {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .users-list-with-status {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
   gap: var(--space-3);
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.completed-user, .answering-user {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  animation: slideIn 0.3s ease-out;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 .completed-user {
-  padding: var(--space-4);
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.25) 100%);
-  border-radius: var(--radius-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
   border-left: 3px solid rgb(34, 197, 94);
-  transition: all var(--transition-fast);
-  animation: slideIn 0.3s ease-out;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.25) 100%);
 }
 
 .answering-user {
-  padding: var(--space-4);
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(251, 146, 60, 0.25) 100%);
-  border-radius: var(--radius-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
   border-left: 3px solid rgb(251, 146, 60);
-  transition: all var(--transition-fast);
-  animation: slideIn 0.3s ease-out;
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(251, 146, 60, 0.25) 100%);
 }
 
 @keyframes slideIn {
@@ -814,6 +785,10 @@
 }
 
 .results-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(102, 126, 234, 0.08) 100%);
@@ -832,18 +807,35 @@
 
 .answers-list {
   display: flex;
+  flex: 1;
+  min-height: 0;
   flex-direction: column;
   gap: var(--space-4);
+  overflow-y: auto;
+}
+
+.answers-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.answers-list::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+}
+
+.answers-list::-webkit-scrollbar-thumb {
+  background: var(--color-primary-purple);
+  border-radius: var(--radius-full);
 }
 
 .answer-card {
-  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
   padding: var(--space-5);
   background: var(--bg-primary);
   border-radius: var(--radius-lg);
   transition: all var(--transition-normal);
-  display: flex;
-  flex-direction: row;
   justify-content: space-between;
   gap: var(--space-3);
 }
@@ -865,12 +857,14 @@
 
 .answer-text-and-author {
   width: 100%;
+  display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .answer-text {
   display: block;
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-base);
   color: var(--text-primary);
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-bold);
@@ -878,14 +872,18 @@
 
 .answer-author {
   display: block;
-  font-size: var(--font-size-lg);
+  font-size: 1.75rem;
   color: var(--text-secondary);
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 .answer-meta {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: end;
   width: 100%;
@@ -933,6 +931,10 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--text-primary);
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 .next-form {
@@ -1184,9 +1186,8 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
 
-  .status-header,
-  .status-footer {
-    padding: var(--space-4);
+  .status-header {
+    padding: var(--space-1) var(--space-4);
   }
 
   .status-page-spacing {
