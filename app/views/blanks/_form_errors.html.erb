@@ -1,0 +1,10 @@
+<% if blank.errors.any? %>
+  <div class="form-errors">
+    <h4>Please fix the following errors:</h4>
+    <ul>
+      <% blank.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_14_232245) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_18_003052) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -97,6 +97,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_14_232245) do
     t.index ["title"], name: "index_stories_on_title", unique: true
   end
 
+  create_table "story_prompts", force: :cascade do |t|
+    t.integer "story_id", null: false
+    t.integer "blank_id", null: false
+    t.integer "prompt_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blank_id"], name: "index_story_prompts_on_blank_id"
+    t.index ["prompt_id"], name: "index_story_prompts_on_prompt_id"
+    t.index ["story_id", "blank_id", "prompt_id"], name: "index_story_prompts_stories_blanks_prompts_unique", unique: true
+    t.index ["story_id"], name: "index_story_prompts_on_story_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -134,6 +146,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_14_232245) do
   add_foreign_key "games", "stories"
   add_foreign_key "rooms", "games", column: "current_game_id"
   add_foreign_key "sessions", "users"
+  add_foreign_key "story_prompts", "blanks"
+  add_foreign_key "story_prompts", "prompts"
+  add_foreign_key "story_prompts", "stories"
   add_foreign_key "users", "rooms"
   add_foreign_key "votes", "answers"
   add_foreign_key "votes", "game_prompts"

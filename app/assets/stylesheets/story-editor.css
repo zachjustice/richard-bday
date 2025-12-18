@@ -11,17 +11,6 @@
   flex-direction: column;
   flex: 1;
   padding: var(--space-8);
-  max-height: 100vh;
-}
-
-.story-form-container,
-.story-editor-container,
-.story-show-container {
-  max-width: 1400px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: var(--space-8);
 }
 
 .story-show-container {
@@ -120,6 +109,17 @@
 .editor-sidebar h2 {
   margin: 0 0 var(--space-4) 0;
   color: var(--text-primary);
+}
+
+.blanks-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.blanks-sidebar-header h2 {
+  margin: 0;
 }
 
 /* Story Form */
@@ -569,6 +569,126 @@
   margin: 0 0 var(--space-4) 0;
   font-size: var(--font-size-lg);
   color: var(--text-primary);
+}
+
+/* Blank Form Sections */
+.form-section {
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-light);
+}
+
+.form-section-title {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.prompt-count {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-secondary);
+}
+
+/* Prompts Checklist */
+.prompts-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-height: 300px;
+  overflow-y: auto;
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.prompt-checkbox {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-primary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.prompt-checkbox:hover {
+  border-color: var(--color-primary-purple);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.prompt-checkbox input[type="checkbox"] {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.prompt-checkbox-label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+.prompt-checkbox-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* New Prompts List */
+.new-prompts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.new-prompt-field {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.new-prompt-field textarea {
+  flex: 1;
+}
+
+.new-prompt-field .remove-prompt {
+  margin-top: 4px;
+}
+
+/* Text utilities */
+.text-secondary {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  margin: var(--space-2) 0;
+}
+
+.text-error {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+}
+
+/* Form Validation Hint */
+.form-validation-hint {
+  display: none;
+  background: rgba(220, 38, 38, 0.1);
+  border: 2px solid var(--color-error-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  margin-top: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  font-weight: var(--font-weight-medium);
 }
 
 /* Responsive */

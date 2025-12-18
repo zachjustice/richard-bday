@@ -218,23 +218,21 @@ class RoomsController < ApplicationController
   def create_game_prompts(story, game)
     blanks = Blank.where(story_id: story.id)
     selected_prompts = []
-    prompts = blanks.map do |b|
-      # Do all prompt tags and blank tags need to match? required tags? optional tags? duplicate entries with different tags?
-
-      # Select a random unchosen prompt
-      p = Prompt.where(tags: b.tags).where.not(id: selected_prompts).sample
-      selected_prompts << p
-      p
-    end
-    game_prompts = blanks.zip(prompts, (0...blanks.size)).map do |blank, prompt, order|
-      GamePrompt.new(
+    game_prompts = blanks.map.with_index do |blank, order|
+      # Select a random unchosen prompt associated with this story
+      available = StoryPrompt.where(blank: blank).where.not(id: selected_prompts)
+      if available.empty?
+        raise "No prompts available for blank #{blank.id} (tags: #{blank.tags}) in story #{story.id}"
+      end
+      story_prompt = available.sample
+      selected_prompts << story_prompt.prompt_id
+      GamePrompt.create!(
         game: game,
-        prompt: prompt,
+        prompt: story_prompt.prompt,
         blank: blank,
         order: order
       )
     end
-    !game_prompts.map(&:save!)
     game_prompts
   end
 

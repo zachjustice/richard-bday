@@ -80,17 +80,26 @@ def create_story(story_parts)
   blanks = story_parts[:prompts].map { |prompt_and_tags|
     phrases = prompt_and_tags[:phrases]
     tags_str = prompt_and_tags[:tags].join(",")
-    phrases.each { |phrase|
-      Prompt.find_or_create_by!(
-        description: phrase,
-        tags: tags_str
-      )
-    }
 
-    Blank.find_or_create_by!(
+    b = Blank.find_or_create_by!(
       story: s,
       tags: tags_str
     )
+
+    phrases.each { |phrase|
+      p = Prompt.find_or_create_by!(
+        description: phrase,
+        tags: tags_str
+      )
+
+      StoryPrompts.find_or_create_by!(
+        story: s,
+        blank: b,
+        prompt: p
+      )
+    }
+
+    b
   }
 
   templated_story = story_parts[:text]

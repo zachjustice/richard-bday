@@ -6,5 +6,7 @@ class Answer < ApplicationRecord
 
   has_many :votes, dependent: :destroy
 
+  validates :game_prompt_id, uniqueness: { scope: [ :user_id, :game_id ] }
+
   after_commit(on: :create) { AnswerSubmittedJob.perform_later(self) }
 end

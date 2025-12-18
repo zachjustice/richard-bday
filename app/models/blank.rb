@@ -2,6 +2,8 @@
 class Blank < ApplicationRecord
   belongs_to :story
   has_many :game_prompts, dependent: :destroy
+  has_many :story_prompts, dependent: :destroy
+  has_many :prompts, through: :story_prompts
 
   validates :story_id, presence: true
   validates :tags, presence: true
@@ -13,7 +15,7 @@ class Blank < ApplicationRecord
 
   # Find prompts matching this blank's tags
   def matching_prompts
-    Prompt.where(tags: tags)
+    prompts
   end
 
   # Get placeholder text for editor display

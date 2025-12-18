@@ -1,5 +1,8 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
+import "@rails/request.js"
+import "@hotwired/turbo-rails"
+
 import "controllers"
 import $ from 'jquery';
 
@@ -7,4 +10,11 @@ import $ from 'jquery';
 window.$ = $;
 window.jQuery = $;
 
-import "@rails/request.js"
+// Register custom Turbo Stream action to close modal
+
+Turbo.StreamActions.close_modal = function() {
+  const modalElement = document.querySelector(this.target)
+  if (modalElement) {
+    modalElement.classList.add("hidden")
+  }
+}

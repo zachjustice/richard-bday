@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
   resources :stories do
     resources :blanks, only: [ :create, :update, :destroy ]
+    get "prompts", to: "stories#prompts"
   end
 
   # Add to prompts routes

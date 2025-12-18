@@ -3,6 +3,7 @@ class Story < ApplicationRecord
   validates :original_text, presence: true
   validates :text, presence: true
 
+  has_many :story_prompts, dependent: :destroy
   has_many :blanks, dependent: :destroy
   has_one :game
 

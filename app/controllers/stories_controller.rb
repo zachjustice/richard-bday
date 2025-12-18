@@ -77,6 +77,18 @@ class StoriesController < ApplicationController
     redirect_to stories_path, notice: "Story deleted successfully"
   end
 
+  def prompts
+    @prompts = Prompt.all.order(created_at: :desc)
+
+    render json: @prompts.map { |p|
+      {
+        id: p.id,
+        description: p.description,
+        tags: p.tags
+      }
+    }
+  end
+
   private
   def trim_params(permitted_params)
     permitted_params.each do |key, value|
