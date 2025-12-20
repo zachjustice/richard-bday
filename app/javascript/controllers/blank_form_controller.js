@@ -170,11 +170,7 @@ export default class extends Controller {
     const hasExistingSelected = this.element.querySelectorAll(
       'input[name="blank[existing_prompt_ids][]"]:checked'
     ).length > 0
-
-    const hasNewPrompts = this.hasNewPromptInputTargets &&
-      Array.from(this.newPromptInputTargets).some(
-        input => input.value.trim().length > 0
-      )
+    const hasNewPrompts = Array.from(this.element.querySelectorAll('.form-textarea')).some(input => input.value.trim().length > 0)
 
     const isValid = hasExistingSelected || hasNewPrompts
 

@@ -98,7 +98,7 @@ class BlanksController < ApplicationController
               partial: "blanks/form",
               locals: { story: @story, blank: Blank.new }
             ),
-            turbo_stream.action(:close_modal, "blank-modal"),
+            turbo_stream.action(:close_modal, "blank-editor-modal"),
             turbo_stream.replace("flash-messages", partial: "shared/flash_messages")
           ]
         end

@@ -8,9 +8,9 @@ class StoryBlanksUpdateService
   def initialize(story:, blank:, params:)
     @story = story
     @blank = blank
-    @tags = params[:tags]
+    @tags = params[:tags].split(",").map(&:strip).join(",")
     @existing_prompt_ids = Array(params[:existing_prompt_ids]).reject(&:blank?).map(&:to_i)
-    @new_prompts = Array(params[:new_prompts]).reject { |p| p[:description].blank? }
+    @new_prompts = Array(params[:new_prompts]).each { |p| p[:description].strip! }.reject { |p| p[:description].blank? }
     @errors = []
   end
 

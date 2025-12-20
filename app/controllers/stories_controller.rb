@@ -20,7 +20,7 @@ class StoriesController < ApplicationController
     @story = Story.new(story_params)
 
     if @story.save
-      redirect_to story_path(@story), notice: "Story created successfully"
+      redirect_to story_path(@story)
     else
       render :new, status: :unprocessable_entity
     end
