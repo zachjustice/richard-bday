@@ -84,7 +84,8 @@ class StoriesController < ApplicationController
       {
         id: p.id,
         description: p.description,
-        tags: p.tags
+        tags: p.tags,
+        usage_count: p.story_prompts.select(:story_id).distinct.count
       }
     }
   end

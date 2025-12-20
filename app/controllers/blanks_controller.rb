@@ -26,7 +26,7 @@ class BlanksController < ApplicationController
               partial: "blanks/form",
               locals: { story: @story, blank: Blank.new }
             ),
-            turbo_stream.action(:close_modal, "blank-modal"),
+            turbo_stream.action(:close_modal, "blank-editor-modal"),
             turbo_stream.replace("flash-messages", partial: "shared/flash_messages")
           ]
         end
@@ -49,11 +49,41 @@ class BlanksController < ApplicationController
     end
   end
 
+  # Gets data required for the Edit modal
+  def edit
+    @story = Story.find(params[:story_id])
+    @blank = @story.blanks.find(params[:id])
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.replace(
+            "blank-modal-form",
+            partial: "blanks/form",
+            locals: { story: @story, blank: @blank }
+          ),
+          turbo_stream.update(
+            "blank-modal-title",
+            "Edit Blank #{@blank.id}"
+          ),
+          turbo_stream.action(:open_modal, "blank-editor-modal")
+        ]
+      end
+    end
+  end
+
+  # UPdates a Blank
   def update
     @story = Story.find(params[:story_id])
     @blank = @story.blanks.find(params[:id])
 
-    if @blank.update(blank_params)
+    result = StoryBlanksUpdateService.new(
+      story: @story,
+      blank: @blank,
+      params: blank_with_prompts_params
+    ).call
+
+    if result.success
       flash[:notice] = "Successfully updated Blank"
       respond_to do |format|
         format.turbo_stream do
@@ -63,18 +93,25 @@ class BlanksController < ApplicationController
               partial: "blanks/blank",
               locals: { blank: @blank, story: @story }
             ),
+            turbo_stream.replace(
+              "blank-modal-form",
+              partial: "blanks/form",
+              locals: { story: @story, blank: Blank.new }
+            ),
+            turbo_stream.action(:close_modal, "blank-modal"),
             turbo_stream.replace("flash-messages", partial: "shared/flash_messages")
           ]
         end
         format.html { redirect_to edit_story_path(@story) }
       end
     else
+      result.errors.each { |error| @blank.errors.add(:base, error) }
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
-            "blank_#{@blank.id}",
-            partial: "blanks/blank_form",
-            locals: { blank: @blank, story: @story }
+            "blank-modal-form",
+            partial: "blanks/form",
+            locals: { story: @story, blank: @blank }
           )
         end
         format.html { render "stories/edit", status: :unprocessable_entity }

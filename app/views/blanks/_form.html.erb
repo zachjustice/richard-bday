@@ -1,13 +1,17 @@
 <!-- app/views/blanks/_form.html.erb -->
+<% edit_mode = blank.persisted? %>
+
 <%= form_with model: blank,
     id: "blank-modal-form",
-    url: story_blanks_path(story),
+    url: edit_mode ? story_blank_path(story, blank) : story_blanks_path(story),
+    method: edit_mode ? :patch : :post,
     data: {
       controller: "blank-form",
-      blank_form_story_id_value: story.id
+      blank_form_story_id_value: story.id,
+      blank_form_blank_id_value: blank.id,
+      blank_form_edit_mode_value: edit_mode,
+      blank_form_existing_prompt_ids_value: blank.prompts.pluck(:id).to_json
     } do |form| %>
-
-  <h3>Add New Blank</h3>
 
   <%= render "blanks/form_errors", blank: blank %>
 
@@ -58,7 +62,7 @@
   </div>
 
   <div class="form-actions">
-    <%= form.submit "Create Blank",
+    <%= form.submit edit_mode ? "Update Blank" : "Create Blank",
         class: "btn-primary btn-sm",
         data: { blank_form_target: "submitButton" } %>
   </div>

@@ -10,11 +10,21 @@ import $ from 'jquery';
 window.$ = $;
 window.jQuery = $;
 
-// Register custom Turbo Stream action to close modal
-
+// Register custom Turbo Stream actions for modal
 Turbo.StreamActions.close_modal = function() {
-  const modalElement = document.querySelector(this.target)
+  const modalElement = document.querySelector(`#${this.target}`)
   if (modalElement) {
     modalElement.classList.add("hidden")
+  }
+}
+
+Turbo.StreamActions.open_modal = function() {
+  const modalElement = document.querySelector(`#${this.target}`)
+  if (modalElement) {
+    modalElement.classList.remove("hidden")
+    const firstInput = modalElement.querySelector("input[type='text']")
+    if (firstInput) {
+      setTimeout(() => firstInput.focus(), 100)
+    }
   }
 }

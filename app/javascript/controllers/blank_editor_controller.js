@@ -2,15 +2,31 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["display", "form"]
+  static targets = ["display", "form", "editLink"]
 
+  openEditModal(event) {
+    event.preventDefault()
+    if (this.hasEditLinkTarget) {
+      this.editLinkTarget.click()
+    }
+  }
+
+  // Keep old methods for backwards compatibility (if inline form is still used)
   edit() {
-    this.displayTarget.style.display = "none"
-    this.formTarget.style.display = "block"
+    if (this.hasDisplayTarget) {
+      this.displayTarget.style.display = "none"
+    }
+    if (this.hasFormTarget) {
+      this.formTarget.style.display = "block"
+    }
   }
 
   cancelEdit() {
-    this.displayTarget.style.display = "block"
-    this.formTarget.style.display = "none"
+    if (this.hasDisplayTarget) {
+      this.displayTarget.style.display = "block"
+    }
+    if (this.hasFormTarget) {
+      this.formTarget.style.display = "none"
+    }
   }
 }

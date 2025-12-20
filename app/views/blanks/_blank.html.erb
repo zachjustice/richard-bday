@@ -2,15 +2,26 @@
 <div id="blank_<%= blank.id %>" class="blank-item" data-controller="blank-editor">
   <div class="blank-display" data-blank-editor-target="display">
     <div class="blank-header">
-      <span class="blank-id">{<%= blank.id %>}</span>
+      <p>
+      Blank ID: <span class="blank-id">{<%= blank.id %>}</span>
+      </p>
       <div class="blank-actions">
-        <button type="button" 
-                class="btn-icon" 
-                data-action="click->blank-editor#edit"
-          title="Edit">
+        <%= link_to edit_story_blank_path(story, blank),
+            class: "hidden",
+            data: {
+              blank_editor_target: "editLink",
+              turbo_stream: true
+            } do %>
+        <% end %>
+
+        <button type="button"
+                class="btn-icon"
+                data-action="click->blank-editor#openEditModal"
+                title="Edit">
           ✏️
         </button>
-        <%= button_to story_blank_path(story, blank), 
+
+        <%= button_to story_blank_path(story, blank),
             method: :delete,
             data: { turbo_confirm: "Delete this blank?" },
             class: "btn-icon",
@@ -19,17 +30,26 @@
         <% end %>
       </div>
     </div>
+
+    <% if blank.matching_prompts.size == 0%>
+      <p class="blank-matches">
+        0 matching prompts
+      </p>
+    <% end %>
+
+    <div class="blank-matches">
+      <ul class="blank-matches-list">
+        <% blank.matching_prompts.map.with_index do |prompt, index| %>
+          <li class="story-prompt-for-blank"><%= index + 1 %>. <%= prompt.description %></li>
+        <% end %>
+      </ul>
+    </div>
+
     <div class="blank-tags">
       <% blank.tags_array.each do |tag| %>
         <span class="tag"><%= tag %></span>
       <% end %>
     </div>
-    <p class="blank-matches">
-      <%= pluralize(blank.matching_prompts.count, "matching prompt") %>
-    </p>
   </div>
 
-  <div class="blank-form" data-blank-editor-target="form" style="display: none;">
-    <%= render "blanks/blank_form", blank: blank, story: story %>
-  </div>
 </div>

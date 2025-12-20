@@ -260,18 +260,22 @@
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
 }
 
+.blank-display {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .blank-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-2);
 }
 
 .blank-id {
   font-family: 'Monaco', 'Courier New', monospace;
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
-  padding: 4px 8px;
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
 }
@@ -302,6 +306,10 @@
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
   margin: 0;
+}
+
+.blank-matches-list {
+  list-style: none;
 }
 
 .blank-form,

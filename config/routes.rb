@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   root to: "rooms#create"
 
   resources :stories do
-    resources :blanks, only: [ :create, :update, :destroy ]
+    resources :blanks, only: [ :create, :edit, :update, :destroy ]
     get "prompts", to: "stories#prompts"
   end
 

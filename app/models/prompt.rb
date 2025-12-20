@@ -1,6 +1,7 @@
 # app/models/prompt.rb
 class Prompt < ApplicationRecord
   has_many :game_prompts, dependent: :destroy
+  has_many :story_prompts, dependent: :destroy
 
   validates :description, presence: true, uniqueness: true
   validates :tags, presence: true

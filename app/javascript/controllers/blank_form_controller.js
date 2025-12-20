@@ -13,13 +13,20 @@ export default class extends Controller {
   ]
 
   static values = {
-    storyId: Number
+    storyId: Number,
+    blankId: Number,
+    editMode: Boolean,
+    existingPromptIds: Array
   }
 
   connect() {
     this.promptsCache = null
     this.filterDebounceTimer = null
-    // this.validateSelection()
+
+    // If edit mode and tags exist, trigger initial filter
+    if (this.editModeValue && this.tagsInputTarget.value.trim().length > 0) {
+      this.filterPrompts()
+    }
   }
 
   filterPrompts(event) {
@@ -69,12 +76,32 @@ export default class extends Controller {
 
     const html = prompts.map(prompt => this.promptCheckboxTemplate(prompt)).join('')
     this.promptsListTarget.innerHTML = html
+
+    // Pre-check existing prompts if in edit mode
+    if (this.editModeValue && this.hasExistingPromptIdsValue) {
+      this.preCheckExistingPrompts()
+    }
+  }
+
+  preCheckExistingPrompts() {
+    const existingIds = this.existingPromptIdsValue || []
+    existingIds.forEach(id => {
+      const checkbox = this.element.querySelector(
+        `input[name="blank[existing_prompt_ids][]"][value="${id}"]`
+      )
+      if (checkbox) {
+        checkbox.checked = true
+      }
+    })
+    this.validateSelection()
   }
 
   promptCheckboxTemplate(prompt) {
     const tags = prompt.tags.split(',').map(t =>
       `<span class="tag">${t.trim()}</span>`
     ).join('')
+
+    const usageText = prompt.usage_count ? ` (Used in ${prompt.usage_count} ${prompt.usage_count === 1 ? 'story' : 'stories'})` : ''
 
     return `
       <label class="prompt-checkbox">
@@ -84,7 +111,7 @@ export default class extends Controller {
                class="form-checkbox"
                data-action="change->blank-form#validateSelection">
         <span class="prompt-checkbox-label">
-          ${this.escapeHtml(prompt.description)}
+          ${this.escapeHtml(prompt.description)}${usageText}
           <span class="prompt-checkbox-tags">${tags}</span>
         </span>
       </label>

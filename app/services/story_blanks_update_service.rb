@@ -2,16 +2,16 @@
 
 require "ostruct"
 
-class StoryBlanksService
-  attr_reader :story, :tags, :existing_prompt_ids, :new_prompts, :errors
+class StoryBlanksUpdateService
+  attr_reader :story, :blank, :tags, :existing_prompt_ids, :new_prompts, :errors
 
-  def initialize(story:, params:)
+  def initialize(story:, blank:, params:)
     @story = story
-    @tags = params[:tags].map(&:strip)
-    @existing_prompt_ids = Array(params[:existing_prompt_ids]).map(&:strip).reject(&:blank?)
-    @new_prompts = Array(params[:new_prompts]).map(&:strip).reject { |p| p[:description].blank? }
+    @blank = blank
+    @tags = params[:tags]
+    @existing_prompt_ids = Array(params[:existing_prompt_ids]).reject(&:blank?).map(&:to_i)
+    @new_prompts = Array(params[:new_prompts]).reject { |p| p[:description].blank? }
     @errors = []
-    @blank = nil
   end
 
   def call
@@ -19,11 +19,10 @@ class StoryBlanksService
     return failure_result if @errors.any?
 
     ActiveRecord::Base.transaction do
-      @blank = create_blank
+      update_blank_tags
       new_prompt_records = create_new_prompts
-      existing_prompts = find_existing_prompts
-      all_prompts = existing_prompts + new_prompt_records
-      create_story_prompts(@blank, all_prompts)
+      all_prompt_ids = @existing_prompt_ids + new_prompt_records.map(&:id)
+      sync_story_prompts(all_prompt_ids)
     end
 
     success_result
@@ -51,10 +50,8 @@ class StoryBlanksService
     end
   end
 
-  def create_blank
-    blank = @story.blanks.build(tags: @tags)
-    blank.save!
-    blank
+  def update_blank_tags
+    @blank.update!(tags: @tags)
   end
 
   def create_new_prompts
@@ -68,18 +65,26 @@ class StoryBlanksService
     end
   end
 
-  def find_existing_prompts
-    return [] if @existing_prompt_ids.empty?
+  def sync_story_prompts(new_prompt_ids)
+    current_prompt_ids = @blank.story_prompts.where(story: @story).pluck(:prompt_id)
 
-    Prompt.where(id: @existing_prompt_ids)
-  end
+    # Remove prompts that are no longer selected
+    prompts_to_remove = current_prompt_ids - new_prompt_ids
+    if prompts_to_remove.any?
+      StoryPrompt.where(
+        story: @story,
+        blank: @blank,
+        prompt_id: prompts_to_remove
+      ).destroy_all
+    end
 
-  def create_story_prompts(blank, prompts)
-    prompts.each do |prompt|
+    # Add new prompts that weren't previously associated
+    prompts_to_add = new_prompt_ids - current_prompt_ids
+    prompts_to_add.each do |prompt_id|
       StoryPrompt.create!(
         story: @story,
-        blank: blank,
-        prompt: prompt
+        blank: @blank,
+        prompt_id: prompt_id
       )
     end
   end
