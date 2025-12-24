@@ -1,16 +1,12 @@
 /* Create Page Styles */
 .create-page {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--gradient-primary);
   padding: var(--space-4);
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 .create-card {
@@ -124,8 +120,8 @@
 
 .links {
   position: absolute;
-  bottom: 0;
   right: 0;
+  bottom: 0;
   font-size: small;
   color: var(--gradient-primary);
   margin-right: var(--space-1);
@@ -138,7 +134,7 @@
 
 @media (min-width: 768px) {
   .create-card {
-    padding: var(--space-16) var(--space-12);
+    padding: var(--space-10) var(--space-8);
   }
 
   .create-title {
