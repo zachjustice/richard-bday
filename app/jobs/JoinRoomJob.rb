@@ -7,7 +7,13 @@ class JoinRoomJob < ApplicationJob
       "rooms:#{room.id}:users",
       target: "waiting-room",
       partial: "rooms/partials/user_list_item",
-      locals: { user: user }
+      locals: { user: user, action: "joined!" }
+    )
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{room.id}:users",
+      action: :update,
+      target: "waiting-room-players-count",
+      html: "Players (#{User.players.where(room: room).count})"
     )
 
     # Remove "no users yet" message via Turbo Stream

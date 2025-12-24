@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="users-section">
-      <h3>Players (<%= users&.size || 0 %>)</h3>
+      <h3 id="waiting-room-players-count">Players (<%= users&.size || 0 %>)</h3>
       <div id="users-list-container" class="users-list-container">
         <ul id="waiting-room" class="players-list">
           <% if users.empty? %>

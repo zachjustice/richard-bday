@@ -14,7 +14,7 @@ This is a multiplayer Mad Libs-style game where players fill in blanks in a stor
 
 ### 2. Player Registration
 - **Action**: User registers with a name and room code
-- **API Call**: `POST /register`
+- **API Call**: `POST /session/new`
 - **Request Body**:
   ```json
   {

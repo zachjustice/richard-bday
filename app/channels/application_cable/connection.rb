@@ -4,6 +4,46 @@ module ApplicationCable
 
     def connect
       set_current_user || reject_unauthorized_connection
+      if self.current_user.role != User::CREATOR
+        self.current_user.update(is_active: true)
+        room = self.current_user.room
+        Turbo::StreamsChannel.broadcast_prepend_to(
+          "rooms:#{room.id}:users",
+          target: "waiting-room",
+          partial: "rooms/partials/user_list_item",
+          locals: { user: self.current_user, action: "joined!" }
+        )
+        Turbo::StreamsChannel.broadcast_action_to(
+          "rooms:#{room.id}:users",
+          action: :update,
+          target: "waiting-room-players-count",
+          html: "Players (#{User.players.where(room: room).count})"
+        )
+      end
+    end
+
+    def disconnect
+      if !self.current_user
+        return
+      end
+
+      self.current_user.update(is_active: false)
+      room = self.current_user.room
+      if self.current_user.role == User::NAVIGATOR
+        self.current_user.update(role: User::PLAYER)
+        User.players.where(room: room).first&.update(role: User::NAVIGATOR)
+      end
+
+      Turbo::StreamsChannel.broadcast_remove_to(
+        "rooms:#{room.id}:users",
+        target: "waiting_room_user_#{self.current_user.id}"
+      )
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{room.id}:users",
+        action: :update,
+        target: "waiting-room-players-count",
+        html: "Players (#{User.players.where(room: room).count})"
+      )
     end
 
     private

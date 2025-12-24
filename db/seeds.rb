@@ -92,7 +92,7 @@ def create_story(story_parts)
         tags: tags_str
       )
 
-      StoryPrompts.find_or_create_by!(
+      StoryPrompt.find_or_create_by!(
         story: s,
         blank: b,
         prompt: p

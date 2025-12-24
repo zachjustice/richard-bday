@@ -1,13 +1,12 @@
 Rails.application.routes.draw do
+  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
+  # Can be used by load balancers and uptime monitors to verify that the app is live.
+
   resource :session
+  get "up" => "rails/health#show", as: :rails_health_check
   post "/session/resume", to: "sessions#resume" unless Rails.env.production?
   get "/session/editor", to: "sessions#editor", as: :session_editor
   post "/session/editor", to: "sessions#create_editor", as: :create_session_editor
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
@@ -41,17 +40,14 @@ Rails.application.routes.draw do
   patch "/rooms/:id/settings", to: "rooms#update_settings", as: :update_room_settings
   get "/rooms/:id/waiting_for_new_game", to: "rooms#waiting_for_new_game", as: :waiting_for_new_game
 
-  post "/register", to: "users#create"
-  get "/users/:id", to: "users#show"
-
   get "/prompts/:id", to: "prompts#show"
   get "/prompts/:id/waiting", to: "prompts#waiting"
   get "/prompts/:id/voting", to: "prompts#voting"
   get "/prompts/:id/results", to: "prompts#results"
 
   post "/answer", to: "answers#create"
-  post "/vote", to: "votes#create", as: :votes
 
+  post "/vote", to: "votes#create", as: :votes
   post "/vote", to: "vote#update"
 
   # Music Player

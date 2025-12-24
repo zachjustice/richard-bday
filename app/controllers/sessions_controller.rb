@@ -4,9 +4,8 @@ class SessionsController < ApplicationController
 
   def new
     session_id = cookies.signed[:session_id]
-    if session_id
-      session = Session.find_by(id: session_id)
-      @room = session&.user&.room
+    if session_id && curr_session = Session.find_by(id: session_id)
+      @room = curr_session&.user&.room
     end
   end
 
@@ -19,12 +18,12 @@ class SessionsController < ApplicationController
     code = params[:code]&.downcase
     room = Room.find_by(code: code)
     if room.nil?
-      return redirect_to new_session_path, alert: "Wrong room code."
+      return redirect_to new_session_path
     end
 
     user = User.find_by(name: params[:name], room_id: room.id)
     if user.nil?
-      return redirect_to new_session_path, alert: "Wrong user name."
+      return redirect_to new_session_path
     end
 
     session[:user_id] = user.id
@@ -38,11 +37,12 @@ class SessionsController < ApplicationController
     # Get room
     session_id = cookies.signed[:session_id]
     code = params[:code]&.downcase
-    if session_id
-      room = Session.find(session_id).user.room
+    if session_id && curr_session = Session.find_by(id: session_id)
+      room = curr_session.user.room
       if room.code == code
         return redirect_to after_authentication_url
       end
+    else
     end
 
     room = Room.find_by(code: code)
@@ -51,7 +51,7 @@ class SessionsController < ApplicationController
     end
 
     if user = User.find_by(name: params[:name], room_id: room.id)
-      return redirect_to new_session_path, alert: "Someone in this room already has that name."
+      return redirect_to new_session_path
     end
 
     current_users = User.players.where(room_id: room.id).count
@@ -66,7 +66,7 @@ class SessionsController < ApplicationController
       start_new_session_for user
       redirect_to after_authentication_url
     else
-      redirect_to new_session_path, alert: "Someone in this room already has that name."
+      redirect_to new_session_path
     end
   end
 
@@ -100,7 +100,7 @@ class SessionsController < ApplicationController
       start_new_session_for user
       redirect_to stories_path
     else
-      redirect_to new_session_path, alert: "Someone in this room already has that name."
+      redirect_to new_session_path
     end
   end
 

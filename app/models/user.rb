@@ -12,7 +12,7 @@ class User < ApplicationRecord
   validates :name, uniqueness: { scope: [ :room_id ] }
 
   # Both Player and Navigator Roles
-  scope :players, -> { where(role: [ PLAYER, NAVIGATOR ]) }
+  scope :players, -> { where(role: [ PLAYER, NAVIGATOR ], is_active: true) }
   # when the room is created, the dashboard front-end gets is own "user" to auth requests with a role of Creator.
   scope :creator, -> { where(role: CREATOR) }
 
