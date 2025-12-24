@@ -54,9 +54,14 @@ export default class extends Controller {
         this.promptsCache = await response.json()
       }
 
-      const matchingPrompts = this.promptsCache.filter(prompt => {
+      let matchingPrompts = this.promptsCache.filter(prompt => {
         const promptTags = prompt.tags.split(',').map(t => t.trim().toLowerCase())
         return promptTags.some(pt => tags.includes(pt))
+      })
+
+      matchingPrompts = matchingPrompts.sort((a, b)=> {
+        return b.tags.split(',').filter(t => tags.includes(t)).length 
+        - a.tags.split(',').filter(t => tags.includes(t)).length;
       })
 
       this.renderPromptsList(matchingPrompts)

@@ -72,7 +72,7 @@ class BlanksController < ApplicationController
     end
   end
 
-  # UPdates a Blank
+  # Updates a Blank
   def update
     @story = Story.find(params[:story_id])
     @blank = @story.blanks.find(params[:id])
