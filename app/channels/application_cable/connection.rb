@@ -4,26 +4,34 @@ module ApplicationCable
 
     def connect
       set_current_user || reject_unauthorized_connection
-      if self.current_user.role != User::CREATOR
-        self.current_user.update(is_active: true)
-        room = self.current_user.room
-        Turbo::StreamsChannel.broadcast_prepend_to(
-          "rooms:#{room.id}:users",
-          target: "waiting-room",
-          partial: "rooms/partials/user_list_item",
-          locals: { user: self.current_user, action: "joined!" }
-        )
-        Turbo::StreamsChannel.broadcast_action_to(
-          "rooms:#{room.id}:users",
-          action: :update,
-          target: "waiting-room-players-count",
-          html: "Players (#{User.players.where(room: room).count})"
-        )
+
+      if self.current_user.role == User::CREATOR
+        return
       end
+
+      self.current_user.update(is_active: true)
+      room = self.current_user.room
+      Turbo::StreamsChannel.broadcast_prepend_to(
+        "rooms:#{room.id}:users",
+        target: "waiting-room",
+        partial: "rooms/partials/user_list_item",
+        locals: { user: self.current_user, action: "joined!" }
+      )
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{room.id}:users",
+        action: :update,
+        target: "waiting-room-players-count",
+        html: "Players (#{User.players.where(room: room).count})"
+      )
     end
 
     def disconnect
       if !self.current_user
+        return
+      end
+
+      # If the game has begun, don't set player as inactive since their phone could be asleep.
+      if self.current_user.room.status != RoomStatus::WaitingRoom
         return
       end
 

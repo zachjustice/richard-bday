@@ -25,8 +25,9 @@ class RoomStatusService
 
   private
 
+  # Sometimes the the creator is including the player list. Do a double check anyways.
   def fetch_users
-    User.players.where(room_id: @room.id)
+    User.players.where(room_id: @room.id).reject { |u| u.name.starts_with?("Creator-") }
   end
 
   def status_specific_data

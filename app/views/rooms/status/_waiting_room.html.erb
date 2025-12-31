@@ -16,16 +16,19 @@
         <span>Or visit <a href="https://blanksies.zachjustice.dev">blanksies.zachjustice.dev</a></span>
       </div>
     </div>
+
     <div class="users-section">
       <h3 id="waiting-room-players-count">Players (<%= users&.size || 0 %>)</h3>
+
       <div id="users-list-container" class="users-list-container">
         <ul id="waiting-room" class="players-list">
           <% if users.empty? %>
             <%# First element is deleted when the first user joins %>
             <li id="no-users-yet" class="no-players"><i>No users yet</i></li>
           <% end %>
+
           <%# Just in case a creator user makes it in here; filter that out from the player list %>
-          <% users.reject { |u| u.role == User::CREATOR }.each do |user| %>
+          <% users.each do |user| %>
             <%= render "rooms/partials/user_list_item", user: user %>
           <% end %>
         </ul>
