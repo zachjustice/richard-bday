@@ -13,6 +13,10 @@
   padding: var(--space-8);
 }
 
+.prompts-index-container {
+  align-self: center;
+}
+
 .story-show-container {
   margin: 0 auto;
   width: 100%;

@@ -75,3 +75,7 @@ gem "minitest-stub_any_instance", "~> 1.0"
 gem "htmlbeautifier", "~> 1.4"
 
 gem "wahwah", "~> 1.6"
+
+gem "tailwindcss-rails", "~> 4.4"
+
+gem "watchman-rails", "~> 0.2.0"
