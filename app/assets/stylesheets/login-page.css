@@ -1,4 +1,6 @@
-/* Login Page Styles */
+/* MIGRATED TO TAILWIND - Phase 1 */
+/* This file kept for reference during migration */
+/*
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -84,7 +86,6 @@
   line-height: var(--line-height-normal);
 }
 
-/* Alert & Notice Messages */
 .alert-message,
 .notice-message {
   display: flex;
@@ -128,7 +129,6 @@
   flex-shrink: 0;
 }
 
-/* Form Styles */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -223,7 +223,6 @@
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3), var(--shadow-button);
 }
 
-/* Footer */
 .login-footer {
   margin-top: var(--space-8);
   padding-top: var(--space-6);
@@ -250,7 +249,6 @@
   text-decoration: underline;
 }
 
-/* Responsive Design */
 @media (max-width: 480px) {
   .login-container {
     align-items: start;
@@ -302,3 +300,4 @@
     transform: none;
   }
 }
+*/

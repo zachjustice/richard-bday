@@ -96,14 +96,13 @@ This document outlines the complete plan to migrate the Blanksies project from a
 ```
 app/assets/
 ├── tailwind/
-│   └── application.css          # Tailwind entry point: @imports components/animations, then @theme config
+│   └── application.css          # Tailwind entry point: @imports components, @theme config with animations
 ├── stylesheets/
 │   ├── application.css          # Legacy CSS import manifest (gradually remove imports)
 │   ├── components.css           # Custom component classes with @apply (imported by tailwind/application.css)
-│   ├── animations.css           # Custom @keyframes and animation classes (imported by tailwind/application.css)
 │   └── [page-specific].css      # Legacy page CSS (comment out as pages are migrated)
 └── builds/
-    └── tailwind.css             # Auto-generated (gitignored) - contains processed components/animations
+    └── tailwind.css             # Auto-generated (gitignored) - contains processed components
 
 app/views/
 ├── layouts/
@@ -114,8 +113,9 @@ app/views/
 
 **Key Architecture Points:**
 - **No config/ directory needed** - Tailwind v4 uses CSS configuration
-- **components.css and animations.css** are `@import`ed into `tailwind/application.css` so `@apply` directives are processed by Tailwind
-- **Layout only needs two stylesheet_link_tags:** `tailwind` (compiled output with components/animations) and `application` (legacy CSS during migration)
+- **components.css** is `@import`ed into `tailwind/application.css` so `@apply` directives are processed by Tailwind
+- **Animations are defined inside `@theme`** using Tailwind v4's native `@keyframes` support (no separate animations.css needed)
+- **Layout only needs two stylesheet_link_tags:** `tailwind` (compiled output with components) and `application` (legacy CSS during migration)
 
 ### Tailwind v4 Configuration Using @theme
 
@@ -124,7 +124,6 @@ app/views/
 ```css
 /* Import custom CSS files BEFORE tailwindcss so @apply directives are processed */
 @import "../stylesheets/components.css";
-@import "../stylesheets/animations.css";
 @import "tailwindcss";
 
 /* Tailwind v4 CSS-first configuration */
@@ -155,6 +154,51 @@ app/views/
   --gradient-primary-simple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-primary-reverse: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
   --gradient-primary-tint: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+
+  /* Animations - Tailwind v4 native @keyframes inside @theme */
+  --animate-gradient-shift: gradient-shift 15s ease infinite;
+  @keyframes gradient-shift {
+    0% { background-size: 400% 400%; background-position: 0% 50%; }
+    50% { background-size: 400% 400%; background-position: 100% 50%; }
+    100% { background-size: 400% 400%; background-position: 0% 50%; }
+  }
+
+  --animate-float: float 3s ease-in-out infinite;
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  --animate-bounce-custom: bounce-custom 1s ease-in-out;
+  @keyframes bounce-custom {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-20px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-10px); }
+  }
+
+  --animate-slide-in: slideIn 0.4s ease-out;
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  --animate-slide-up: slide-up 0.6s ease-out;
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-bounce-custom,
+  .animate-slide-in,
+  .animate-slide-up,
+  .animate-gradient-shift {
+    animation: none;
+  }
 }
 
 /* Global base styles */
@@ -177,12 +221,19 @@ html {
 
 <!-- Use custom shadows -->
 <div class="shadow-button">
+
+<!-- Use custom animations -->
+<div class="animate-float">        <!-- Floating animation -->
+<div class="animate-slide-up">     <!-- Slide up on mount -->
+<div class="animate-gradient-shift"> <!-- Animated gradient background -->
 ```
 
 **Important Tailwind v4 Syntax Notes:**
 - For gradient CSS variables, use `bg-(image:--gradient-primary)` syntax
 - The `bg-[var(--gradient-primary)]` syntax sets `background-color`, not `background-image`
 - Gradients require `background-image` property to render correctly
+- Animations are defined inside `@theme` using `--animate-*` variables and `@keyframes` blocks
+- This generates utility classes like `animate-float`, `animate-slide-up`, etc.
 
 ### Component CSS Structure
 
@@ -398,59 +449,7 @@ html {
 }
 ```
 
-**app/assets/stylesheets/animations.css:**
-
-```css
-/* Custom animations with prefers-reduced-motion support */
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes bounce-custom {
-  0%, 100% { transform: translateY(0); }
-  25% { transform: translateY(-20px); }
-  50% { transform: translateY(0); }
-  75% { transform: translateY(-10px); }
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-bounce-custom {
-  animation: bounce-custom 1s ease-in-out;
-}
-
-.animate-slide-in {
-  animation: slideIn 0.4s ease-out;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.6s ease-out;
-}
-
-/* Disable animations for users who prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .animate-float,
-  .animate-bounce-custom,
-  .animate-slide-in,
-  .animate-slide-up {
-    animation: none;
-  }
-}
-```
+**Note:** Animations are defined in `tailwind/application.css` inside `@theme` using Tailwind v4's native `@keyframes` support, not in a separate file.
 
 ### Asset Loading in Layout
 
@@ -479,11 +478,10 @@ html {
 **Loading Order Explanation:**
 1. `tailwind.css` loads first - this is the compiled output that includes:
    - Processed `components.css` (with `@apply` directives resolved)
-   - Processed `animations.css` (with `@apply` directives resolved)
-   - Tailwind utilities and theme configuration
+   - Tailwind utilities, theme configuration, and animations (defined in `@theme`)
 2. `application.css` loads second - legacy CSS manifest (gradually remove imports as pages migrate)
 
-**Important:** Components and animations are `@import`ed into `tailwind/application.css`, NOT loaded as separate stylesheet_link_tags. This is required for `@apply` directives to work.
+**Important:** Components are `@import`ed into `tailwind/application.css`, NOT loaded as separate stylesheet_link_tags. This is required for `@apply` directives to work. Animations are defined directly in `@theme` using Tailwind v4's native `@keyframes` support.
 
 ### Rails Component Partials
 
@@ -770,6 +768,8 @@ Simple flexbox layout prevents breaking, max-width ensures responsive behavior.
 1. **Configure Tailwind v4 in `/app/assets/tailwind/application.css`:**
    - Add `@theme` directive with brand colors, custom spacing, shadows
    - Define gradient CSS variables
+   - Define animations inside `@theme` using `--animate-*` variables and `@keyframes` blocks
+   - Add `prefers-reduced-motion` support outside `@theme`
    - Test compilation: `bin/rails tailwindcss:build`
 
 2. **Create `/app/assets/stylesheets/components.css`:**
@@ -781,28 +781,23 @@ Simple flexbox layout prevents breaking, max-width ensures responsive behavior.
    - TV mode scaling
    - Scroll fade indicators
 
-3. **Create `/app/assets/stylesheets/animations.css`:**
-   - All `@keyframes` definitions
-   - Animation utility classes
-   - `prefers-reduced-motion` support
-
-4. **Update `/app/views/layouts/application.html.erb`:**
-   - Load Tailwind, components, animations CSS files
+3. **Update `/app/views/layouts/application.html.erb`:**
+   - Load Tailwind and application CSS files
    - Set up `yield :stylesheets` for page-specific CSS
 
-5. **Create Rails partials:**
+4. **Create Rails partials:**
    - `app/views/shared/_card.html.erb`
    - `app/views/shared/_flash_messages.html.erb`
 
-6. **Test setup:**
+5. **Test setup:**
    - Start Rails server: `bin/dev`
    - Verify Tailwind compiles without errors
    - Check no visual regressions on existing pages
    - Verify all CSS files load in correct order
 
 **Deliverables:**
-- Working Tailwind v4 configuration
-- Component and animation CSS files
+- Working Tailwind v4 configuration with animations defined in `@theme`
+- Component CSS file with `@apply` patterns
 - Shared partials created
 - No visual regressions on existing pages
 
@@ -904,9 +899,8 @@ Simple flexbox layout prevents breaking, max-width ensures responsive behavior.
 - All page-specific CSS files (17 files)
 
 **Files to Keep:**
-- app/assets/tailwind/application.css
-- app/assets/stylesheets/components.css (new)
-- app/assets/stylesheets/animations.css (new)
+- app/assets/tailwind/application.css (includes @theme config with animations)
+- app/assets/stylesheets/components.css (component classes with @apply)
 
 ## Production Build
 
@@ -972,10 +966,9 @@ This project uses **Tailwind CSS v4** with minimal custom CSS.
 ```
 app/assets/
 ├── tailwind/
-│   └── application.css      # @theme config + Tailwind import
+│   └── application.css      # @theme config (with animations) + Tailwind import
 ├── stylesheets/
-│   ├── components.css       # Custom component classes
-│   └── animations.css       # Custom animations
+│   └── components.css       # Custom component classes with @apply
 └── builds/
     └── tailwind.css         # Auto-generated
 ```
@@ -1036,12 +1029,12 @@ Then use in templates:
 Propshaft serves files separately (no bundling):
 
 ```erb
-<%= stylesheet_link_tag "tailwind" %>      <!-- Base utilities -->
-<%= stylesheet_link_tag "components" %>    <!-- Custom classes -->
-<%= stylesheet_link_tag "animations" %>    <!-- Animations -->
+<%= stylesheet_link_tag "tailwind" %>      <!-- Compiled output with components + animations -->
+<%= stylesheet_link_tag "application" %>   <!-- Legacy CSS during migration -->
 ```
 
-HTTP/2 multiplexing makes this efficient.
+Components are `@import`ed into `tailwind/application.css` so `@apply` works.
+Animations are defined in `@theme` using Tailwind v4's native `@keyframes` support.
 
 ## Best Practices
 
@@ -1050,7 +1043,7 @@ HTTP/2 multiplexing makes this efficient.
 3. **Use semantic names** - `.btn-primary`, not `.purple-button`
 4. **Minimal @apply** - Only for complex pseudo-selectors
 5. **Test responsive** - Check mobile, tablet, desktop, TV (1240px+)
-6. **Respect motion** - Animations in separate file with `prefers-reduced-motion`
+6. **Respect motion** - Include `prefers-reduced-motion` media query for animations
 ```
 
 ### Create docs/TAILWIND_MIGRATION.md
@@ -1122,6 +1115,7 @@ Migration from custom CSS to **Tailwind CSS v4**.
 | Config | `tailwind.config.js` (JS) | `@theme` in CSS |
 | Layers | `@layer` works anywhere | Only in main CSS file |
 | Import | `@tailwind base/components/utilities` | `@import "tailwindcss"` |
+| Animations | Separate file or config.js | `@keyframes` inside `@theme` |
 | Size | ~3.5MB uncompiled | ~2MB uncompiled |
 | Speed | Fast | Faster (Oxide engine) |
 | Variants | `motion-reduce:` prefix | Same |
