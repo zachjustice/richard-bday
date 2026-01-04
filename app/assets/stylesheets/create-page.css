@@ -1,4 +1,6 @@
-/* Create Page Styles */
+/* MIGRATED TO TAILWIND - Phase 1 */
+/* This file kept for reference during migration */
+/*
 .create-page {
   position: relative;
   display: flex;
@@ -145,3 +147,4 @@
     font-size: var(--font-size-6xl);
   }
 }
+*/

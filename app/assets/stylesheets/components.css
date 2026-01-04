@@ -1,137 +1,215 @@
-/* Buttons */
-button,
-input[type="submit"],
-input[type="button"] {
-  display: block;
-  background-color: var(--color-blue-500);
-  color: var(--text-on-primary);
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-base);
-  cursor: pointer;
+/* Component classes for complex patterns that need @apply or pseudo-selectors */
+
+/* Card with gradient top border */
+.card-primary {
+  @apply relative bg-white rounded-3xl shadow-2xl overflow-hidden;
 }
 
-button:hover,
-input[type="submit"]:hover,
-input[type="button"]:hover {
-  background-color: var(--color-blue-700);
+.card-primary::before {
+  content: '';
+  @apply absolute top-0 left-0 right-0 h-1.5;
+  background: var(--gradient-primary-simple);
+  border-radius: 24px 24px 0 0;
 }
 
-/* Forms */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-textarea,
-select {
-  width: 100%;
-  padding: 0.6rem;
-  margin-bottom: var(--space-4);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-base);
+/* Gradient utility classes (since they're reused) */
+.bg-gradient-primary {
+  background: var(--gradient-primary);
 }
 
-form input[type='radio'] {
-  display: block;
+.bg-gradient-primary-simple {
+  background: var(--gradient-primary-simple);
 }
 
-form input[type='textarea'] {
-  width: 95%;
+.bg-gradient-primary-reverse {
+  background: var(--gradient-primary-reverse);
 }
 
-.radio-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+.bg-gradient-primary-tint {
+  background: var(--gradient-primary-tint);
 }
 
-.radio-option {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
-  font-size: var(--font-size-base);
-  cursor: pointer;
+/* Button - Primary */
+.btn-primary {
+  @apply px-8 py-5 text-lg font-bold text-white uppercase tracking-wider;
+  @apply rounded-xl cursor-pointer transition-all border-none;
+  background: var(--gradient-primary-simple);
+  box-shadow: var(--shadow-button);
 }
 
-.radio-option input[type="radio"] {
-  accent-color: var(--color-blue-500);
-  transform: scale(1.2);
+.btn-primary:hover {
+  @apply -translate-y-1;
+  background: var(--gradient-primary-reverse);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
 }
 
-/* Navigation */
-nav {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-bottom: var(--space-6);
+.btn-primary:active {
+  @apply -translate-y-0.5;
 }
 
-nav a {
-  padding: var(--space-2);
-  background-color: var(--bg-tertiary);
-  border-radius: var(--radius-sm);
-}
-
-@media (min-width: 768px) {
-  nav {
-    flex-direction: row;
-  }
-
-  nav a {
-    padding: 0.75rem var(--space-4);
-  }
-}
-
-.waiting-animation {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 140px;
-  height: 140px;
-  margin: 0 auto var(--space-6);
-}
-
-.spinner-ring {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 4px solid transparent;
-  border-top-color: var(--color-primary-purple);
-  border-radius: 50%;
-  animation: spin 2s linear infinite;
-}
-
-.spinner-ring-2 {
-  width: 80%;
-  height: 80%;
-  border-top-color: var(--color-primary-deep-purple);
-  animation-duration: 1.5s;
-  animation-direction: reverse;
-}
-
-.spinner-ring-3 {
-  width: 60%;
-  height: 60%;
-  border-top-color: var(--color-primary-pink);
-  animation-duration: 1s;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+.btn-primary:focus {
+  @apply outline-none ring-4 ring-brand-purple/30;
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-  .spinner-ring {
-    animation: none;
+  .btn-primary:hover,
+  .btn-primary:active {
+    transform: none;
   }
+}
+
+/* Form Components */
+.form-input {
+  @apply w-full px-4 py-4 text-base font-medium bg-gray-50 border-2 border-gray-200;
+  @apply rounded-xl outline-none transition-all;
+}
+
+.form-input:hover {
+  @apply border-brand-purple bg-white;
+}
+
+.form-input:focus {
+  @apply border-brand-purple bg-white ring-4 ring-brand-purple/10 -translate-y-px;
+}
+
+.form-input::placeholder {
+  @apply text-gray-400 font-normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-input:focus {
+    transform: none;
+  }
+}
+
+.form-label {
+  @apply flex items-center gap-2 text-sm font-semibold uppercase tracking-wide;
+}
+
+/* Alert/Notice Messages */
+.alert-message {
+  @apply flex items-center gap-3 px-4 py-4 rounded-xl mb-6 text-sm font-medium border-2;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(220, 38, 38, 0.15) 100%);
+  color: #dc2626;
+  border-color: #fee2e2;
+}
+
+.notice-message {
+  @apply flex items-center gap-3 px-4 py-4 rounded-xl mb-6 text-sm font-medium border-2;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.15) 100%);
+  color: #15803d;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+/* Complex Radio Button Pattern (requires sibling selectors) */
+.answer-option {
+  @apply relative block cursor-pointer;
+}
+
+.answer-radio {
+  @apply absolute opacity-0 w-0 h-0;
+}
+
+.answer-content {
+  @apply relative flex items-center gap-4 px-5 py-5 rounded-xl border-2 transition-all;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+.answer-checkmark {
+  @apply flex-shrink-0 w-7 h-7 flex items-center justify-center;
+  @apply border-2 border-brand-purple rounded-full text-transparent bg-white transition-all;
+}
+
+.answer-text {
+  @apply flex-1 text-base font-medium leading-normal;
+}
+
+/* Hover state */
+.answer-option:hover .answer-content {
+  @apply border-brand-purple -translate-y-0.5;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.answer-option:hover .answer-checkmark {
+  @apply border-[3px] scale-110;
+}
+
+/* Checked state */
+.answer-radio:checked ~ .answer-content {
+  @apply border-brand-purple border-[3px];
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.answer-radio:checked ~ .answer-content .answer-checkmark {
+  @apply border-brand-purple text-white scale-[1.15];
+  background: var(--gradient-primary-simple);
+}
+
+.answer-radio:checked ~ .answer-content .answer-text {
+  @apply font-bold;
+}
+
+.answer-radio:focus ~ .answer-content {
+  @apply outline outline-3 outline-offset-2 outline-brand-purple/40;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .answer-option:hover .answer-content,
+  .answer-option:hover .answer-checkmark {
+    transform: none;
+  }
+  .answer-radio:checked ~ .answer-content .answer-checkmark {
+    transform: none;
+  }
+}
+
+/* TV Mode - Scale fonts for large displays (1240px+) */
+@media screen and (min-width: 1240px) {
+  .tv-mode {
+    font-size: 200%; /* Scale everything proportionally */
+  }
+
+  /* Fine-tune specific elements if needed */
+  .tv-mode .room-code {
+    font-size: 250%;
+  }
+}
+
+/* Scroll Fade Indicators (too complex for inline utilities) */
+.scroll-fade-indicators {
+  background:
+    /* Shadow Cover TOP */
+    linear-gradient(white 30%, rgba(255, 255, 255, 0)) center top,
+    /* Shadow Cover BOTTOM */
+    linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
+    /* Shadow TOP */
+    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top,
+    /* Shadow BOTTOM */
+    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center bottom;
+
+  background-repeat: no-repeat;
+  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* Glass Morphism Effects */
+.glass-light {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.glass-medium {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* Gradient text effect for titles */
+.text-gradient-primary {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

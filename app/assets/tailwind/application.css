@@ -1,1 +1,38 @@
+@import "../stylesheets/components.css";
+@import "../stylesheets/animations.css";
 @import "tailwindcss";
+
+/* Tailwind v4 CSS-first configuration */
+@theme {
+  /* Brand Colors */
+  --color-brand-purple: #667eea;
+  --color-brand-deep-purple: #764ba2;
+  --color-brand-pink: #f093fb;
+
+  /* Semantic Colors */
+  --color-error: #dc2626;
+  --color-error-light: #fee2e2;
+  --color-success: #22c55e;
+
+  /* Custom Spacing (space-32 = 8rem) */
+  --spacing-32: 8rem;
+
+  /* Custom Border Radius */
+  --radius-3xl: 24px;
+
+  /* Custom Shadows */
+  --shadow-button: 0 4px 15px rgba(102, 126, 234, 0.4);
+  --shadow-2xl: 0 10px 40px rgba(0, 0, 0, 0.1);
+  --shadow-3xl: 0 20px 60px rgba(102, 126, 234, 0.3);
+
+  /* Gradients as CSS Variables (use with arbitrary values) */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  --gradient-primary-simple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-primary-reverse: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  --gradient-primary-tint: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+}
+
+/* Global base styles */
+html {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

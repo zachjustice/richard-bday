@@ -1,26 +1,24 @@
-<%= stylesheet_link_tag "create-page", "data-turbo-track": "reload" %>
+<div class="min-h-screen flex items-center justify-center bg-(image:--gradient-primary) p-4 relative overflow-auto">
+  <div class="card-primary animate-slide-up p-12 px-8 md:p-10 md:px-8 max-w-lg w-full text-center">
+    <%= tag.div(flash[:notice], class: "bg-error-light text-error px-4 py-3 rounded-lg text-sm mb-4") if flash[:notice] %>
 
-<div class="create-page">
-  <div class="create-card">
-    <%= tag.div(flash[:notice], class: "error-notice") if flash[:notice] %>
+    <div class="flex flex-col gap-6">
+      <div class="text-5xl md:text-6xl mb-2 animate-float">✨📝🎨</div>
+      <h1 class="text-3xl md:text-4xl font-bold text-gradient-primary mb-0 leading-tight">Collaborative Fill-in-the-Blank Stories</h1>
+      <p class="text-lg text-gray-600 italic mb-2">Answer prompts with your friends to create stories!</p>
 
-    <div class="create-content">
-      <div class="emoji-header">✨📝🎨</div>
-      <h1 class="create-title">Collaborative Fill-in-the-Blank Stories</h1>
-      <p class="create-subtitle">Answer prompts with your friends to create stories!</p>
-
-      <%= form_with url: "/rooms/create", method: :post, class: "create-form" do |form| %>
-        <%= form.submit "New Game", class: "create-button" %>
+      <%= form_with url: "/rooms/create", method: :post, class: "mt-4" do |form| %>
+        <%= form.submit "New Game", class: "btn-primary w-full" %>
       <% end %>
 
-      <span class="join-game-link">
-        <%= link_to "Join as a player instead", new_session_path %>
+      <span class="text-sm">
+        <%= link_to "Join as a player instead", new_session_path, class: "text-gray-600 italic underline" %>
       </span>
     </div>
   </div>
 
-  <div class="links">
-    <%= link_to "copyright", copyright_path %> | 
+  <div class="absolute right-0 bottom-0 text-sm text-gray-600 mr-1">
+    <%= link_to "copyright", copyright_path %> |
     <%= link_to "about", about_path %> |
     <%= link_to "bots", "/babble" %>
   </div>
