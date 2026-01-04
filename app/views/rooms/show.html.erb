@@ -1,13 +1,12 @@
-<%= stylesheet_link_tag "room-lobby", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<div data-controller="prompt" class="room-lobby-container">
-  <div class="room-lobby-card">
-    <div class="lobby-header">
-      <div class="lobby-icon">☺️</div>
-      <h1 class="lobby-title">Welcome, <%= @current_user.name %>!</h1>
+<div data-controller="prompt" class="min-h-screen flex items-center justify-center p-6 max-sm:p-4 max-[480px]:items-start max-[480px]:pt-16 bg-linear-to-br from-[#f8f4ff] to-[#fff4f9]">
+  <div class="card-primary animate-fade-in p-12 max-sm:p-8 max-w-xl w-full">
+    <div class="text-center mb-10">
+      <div class="text-6xl max-sm:text-5xl mb-4 animate-swing">☺️</div>
+      <h1 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Welcome, <%= @current_user.name %>!</h1>
     </div>
-    <div class="waiting-section">
-      <p class="waiting-text">Waiting for other players to join...</p>
+    <div class="flex flex-col items-center gap-6 py-10 px-6 max-sm:py-8 max-sm:px-4 mb-10 bg-gradient-primary-tint rounded-2xl border-2 border-brand-purple/10">
+      <p class="text-lg max-sm:text-base font-medium text-gray-500 text-center m-0">Waiting for other players to join...</p>
     </div>
   </div>
 </div>

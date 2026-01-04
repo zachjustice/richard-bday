@@ -1,3 +1,6 @@
+/* MIGRATED TO TAILWIND - Phase 3 */
+/* This file kept for reference during migration */
+/*
 /* Room Lobby Page Styles */
 .room-lobby-container {
   min-height: 100vh;
@@ -291,3 +294,4 @@
     transform: none;
   }
 }
+*/
