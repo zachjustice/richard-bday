@@ -100,7 +100,7 @@ class SessionsController < ApplicationController
       start_new_session_for user
       redirect_to stories_path
     else
-      redirect_to new_session_path
+      redirect_to session_editor, notice: "Something went wrong"
     end
   end
 

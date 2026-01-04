@@ -1,29 +1,25 @@
-<%= stylesheet_link_tag "login-page", "data-turbo-track": "reload" %>
-
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <h1 class="login-title">Sign In</h1>
+<div class="min-h-screen flex items-center justify-center p-6 max-sm:items-start max-sm:p-4 max-sm:pt-16 bg-(image:--gradient-primary) animate-gradient-shift">
+  <div class="card-primary animate-slide-up p-10 max-sm:p-8 max-w-md w-full">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-2 leading-tight">Join a Game</h1>
+      <div class="text-base max-sm:text-sm text-success mb-2">
+        <% if @room&.current_game&.current_game_prompt && (Time.now - @room.created_at) < 1.day %>
+          <span>It looks like you're already in a game.</span>
+          <%= link_to "Rejoin?", controller: "prompts", action: "show", id: @room.current_game.current_game_prompt, class: "underline" %>
+        <% elsif @room.present? && (Time.now - @room.created_at) < 1.day %>
+          <span>It looks like you're already in a game.</span>
+          <%= link_to "Rejoin?", controller: "rooms", action: "show", class: "underline" %>
+        <% end %>
+      </div>
+      <% if !@room %>
+        <p class="text-base max-sm:text-sm text-gray-500">Enter your details to start playing</p>
+      <% end %>
     </div>
 
-    <% if flash[:alert] %>
-      <div class="alert-message">
-        <span class="alert-icon">⚠️</span>
-        <%= flash[:alert] %>
-      </div>
-    <% end %>
-
-    <% if flash[:notice] %>
-      <div class="notice-message">
-        <span class="notice-icon">✓</span>
-        <%= flash[:notice] %>
-      </div>
-    <% end %>
-
-    <%= form_with url: session_editor_path, class: "login-form" do |form| %>
-      <div class="form-group">
+    <%= form_with url: session_editor_path, class: "flex flex-col gap-6" do |form| %>
+      <div class="flex flex-col gap-2">
         <label for="name" class="form-label">
-          <span class="label-icon">👤</span>
+          <span class="text-lg">👤</span>
           Username
         </label>
         <%= form.text_field :name,
@@ -36,27 +32,27 @@
             class: "form-input" %>
       </div>
 
-      <div class="form-group">
+      <div class="flex flex-col gap-2">
         <label for="code" class="form-label">
-          <span class="label-icon">🔑</span>
-          Password
+          <span class="text-lg">🔑</span>
+          Room Code
         </label>
-        <%= form.password_field :code,
+        <%= form.text_field :code,
             id: "code",
             value: params[:code],
             required: true,
             autocomplete: "off",
-            placeholder: "Enter password",
+            placeholder: "Enter room code",
             maxlength: 72,
-            class: "form-input room-code-input" %>
+            class: "form-input uppercase tracking-widest font-bold" %>
       </div>
 
-      <%= form.submit "Submit", class: "submit-button" %>
+      <%= form.submit "Join Game", class: "btn-primary mt-4" %>
     <% end %>
 
-    <div class="login-footer">
-      <span class="start-game-link">
-        <%= link_to "Take me Home", root_path %>
+    <div class="mt-8 pt-6 border-t-2 border-gray-200 text-center">
+      <span class="text-sm">
+        <%= link_to "Start a new game instead", create_room_path, class: "text-gray-500 italic underline" %>
       </span>
     </div>
   </div>
