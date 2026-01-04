@@ -51,10 +51,10 @@ This document outlines the complete plan to migrate the Blanksies project from a
 ### Incremental Approach
 
 **Migration Order:**
-1. **Phase 0:** Setup & Foundation (Tailwind config via @theme, component CSS files)
-2. **Phase 1:** Simple pages (create-page → login-page → sessions/new)
-3. **Phase 2:** Medium complexity (prompt-voting → prompt-answer → prompt-waiting)
-4. **Phase 3:** Complex pages (room-status with TV mode, results pages)
+1. **[DONE] Phase 0:** Setup & Foundation (Tailwind config via @theme, component CSS files)
+2. **[DONE] Phase 1:** Simple pages (rooms/create, sessions/new, about/show, copyright/show)
+3. **[DONE] Phase 2:** Medium complexity (prompts/voting, prompts/show, prompts/waiting, prompts/results)
+4. **[IN PROGRESS] Phase 3:** Complex pages (rooms/show, rooms/status with TV mode)
 5. **Phase 4:** Shared components (flash messages, forms, modals)
 6. **Phase 5:** Cleanup (remove old CSS files, update documentation)
 
@@ -1063,10 +1063,10 @@ Migration from custom CSS to **Tailwind CSS v4**.
 
 ## Migration Timeline
 
-- **Phase 0:** Setup & Foundation ⏳
-- **Phase 1:** Simple Pages ⏳
-- **Phase 2:** Medium Complexity ⏳
-- **Phase 3:** Complex Pages ⏳
+- **Phase 0:** Setup & Foundation ✅
+- **Phase 1:** Simple Pages ✅
+- **Phase 2:** Medium Complexity ✅
+- **Phase 3:** Complex Pages 🔄 (rooms/show done, rooms/status pending)
 - **Phase 4:** Shared Components ⏳
 - **Phase 5:** Cleanup ⏳
 

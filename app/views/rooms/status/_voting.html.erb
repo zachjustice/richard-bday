@@ -1,15 +1,15 @@
 <%= turbo_stream_from "rooms:#{room.id}:votes" %>
 
-<div class="room-content-card">
-  <div class="prompt-section">
+<div class="flex-1 flex flex-col justify-start min-h-0">
+  <div class="text-center p-6 mb-8 bg-gradient-primary-tint rounded-xl border-2 border-brand-purple/10">
     <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
-    <h2 class="prompt-text">Vote for the best answer on your device!</h2>
+    <h2 class="text-2xl font-bold text-gray-900 mb-3 leading-tight">Vote for the best answer on your device!</h2>
   </div>
 
-  <div class="progress-section">
-    <h3>Votes</h3>
-    <div class="completed-users">
-      <ul id="users-with-status-list" class="users-list-with-status">
+  <div class="p-6 rounded-xl bg-linear-to-br from-brand-deep-purple/5 to-brand-deep-purple/8 border-2 border-brand-deep-purple/15 flex-1 min-h-0">
+    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">Votes</h3>
+    <div class="flex flex-col flex-1 min-h-0">
+      <ul id="users-with-status-list" class="list-none p-0 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
         <% users.each do |user| %>
           <%= render "rooms/partials/user_with_status_item", user: user, completed: users_with_vote.include?(user.name) %>
         <% end %>

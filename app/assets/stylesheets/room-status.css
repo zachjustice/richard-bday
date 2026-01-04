@@ -1,3 +1,6 @@
+/* MIGRATED TO TAILWIND - Phase 3 */
+/* This file kept for reference during migration */
+/*
 /* Make text bigger on the room status page since it will be displayed on TVs and larger monitors */
 @media screen and (min-width: 1240px) {
   .status-content {
@@ -1300,3 +1303,4 @@
     text-align: left;
   }
 }
+*/

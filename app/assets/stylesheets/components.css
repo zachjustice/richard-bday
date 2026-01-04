@@ -250,3 +250,116 @@
 .progress-dot:nth-child(3) {
   animation-delay: 0.6s;
 }
+
+/* Game Status Badge (sidebar phase indicators) */
+.game-status-badge {
+  @apply flex items-center gap-2 px-4 py-2 rounded-full;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(251, 146, 60, 0.25) 100%);
+}
+
+.game-status-badge.completed {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.game-status-badge.current {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.25) 100%);
+}
+
+/* Player List Items (status page) */
+.player-item {
+  @apply px-4 py-4 rounded-lg font-semibold text-gray-900 transition-all;
+  @apply border-l-[3px] border-brand-deep-purple;
+  @apply whitespace-nowrap overflow-hidden text-ellipsis;
+  background: linear-gradient(135deg, rgba(118, 75, 162, 0.15) 0%, rgba(118, 75, 162, 0.25) 100%);
+}
+
+.player-item:hover {
+  @apply translate-x-1;
+  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+}
+
+/* User status items (completed/answering) */
+.user-status-item {
+  @apply px-4 py-4 rounded-lg font-semibold text-gray-900 transition-all animate-slide-in;
+  @apply whitespace-nowrap overflow-hidden text-ellipsis border-l-[3px];
+}
+
+.user-status-item.completed {
+  border-color: rgb(34, 197, 94);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.25) 100%);
+}
+
+.user-status-item.completed::before {
+  content: '✓ ';
+  @apply mr-2 font-bold;
+  color: rgb(34, 197, 94);
+}
+
+.user-status-item.completed:hover {
+  @apply translate-x-1;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.user-status-item.waiting {
+  border-color: rgb(251, 146, 60);
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(251, 146, 60, 0.25) 100%);
+}
+
+.user-status-item.waiting::before {
+  content: '- ';
+  @apply mr-2 font-bold;
+  color: rgb(251, 146, 60);
+}
+
+.user-status-item.waiting:hover {
+  @apply translate-x-1;
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.3);
+}
+
+/* Voter item */
+.voter-item {
+  @apply px-4 py-4 rounded-lg font-semibold text-gray-900 transition-all animate-slide-in;
+  @apply border-l-[3px] border-brand-purple;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.25) 100%);
+}
+
+.voter-item:hover {
+  @apply translate-x-1;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-item:hover,
+  .user-status-item:hover,
+  .voter-item:hover {
+    transform: none;
+  }
+}
+
+/* Answer Card (results page) */
+.answer-card {
+  @apply flex flex-row flex-1 p-5 bg-white rounded-lg transition-all justify-between gap-3;
+}
+
+.answer-card:hover {
+  @apply -translate-y-0.5;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.answer-card.winner {
+  @apply border-2 border-l-[6px];
+  border-color: rgba(34, 197, 94, 0.4);
+  border-left-color: rgb(34, 197, 94);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.15) 100%);
+}
+
+.answer-card.winner:hover {
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .answer-card:hover {
+    transform: none;
+  }
+}

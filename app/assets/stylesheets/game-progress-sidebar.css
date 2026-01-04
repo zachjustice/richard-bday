@@ -1,3 +1,6 @@
+/* MIGRATED TO TAILWIND - Phase 3 */
+/* This file kept for reference during migration */
+/*
 /* Room Status Sidebar Styles */
 .status-layout {
   display: flex;
@@ -131,3 +134,4 @@
     padding: var(--space-2);
   }
 }
+*/

@@ -1,19 +1,19 @@
 <%= turbo_stream_from "rooms:#{@room.id}:status" %>
 
-<%= stylesheet_link_tag "room-status", "data-turbo-track": "reload" %>
+<%# This page is typically viewed by players from a shared screen. Normally a TV. %>
+<%# Text and content should be easily viewable from a distance and should  %>
+<div class="h-screen flex flex-col tv-mode" data-controller="room-status">
+  <%= render "rooms/status/header" %>
 
-<%= render "rooms/status/header" %>
-
-<div class="status-content" data-controller="room-status">
-  <div id="status-content-inner" class="status-content-inner">
-    <div class="status-page-card">
-      <div id="turbo-target-sidebar" class="turbo-target-sidebar">
+  <div id="status-content-inner" class="flex-1 flex flex-col bg-linear-to-br from-[#f8f4ff] to-[#fff4f9] items-center justify-center">
+    <div class="card-primary max-w-[2250px] w-full max-h-[1000px] flex flex-row flex-1 min-h-0">
+      <div id="turbo-target-sidebar" class="flex">
         <% if @room.current_game.present? %>
           <%= render partial: "rooms/status/sidebar", locals: @status_data %>
         <% end %>
       </div>
 
-      <div id="turbo-target-status-page" class="status-page-card">
+      <div id="turbo-target-status-page" class="flex-1 flex flex-col justify-start p-8 min-h-0">
         <% case @status %>
         <% when RoomStatus::WaitingRoom %>
           <%= render partial: "rooms/status/waiting_room", locals: @status_data %>

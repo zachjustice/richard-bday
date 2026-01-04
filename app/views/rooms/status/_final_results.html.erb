@@ -1,27 +1,29 @@
 <%= stylesheet_link_tag "prompt-tooltip", "data-turbo-track": "reload" %>
-<div class="room-content-card">
-  <div class="story-header" 
-       data-controller="speech" 
+<div class="flex-1 flex flex-col justify-start min-h-0">
+  <div class="text-center p-6 mb-6 rounded-xl bg-linear-to-br from-brand-pink/10 to-brand-purple/10 border-2 border-brand-pink/20 items-center"
+       data-controller="speech"
        data-speech-text-value="<%= render_plaintext(story_text, blank_id_to_answer_text) %>">
-    <div class="story-title">
-      <h2 class="story-title-text">
+    <div class="relative w-full text-center">
+      <h2 class="max-md:font-bold text-gray-900 m-0">
         <%= current_room.current_game.story.title %>
       </h2>
-      <button class="read-aloud-button" type="button" data-action="click->speech#speak">
+      <button class="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-2 bg-gradient-primary-reverse text-white border-none rounded-full cursor-pointer shadow-button" type="button" data-action="click->speech#speak">
         🔊 Read Aloud
       </button>
     </div>
 
-    <div class="story-authors">
-      <span class="authors-label">Written by:</span>
-      <div class="authors-list">
+    <div class="flex flex-col items-center gap-2 mt-4">
+      <span class="font-medium text-gray-500 italic">Written by:</span>
+      <div class="flex flex-wrap gap-2 justify-center">
         <% users.each do |user| %>
-          <span class="author-tag"><%= user.name %></span>
+          <span class="px-3 py-1 rounded-full font-semibold text-gray-900 border border-brand-pink/30 bg-linear-to-br from-brand-pink/25 to-brand-purple/25"><%= user.name %></span>
         <% end %>
       </div>
     </div>
   </div>
-  <div class="story-content">
-    <%= simple_format(render_story_with_tooltips(story_text, blank_id_to_answer_text), {}, sanitize: false) %>
+  <div class="flex flex-1 min-h-0 overflow-y-auto flex-col p-8 max-md:p-6 bg-gradient-primary-tint rounded-xl border-2 border-brand-purple/15">
+    <p class="max-md:text-base text-gray-900 leading-relaxed m-0 text-justify max-md:text-left">
+      <%= simple_format(render_story_with_tooltips(story_text, blank_id_to_answer_text), {}, sanitize: false) %>
+    </p>
   </div>
 </div>

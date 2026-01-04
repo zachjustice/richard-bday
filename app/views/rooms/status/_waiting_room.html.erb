@@ -1,30 +1,30 @@
 <%= turbo_stream_from "rooms:#{room.id}:users" %>
-<div class="room-content-card">
-  <div class="waiting-room-grid">
-    <div class="stories-section">
-      <h3>Stories</h3>
-      <%= form_with url: "/rooms/#{room.id}/start", method: :post, class: "story-form" do |form| %>
+<div class="flex-1 flex flex-col justify-start min-h-0">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 min-h-0">
+    <div class="flex flex-col gap-4 p-6 rounded-xl transition-all min-h-0 overflow-hidden bg-gradient-primary-tint border-2 border-brand-purple/15">
+      <h3 class="text-2xl font-bold text-gray-900 flex items-center gap-2">Stories</h3>
+      <%= form_with url: "/rooms/#{room.id}/start", method: :post, class: "flex flex-col gap-4" do |form| %>
         <div id="stories-list-container">
-          <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title'), class: 'story-select' %>
+          <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title'), class: 'form-input cursor-pointer' %>
         </div>
-        <%= form.submit "Start Game", class: "start-button" %>
+        <%= form.submit "Start Game", class: "btn-primary" %>
       <% end %>
 
-      <div class="qr-code">
+      <div class="flex flex-col gap-1 text-gray-500 items-center">
         <span>Scan the QR code to join the game:</span>
-        <img id="qr-code" src="">
-        <span>Or visit <a href="https://blanksies.zachjustice.dev">blanksies.zachjustice.dev</a></span>
+        <img id="qr-code" src="" class="w-full max-w-[200px] h-auto">
+        <span>Or visit <a href="https://blanksies.zachjustice.dev" class="underline">blanksies.zachjustice.dev</a></span>
       </div>
     </div>
 
-    <div class="users-section">
-      <h3 id="waiting-room-players-count">Players (<%= users&.size || 0 %>)</h3>
+    <div class="flex flex-col gap-4 p-6 rounded-xl transition-all min-h-0 overflow-hidden bg-gradient-primary-tint border-2 border-brand-purple/15">
+      <h3 id="waiting-room-players-count" class="text-2xl font-bold text-gray-900 flex items-center gap-2">Players (<%= users&.size || 0 %>)</h3>
 
-      <div id="users-list-container" class="users-list-container">
-        <ul id="waiting-room" class="players-list">
+      <div id="users-list-container" class="min-h-0 flex-1 overflow-y-auto">
+        <ul id="waiting-room" class="list-none p-0 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
           <% if users.empty? %>
             <%# First element is deleted when the first user joins %>
-            <li id="no-users-yet" class="no-players"><i>No users yet</i></li>
+            <li id="no-users-yet" class="py-8 px-4 text-gray-400 text-center italic"><i>No users yet</i></li>
           <% end %>
 
           <%# Just in case a creator user makes it in here; filter that out from the player list %>

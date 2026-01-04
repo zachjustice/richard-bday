@@ -1,24 +1,24 @@
 <%= stylesheet_link_tag "settings-modal", "data-turbo-track": "reload" %>
-<header class="status-header" data-controller="settings-modal">
-  <div class="header-left">
-    <div class="app-logo">
-      <span class="app-name">Blanksies</span>
+<header class="sticky top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-1 bg-gradient-primary-simple text-white shadow-sm flex-wrap gap-4 w-full m-0 max-md:px-4" data-controller="settings-modal">
+  <div class="flex items-center flex-1 min-w-[120px] max-md:flex-[1_1_100%] max-md:justify-center">
+    <div class="flex items-center gap-2">
+      <span class="text-xl font-bold max-md:text-base">Blanksies</span>
     </div>
   </div>
-  <div class="header-center" >
-    <div class="room-code-container" data-controller="copy-code">
-      <span class="room-code-label">Room Code:</span>
-      <span class="room-code-display"><%= @room.code.upcase %></span>
-      <button class="copy-button" data-room-code="<%= @room.code.upcase %>" data-action="click->copy-code#copy" title="Copy room code">
+  <div class="flex items-center flex-1 justify-center min-w-[200px] max-md:flex-[1_1_100%] max-md:justify-center">
+    <div class="flex items-center gap-2 glass-light px-4 py-2 rounded-xl" data-controller="copy-code">
+      <span class="text-xs font-medium">Room Code:</span>
+      <span class="text-xl font-bold tracking-widest max-md:text-lg"><%= @room.code.upcase %></span>
+      <button class="glass-medium border-none px-2 py-1 rounded-md cursor-pointer text-base transition-all hover:scale-110 active:scale-95" data-room-code="<%= @room.code.upcase %>" data-action="click->copy-code#copy" title="Copy room code">
         📋
       </button>
     </div>
   </div>
-  <div class="header-right">
-    <button type="button" 
-            class="settings-button text-xl" 
+  <div class="flex items-center flex-1 justify-end min-w-[200px] max-md:flex-[1_1_100%] max-md:justify-center max-md:-order-1">
+    <button type="button"
+            class="glass-light border-none p-2 rounded-lg cursor-pointer transition-all hover:scale-110 active:scale-95 text-xl"
             data-action="click->settings-modal#toggle"
-      aria-label="Open settings">
+            aria-label="Open settings">
       ⚙️
     </button>
   </div>
