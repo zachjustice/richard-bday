@@ -1,16 +1,20 @@
 class Helpers
-  def self.create_user(room_id, name)
-    User.find_or_create_by!(room_id: room_id, name: name)
+  def initialize(room_id)
+    @room_id = room_id
   end
 
-  def self.create_users(room_id, names)
+  def create_user(name)
+    User.find_or_create_by!(room_id: @room_id, name: name)
+  end
+
+  def create_users(names)
     names.each do |name|
-      User.find_or_create_by!(room_id: room_id, name: name)
+      User.find_or_create_by!(room_id: @room_id, name: name)
     end
   end
 
-  def self.create_answers(room_id, answers)
-    room = Room.find(room_id)
+  def create_answers(answers)
+    room = Room.find(@room_id)
     g = room.current_game
     gp = g.current_game_prompt
 
@@ -33,8 +37,8 @@ class Helpers
     end
   end
 
-  def self.create_votes(room_id, num_votes, tie = false)
-    room = Room.find(room_id)
+  def create_votes(num_votes, tie = false)
+    room = Room.find(@room_id)
     g = room.current_game
     gp = g.current_game_prompt
     answers = Answer.where(
@@ -62,8 +66,8 @@ class Helpers
     end
   end
 
-  def self.move_to_answering(room_id, skip_timer = false)
-    room = Room.find(room_id)
+  def move_to_answering(skip_timer = false)
+    room = Room.find(@room_id)
     current_game_prompt_order = room.current_game.current_game_prompt.order
     next_game_prompt_id = GamePrompt.find_by(game_id: room.current_game_id, order: current_game_prompt_order + 1)&.id
 

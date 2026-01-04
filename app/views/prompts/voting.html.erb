@@ -1,19 +1,18 @@
-<%= stylesheet_link_tag "prompt-voting", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 
-<div data-controller="prompt" class="prompt-voting-container">
-  <div class="prompt-voting-card">
+<div data-controller="prompt" class="min-h-screen flex items-center justify-center bg-linear-to-br from-[#f0f4ff] to-[#f8f4ff] overflow-auto">
+  <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-4 max-sm:m-4 max-w-2xl w-full flex flex-col flex-1 min-h-0 max-h-[700px]">
 
-    <div class="voting-header">
-      <div class="voting-icon">🗳️</div>
-      <h2 class="voting-title"><%= @game_prompt.prompt.description %></h2>
+    <div class="text-center mb-8">
+      <div class="text-6xl max-sm:text-5xl mb-4 animate-float">🗳️</div>
+      <h2 class="text-2xl max-sm:text-xl font-bold text-gray-900 leading-snug"><%= @game_prompt.prompt.description %></h2>
     </div>
 
-    <%= form_with url: "/vote", method: :post, class: "voting-form" do |form| %>
+    <%= form_with url: "/vote", method: :post, class: "flex flex-1 flex-col gap-6 min-h-0" do |form| %>
       <%= form.hidden_field :game_prompt_id, required: true, value: @game_prompt.id %>
 
-      <div class="answers-list-wrapper">
-        <div class="answers-list answers-list answers-list--fade">
+      <div class="flex flex-1 min-h-0">
+        <div class="flex flex-1 min-h-0 overflow-y-auto flex-col gap-4 scroll-fade-indicators p-1">
           <%= form.collection_radio_buttons :answer_id, @answers, :id, :text do |b| %>
             <label class="answer-option">
               <%= b.radio_button name: 'answer_id', value: :id, class: "answer-radio" %>
@@ -26,7 +25,7 @@
         </div>
       </div>
 
-      <%= form.submit "Submit Vote", class: "submit-button" %>
+      <%= form.submit "Submit Vote", class: "btn-primary mt-4" %>
     <% end %>
   </div>
 </div>

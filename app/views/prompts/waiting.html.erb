@@ -1,17 +1,15 @@
-<%= stylesheet_link_tag "prompt-waiting", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<div data-controller="prompt" class="prompt-waiting-container">
-  <div class="prompt-waiting-card">
-    <div class="waiting-header">
-      <div class="waiting-animation">
-        <div class="spinner-ring"></div>
-        <div class="spinner-ring spinner-ring-2"></div>
-        <div class="spinner-ring spinner-ring-3"></div>
-        <span class="waiting-icon">⏳</span>
+
+<div data-controller="prompt" class="h-screen flex items-center justify-center bg-linear-to-br from-[#fff9f0] to-[#f0fff4]">
+  <div class="card-primary animate-fade-in p-12 max-sm:p-4 max-w-xl w-full max-h-[90vh] overflow-hidden">
+    <div class="text-center mb-10">
+      <div class="relative flex items-center justify-center w-32 h-32 max-sm:w-28 max-sm:h-28 mx-auto mb-6">
+        <span class="text-5xl max-sm:text-4xl animate-swing">⏳</span>
       </div>
-      <h2 class="waiting-title">Answer Submitted</h2>
-      <p class="waiting-subtitle">Waiting for everyone to submit answers...</p>
+      <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Answer Submitted</h2>
+      <p class="text-base max-sm:text-sm text-gray-500 italic">Waiting for everyone to submit answers...</p>
     </div>
+
     <%= render "shared/fun_facts" %>
   </div>
 </div>

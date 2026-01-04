@@ -74,6 +74,25 @@
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  --animate-swing: swing 2s ease-in-out infinite;
+  @keyframes swing {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(20deg); }
+    75% { transform: rotate(-20deg); }
+  }
+
+  --animate-fade-in: fade-in 0.6s ease-out;
+  @keyframes fade-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  --animate-pulse-dot: pulse-dot 1.5s ease-in-out infinite;
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+  }
 }
 
 /* Disable animations for users who prefer reduced motion */
@@ -82,7 +101,10 @@
   .animate-bounce-custom,
   .animate-slide-in,
   .animate-slide-up,
-  .animate-gradient-shift {
+  .animate-gradient-shift,
+  .animate-swing,
+  .animate-fade-in,
+  .animate-pulse-dot {
     animation: none;
   }
 }

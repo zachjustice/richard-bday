@@ -1,60 +1,48 @@
-<%= stylesheet_link_tag "prompt-results", "data-turbo-track": "reload" %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<div id="results" data-controller="prompt" class="prompt-results-container">
-  <div class="prompt-results-card">
+<div id="results" data-controller="prompt" class="h-screen flex items-center justify-center bg-linear-to-br from-[#f8f4ff] to-[#fff9f0]">
+  <div class="card-primary animate-fade-in m-4 p-12 max-sm:p-8 max-w-xl w-full max-h-[90vh] overflow-hidden">
     <% if @status == RoomStatus::FinalResults %>
-      <div class="status-display final-results">
-        <div class="waiting-animation">
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring spinner-ring-2"></div>
-          <div class="spinner-ring spinner-ring-3"></div>
-        </div>
-        <h2 class="status-title">Game Complete!</h2>
+      <div class="text-center mb-8">
+        <span class="text-5xl max-sm:text-4xl mb-4 block animate-bounce-custom">🎉</span>
+        <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Game Complete!</h2>
         <% if @current_user.role == User::NAVIGATOR %>
-          <p class="status-message">Click 'Start New Game' when you're ready!</p>
-          <%= form_with url: "/rooms/#{@current_room.id}/end_game", method: :post, class: "next-form" do |form| %>
-            <%= form.submit "Start New Game", class: "next-button" %>
+          <p class="text-base max-sm:text-sm text-gray-500 italic mb-8">Click 'Start New Game' when you're ready!</p>
+          <%= form_with url: "/rooms/#{@current_room.id}/end_game", method: :post, class: "flex justify-center" do |form| %>
+            <%= form.submit "Start New Game", class: "btn-primary min-w-[200px]" %>
           <% end %>
         <% else %>
-          <p class="status-message">Check the big screen for the final results!</p>
+          <p class="text-base max-sm:text-sm text-gray-500 italic">Check the big screen for the final results!</p>
         <% end %>
       </div>
     <% elsif @status == RoomStatus::WaitingRoom %>
-      <div class="status-display waiting-room">
-        <div class="waiting-animation">
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring spinner-ring-2"></div>
-          <div class="spinner-ring spinner-ring-3"></div>
-        </div>
-        <h2 class="status-title">Between Games</h2>
-        <p class="status-message">Waiting for a new game to start...</p>
+      <div class="text-center mb-8">
+        <span class="text-5xl max-sm:text-4xl mb-4 block animate-swing">⏳</span>
+        <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Between Games</h2>
+        <p class="text-base max-sm:text-sm text-gray-500 italic mb-8">Waiting for a new game to start...</p>
         <%= render "shared/fun_facts" %>
       </div>
     <% elsif @status != RoomStatus::Results %>
-      <div class="status-display waiting-votes">
-        <div class="waiting-animation">
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring spinner-ring-2"></div>
-          <div class="spinner-ring spinner-ring-3"></div>
-        </div>
-        <h2 class="status-title">Counting Votes</h2>
-        <p class="status-message">Waiting for everyone to vote...</p>
+      <div class="text-center mb-8">
+        <span class="text-5xl max-sm:text-4xl mb-4 block animate-swing">⏳</span>
+        <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Counting Votes</h2>
+        <p class="text-base max-sm:text-sm text-gray-500 italic mb-8">Waiting for everyone to vote...</p>
         <%= render "shared/fun_facts" %>
       </div>
     <% else %>
-      <div class="status-display results-ready">
-        <h2 class="status-title">Round Complete!</h2>
-        <p class="status-message">Check the big screen for the winner.</p>
+      <div class="text-center mb-8">
+        <span class="text-5xl max-sm:text-4xl mb-4 block animate-bounce-custom">🏆</span>
+        <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Round Complete!</h2>
+        <p class="text-base max-sm:text-sm text-gray-500 italic mb-8">Check the big screen for the winner.</p>
       </div>
       <% if @current_user.role == User::NAVIGATOR %>
-        <%= form_with url: "/rooms/#{@current_room.id}/next", method: :post, class: "next-form" do |form| %>
-          <%= form.submit "Next Round", class: "next-button" %>
+        <%= form_with url: "/rooms/#{@current_room.id}/next", method: :post, class: "flex justify-center" do |form| %>
+          <%= form.submit "Next Round", class: "btn-primary min-w-[200px]" %>
         <% end %>
       <% else %>
         <div class="progress-dots">
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
+          <span class="progress-dot"></span>
+          <span class="progress-dot"></span>
+          <span class="progress-dot"></span>
         </div>
       <% end %>
     <% end %>

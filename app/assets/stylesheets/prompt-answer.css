@@ -1,3 +1,6 @@
+/* MIGRATED TO TAILWIND - Phase 2 */
+/* This file kept for reference during migration */
+/*
 /* Prompt Answer Page Styles */
 .prompt-answer-container {
   min-height: 100vh;
@@ -343,3 +346,4 @@
     transform: none;
   }
 }
+*/
