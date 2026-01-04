@@ -1,10 +1,10 @@
 <div class="flex-1 flex flex-col justify-start min-h-0">
   <% if winners.size == 1 %>
-    <h3 class="font-bold text-gray-900 mb-6 flex items-center gap-2">Winner!</h3>
+    <h1 class="text-4xl font-bold text-gray-900 mb-6 flex items-center gap-2">Winner!</h3>
   <% elsif winners.size > 1 %>
-    <h3 class="font-bold text-gray-900 mb-6 flex items-center gap-2"><%= winners.size %>-Way Tie</h3>
+    <h1 class="text-4xl font-bold text-gray-900 mb-6 flex items-center gap-2"><%= winners.size %>-Way Tie</h3>
   <% else %>
-    <h3 class="font-bold text-gray-900 mb-6 flex items-center gap-2">No Winner</h3>
+    <h1 class="text-4xl font-bold text-gray-900 mb-6 flex items-center gap-2">No Winner</h3>
   <% end %>
 
   <div class="flex flex-col flex-1 min-h-0 p-6 rounded-xl bg-gradient-primary-tint border-2 border-brand-purple/15">
@@ -12,8 +12,8 @@
       <% answers_sorted_by_votes.each do |answer| %>
         <div class="answer-card <%= 'winner' if winners.include?(answer) %>">
           <div class="w-full flex flex-col flex-1">
-            <span class="block text-gray-900 leading-tight font-bold"><%= answer.text %> <%= '🏆' if winner.id == answer.id %></span>
-            <span class="block text-[1.75rem] text-gray-500 leading-tight font-medium whitespace-nowrap overflow-hidden text-ellipsis"><%= answer.user.name %></span>
+            <span class="text-2xl block text-gray-900 leading-tight font-bold"><%= answer.text %> <%= '🏆' if winner&.id == answer&.id %></span>
+            <span class="text-2xl block text-gray-500 leading-tight font-medium whitespace-nowrap overflow-hidden text-ellipsis"><%= answer.user.name %></span>
           </div>
           <div class="flex flex-1 flex-col items-end w-full text-gray-500">
             <% if votes_by_answer[answer.id]&.any? %>

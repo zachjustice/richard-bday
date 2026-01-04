@@ -408,18 +408,6 @@ html {
   }
 }
 
-/* TV Mode - Scale fonts for large displays (1240px+) */
-@media screen and (min-width: 1240px) {
-  .tv-mode {
-    font-size: 200%; /* Scale everything proportionally */
-  }
-
-  /* Fine-tune specific elements if needed */
-  .tv-mode .room-code {
-    font-size: 250%;
-  }
-}
-
 /* Scroll Fade Indicators (too complex for inline utilities) */
 .scroll-fade-indicators {
   background:
@@ -655,19 +643,6 @@ html {
 - Real-time Turbo Stream updates
 - QR code integration
 
-**TV Mode Implementation:**
-
-Instead of redefining every text class, use proportional font-size scaling:
-
-```erb
-<div class="status-content <%= 'tv-mode' if request.user_agent.include?('Large-Display') %>">
-  <h1 class="text-2xl">This scales to 4rem on large screens</h1>
-  <p class="text-base">This scales to 2rem on large screens</p>
-</div>
-```
-
-The `.tv-mode` class in components.css uses `font-size: 200%` to scale all text proportionally.
-
 **QR Code Layout:**
 
 ```erb
@@ -711,16 +686,6 @@ Simple flexbox layout prevents breaking, max-width ensures responsive behavior.
   </template>
 </turbo-stream>
 ```
-
-### 3. TV Display Mode Scaling
-
-**Concern:** Scale all fonts 2x on 1240px+ displays
-
-**Solution:**
-- Use `.tv-mode` class with `font-size: 200%` in media query
-- All child text scales proportionally (uses relative units)
-- Simple to maintain, works with Tailwind text utilities
-- Fine-tune specific elements if needed
 
 **Why this works better than redefining every class:**
 - Less CSS to maintain
@@ -862,10 +827,9 @@ Simple flexbox layout prevents breaking, max-width ensures responsive behavior.
 
 **Process:**
 1. Create partials for reusable components
-2. Apply `.tv-mode` class for large displays
-3. Use Tailwind for layout, components for complex UI
-4. Test all game states
-5. Verify Turbo Stream targets preserved
+2. Use Tailwind for layout, components for complex UI
+3. Test all game states
+4. Verify Turbo Stream targets preserved
 
 ### Phase 4: Shared Components (Est: 6 hours)
 

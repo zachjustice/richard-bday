@@ -166,18 +166,6 @@
   }
 }
 
-/* TV Mode - Scale fonts for large displays (1240px+) */
-@media screen and (min-width: 1240px) {
-  .tv-mode {
-    font-size: 200%; /* Scale everything proportionally */
-  }
-
-  /* Fine-tune specific elements if needed */
-  .tv-mode .room-code {
-    font-size: 250%;
-  }
-}
-
 /* Scroll Fade Indicators (too complex for inline utilities) */
 .scroll-fade-indicators {
   background:

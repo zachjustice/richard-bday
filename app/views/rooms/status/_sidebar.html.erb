@@ -1,6 +1,6 @@
 <div id="game-progress-sidebar" class="flex flex-col flex-1 w-[375px] min-w-[280px] bg-gradient-primary-tint border-r-2 border-gray-200 p-8 overflow-y-auto">
   <div class="mb-6 pb-4 border-b-2 border-gray-200">
-    <h3 class="font-semibold text-brand-purple m-0">Game Status</h3>
+    <h3 class="text-4xl font-semibold text-brand-purple m-0">Game Status</h3>
   </div>
   <div class="flex flex-col gap-3 overflow-y-auto pr-2">
     <p class="m-0">Round <%= room.current_game.current_game_prompt.order + 1 %> of <%= total_game_prompts %></p>
@@ -11,16 +11,16 @@
       %>
       <div class="game-status-badge <%= 'completed' if is_completed %> <%= 'current' if is_current %>">
         <% if is_completed %>
-          <span class="">✔️</span>
+          <span class="text-xl">✔️</span>
         <% else %>
-          <span class=""><%= curr[:icon] %></span>
+          <span class="text-xl"><%= curr[:icon] %></span>
         <% end %>
         <span class="font-semibold text-[0.95rem]"><%= curr[:text] %></span>
       </div>
     <% end %>
     <div class="border-t border-gray-300 my-2"></div>
     <div class="game-status-badge <%= 'current' if room.status == RoomStatus::FinalResults %>">
-      <span class="">📜</span>
+      <span class="text-xl">📜</span>
       <span class="font-semibold text-[0.95rem]">Final Story</span>
     </div>
   </div>
