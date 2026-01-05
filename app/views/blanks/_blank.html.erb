@@ -1,11 +1,11 @@
-<!-- app/views/blanks/_blank.html.erb -->
+<%# app/views/blanks/_blank.html.erb %>
 <div id="blank_<%= blank.id %>" class="blank-item" data-controller="blank-editor">
-  <div class="blank-display" data-blank-editor-target="display">
-    <div class="blank-header">
-      <p>
-      Blank ID: <span class="blank-id">{<%= blank.id %>}</span>
+  <div class="flex flex-col gap-2" data-blank-editor-target="display">
+    <div class="flex justify-between items-center">
+      <p class="m-0">
+        Blank ID: <span class="blank-id">{<%= blank.id %>}</span>
       </p>
-      <div class="blank-actions">
+      <div class="flex gap-2">
         <%= link_to edit_story_blank_path(story, blank),
             class: "hidden",
             data: {
@@ -31,25 +31,24 @@
       </div>
     </div>
 
-    <% if blank.matching_prompts.size == 0%>
-      <p class="blank-matches">
+    <% if blank.matching_prompts.size == 0 %>
+      <p class="text-xs text-gray-500 m-0">
         0 matching prompts
       </p>
     <% end %>
 
-    <div class="blank-matches">
-      <ul class="blank-matches-list">
+    <div class="text-xs text-gray-500 m-0">
+      <ul class="list-none p-0 m-0">
         <% blank.matching_prompts.map.with_index do |prompt, index| %>
-          <li class="story-prompt-for-blank"><%= index + 1 %>. <%= prompt.description %></li>
+          <li class="text-sm text-gray-600"><%= index + 1 %>. <%= prompt.description %></li>
         <% end %>
       </ul>
     </div>
 
-    <div class="blank-tags">
+    <div class="flex flex-wrap gap-2">
       <% blank.tags_array.each do |tag| %>
         <span class="tag"><%= tag %></span>
       <% end %>
     </div>
   </div>
-
 </div>

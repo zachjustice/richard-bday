@@ -325,6 +325,479 @@
   }
 }
 
+/* Story Editor Components */
+.story-card {
+  @apply flex flex-row p-6 border-2 border-gray-200 rounded-xl transition-all justify-between;
+}
+
+.story-card:hover {
+  @apply -translate-y-1 shadow-lg border-brand-purple;
+}
+
+.story-form-input {
+  @apply p-4 border-2 border-gray-200 rounded-lg text-base transition-all outline-none;
+}
+
+.story-form-input:focus {
+  @apply border-brand-purple ring-4 ring-brand-purple/10;
+}
+
+.story-form-textarea {
+  @apply p-4 border-2 border-gray-200 rounded-lg text-base transition-all outline-none;
+  @apply resize-y font-mono leading-relaxed;
+}
+
+.story-form-textarea:focus {
+  @apply border-brand-purple ring-4 ring-brand-purple/10;
+}
+
+.blank-item {
+  @apply bg-white border-2 border-gray-200 rounded-lg p-4 transition-all;
+}
+
+.blank-item:hover {
+  @apply border-brand-purple;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.blank-card {
+  @apply flex flex-col bg-white p-4 rounded-lg border-2 border-gray-200 transition-all gap-2;
+}
+
+.blank-card:hover {
+  @apply -translate-y-0.5 shadow-md border-brand-purple;
+}
+
+.blank-id {
+  @apply font-mono font-bold text-black rounded-sm text-sm;
+}
+
+.tag {
+  @apply inline-block px-2.5 py-1 rounded-full text-xs font-medium text-gray-900;
+  background: linear-gradient(135deg, rgba(118, 75, 162, 0.15) 0%, rgba(240, 147, 251, 0.15) 100%);
+  border: 1px solid rgba(118, 75, 162, 0.3);
+}
+
+.blanks-help {
+  @apply p-4 rounded-lg mb-6;
+  background: rgba(102, 126, 234, 0.05);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.prompts-checklist {
+  @apply flex flex-col gap-3 max-h-[300px] overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200;
+}
+
+.prompt-item {
+  @apply bg-gray-50 border-2 border-gray-200 rounded-lg p-5 transition-all;
+}
+
+.prompt-item:hover {
+  @apply border-brand-purple;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.prompt-form {
+  @apply animate-slide-in;
+}
+
+.prompt-checkbox {
+  @apply flex gap-3 p-3 bg-white border-2 border-gray-200 rounded-md cursor-pointer transition-all;
+}
+
+.prompt-checkbox:hover {
+  @apply border-brand-purple;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+/* Blank Modal Component */
+.blank-modal {
+  @apply fixed inset-0 z-[1000] flex items-center justify-center p-4 animate-fade-in;
+}
+
+.blank-modal.hidden {
+  @apply hidden;
+}
+
+.blank-backdrop {
+  @apply absolute inset-0 bg-black/50 backdrop-blur-sm;
+}
+
+.blank-content {
+  @apply relative bg-white rounded-2xl shadow-3xl w-full max-w-[700px] max-h-[90vh];
+  @apply overflow-hidden flex flex-col animate-slide-up;
+}
+
+.blank-content::before {
+  content: '';
+  @apply absolute top-0 left-0 right-0 h-1;
+  background: var(--gradient-primary-simple);
+}
+
+/* Story Editor Buttons */
+.btn-secondary {
+  @apply px-6 py-3 rounded-lg font-semibold cursor-pointer transition-all text-base;
+  @apply inline-block text-gray-900 no-underline bg-gray-100 border-2 border-gray-200 whitespace-nowrap;
+}
+
+.btn-secondary:hover {
+  @apply bg-gray-200 border-gray-300;
+}
+
+.btn-sm {
+  @apply px-4 py-2 text-sm;
+}
+
+.btn-icon {
+  @apply p-2 bg-transparent border border-transparent rounded-lg text-lg cursor-pointer transition-all;
+}
+
+.btn-icon:hover {
+  @apply bg-gray-100 border-gray-200 scale-110;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-card:hover,
+  .blank-card:hover,
+  .btn-icon:hover {
+    transform: none;
+  }
+}
+
+/* Settings Modal Component */
+.settings-modal {
+  @apply fixed inset-0 z-[1000] flex items-center justify-center p-4 animate-fade-in;
+}
+
+.settings-modal.hidden {
+  @apply hidden;
+}
+
+.settings-backdrop {
+  @apply absolute inset-0 bg-black/50 backdrop-blur-sm;
+}
+
+.settings-content {
+  @apply relative bg-white rounded-2xl shadow-3xl w-full max-w-[500px] overflow-hidden animate-slide-up;
+}
+
+.settings-content::before {
+  content: '';
+  @apply absolute top-0 left-0 right-0 h-1;
+  background: var(--gradient-primary-simple);
+}
+
+.settings-input {
+  @apply p-4 text-base font-medium text-gray-900 bg-gray-50 border-2 border-gray-200;
+  @apply rounded-lg transition-all outline-none;
+}
+
+.settings-input:hover {
+  @apply border-brand-purple bg-white;
+}
+
+.settings-input:focus {
+  @apply border-brand-purple bg-white ring-4 ring-brand-purple/10;
+}
+
+.settings-submit {
+  @apply flex-1 px-6 py-4 text-base font-semibold rounded-lg cursor-pointer transition-all border-none;
+  @apply text-white;
+  background: var(--gradient-primary-simple);
+  box-shadow: var(--shadow-button);
+}
+
+.settings-submit:hover:not(:disabled) {
+  @apply -translate-y-0.5 shadow-lg;
+  background: var(--gradient-primary-reverse);
+}
+
+.settings-submit:active:not(:disabled) {
+  @apply translate-y-0;
+}
+
+.settings-submit:disabled,
+.settings-submit.submitting {
+  @apply opacity-70 cursor-not-allowed;
+}
+
+.settings-cancel {
+  @apply flex-1 px-6 py-4 text-base font-semibold rounded-lg cursor-pointer transition-all;
+  @apply bg-gray-100 text-gray-900 border-2 border-gray-200;
+}
+
+.settings-cancel:hover {
+  @apply bg-gray-200 border-gray-300;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-submit:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Music Player Component */
+.music-player-button {
+  @apply fixed bottom-5 left-5 w-[50px] h-[50px] bg-transparent border-none rounded-full;
+  @apply cursor-pointer text-[1.7rem] transition-all z-[999] flex items-center justify-center;
+}
+
+.music-player-button:hover {
+  @apply scale-105;
+}
+
+.music-player-modal {
+  @apply fixed inset-0 z-[1000] flex items-center justify-center animate-fade-in;
+}
+
+.music-player-modal.hidden {
+  @apply hidden;
+}
+
+.music-player-backdrop {
+  @apply absolute inset-0 bg-black/50 backdrop-blur-sm;
+}
+
+.music-player-content {
+  @apply relative bg-white rounded-2xl shadow-3xl w-[90%] max-w-[80vw];
+  @apply min-h-[450px] max-h-[80vh] overflow-hidden flex flex-col animate-slide-up;
+}
+
+.music-player-header {
+  @apply p-6 text-white flex justify-between items-center shrink-0;
+  background: var(--gradient-primary-simple);
+}
+
+.music-player-close-btn {
+  @apply bg-transparent border-none text-2xl text-white cursor-pointer p-2 rounded-md leading-none;
+}
+
+.music-player-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.music-player-controls {
+  @apply p-6 bg-gray-50 border-b-2 border-gray-200 shrink-0;
+}
+
+.control-btn {
+  @apply bg-transparent border-2 border-gray-200 w-12 h-12 rounded-full cursor-pointer;
+  @apply text-xl flex items-center justify-center transition-all;
+}
+
+.control-btn:hover {
+  @apply border-brand-purple scale-110;
+}
+
+.control-btn.play-pause {
+  @apply w-16 h-16 bg-transparent border-transparent text-2xl;
+}
+
+.control-btn.play-pause:hover {
+  @apply scale-115 shadow-lg;
+}
+
+.progress-bar-container {
+  @apply w-full h-2 bg-gray-200 rounded-full flex-1 min-h-0 cursor-pointer;
+}
+
+.progress-bar-fill {
+  @apply h-full rounded-full transition-[width];
+  background: var(--gradient-primary-simple);
+}
+
+.music-search-input {
+  @apply w-full p-3 border-2 border-gray-200 rounded-lg text-base transition-colors;
+}
+
+.music-search-input:focus {
+  @apply outline-none border-brand-purple;
+}
+
+.music-player-songs {
+  @apply overflow-y-auto border border-gray-300 rounded-lg flex-1 min-h-0 mt-4;
+}
+
+/* Song items (dynamically generated by Stimulus controller) */
+.song-item {
+  @apply flex items-center gap-3 p-3 rounded-lg cursor-pointer;
+}
+
+.song-item:hover {
+  @apply bg-gray-100;
+}
+
+.song-info {
+  @apply flex-1 min-w-0;
+}
+
+.song-title {
+  @apply font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis text-base;
+}
+
+.song-artist {
+  @apply text-sm text-gray-500;
+}
+
+.song-duration {
+  @apply text-sm text-gray-400 min-w-[40px] tabular-nums;
+}
+
+.song-action-btn {
+  @apply bg-transparent border border-gray-200 w-9 h-9 rounded-md cursor-pointer;
+  @apply text-base flex items-center justify-center transition-all;
+}
+
+.song-action-btn:hover {
+  @apply border-brand-purple scale-110;
+}
+
+/* Music player scrollbar */
+.music-player-songs::-webkit-scrollbar {
+  width: 8px;
+}
+
+.music-player-songs::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+.music-player-songs::-webkit-scrollbar-thumb {
+  @apply bg-brand-purple rounded-full;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .music-player-content {
+    @apply w-[95%] max-h-[90vh];
+  }
+
+  .music-player-header {
+    @apply p-4;
+  }
+
+  .music-player-controls {
+    @apply p-4;
+  }
+
+  .control-btn {
+    @apply w-10 h-10;
+  }
+
+  .control-btn.play-pause {
+    @apply w-14 h-14;
+  }
+
+  .song-duration {
+    @apply hidden;
+  }
+}
+
+/* Countdown Timer Component */
+.countdown-timer {
+  @apply relative inline-flex items-center justify-center w-[120px] h-[120px];
+}
+
+.countdown-timer-svg {
+  @apply absolute w-full h-full -rotate-90;
+}
+
+.countdown-timer-circle-bg {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.1);
+  stroke-width: 6;
+}
+
+.countdown-timer-circle {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  @apply transition-all duration-300;
+}
+
+/* Color phases */
+.countdown-timer[data-phase="green"] .countdown-timer-circle {
+  stroke: #22c55e;
+}
+
+.countdown-timer[data-phase="orange"] .countdown-timer-circle {
+  stroke: #f97316;
+}
+
+.countdown-timer[data-phase="red"] .countdown-timer-circle {
+  stroke: #ef4444;
+}
+
+/* Flash animation when time is up */
+.countdown-timer[data-phase="zero"] .countdown-timer-circle-bg {
+  stroke: #ef4444;
+  @apply animate-flash-red;
+}
+
+.countdown-timer[data-phase="zero"] .countdown-timer-display {
+  color: #ef4444;
+  @apply animate-flash-red;
+}
+
+.countdown-timer-display {
+  @apply text-lg font-bold text-gray-900 select-none z-[1];
+  font-variant-numeric: tabular-nums;
+}
+
+/* Responsive sizing */
+@media (max-width: 640px) {
+  .countdown-timer {
+    @apply w-[60px] h-[60px];
+  }
+
+  .countdown-timer-display {
+    @apply text-base;
+  }
+
+  .countdown-timer-circle-bg,
+  .countdown-timer-circle {
+    stroke-width: 5;
+  }
+}
+
+/* Flash Messages */
+.flash-message {
+  @apply flex items-center justify-between gap-3 px-5 py-4 rounded-xl shadow-xl;
+  @apply animate-slide-in-right transition-all;
+}
+
+.flash-notice {
+  @apply bg-success text-white;
+}
+
+.flash-alert {
+  @apply bg-error text-white;
+}
+
+.flash-dismiss {
+  @apply shrink-0 bg-transparent border-none text-xl leading-none cursor-pointer;
+  @apply p-1 rounded-sm transition-all opacity-70 text-white;
+}
+
+.flash-dismiss:hover {
+  @apply opacity-100 scale-110;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.flash-dismiss:active {
+  @apply scale-95;
+}
+
+.flash-dismiss:focus {
+  @apply outline-2 outline-current outline-offset-2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-dismiss:hover,
+  .flash-dismiss:active {
+    transform: none;
+  }
+}
+
 /* Answer Card (results page) */
 .answer-card {
   @apply flex flex-row flex-1 p-5 bg-white rounded-lg transition-all justify-between gap-3;

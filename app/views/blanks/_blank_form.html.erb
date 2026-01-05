@@ -1,22 +1,22 @@
-<!-- app/views/blanks/_blank_form.html.erb -->
-<%= form_with model: blank, 
+<%# app/views/blanks/_blank_form.html.erb %>
+<%= form_with model: blank,
     url: story_blank_path(story, blank),
     method: :patch,
-    class: "blank-edit-form" do |form| %>
+    class: "flex flex-col gap-4" do |form| %>
 
-  <div class="form-field">
-    <%= form.label :tags, "Tags (comma-separated)" %>
-    <%= form.text_field :tags, 
+  <div class="flex flex-col gap-2">
+    <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-gray-900" %>
+    <%= form.text_field :tags,
         placeholder: "noun,animal,funny",
-        class: "form-input" %>
-    <p class="form-hint">Examples: noun,animal,funny or adjective,colorful</p>
+        class: "story-form-input" %>
+    <p class="text-sm text-gray-500 italic m-0">Examples: noun,animal,funny or adjective,colorful</p>
   </div>
 
-  <div class="form-actions">
+  <div class="flex gap-4 pt-2">
     <%= form.submit "Save", class: "btn-primary btn-sm" %>
-    <button type="button" 
+    <button type="button"
             data-action="click->blank-editor#cancelEdit"
-      class="btn-secondary btn-sm">
+            class="btn-secondary btn-sm">
       Cancel
     </button>
   </div>

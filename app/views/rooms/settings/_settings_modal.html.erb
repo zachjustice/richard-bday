@@ -1,17 +1,17 @@
-<div id="settings-modal" 
-     class="settings-modal hidden" 
+<div id="settings-modal"
+     class="settings-modal hidden"
      data-settings-modal-target="modal"
      role="dialog"
      aria-labelledby="settings-modal-title"
      aria-modal="true">
   <div class="settings-backdrop" data-action="click->settings-modal#close"></div>
   <div class="settings-content">
-    <div class="settings-header">
-      <h2 id="settings-modal-title" class="settings-title">Room Settings</h2>
-      <button type="button" 
-              class="settings-close" 
+    <div class="flex items-center justify-between px-8 py-6 border-b-2 border-gray-200">
+      <h2 id="settings-modal-title" class="text-2xl font-bold text-gray-900 m-0">Room Settings</h2>
+      <button type="button"
+              class="bg-transparent border-none text-2xl text-gray-500 cursor-pointer p-2 rounded-md leading-none transition-all hover:bg-gray-100 hover:text-gray-900"
               data-action="click->settings-modal#close"
-        aria-label="Close settings">
+              aria-label="Close settings">
         ✕
       </button>
     </div>

@@ -1,4 +1,4 @@
-<!-- app/views/blanks/_form.html.erb -->
+<%# app/views/blanks/_form.html.erb %>
 <% edit_mode = blank.persisted? %>
 
 <%= form_with model: blank,
@@ -16,36 +16,36 @@
   <%= render "blanks/form_errors", blank: blank %>
 
   <!-- Tags Input -->
-  <div class="form-field">
-    <%= form.label :tags, "Tags (comma-separated)" %>
+  <div class="flex flex-col gap-2">
+    <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-gray-900" %>
     <%= form.text_field :tags,
         placeholder: "noun,animal,funny",
-        class: "form-input",
+        class: "story-form-input",
         data: {
           action: "input->blank-form#filterPrompts",
           blank_form_target: "tagsInput"
         } %>
-    <p class="form-hint">Tags help match prompts. Use commas to separate.</p>
+    <p class="text-sm text-gray-500 italic m-0">Tags help match prompts. Use commas to separate.</p>
   </div>
 
   <!-- Existing Prompts Selection -->
-  <div class="form-section" data-blank-form-target="promptsSection">
-    <h4 class="form-section-title">
+  <div class="mt-6 pt-6 border-t border-gray-200" data-blank-form-target="promptsSection">
+    <h4 class="m-0 mb-3 text-base font-semibold text-gray-900 flex items-center gap-2">
       Select Existing Prompts
-      <span class="prompt-count" data-blank-form-target="promptCount">(0 matching)</span>
+      <span class="text-sm font-normal text-gray-500" data-blank-form-target="promptCount">(0 matching)</span>
     </h4>
 
     <div class="prompts-checklist" data-blank-form-target="promptsList">
-      <p class="text-secondary">Enter tags above to see matching prompts</p>
+      <p class="text-gray-500 text-sm italic m-1">Enter tags above to see matching prompts</p>
     </div>
   </div>
 
   <!-- New Prompts Creation -->
-  <div class="form-section">
-    <h4 class="form-section-title">Or Create New Prompts</h4>
-    <p class="form-hint">New prompts will inherit the blank's tags</p>
+  <div class="mt-6 pt-6 border-t border-gray-200">
+    <h4 class="m-0 mb-3 text-base font-semibold text-gray-900">Or Create New Prompts</h4>
+    <p class="text-sm text-gray-500 italic m-0 mb-3">New prompts will inherit the blank's tags</p>
 
-    <div class="new-prompts-list" data-blank-form-target="newPromptsList">
+    <div class="flex flex-col gap-3 mb-3" data-blank-form-target="newPromptsList">
       <!-- Dynamic prompt fields added here -->
     </div>
 
@@ -57,11 +57,11 @@
   </div>
 
   <!-- Validation Message -->
-  <div class="form-validation-hint" data-blank-form-target="validationHint">
+  <div class="hidden bg-red-500/10 border-2 border-error-light rounded-lg p-3 mt-4 text-sm text-error font-medium" data-blank-form-target="validationHint">
     You must select at least one existing prompt OR create a new one.
   </div>
 
-  <div class="form-actions">
+  <div class="flex gap-4 pt-4">
     <%= form.submit edit_mode ? "Update Blank" : "Create Blank",
         class: "btn-primary btn-sm",
         data: { blank_form_target: "submitButton" } %>

@@ -1,16 +1,17 @@
-<div id="game-prompt-<%= game_prompt.id %>" class="tooltip-content">
-  <div class="tooltip-header">
-    <h4 class="tooltip-prompt"><%= game_prompt.prompt.description %></h4>
+<%# app/views/prompts/_tooltip_content.html.erb %>
+<div id="game-prompt-<%= game_prompt.id %>" class="p-4">
+  <div class="mb-3">
+    <h4 class="text-base font-bold text-gray-900 m-0"><%= game_prompt.prompt.description %></h4>
   </div>
-  
-  <div class="tooltip-answers">
+
+  <div class="flex flex-col gap-2">
     <% answers.sort_by { |a| -votes_by_answer[a.id]&.size.to_i }.each do |answer| %>
-      <div class="tooltip-answer <%= 'tooltip-winner' if answer.won %>">
-        <div class="answer-info">
-          <span class="answer-author"><%= answer.user.name %>:</span>
-          <span class="answer-text">"<%= answer.text %>"</span>
+      <div class="flex justify-between items-center p-3 rounded-lg <%= answer.won ? 'bg-success/10 border border-success/30' : 'bg-gray-50' %>">
+        <div class="flex-1 min-w-0">
+          <span class="font-semibold text-gray-900"><%= answer.user.name %>:</span>
+          <span class="text-gray-700">"<%= answer.text %>"</span>
         </div>
-        <div class="answer-votes">
+        <div class="text-sm text-gray-500 ml-3 shrink-0">
           <%= pluralize(votes_by_answer[answer.id]&.size || 0, 'vote') %>
           <%= '🏆' if answer.won %>
         </div>

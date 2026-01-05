@@ -1,47 +1,44 @@
-<!-- app/views/stories/show.html.erb -->
-<%= stylesheet_link_tag "story-editor", "data-turbo-track": "reload" %>
-
-<div class="story-show-container">
-  <div class="story-header">
-    <h1><%= @story.title %></h1>
-    <div class="story-actions">
+<%# app/views/stories/show.html.erb %>
+<div class="max-w-[1400px] flex flex-col flex-1 p-8 md:p-4 mx-auto w-full">
+  <div class="flex justify-between items-center mb-8 pb-6 border-b-2 border-gray-200 flex-wrap gap-4">
+    <h1 class="text-3xl font-bold text-gray-900 m-0"><%= @story.title %></h1>
+    <div class="flex gap-4">
       <%= link_to "Edit Story", edit_story_path(@story), class: "btn-primary" %>
       <%= link_to "← Back to Stories", stories_path, class: "btn-secondary" %>
     </div>
   </div>
 
   <% unless @validation[:valid] %>
-    <div class="validation-errors">
-      <h3>⚠️ Story Validation Issues:</h3>
+    <div class="bg-red-500/10 border-2 border-error-light rounded-xl p-6 mb-8">
+      <h3 class="text-error m-0 mb-4 font-bold">⚠️ Story Validation Issues:</h3>
       <% if @validation[:missing].any? %>
-        <p>Missing blanks in text: <%= @validation[:missing].map { |id| "{#{id}}" }.join(", ") %></p>
+        <p class="text-error m-1 font-mono text-sm">Missing blanks in text: <%= @validation[:missing].map { |id| "{#{id}}" }.join(", ") %></p>
       <% end %>
       <% if @validation[:unused].any? %>
-        <p>Undefined blanks in text: <%= @validation[:unused].map { |id| "{#{id}}" }.join(", ") %></p>
+        <p class="text-error m-1 font-mono text-sm">Undefined blanks in text: <%= @validation[:unused].map { |id| "{#{id}}" }.join(", ") %></p>
       <% end %>
     </div>
   <% end %>
 
-  <div class="story-content">
-    <h2>Story Text:</h2>
-    <div class="story-text-display">
-      <%# <%= simple_format(@story.text) %\> %>
+  <div class="bg-white p-8 rounded-xl mb-8 border-2 border-gray-200">
+    <h2 class="text-xl font-bold text-gray-900 m-0 mb-4">Story Text:</h2>
+    <div class="font-serif text-lg leading-relaxed text-gray-900">
       <%= simple_format(highlight_blanks_in_text(@story.text)) %>
     </div>
   </div>
 
-  <div class="story-blanks">
-    <h2>Blanks (<%= @story.blanks.count %>)</h2>
-    <div class="blanks-grid">
+  <div class="bg-gray-50 p-8 rounded-xl border-2 border-gray-200">
+    <h2 class="text-xl font-bold text-gray-900 m-0 mb-4">Blanks (<%= @story.blanks.count %>)</h2>
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
       <% @story.blanks.each do |blank| %>
         <div class="blank-card">
           <div class="blank-id <%= blank_id_to_bg_color(blank.id) %>">{<%= blank.id %>}</div>
-          <div class="blank-tags">
+          <div class="flex flex-wrap gap-2">
             <% blank.tags_array.each do |tag| %>
               <span class="tag"><%= tag %></span>
             <% end %>
           </div>
-          <div class="blank-matches">
+          <div class="text-xs text-gray-500 m-0">
             <%= pluralize(blank.matching_prompts.count, "matching prompt") %>
           </div>
         </div>

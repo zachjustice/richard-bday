@@ -1,16 +1,16 @@
-<!-- app/views/prompts/_prompt.html.erb -->
+<%# app/views/prompts/_prompt.html.erb %>
 <div id="prompt_<%= prompt.id %>" class="prompt-item" data-controller="prompt-editor">
-  <div class="prompt-display" data-prompt-editor-target="display">
-    <div class="prompt-header">
-      <p class="prompt-description"><%= prompt.description %></p>
-      <div class="prompt-actions">
-        <button type="button" 
-                class="btn-icon" 
+  <div class="flex flex-col gap-2" data-prompt-editor-target="display">
+    <div class="flex justify-between items-start gap-4 mb-3">
+      <p class="flex-1 text-base font-medium text-gray-900 m-0 leading-snug"><%= prompt.description %></p>
+      <div class="flex gap-2 shrink-0">
+        <button type="button"
+                class="btn-icon"
                 data-action="click->prompt-editor#edit"
-          title="Edit">
+                title="Edit">
           ✏️
         </button>
-        <%= button_to destroy_prompt_path(prompt), 
+        <%= button_to destroy_prompt_path(prompt),
             method: :delete,
             data: { turbo_confirm: "Delete this prompt?" },
             class: "btn-icon",
@@ -19,17 +19,17 @@
         <% end %>
       </div>
     </div>
-    <div class="prompt-tags">
+    <div class="flex flex-wrap gap-2 mb-2">
       <% prompt.tags_array.each do |tag| %>
         <span class="tag"><%= tag %></span>
       <% end %>
     </div>
-    <p class="prompt-matches">
+    <p class="text-xs text-gray-500 m-0">
       <%= pluralize(prompt.matching_blanks.count, "matching blank") %>
     </p>
   </div>
 
-  <div class="prompt-form" data-prompt-editor-target="form" style="display: none;">
+  <div class="prompt-form hidden" data-prompt-editor-target="form">
     <%= render "prompts/prompt_form", prompt: prompt %>
   </div>
 </div>

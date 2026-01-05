@@ -1,54 +1,60 @@
 <% form_saved = local_assigns.fetch(:form_saved, false) %>
-<%= form_with model: room, 
-              url: update_room_settings_path(room), 
+<%= form_with model: room,
+              url: update_room_settings_path(room),
               method: :patch,
-              data: { 
+              data: {
                 turbo_frame: "settings-form",
                 action: "turbo:submit-start->settings-modal#submitting turbo:submit-end->settings-modal#submitted"
               },
-              class: "settings-form" do |form| %>
+              class: "p-8 flex flex-col gap-6" do |form| %>
   <% if room.errors.any? %>
-    <div class="settings-errors">
+    <div class="p-4 rounded-lg border-2 border-error-light mb-4 bg-linear-to-br from-red-500/10 to-red-500/15">
       <% room.errors.full_messages.each do |message| %>
-        <p class="error-message"><span class="error-icon">⚠️</span> <%= message %></p>
+        <p class="flex items-center gap-2 text-error text-sm font-medium m-0">
+          <span class="text-lg">⚠️</span> <%= message %>
+        </p>
       <% end %>
     </div>
   <% end %>
-  <div class="settings-field">
-    <%= form.label :time_to_answer_seconds, class: "settings-label" do %>
+
+  <div class="flex flex-col gap-2">
+    <%= form.label :time_to_answer_seconds, class: "flex items-center gap-2 text-base font-semibold text-gray-900" do %>
       Time to Answer (seconds)
     <% end %>
-    <%= form.number_field :time_to_answer_seconds, 
-        min: Room::MIN_WAITING_TIME_SECONDS, 
-        max: Room::MAX_WAITING_TIME_SECONDS, 
+    <%= form.number_field :time_to_answer_seconds,
+        min: Room::MIN_WAITING_TIME_SECONDS,
+        max: Room::MAX_WAITING_TIME_SECONDS,
         class: "settings-input"
     %>
-    <span class="settings-hint">Between <%= Room::MIN_WAITING_TIME_SECONDS %> and <%= Room::MAX_WAITING_TIME_SECONDS %> seconds</span>
+    <span class="text-sm text-gray-500 italic">Between <%= Room::MIN_WAITING_TIME_SECONDS %> and <%= Room::MAX_WAITING_TIME_SECONDS %> seconds</span>
   </div>
-  <div class="settings-field">
-    <%= form.label :time_to_vote_seconds, class: "settings-label" do %>
+
+  <div class="flex flex-col gap-2">
+    <%= form.label :time_to_vote_seconds, class: "flex items-center gap-2 text-base font-semibold text-gray-900" do %>
       Time to Vote (seconds)
     <% end %>
-    <%= form.number_field :time_to_vote_seconds, 
-        min: Room::MIN_WAITING_TIME_SECONDS, 
-        max: Room::MAX_WAITING_TIME_SECONDS, 
+    <%= form.number_field :time_to_vote_seconds,
+        min: Room::MIN_WAITING_TIME_SECONDS,
+        max: Room::MAX_WAITING_TIME_SECONDS,
         class: "settings-input"
     %>
-    <span class="settings-hint">Between <%= Room::MIN_WAITING_TIME_SECONDS %> and <%= Room::MAX_WAITING_TIME_SECONDS %> seconds</span>
+    <span class="text-sm text-gray-500 italic">Between <%= Room::MIN_WAITING_TIME_SECONDS %> and <%= Room::MAX_WAITING_TIME_SECONDS %> seconds</span>
   </div>
-  <div class="settings-actions">
-    <%= form.submit "Save Settings", 
+
+  <div class="flex gap-4 mt-4 flex-col sm:flex-row">
+    <%= form.submit "Save Settings",
         class: "settings-submit",
         data: { settings_modal_target: "submitButton" } %>
-    <button type="button" 
-            class="settings-cancel" 
+    <button type="button"
+            class="settings-cancel"
             data-action="click->settings-modal#close">
       Cancel
     </button>
   </div>
+
   <% if form_saved %>
-    <div class="settings-success">
-      <p class="success-message">Settings updated successfully</p>
+    <div class="animate-slide-up">
+      <p class="text-success font-medium animate-bounce-custom">Settings updated successfully</p>
     </div>
   <% end %>
 <% end %>

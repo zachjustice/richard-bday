@@ -1,35 +1,37 @@
-<!-- app/views/prompts/_form.html.erb -->
-<%= form_with model: prompt, 
+<%# app/views/prompts/_form.html.erb %>
+<%= form_with model: prompt,
     url: create_prompt_path,
-    class: "new-prompt-form" do |form| %>
+    class: "bg-white border-2 border-dashed border-gray-300 rounded-lg p-6" do |form| %>
 
-  <h3>Add New Prompt</h3>
+  <h3 class="m-0 mb-4 text-lg font-bold text-gray-900">Add New Prompt</h3>
 
   <% if prompt.errors.any? %>
-    <div class="form-errors">
+    <div class="bg-red-500/10 border-2 border-error-light rounded-lg p-4 mb-4">
       <% prompt.errors.full_messages.each do |message| %>
-        <p><%= message %></p>
+        <p class="text-error text-sm m-0"><%= message %></p>
       <% end %>
     </div>
   <% end %>
 
-  <div class="form-field">
-    <%= form.label :description, "Prompt Question" %>
-    <%= form.text_area :description, 
-        rows: 3,
-        placeholder: "What is a funny animal?",
-        class: "form-textarea" %>
-  </div>
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+      <%= form.label :description, "Prompt Question", class: "font-semibold text-gray-900" %>
+      <%= form.text_area :description,
+          rows: 3,
+          placeholder: "What is a funny animal?",
+          class: "story-form-textarea" %>
+    </div>
 
-  <div class="form-field">
-    <%= form.label :tags, "Tags (comma-separated)" %>
-    <%= form.text_field :tags, 
-        placeholder: "noun,animal,funny",
-        class: "form-input" %>
-    <p class="form-hint">Tags match prompts to story blanks</p>
-  </div>
+    <div class="flex flex-col gap-2">
+      <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-gray-900" %>
+      <%= form.text_field :tags,
+          placeholder: "noun,animal,funny",
+          class: "story-form-input" %>
+      <p class="text-sm text-gray-500 italic m-0">Tags match prompts to story blanks</p>
+    </div>
 
-  <div class="form-actions">
-    <%= form.submit "Create Prompt", class: "btn-primary" %>
+    <div class="flex gap-4 pt-2">
+      <%= form.submit "Create Prompt", class: "btn-primary" %>
+    </div>
   </div>
 <% end %>

@@ -1,7 +1,8 @@
+<%# app/views/blanks/_form_errors.html.erb %>
 <% if blank.errors.any? %>
-  <div class="form-errors">
-    <h4>Please fix the following errors:</h4>
-    <ul>
+  <div class="bg-red-500/10 border-2 border-error-light rounded-lg p-4 mb-4">
+    <h4 class="text-error m-0 mb-2 text-base font-semibold">Please fix the following errors:</h4>
+    <ul class="m-0 pl-4 text-error text-sm">
       <% blank.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>

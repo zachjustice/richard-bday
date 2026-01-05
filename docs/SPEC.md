@@ -54,8 +54,8 @@ This document outlines the complete plan to migrate the Blanksies project from a
 1. **[DONE] Phase 0:** Setup & Foundation (Tailwind config via @theme, component CSS files)
 2. **[DONE] Phase 1:** Simple pages (rooms/create, sessions/new, about/show, copyright/show)
 3. **[DONE] Phase 2:** Medium complexity (prompts/voting, prompts/show, prompts/waiting, prompts/results)
-4. **[IN PROGRESS] Phase 3:** Complex pages (rooms/show, rooms/status with TV mode)
-5. **Phase 4:** Shared components (flash messages, forms, modals)
+4. **[DONE] Phase 3:** Complex pages (rooms/show, rooms/status with TV mode)
+5. **[DONE] Phase 4:** Shared components (flash messages, countdown timer, music player, fun facts)
 6. **Phase 5:** Cleanup (remove old CSS files, update documentation)
 
 **Per-Page Process:**
