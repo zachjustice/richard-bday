@@ -9,5 +9,4 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
-@import url("design-tokens.css");
-@import url("utilities.css");
+/* All styles are now managed through Tailwind (app/assets/tailwind/application.css) */
