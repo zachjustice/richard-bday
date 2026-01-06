@@ -1,15 +1,17 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 
-<div data-controller="prompt" class="h-screen flex items-center justify-center bg-linear-to-br from-[#fff9f0] to-[#f0fff4]">
-  <div class="card-primary animate-fade-in p-12 max-sm:p-4 max-w-xl w-full max-h-[90vh] overflow-hidden">
-    <div class="text-center mb-10">
-      <div class="relative flex items-center justify-center w-32 h-32 max-sm:w-28 max-sm:h-28 mx-auto mb-6">
-        <span class="text-5xl max-sm:text-4xl animate-swing">⏳</span>
+<div data-controller="prompt" class="h-screen flex items-center justify-center bg-page">
+  <div class="card-primary p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-[600px] w-full animate-fade-in">
+    <div class="text-center">
+      <div class="text-6xl mb-6 animate-swing">⏳</div>
+      <h2 class="text-3xl md:text-2xl font-bold text-gray-900 m-0 mb-3 leading-tight">Answer submitted</h2>
+      <p class="text-base md:text-sm text-gray-500 m-0 mb-8 italic">Waiting for everyone to submit answers...</p>
+      <div class="progress-dots mb-6">
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
       </div>
-      <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Answer Submitted</h2>
-      <p class="text-base max-sm:text-sm text-gray-500 italic">Waiting for everyone to submit answers...</p>
+      <%= render "shared/fun_facts" %>
     </div>
-
-    <%= render "shared/fun_facts" %>
   </div>
 </div>

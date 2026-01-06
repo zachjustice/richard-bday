@@ -15,7 +15,8 @@ export default class extends Controller {
 
     $('#qr-code').attr('src', qrcode.toDataURL(8, {
       margin: 0,
-      background: [252, 244, 251]
+      /* --color-accent-secondary */
+      background: [255, 255, 255]
     }));
   }
   disconnect() {

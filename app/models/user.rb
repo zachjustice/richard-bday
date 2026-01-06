@@ -10,6 +10,7 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :room_id, presence: true
   validates :name, uniqueness: { scope: [ :room_id ] }
+  validates :name,  length: { maximum: 15 }
 
   # Both Player and Navigator Roles
   scope :players, -> { where(role: [ PLAYER, NAVIGATOR ], is_active: true) }

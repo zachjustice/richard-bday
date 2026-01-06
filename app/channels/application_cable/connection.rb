@@ -11,7 +11,7 @@ module ApplicationCable
 
       self.current_user.update(is_active: true)
       room = self.current_user.room
-      Turbo::StreamsChannel.broadcast_prepend_to(
+      Turbo::StreamsChannel.broadcast_append_to(
         "rooms:#{room.id}:users",
         target: "waiting-room",
         partial: "rooms/partials/user_list_item",
@@ -21,7 +21,7 @@ module ApplicationCable
         "rooms:#{room.id}:users",
         action: :update,
         target: "waiting-room-players-count",
-        html: "Players (#{User.players.where(room: room).count})"
+        html: "#{User.players.where(room: room).count} joined"
       )
     end
 
@@ -50,7 +50,7 @@ module ApplicationCable
         "rooms:#{room.id}:users",
         action: :update,
         target: "waiting-room-players-count",
-        html: "Players (#{User.players.where(room: room).count})"
+        html: "#{User.players.where(room: room).count} joined"
       )
     end
 

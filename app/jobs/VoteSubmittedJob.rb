@@ -14,7 +14,7 @@ class VoteSubmittedJob < ApplicationJob
       "rooms:#{room.id}:votes",
       target: "user_list_user_#{user.id}",
       partial: "rooms/partials/user_with_status_item",
-      locals: { user: user, completed: true }
+      locals: { user: user, completed: true, color: "indigo" }
     )
 
     ActionCable.server.broadcast(

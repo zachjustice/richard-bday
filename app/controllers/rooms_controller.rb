@@ -3,6 +3,22 @@ class RoomsController < ApplicationController
   allow_unauthenticated_access only: %i[ _create create ]
   before_action :in_room?, except: %i[ _create create ]
 
+  def initialize_room
+    room = Room.find(params[:id])
+
+    unless @current_user&.role == User::CREATOR && @current_user.room_id == room.id
+      flash[:alert] = "Only the room creator can initialize the game"
+      return redirect_to room_status_path(room)
+    end
+
+    room.update!(status: RoomStatus::StorySelection)
+
+    status_data = RoomStatusService.new(room).call
+    GamePhasesService.new(room).update_room_status_view("rooms/status/story_selection", status_data)
+
+    redirect_to room_status_path(room)
+  end
+
   def start
     story_id = params[:story]
     room_id = params[:id]

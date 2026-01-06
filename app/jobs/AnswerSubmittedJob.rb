@@ -13,7 +13,7 @@ class AnswerSubmittedJob < ApplicationJob
       "rooms:#{room.id}:answers",
       target: "user_list_user_#{answer.user.id}",
       partial: "rooms/partials/user_with_status_item",
-      locals: { user: answer.user, completed: true }
+      locals: { user: answer.user, completed: true, color: "blue" }
     )
 
     ActionCable.server.broadcast(

@@ -1,26 +1,28 @@
 <div class="flex-1 flex flex-col justify-start min-h-0">
-  <% if winners.size == 1 %>
-    <h1 class="text-4xl font-bold text-gray-900 mb-6 flex items-center gap-2">Winner!</h3>
-  <% elsif winners.size > 1 %>
-    <h1 class="text-4xl font-bold text-gray-900 mb-6 flex items-center gap-2"><%= winners.size %>-Way Tie</h3>
-  <% else %>
-    <h1 class="text-4xl font-bold text-gray-900 mb-6 flex items-center gap-2">No Winner</h3>
-  <% end %>
+  <div class="card-subdued mb-8 text-center border-l-4 border-accent-violet/40 border-l-accent-violet bg-accent-violet/10">
+    <% if winners.size == 1 %>
+      <h1 class="text-4xl font-bold text-ink m-0 flex items-center justify-center gap-2">Winner!</h1>
+    <% elsif winners.size > 1 %>
+      <h1 class="text-4xl font-bold text-ink m-0 flex items-center justify-center gap-2"><%= winners.size %>-Way Tie</h1>
+    <% else %>
+      <h1 class="text-4xl font-bold text-ink m-0 flex items-center justify-center gap-2">No Winner</h1>
+    <% end %>
+  </div>
 
-  <div class="flex flex-col flex-1 min-h-0 p-6 rounded-xl bg-gradient-primary-tint border-2 border-brand-purple/15">
-    <div class="flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto">
+  <div class="card-subdued flex flex-1 min-h-0 border-l-4 border-accent-violet/40 border-l-accent-violet py-4">
+    <div class="flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto scroll-fade-indicators">
       <% answers_sorted_by_votes.each do |answer| %>
-        <div class="answer-card <%= 'winner' if winners.include?(answer) %>">
+        <div class="flex flex-row p-4 border-2 rounded-3xl border-accent-violet/40 <%= winner&.id == answer&.id ? 'bg-accent-violet/40' : 'bg-accent-violet/10'  %>">
           <div class="w-full flex flex-col flex-1">
-            <span class="text-2xl block text-gray-900 leading-tight font-bold"><%= answer.text %> <%= '🏆' if winner&.id == answer&.id %></span>
-            <span class="text-2xl block text-gray-500 leading-tight font-medium whitespace-nowrap overflow-hidden text-ellipsis"><%= answer.user.name %></span>
+            <span class="text-2xl block text-ink leading-tight font-bold"><%= answer.text %> <%= '🏆' if winner&.id == answer&.id %></span>
+            <span class="text-2xl block text-ink/60 leading-tight font-medium whitespace-nowrap overflow-hidden text-ellipsis"><%= answer.user.name %></span>
           </div>
-          <div class="flex flex-1 flex-col items-end w-full text-gray-500">
+          <div class="flex flex-1 flex-col items-end w-full text-ink/60">
             <% if votes_by_answer[answer.id]&.any? %>
               <div class="flex flex-col gap-2">
                 <div class="flex flex-wrap gap-2">
                   <% votes_by_answer[answer.id].each do |vote| %>
-                    <span class="px-3 py-1 rounded-full font-medium text-gray-900 max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis bg-linear-to-br from-brand-purple/20 to-brand-deep-purple/30"><%= vote.user.name %></span>
+                    <span class="px-3 py-1 border border-accent-violet rounded-full font-medium text-ink max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis bg-accent-violet/10"><%= vote.user.name %></span>
                   <% end %>
                 </div>
               </div>

@@ -1,25 +1,75 @@
-<div class="min-h-screen flex items-center justify-center bg-(image:--gradient-primary) p-4 relative overflow-auto">
-  <div class="card-primary animate-slide-up p-12 px-8 md:p-10 md:px-8 max-w-lg w-full text-center">
-    <%= tag.div(flash[:notice], class: "bg-error-light text-error px-4 py-3 rounded-lg text-sm mb-4") if flash[:notice] %>
+<div class="min-h-screen bg-page overflow-auto">
+  <%= render "shared/doodle_decorations" %>
 
-    <div class="flex flex-col gap-6">
-      <div class="text-5xl md:text-6xl mb-2 animate-float">✨📝🎨</div>
-      <h1 class="text-3xl md:text-4xl font-bold text-gradient-primary mb-0 leading-tight">Collaborative Fill-in-the-Blank Stories</h1>
-      <p class="text-lg text-gray-600 italic mb-2">Answer prompts with your friends to create stories!</p>
+  <div class="relative z-10 flex flex-col min-h-screen">
+    <!-- Hero Section -->
+    <main class="flex-1 flex flex-col items-center justify-center px-4 py-12 md:py-16">
+      <div class="w-full max-w-2xl mx-auto text-center animate-slide-up">
 
-      <%= form_with url: "/rooms/create", method: :post, class: "mt-4" do |form| %>
-        <%= form.submit "New Game", class: "btn-primary w-full" %>
-      <% end %>
+        <!-- Logo -->
+        <h1 class="title-primary mb-4">BLANKSIES</h1>
 
-      <span class="text-sm">
-        <%= link_to "Join as a player instead", new_session_path, class: "text-gray-600 italic underline" %>
-      </span>
-    </div>
-  </div>
+        <!-- Tagline -->
+        <p class="tagline mb-8 max-w-lg mx-auto">
+          Vote on friends' answers to witty prompts to create fill-in-the-blank stories
+        </p>
 
-  <div class="absolute right-0 bottom-0 text-sm text-gray-600 mr-1">
-    <%= link_to "copyright", copyright_path %> |
-    <%= link_to "about", about_path %> |
-    <%= link_to "bots", "/babble" %>
+        <!-- Flash notice -->
+        <%= tag.div(flash[:notice], class: "bg-accent-primary/10 text-accent-primary border-2 border-accent-primary/30 px-4 py-3 rounded-xl text-sm mb-6 font-medium") if flash[:notice] %>
+
+        <!-- Main Card -->
+        <div class="card-primary mb-8">
+          <!-- CTA -->
+          <%= form_with url: "/rooms/create", method: :post, class: "mb-6" do |form| %>
+            <%= form.submit "Start a Game", class: "btn-primary w-full text-xl" %>
+          <% end %>
+
+          <p class="body">
+            Already have a game?
+            <%= link_to "Join as a player", new_session_path, class: "font-semibold" %>
+          </p>
+        </div>
+
+        <!-- How It Works -->
+        <div class="card-subdued mb-8">
+          <h2 class="heading mb-6">How It Works</h2>
+
+          <div class="grid md:grid-cols-3 gap-6 text-left">
+            <!-- Step 1 -->
+            <div class="flex flex-col items-center text-center">
+              <div class="step-indicator bg-accent-tertiary text-ink mb-3">1</div>
+              <h3 class="label mb-1">Answer Prompts</h3>
+              <p class="body">Everyone answers fun, witty prompts on their phones</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col items-center text-center">
+              <div class="step-indicator bg-accent-secondary text-ink-inverted mb-3">2</div>
+              <h3 class="label mb-1">Vote for Favorites</h3>
+              <p class="body">Pick the funniest answers from your friends</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex flex-col items-center text-center">
+              <div class="step-indicator bg-accent-primary text-ink-inverted mb-3">3</div>
+              <h3 class="label mb-1">Read the Story</h3>
+              <p class="body">Watch as winning answers fill in the blanks!</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 px-4">
+      <div class="flex flex-wrap justify-center gap-4 text-sm body">
+        <%= link_to "Copyright", copyright_path %>
+        <span>·</span>
+        <%= link_to "About", about_path %>
+        <span>·</span>
+        <%= link_to "Bots", "/babble" %>
+      </div>
+    </footer>
   </div>
 </div>

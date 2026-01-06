@@ -1,14 +1,28 @@
 <%= turbo_stream_from "rooms:#{@room.id}:status" %>
 
 <%# This page is typically viewed by players from a shared screen. Normally a TV. %>
-<%# Text and content should be easily viewable from a distance and should  %>
-<div class="h-screen flex flex-col" data-controller="room-status">
-  <%= render "rooms/status/header" %>
+<%# Text and content should be easily viewable from a distance %>
+<div class="h-screen flex flex-col bg-page relative" data-controller="room-status settings-modal">
+  <%# Floating branded text - top left %>
+  <div class="fixed top-4 left-4 z-50">
+    <span class="text-2xl font-bold text-ink" style="text-shadow: 2px 2px 0px var(--color-accent-tertiary);">Blanksies</span>
+  </div>
 
-  <div id="status-content-inner" class="flex-1 flex flex-col bg-linear-to-br from-[#f8f4ff] to-[#fff4f9] items-center justify-center">
-    <div class="card-primary max-w-[2250px] w-full max-h-[1000px] m-10 flex flex-row flex-1 min-h-0">
+  <%# Floating settings - top right %>
+  <button type="button"
+          class="fixed top-4 right-4 z-50 p-2 bg-white rounded-lg cursor-pointer transition-all hover:scale-110 active:scale-95 text-xl border-2 border-ink"
+          style="box-shadow: 2px 2px 0px var(--color-ink);"
+          data-action="click->settings-modal#toggle"
+    aria-label="Open settings">
+    ⚙️
+  </button>
+
+  <%= render "rooms/settings/settings_modal", room: @room %>
+
+  <div id="status-content-inner" class="flex-1 flex items-center justify-center p-6">
+    <div class="card-primary p-0 max-w-[1400px] w-full max-h-[950px] flex flex-row min-h-0">
       <div id="turbo-target-sidebar" class="flex">
-        <% if @room.current_game.present? %>
+        <% if @room.current_game&.story.present? %>
           <%= render partial: "rooms/status/sidebar", locals: @status_data %>
         <% end %>
       </div>
@@ -17,6 +31,8 @@
         <% case @status %>
         <% when RoomStatus::WaitingRoom %>
           <%= render partial: "rooms/status/waiting_room", locals: @status_data %>
+        <% when RoomStatus::StorySelection %>
+          <%= render partial: "rooms/status/story_selection", locals: @status_data %>
         <% when RoomStatus::Answering %>
           <%= render partial: "rooms/status/answering", locals: @status_data %>
         <% when RoomStatus::Voting %>

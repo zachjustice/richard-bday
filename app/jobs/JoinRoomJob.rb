@@ -3,7 +3,7 @@ class JoinRoomJob < ApplicationJob
     room = user.room
 
     # Broadcast Turbo Stream to append user to the waiting room list
-    Turbo::StreamsChannel.broadcast_prepend_to(
+    Turbo::StreamsChannel.broadcast_append_to(
       "rooms:#{room.id}:users",
       target: "waiting-room",
       partial: "rooms/partials/user_list_item",
@@ -13,7 +13,7 @@ class JoinRoomJob < ApplicationJob
       "rooms:#{room.id}:users",
       action: :update,
       target: "waiting-room-players-count",
-      html: "Players (#{User.players.where(room: room).count})"
+      html: "#{User.players.where(room: room).count} joined"
     )
 
     # Remove "no users yet" message via Turbo Stream

@@ -3,15 +3,47 @@
 
 /* Tailwind v4 CSS-first configuration */
 @theme {
-  /* Brand Colors */
+  /* ============================================
+     NEW BLANKSIES DESIGN SYSTEM
+     Playful Chaos with Bold Primary Colors
+     ============================================ */
+
+  /* Base Colors (don't use directly - use semantic tokens below) */
+  --color-dark: #1A1A2E;
+  --color-light: #FFFFFF;
+
+  /* Primary Design Tokens */
+  --color-accent-primary: #E63946;    /* Red - CTAs, alerts */
+  --color-accent-secondary: #2196F3;  /* Blue - links, secondary actions */
+  --color-accent-tertiary: #FFD60A;   /* Yellow - highlights, accents */
+  --color-bg-page: #FFF8E7;           /* Cream - page backgrounds */
+  --color-ink: var(--color-dark);               /* Dark - text, borders, shadows */
+  --color-ink-inverted: var(--color-light);     /* Light - text/borders on dark backgrounds */
+
+  /* Light background variants for player items */
+  --color-accent-primary-light: rgba(230, 57, 70, 0.1);
+  --color-accent-secondary-light: rgba(33, 150, 243, 0.1);
+  --color-accent-tertiary-light: rgba(255, 214, 10, 0.15);
+
+  /* Extended Palette */
+  --color-accent-red: #E63946;
+  --color-accent-orange: #FF6B35;
+  --color-accent-yellow: #FFD60A;
+  --color-accent-green: #4CAF50;
+  --color-accent-blue: #2196F3;
+  --color-accent-indigo: #7C4DFF;
+  --color-accent-violet: #E040FB;
+
+  /* Legacy Brand Colors (for backwards compatibility) */
   --color-brand-purple: #667eea;
   --color-brand-deep-purple: #764ba2;
   --color-brand-pink: #f093fb;
 
   /* Semantic Colors */
-  --color-error: #dc2626;
-  --color-error-light: #fee2e2;
-  --color-success: #22c55e;
+  --color-error: #E63946;
+  --color-error-light: #FDEAEA;
+  --color-success: #4CAF50;
+  --color-success-light: #E8F5E9;
 
   /* Custom Spacing (space-32 = 8rem) */
   --spacing-32: 8rem;
@@ -19,16 +51,24 @@
   /* Custom Border Radius */
   --radius-3xl: 24px;
 
-  /* Custom Shadows */
-  --shadow-button: 0 4px 15px rgba(102, 126, 234, 0.4);
+  /* Custom Shadows - Updated for new palette */
+  --shadow-button: 0 4px 15px rgba(230, 57, 70, 0.3);
+  --shadow-button-yellow: 0 4px 15px rgba(255, 214, 10, 0.4);
+  --shadow-button-blue: 0 4px 15px rgba(33, 150, 243, 0.4);
   --shadow-2xl: 0 10px 40px rgba(0, 0, 0, 0.1);
-  --shadow-3xl: 0 20px 60px rgba(102, 126, 234, 0.3);
+  --shadow-3xl: 0 20px 60px rgba(26, 26, 46, 0.2);
+  --shadow-playful: 4px 4px 0px var(--color-ink);
+  --shadow-playful-sm: 2px 2px 0px var(--color-ink);
 
-  /* Gradients as CSS Variables (use with arbitrary values) */
+  /* Legacy Gradients (for backwards compatibility) */
   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   --gradient-primary-simple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-primary-reverse: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
   --gradient-primary-tint: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+
+  /* Accent Gradients */
+  --gradient-warm: linear-gradient(135deg, var(--color-accent-tertiary) 0%, var(--color-accent-orange) 100%);
+  --gradient-cool: linear-gradient(135deg, var(--color-accent-secondary) 0%, var(--color-accent-green) 100%);
 
   /* Animations */
   --animate-gradient-shift: gradient-shift 15s ease infinite;
@@ -111,6 +151,70 @@
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  /* ============================================
+     NEW BLANKSIES ANIMATIONS
+     Bouncy, playful, intentional
+     ============================================ */
+
+  /* Bouncy entrance - for buttons and interactive elements */
+  --animate-bouncy: bouncy 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  @keyframes bouncy {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Wiggle - for hover states and attention */
+  --animate-wiggle: wiggle 0.5s ease-in-out;
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+  }
+
+  /* Pop - quick attention grabber */
+  --animate-pop: pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  /* Squish - playful button press */
+  --animate-squish: squish 0.2s ease-out;
+  @keyframes squish {
+    0% { transform: scale(1, 1); }
+    50% { transform: scale(1.1, 0.9); }
+    100% { transform: scale(1, 1); }
+  }
+
+  /* Jello - wobbly attention effect */
+  --animate-jello: jello 0.9s ease-in-out;
+  @keyframes jello {
+    0%, 100% { transform: scale3d(1, 1, 1); }
+    30% { transform: scale3d(1.25, 0.75, 1); }
+    40% { transform: scale3d(0.75, 1.25, 1); }
+    50% { transform: scale3d(1.15, 0.85, 1); }
+    65% { transform: scale3d(0.95, 1.05, 1); }
+    75% { transform: scale3d(1.05, 0.95, 1); }
+  }
+
+  /* Draw - for underline animations */
+  --animate-draw: draw 0.4s ease-out forwards;
+  @keyframes draw {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  /* Scribble - subtle hand-drawn effect */
+  --animate-scribble: scribble 0.3s ease-in-out infinite;
+  @keyframes scribble {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-1px) rotate(-0.5deg); }
+    75% { transform: translateX(1px) rotate(0.5deg); }
+  }
 }
 
 /* Disable animations for users who prefer reduced motion */
@@ -125,7 +229,14 @@
   .animate-pulse-dot,
   .animate-slide-in-right,
   .animate-flash-red,
-  .animate-tooltip-fade-in {
+  .animate-tooltip-fade-in,
+  .animate-bouncy,
+  .animate-wiggle,
+  .animate-pop,
+  .animate-squish,
+  .animate-jello,
+  .animate-draw,
+  .animate-scribble {
     animation: none;
   }
 }

@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   get "/rooms/create", to: "rooms#create", as: :create_room
   post "/rooms/create", to: "rooms#_create"
   get "/rooms/:id/status", to: "rooms#status", as: :room_status
+  post "/rooms/:id/initialize", to: "rooms#initialize_room", as: :initialize_room
   post "/rooms/:id/start", to: "rooms#start", as: :start_room
   post "/rooms/:id/next", to: "rooms#next", as: :next_room
   post "/rooms/:id/end_game", to: "rooms#end_game", as: :end_room_game

@@ -1,38 +1,63 @@
 <%= turbo_stream_from "rooms:#{room.id}:users" %>
-<div class="flex-1 flex flex-col justify-start min-h-0">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 min-h-0">
-    <div class="flex flex-col gap-4 p-6 rounded-xl transition-all min-h-0 overflow-hidden bg-gradient-primary-tint border-2 border-brand-purple/15">
-      <h1 class="text-4xl font-bold text-gray-900 flex items-center gap-2">Stories</h3>
-      <%= form_with url: "/rooms/#{room.id}/start", method: :post, class: "flex flex-col gap-4" do |form| %>
-        <div id="stories-list-container">
-          <%= select_tag 'story', options_from_collection_for_select(Story.all, 'id', 'title'), class: 'form-input cursor-pointer' %>
-        </div>
-        <%= form.submit "Start Game", class: "btn-primary" %>
-      <% end %>
 
-      <div class="flex flex-col gap-1 text-gray-500 items-center">
-        <span>Scan the QR code to join the game:</span>
-        <img id="qr-code" src="" class="w-full max-w-[200px] h-auto">
-        <span>Or visit <a href="https://blanksies.zachjustice.dev" class="underline">blanksies.zachjustice.dev</a></span>
+<%# Doodle decorations %>
+<%= render "shared/waiting_room_doodles" %>
+
+<div class="flex-1 flex flex-col justify-start min-h-0 relative z-10">
+  <%# Header section with title styling %>
+  <div class="text-center mb-8 animate-slide-up">
+    <h1 class="text-4xl md:text-5xl font-bold mb-3" style="text-shadow: 3px 3px 0px var(--color-accent-yellow);">C'MON, GET IN HERE!</h1>
+    <div class="flex items-center justify-center gap-3 flex-wrap" data-controller="copy-code">
+      <%# Room code badge %>
+      <span class="badge-primary">
+        <span class="text-ink/60 text-sm uppercase tracking-wide">Room</span>
+        <span class="tracking-widest text-ink"><%= room.code.upcase %></span>
+        <button class="p-1 rounded cursor-pointer transition-all hover:scale-110 active:scale-95"
+                data-room-code="<%= room.code.upcase %>"
+                data-action="click->copy-code#copy"
+          title="Copy room code">
+          <svg class="w-4 h-4 text-ink/50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15V5a2 2 0 012-2h10"/>
+          </svg>
+        </button>
+      </span>
+      <%# Player count badge %>
+      <span id="waiting-room-players-count" class="badge-primary">
+        <%= users&.size || 0 %> joined
+      </span>
+    </div>
+  </div>
+
+  <%# Bottom Section %>
+  <div class="flex flex-row gap-8">
+    <%# Player grid - main content with staggered animation %>
+    <div id="users-list-container" class="flex flex-1 flex-col min-h-0">
+      <ul id="waiting-room" class="stagger-animation rainbow-cycle playful-tilt list-none p-2 m-0 gap-4 grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
+        <% if users.empty? %>
+          <%# First element is deleted when the first user joins %>
+          <li id="no-users-yet" class="py-8 px-4 text-ink-inverted text-center italic col-span-full">No players yet...</li>
+        <% end %>
+
+        <% users.each do |user| %>
+          <%= render "rooms/partials/user_list_item", user: user %>
+        <% end %>
+      </ul>
+
+      <div class="flex justify-center mt-auto">
+        <%= form_with url: initialize_room_path(room), method: :post do %>
+          <%= submit_tag "Let's Go!", class: "btn-primary" %>
+        <% end %>
       </div>
     </div>
 
-    <div class="flex flex-col gap-4 p-6 rounded-xl transition-all min-h-0 overflow-hidden bg-gradient-primary-tint border-2 border-brand-purple/15">
-      <h3 id="waiting-room-players-count" class="text-2xl font-bold text-gray-900 flex items-center gap-2">Players (<%= users&.size || 0 %>)</h3>
-
-      <div id="users-list-container" class="min-h-0 flex-1 overflow-y-auto">
-        <ul id="waiting-room" class="list-none p-0 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
-          <% if users.empty? %>
-            <%# First element is deleted when the first user joins %>
-            <li id="no-users-yet" class="py-8 px-4 text-gray-400 text-center italic"><i>No users yet</i></li>
-          <% end %>
-
-          <%# Just in case a creator user makes it in here; filter that out from the player list %>
-          <% users.each do |user| %>
-            <%= render "rooms/partials/user_list_item", user: user %>
-          <% end %>
-        </ul>
-      </div>
+    <%# QR code section - hero treatment %>
+    <div class="card-secondary max-w-sm mx-auto">
+      <h2 class="text-xl font-bold mb-4 text-ink">Scan to Join!</h2>
+      <img id="qr-code" src="" class="w-[220px] h-[220px] mx-auto">
+      <p class="mt-4">
+        <a href="https://blanksies.zachjustice.dev" class="font-semibold text-lg">blanksies.zachjustice.dev</a>
+      </p>
     </div>
   </div>
 </div>

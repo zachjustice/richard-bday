@@ -1,27 +1,46 @@
-<div id="game-progress-sidebar" class="flex flex-col flex-1 w-[375px] min-w-[280px] bg-gradient-primary-tint border-r-2 border-gray-200 p-8 overflow-y-auto">
-  <div class="mb-6 pb-4 border-b-2 border-gray-200">
-    <h3 class="text-4xl font-semibold text-brand-purple m-0">Game Status</h3>
+<%
+  # Map phases to accent colors (blue → indigo → violet)
+  phase_colors = {
+    RoomStatus::Answering => { bg_light: "bg-accent-blue/10", bg_dark: "bg-accent-blue/30", ring: "border-accent-blue", border: "border-accent-blue" },
+    RoomStatus::Voting => { bg_light: "bg-accent-indigo/10", bg_dark: "bg-accent-indigo/30", ring: "border-accent-indigo", border: "border-accent-indigo" },
+    RoomStatus::Results => { bg_light: "bg-accent-violet/10", bg_dark: "bg-accent-violet/30", ring: "border-accent-violet", border: "border-accent-violet" },
+    RoomStatus::FinalResults => { bg_light: "bg-accent-green/10", bg_dark: "bg-accent-green/30", ring: "border-accent-green", border: "border-accent-green" }
+  }
+  current_phase_color = phase_colors[room.status] || phase_colors[RoomStatus::Answering]
+%>
+<%# Using p-7 as the game phase items each have a m-1. The margin on the game phase items is because they have ring-2 %>
+<%# Since ring uses box-shadow, there needs to be extra space to avoid the element from being clipped on the edges %>
+<div id="game-progress-sidebar" class="flex flex-col flex-1 w-[375px] min-w-[280px] <%= current_phase_color[:bg_light] %> border-r-3 rounded-3xl border-ink/10 p-7">
+  <div class="mb-6 pb-4 border-b-2 border-ink/20">
+    <h3 class="text-4xl font-semibold text-ink m-0">Game Status</h3>
   </div>
-  <div class="flex flex-col gap-3 overflow-y-auto pr-2">
-    <p class="m-0">Round <%= room.current_game.current_game_prompt.order + 1 %> of <%= total_game_prompts %></p>
+  <div class="flex flex-col gap-3">
+    <p class="m-0 text-ink/70">Round <%= (room.current_game&.current_game_prompt&.order || 0) + 1 %> of <%= total_game_prompts %></p>
     <% RoomsHelper::GAME_PHASES.each_with_index do |curr, index| %>
       <%
         is_current = curr[:status] == room.status
         is_completed = index < (RoomsHelper::GAME_PHASES.find_index{|rs| rs[:status] == room.status} || RoomsHelper::GAME_PHASES.size)
+        item_color = phase_colors[curr[:status]]
       %>
-      <div class="game-status-badge <%= 'completed' if is_completed %> <%= 'current' if is_current %>">
+      <div class="flex items-center gap-2 px-4 py-2 mx-1 rounded-full transition-all
+                  <%= is_completed ? item_color[:bg_light] : is_current ? "#{item_color[:bg_dark]} border-2 #{item_color[:ring]}" : item_color[:bg_light] %>">
         <% if is_completed %>
-          <span class="text-xl">✔️</span>
+          <span class="text-xl text-accent-green">✓</span>
         <% else %>
           <span class="text-xl"><%= curr[:icon] %></span>
         <% end %>
-        <span class="font-semibold text-[0.95rem]"><%= curr[:text] %></span>
+        <span class="font-semibold text-[0.95rem] text-ink"><%= curr[:text] %></span>
       </div>
     <% end %>
-    <div class="border-t border-gray-300 my-2"></div>
-    <div class="game-status-badge <%= 'current' if room.status == RoomStatus::FinalResults %>">
+    <div class="border-t border-ink/20 my-2"></div>
+    <%
+      final_color = phase_colors[RoomStatus::FinalResults]
+      is_final = room.status == RoomStatus::FinalResults
+    %>
+    <div class="flex items-center gap-2 px-4 py-2 rounded-full transition-all
+                <%= is_final ? "#{final_color[:bg_dark]} ring-2 #{final_color[:ring]}" : final_color[:bg_light] %>">
       <span class="text-xl">📜</span>
-      <span class="font-semibold text-[0.95rem]">Final Story</span>
+      <span class="font-semibold text-[0.95rem] text-ink">Final Story</span>
     </div>
   </div>
 </div>

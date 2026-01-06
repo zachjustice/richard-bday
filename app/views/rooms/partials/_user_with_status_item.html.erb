@@ -1,3 +1,51 @@
-<li id="<%= dom_id(user, :user_list) %>" class="user-status-item <%= completed ? 'completed' : 'waiting' %>">
-  <%= user.name %>
+<%
+  color ||= "ink"
+  color_classes = case color
+    when "red" then "border-l-4 border-accent-red"
+    when "orange" then "border-l-4 border-accent-orange"
+    when "yellow" then "border-l-4 border-accent-yellow"
+    when "green" then "border-l-4 border-accent-green"
+    when "blue" then "border-l-4 border-accent-blue"
+    when "indigo" then "border-l-4 border-accent-indigo"
+    when "violet" then "border-l-4 border-accent-violet"
+    else "border-l-4 border-ink/20"
+  end
+
+  pending_color_classes = case color
+    when "red" then "bg-accent-red/10"
+    when "orange" then "bg-accent-orange/10"
+    when "yellow" then "bg-accent-yellow/10"
+    when "green" then "bg-accent-green/10"
+    when "blue" then "bg-accent-blue/10"
+    when "indigo" then "bg-accent-indigo/10"
+    when "violet" then "bg-accent-violet/10"
+    else "bg-ink/5"
+  end
+
+  completed_color_classes = case color
+    when "red" then "bg-accent-red/40"
+    when "orange" then "bg-accent-orange/40"
+    when "yellow" then "bg-accent-yellow/40"
+    when "green" then "bg-accent-green/40"
+    when "blue" then "bg-accent-blue/40"
+    when "indigo" then "bg-accent-indigo/40"
+    when "violet" then "bg-accent-violet/40"
+    else "bg-ink/5"
+  end
+
+  checkmark_color_class = case color
+    when "red"    then "text-accent-red"
+    when "orange" then "text-accent-orange"
+    when "yellow" then "text-accent-yellow"
+    when "green"  then "text-accent-green"
+    when "blue"   then "text-accent-blue"
+    when "indigo" then "text-accent-indigo"
+    when "violet" then "text-accent-violet"
+    else "text-ink"
+  end
+%>
+<li id="<%= dom_id(user, :user_list) %>"
+    class="px-4 py-3 rounded-lg font-semibold text-ink transition-all animate-slide-in whitespace-nowrap text-ellipsis overflow-clip
+           <%= completed ? completed_color_classes : pending_color_classes %> <%= color_classes %>">
+  <% if completed %><span class="<%= checkmark_color_class %> mr-2">✓</span><% end %><%= user.name %>
 </li>

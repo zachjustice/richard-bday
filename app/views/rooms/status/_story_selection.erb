@@ -1,0 +1,33 @@
+<%= turbo_stream_from "rooms:#{room.id}:users" %>
+
+<%# Doodle decorations %>
+<%= render "shared/waiting_room_doodles" %>
+
+<div class="flex-1 flex flex-col justify-start min-h-0 relative z-10">
+  <%# Header section with title styling %>
+  <div class="text-center mb-8 animate-slide-up">
+    <h1 class="text-4xl md:text-5xl font-bold mb-3" style="text-shadow: 3px 3px 0px var(--color-accent-yellow);">PICK A STORY</h1>
+  </div>
+
+  <%# Bottom Section %>
+  <div class="flex flex-1 min-h-0 flex-row gap-8">
+    <%# Player grid - main content with staggered animation %>
+    <div id="story-list-container" class="flex flex-1 flex-col min-h-0">
+      <%= form_with url: start_room_path(room), method: :post, class: "flex flex-1 flex-col min-h-0" do %>
+        <div class="flex-1 min-h-0 overflow-y-auto gap-2 flex flex-col stagger-animation p-4 scroll-fade-indicators">
+          <% stories.each do |story| %>
+            <label class="cursor-pointer block">
+              <input type="radio" name="story" value="<%= story.id %>"
+                class="peer sr-only" required>
+              <div class="flex badge-primary peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 transition-all">
+                <span class="font-bold"><%= story.title %></span>
+                <span class="text-sm text-ink/60"><%= pluralize(story.blanks.count, "blank") %></span>
+              </div>
+            </label>
+          <% end %>
+        </div>
+
+        <button type="submit" class="btn-primary mt-4 ml-4">Start Game</button>
+      <% end %>
+    </div>
+  </div>

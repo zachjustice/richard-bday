@@ -1,8 +1,8 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<div id="results" data-controller="prompt" class="h-screen flex items-center justify-center bg-linear-to-br from-[#f8f4ff] to-[#fff9f0]">
+<div id="results" data-controller="prompt" class="h-screen flex items-center justify-center bg-page">
   <div class="card-primary animate-fade-in m-4 p-12 max-sm:p-8 max-w-xl w-full max-h-[90vh] overflow-hidden">
     <% if @status == RoomStatus::FinalResults %>
-      <div class="text-center mb-8">
+      <div class="text-center">
         <span class="text-5xl max-sm:text-4xl mb-4 block animate-bounce-custom">🎉</span>
         <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Game Complete!</h2>
         <% if @current_user.role == User::NAVIGATOR %>
@@ -15,21 +15,21 @@
         <% end %>
       </div>
     <% elsif @status == RoomStatus::WaitingRoom %>
-      <div class="text-center mb-8">
+      <div class="text-center">
         <span class="text-5xl max-sm:text-4xl mb-4 block animate-swing">⏳</span>
         <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Between Games</h2>
         <p class="text-base max-sm:text-sm text-gray-500 italic mb-8">Waiting for a new game to start...</p>
         <%= render "shared/fun_facts" %>
       </div>
     <% elsif @status != RoomStatus::Results %>
-      <div class="text-center mb-8">
+      <div class="text-center">
         <span class="text-5xl max-sm:text-4xl mb-4 block animate-swing">⏳</span>
         <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Counting Votes</h2>
         <p class="text-base max-sm:text-sm text-gray-500 italic mb-8">Waiting for everyone to vote...</p>
         <%= render "shared/fun_facts" %>
       </div>
     <% else %>
-      <div class="text-center mb-8">
+      <div class="text-center">
         <span class="text-5xl max-sm:text-4xl mb-4 block animate-bounce-custom">🏆</span>
         <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Round Complete!</h2>
         <p class="text-base max-sm:text-sm text-gray-500 italic mb-8">Check the big screen for the winner.</p>

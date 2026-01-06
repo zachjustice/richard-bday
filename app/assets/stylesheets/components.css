@@ -1,4 +1,164 @@
 /* Component classes for complex patterns that need @apply or pseudo-selectors */
+/* ONLY use for complex classes or frequently repeated classes */
+
+/* ============================================
+   LANDING PAGE COMPONENTS
+   ============================================ */
+
+/* Base anchor styling - animated underline on hover */
+@layer base {
+  a {
+    @apply relative transition-colors;
+    color: var(--color-ink);
+  }
+  a:hover {
+    color: var(--color-accent-secondary);
+  }
+  a::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-0 h-0.5 transition-all duration-300;
+    background-color: var(--color-accent-secondary);
+  }
+  a:hover::after {
+    @apply w-full;
+  }
+}
+
+@layer components {
+  /* Page background with doodle pattern */
+  .bg-page {
+    background-color: var(--color-bg-page);
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231A1A2E' stroke-width='1' stroke-opacity='0.06'%3E%3Cpath d='M5 5c2-2 4 0 4 2s-2 4-4 4-4-2-4-4 2-4 4-2'/%3E%3Cpath d='M45 15l8 4-8 4'/%3E%3Cpath d='M15 45c0 0 5-3 8 0s5 5 8 3'/%3E%3Cpath d='M35 35l5 5m-5 0l5-5'/%3E%3Ccircle cx='50' cy='50' r='3'/%3E%3Cpath d='M10 25h8'/%3E%3Cpath d='M25 5v8'/%3E%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Primary button with offset shadow */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold uppercase tracking-wide;
+    @apply rounded-xl cursor-pointer transition-all duration-200 text-white;
+    background-color: var(--color-accent-primary);
+    border: 3px solid var(--color-ink);
+    box-shadow: 4px 4px 0px var(--color-ink);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 6px 6px 0px var(--color-ink);
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-primary:active {
+    box-shadow: 2px 2px 0px var(--color-ink);
+    transform: translate(2px, 2px);
+  }
+
+  /* Main content card */
+  .card-primary {
+    @apply bg-white rounded-3xl p-8 md:p-10;
+    border: 3px solid var(--color-ink);
+    box-shadow: 8px 8px 0px var(--color-ink);
+  }
+
+  /* Subdued card with softer styling */
+  .card-subdued {
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8;
+    border: 2px solid rgba(26, 26, 46, 0.2);
+  }
+
+  /* Hero card - prominent callout sections (QR code, announcements) */
+  /* Can place this inside card-primary since box shadow is thinner */
+  .card-secondary {
+    @apply bg-white rounded-2xl p-6;
+    border: 3px solid var(--color-ink);
+    box-shadow: 4px 4px 0px var(--color-ink);
+  }
+
+  /* Primary badge - used for room codes, player counts, player items */
+  .badge-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-lg border-2 border-ink transition-all duration-200;
+    box-shadow: 2px 2px 0px var(--color-ink);
+  }
+
+  .badge-primary:hover {
+    box-shadow: 4px 4px 0px var(--color-ink);
+    transform: translate(-2px, -2px);
+  }
+
+  .badge-primary:active {
+    box-shadow: 1px 1px 0px var(--color-ink);
+    transform: translate(1px, 1px);
+  }
+
+  /* Step indicator circles */
+  .step-indicator {
+    @apply w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold;
+    border: 3px solid var(--color-ink);
+    box-shadow: 3px 3px 0px var(--color-ink);
+  }
+
+  /* Typography classes */
+
+  /* Primary title with text shadow */
+  .title-primary {
+    @apply text-5xl md:text-6xl lg:text-7xl font-black tracking-tight;
+    color: var(--color-ink);
+    text-shadow: 3px 3px 0px var(--color-accent-tertiary);
+  }
+
+  .heading {
+    @apply text-2xl md:text-3xl font-bold;
+    color: var(--color-ink);
+  }
+
+  .tagline {
+    @apply text-lg md:text-xl leading-relaxed;
+    color: rgba(26, 26, 46, 0.8);
+  }
+
+  .body {
+    @apply text-sm;
+    color: rgba(26, 26, 46, 0.7);
+  }
+
+  .label {
+    @apply font-bold;
+    color: var(--color-ink);
+  }
+
+  /* Doodle decorations with wiggle animation */
+  .doodle-decoration {
+    @apply opacity-50;
+    animation: doodle-wiggle 3s ease-in-out infinite;
+  }
+}
+
+/* Doodle animation delays */
+.doodle-decoration:nth-child(2) { animation-delay: 0.4s; }
+.doodle-decoration:nth-child(3) { animation-delay: 0.8s; }
+.doodle-decoration:nth-child(4) { animation-delay: 1.2s; }
+.doodle-decoration:nth-child(5) { animation-delay: 1.6s; }
+.doodle-decoration:nth-child(6) { animation-delay: 2.0s; }
+.doodle-decoration:nth-child(7) { animation-delay: 2.4s; }
+
+@keyframes doodle-wiggle {
+  0%, 100% { transform: rotate(var(--tw-rotate, 0)) translateX(0); }
+  25% { transform: rotate(var(--tw-rotate, 0)) translateX(-2px) rotate(-1deg); }
+  75% { transform: rotate(var(--tw-rotate, 0)) translateX(2px) rotate(1deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary:hover,
+  .btn-primary:active,
+  .badge-primary:hover,
+  .badge-primary:active {
+    transform: none;
+  }
+  .doodle-decoration {
+    animation: none;
+  }
+}
+
+/* ============================================
+   END LANDING PAGE COMPONENTS
+   ============================================ */
 
 /* Prompt Tooltip Component */
 .prompt-tooltip {
@@ -19,25 +179,13 @@
 
 /* Game prompt answer styling (clickable blanks in story) */
 .game-prompt-answer {
-  @apply cursor-help transition-all;
+  @apply cursor-help transition-all font-bold;
   border-bottom: 2px dotted var(--color-brand-purple);
 }
 
 .game-prompt-answer:hover {
   @apply text-brand-purple;
   border-bottom-style: solid;
-}
-
-/* Card with gradient top border */
-.card-primary {
-  @apply relative bg-white rounded-3xl shadow-2xl overflow-hidden;
-}
-
-.card-primary::before {
-  content: '';
-  @apply absolute top-0 left-0 right-0 h-1.5;
-  background: var(--gradient-primary-simple);
-  border-radius: 24px 24px 0 0;
 }
 
 /* Gradient utility classes (since they're reused) */
@@ -53,55 +201,26 @@
   background: var(--gradient-primary-reverse);
 }
 
-.bg-gradient-primary-tint {
-  background: var(--gradient-primary-tint);
-}
-
-/* Button - Primary */
-.btn-primary {
-  @apply px-8 py-5 text-lg font-bold text-white uppercase tracking-wider;
-  @apply rounded-xl cursor-pointer transition-all border-none;
-  background: var(--gradient-primary-simple);
-  box-shadow: var(--shadow-button);
-}
-
-.btn-primary:hover {
-  @apply -translate-y-1;
-  background: var(--gradient-primary-reverse);
-  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
-}
-
-.btn-primary:active {
-  @apply -translate-y-0.5;
-}
-
-.btn-primary:focus {
-  @apply outline-none ring-4 ring-brand-purple/30;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .btn-primary:hover,
-  .btn-primary:active {
-    transform: none;
-  }
-}
-
 /* Form Components */
 .form-input {
-  @apply w-full px-4 py-4 text-base font-medium bg-gray-50 border-2 border-gray-200;
-  @apply rounded-xl outline-none transition-all;
+  @apply w-full px-4 py-4 text-base font-medium rounded-xl outline-none transition-all;
+  border: 2px solid rgba(26, 26, 46, 0.2);
 }
 
 .form-input:hover {
-  @apply border-brand-purple bg-white;
+  @apply bg-white;
+  border-color: var(--color-ink);
 }
 
 .form-input:focus {
-  @apply border-brand-purple bg-white ring-4 ring-brand-purple/10 -translate-y-px;
+  @apply bg-white ring-4 -translate-y-px;
+  border-color: var(--color-accent-secondary);
+  --tw-ring-color: rgba(33, 150, 243, 0.1);
 }
 
 .form-input::placeholder {
-  @apply text-gray-400 font-normal;
+  @apply font-normal;
+  color: rgba(26, 26, 46, 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -112,6 +231,23 @@
 
 .form-label {
   @apply flex items-center gap-2 text-sm font-semibold uppercase tracking-wide;
+  color: var(--color-ink);
+}
+
+.form-header {
+  @apply text-3xl font-bold mb-2 leading-tight;
+  color: var(--color-ink);
+  text-shadow: 2px 2px 0px var(--color-accent-tertiary);
+}
+
+.form-subheader {
+  @apply text-base;
+  color: rgba(26, 26, 46, 0.6);
+}
+
+.divider {
+  @apply mt-8 pt-6 text-center;
+  border-top: 2px solid rgba(26, 26, 46, 0.1);
 }
 
 /* Alert/Notice Messages */
@@ -131,84 +267,63 @@
 
 /* Complex Radio Button Pattern (requires sibling selectors) */
 .answer-option {
-  @apply relative block cursor-pointer;
+  @apply block cursor-pointer;
 }
 
 .answer-radio {
-  @apply absolute opacity-0 w-0 h-0;
+  @apply sr-only;
 }
 
 .answer-content {
-  @apply relative flex items-center gap-4 px-5 py-5 rounded-xl border-2 transition-all;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-  border-color: rgba(102, 126, 234, 0.2);
-}
-
-.answer-checkmark {
-  @apply flex-shrink-0 w-7 h-7 flex items-center justify-center;
-  @apply border-2 border-brand-purple rounded-full text-transparent bg-white transition-all;
+  @apply relative flex items-center gap-4
+         rounded-xl border-[3px] border-ink
+         bg-white px-5 py-4
+         transition-all duration-200 ease-out
+         shadow-[4px_4px_0_0_var(--color-ink)];
 }
 
 .answer-text {
-  @apply flex-1 text-base font-medium leading-normal;
+  @apply text-base font-semibold text-ink leading-snug;
 }
 
-/* Hover state */
+.answer-checkmark {
+  @apply flex items-center justify-center
+         w-8 h-8 aspect-square flex-none
+         rounded-full
+         border-2 border-ink
+         text-sm font-bold
+         text-ink-inverted
+         bg-white
+         transition-all duration-200 ease-out;
+}
+
 .answer-option:hover .answer-content {
-  @apply border-brand-purple -translate-y-0.5;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 6px 6px 0px var(--color-ink);
+  transform: translate(-2px, -2px);
 }
 
-.answer-option:hover .answer-checkmark {
-  @apply border-[3px] scale-110;
+.answer-option:active .answer-content {
+  box-shadow: 2px 2px 0px var(--color-ink);
+  transform: translate(2px, 2px);
 }
 
-/* Checked state */
 .answer-radio:checked ~ .answer-content {
-  @apply border-brand-purple border-[3px];
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  border-color: var(--color-accent-secondary);
+  background-color: var(--color-accent-secondary-light);
+  box-shadow: 6px 6px 0px var(--color-ink);
+  transform: translate(-2px, -2px);
 }
+
 
 .answer-radio:checked ~ .answer-content .answer-checkmark {
-  @apply border-brand-purple text-white scale-[1.15];
-  background: var(--gradient-primary-simple);
+  background-color: var(--color-accent-secondary);
+  color: var(--color-ink-inverted);
+  border-color: var(--color-accent-secondary);
 }
 
-.answer-radio:checked ~ .answer-content .answer-text {
-  @apply font-bold;
-}
-
-.answer-radio:focus ~ .answer-content {
-  @apply outline outline-3 outline-offset-2 outline-brand-purple/40;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .answer-option:hover .answer-content,
-  .answer-option:hover .answer-checkmark {
-    transform: none;
-  }
-  .answer-radio:checked ~ .answer-content .answer-checkmark {
-    transform: none;
-  }
-}
-
-/* Scroll Fade Indicators (too complex for inline utilities) */
-.scroll-fade-indicators {
-  background:
-    /* Shadow Cover TOP */
-    linear-gradient(white 30%, rgba(255, 255, 255, 0)) center top,
-    /* Shadow Cover BOTTOM */
-    linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
-    /* Shadow TOP */
-    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top,
-    /* Shadow BOTTOM */
-    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center bottom;
-
-  background-repeat: no-repeat;
-  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
-  background-attachment: local, local, scroll, scroll;
+.answer-radio:focus-visible ~ .answer-content {
+  outline: 3px solid rgba(33, 150, 243, 0.4);
+  outline-offset: 3px;
 }
 
 /* Glass Morphism Effects */
@@ -238,8 +353,7 @@
 .message-card {
   @apply relative flex flex-col items-center gap-4 p-6;
   @apply rounded-2xl border-2 opacity-0 translate-y-5 transition-all duration-500 pointer-events-none;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
-  border-color: rgba(102, 126, 234, 0.15);
+  @apply bg-accent-blue/10 border-accent-blue/40
 }
 
 .message-card:not(.active) {
@@ -256,101 +370,18 @@
 }
 
 .progress-dot {
-  @apply w-3 h-3 bg-brand-purple rounded-full animate-pulse-dot;
+  @apply w-3 h-3 rounded-full animate-pulse-dot;
 }
-
+.progress-dot:nth-child(1) {
+  @apply bg-accent-yellow;
+}
 .progress-dot:nth-child(2) {
+  @apply bg-accent-blue;
   animation-delay: 0.3s;
 }
-
 .progress-dot:nth-child(3) {
+  @apply bg-accent-red;
   animation-delay: 0.6s;
-}
-
-/* Game Status Badge (sidebar phase indicators) */
-.game-status-badge {
-  @apply flex items-center gap-2 px-4 py-2 rounded-full;
-  backdrop-filter: blur(10px);
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(251, 146, 60, 0.25) 100%);
-}
-
-.game-status-badge.completed {
-  background: rgba(102, 126, 234, 0.1);
-}
-
-.game-status-badge.current {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.25) 100%);
-}
-
-/* Player List Items (status page) */
-.player-item {
-  @apply px-4 py-4 rounded-lg font-semibold text-gray-900 transition-all;
-  @apply border-l-[3px] border-brand-deep-purple;
-  @apply whitespace-nowrap overflow-hidden text-ellipsis;
-  background: linear-gradient(135deg, rgba(118, 75, 162, 0.15) 0%, rgba(118, 75, 162, 0.25) 100%);
-}
-
-.player-item:hover {
-  @apply translate-x-1;
-  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
-}
-
-/* User status items (completed/answering) */
-.user-status-item {
-  @apply px-4 py-4 rounded-lg font-semibold text-gray-900 transition-all animate-slide-in;
-  @apply whitespace-nowrap overflow-hidden text-ellipsis border-l-[3px];
-}
-
-.user-status-item.completed {
-  border-color: rgb(34, 197, 94);
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.25) 100%);
-}
-
-.user-status-item.completed::before {
-  content: '✓ ';
-  @apply mr-2 font-bold;
-  color: rgb(34, 197, 94);
-}
-
-.user-status-item.completed:hover {
-  @apply translate-x-1;
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
-}
-
-.user-status-item.waiting {
-  border-color: rgb(251, 146, 60);
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(251, 146, 60, 0.25) 100%);
-}
-
-.user-status-item.waiting::before {
-  content: '- ';
-  @apply mr-2 font-bold;
-  color: rgb(251, 146, 60);
-}
-
-.user-status-item.waiting:hover {
-  @apply translate-x-1;
-  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.3);
-}
-
-/* Voter item */
-.voter-item {
-  @apply px-4 py-4 rounded-lg font-semibold text-gray-900 transition-all animate-slide-in;
-  @apply border-l-[3px] border-brand-purple;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.25) 100%);
-}
-
-.voter-item:hover {
-  @apply translate-x-1;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .player-item:hover,
-  .user-status-item:hover,
-  .voter-item:hover {
-    transform: none;
-  }
 }
 
 /* Story Editor Components */
@@ -869,3 +900,39 @@
   background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
   background-attachment: local, local, scroll, scroll;
 }
+
+/* TODO: can the below classes be accomplished with out components.css? Does it matter? */
+
+/* Staggered entrance animation for lists */
+.stagger-animation > *:nth-child(1) { animation-delay: 0s; }
+.stagger-animation > *:nth-child(2) { animation-delay: 0.05s; }
+.stagger-animation > *:nth-child(3) { animation-delay: 0.1s; }
+.stagger-animation > *:nth-child(4) { animation-delay: 0.15s; }
+.stagger-animation > *:nth-child(5) { animation-delay: 0.2s; }
+.stagger-animation > *:nth-child(6) { animation-delay: 0.25s; }
+.stagger-animation > *:nth-child(7) { animation-delay: 0.3s; }
+.stagger-animation > *:nth-child(8) { animation-delay: 0.35s; }
+.stagger-animation > *:nth-child(9) { animation-delay: 0.4s; }
+.stagger-animation > *:nth-child(10) { animation-delay: 0.45s; }
+.stagger-animation > *:nth-child(11) { animation-delay: 0.5s; }
+.stagger-animation > *:nth-child(12) { animation-delay: 0.55s; }
+.stagger-animation > *:nth-child(n+13) { animation-delay: 0.6s; }
+
+/* Rainbow cycling colors for player list items */
+.rainbow-cycle > *:nth-child(7n+1) { background-color: var(--color-accent-red); }
+.rainbow-cycle > *:nth-child(7n+2) { background-color: var(--color-accent-orange); }
+.rainbow-cycle > *:nth-child(7n+3) { background-color: var(--color-accent-yellow); }
+.rainbow-cycle > *:nth-child(7n+4) { background-color: var(--color-accent-green); }
+.rainbow-cycle > *:nth-child(7n+5) { background-color: var(--color-accent-blue); }
+.rainbow-cycle > *:nth-child(7n+6) { background-color: var(--color-accent-indigo); }
+.rainbow-cycle > *:nth-child(7n+0) { background-color: var(--color-accent-violet); }
+
+/* Playful tilts for chaos effect */
+.playful-tilt > *:nth-child(8n+1) { transform: rotate(-2deg); }
+.playful-tilt > *:nth-child(8n+2) { transform: rotate(1.5deg); }
+.playful-tilt > *:nth-child(8n+3) { transform: rotate(-1deg); }
+.playful-tilt > *:nth-child(8n+4) { transform: rotate(2.5deg); }
+.playful-tilt > *:nth-child(8n+5) { transform: rotate(-1.5deg); }
+.playful-tilt > *:nth-child(8n+6) { transform: rotate(1deg); }
+.playful-tilt > *:nth-child(8n+7) { transform: rotate(-2.5deg); }
+.playful-tilt > *:nth-child(8n+0) { transform: rotate(2deg); }

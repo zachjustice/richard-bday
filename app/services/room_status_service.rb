@@ -32,6 +32,8 @@ class RoomStatusService
 
   def status_specific_data
     case @room.status
+    when RoomStatus::StorySelection
+      story_selection_data
     when RoomStatus::Answering, RoomStatus::Voting, RoomStatus::Results
       answering_voting_results_data
     when RoomStatus::FinalResults
@@ -39,6 +41,10 @@ class RoomStatusService
     else
       {}
     end
+  end
+
+  def story_selection_data
+    { stories: Story.all.order(:title) }
   end
 
   def answering_voting_results_data

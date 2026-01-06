@@ -1,18 +1,20 @@
-<div class="min-h-screen flex items-center justify-center p-6 max-sm:items-start max-sm:p-4 max-sm:pt-16 bg-(image:--gradient-primary) animate-gradient-shift">
-  <div class="card-primary animate-slide-up p-10 max-sm:p-8 max-w-md w-full">
+<div class="min-h-screen bg-page flex items-center justify-center p-6 max-sm:items-center max-sm:p-4 max-sm:pt-16">
+  <%= render "shared/login_doodles" %>
+
+  <div class="relative z-10 card-primary animate-slide-up p-10 max-sm:p-8 max-w-md w-full">
     <div class="text-center mb-8">
-      <h1 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-2 leading-tight">Join a Game</h1>
-      <div class="text-base max-sm:text-sm text-success mb-2">
+      <h1 class="form-header max-sm:text-2xl">Join a Game</h1>
+      <div class="text-base max-sm:text-sm text-accent-secondary mb-2">
         <% if @room&.current_game&.current_game_prompt && (Time.now - @room.created_at) < 1.day %>
           <span>It looks like you're already in a game.</span>
-          <%= link_to "Rejoin?", controller: "prompts", action: "show", id: @room.current_game.current_game_prompt, class: "underline" %>
+          <%= link_to "Rejoin?", controller: "prompts", action: "show", id: @room.current_game.current_game_prompt, class: "underline font-bold" %>
         <% elsif @room.present? && (Time.now - @room.created_at) < 1.day %>
           <span>It looks like you're already in a game.</span>
-          <%= link_to "Rejoin?", controller: "rooms", action: "show", class: "underline" %>
+          <%= link_to "Rejoin?", controller: "rooms", action: "show", class: "underline font-bold" %>
         <% end %>
       </div>
       <% if !@room %>
-        <p class="text-base max-sm:text-sm text-gray-500">Enter your details to start playing</p>
+        <p class="form-subheader max-sm:text-sm">Enter your details to start playing</p>
       <% end %>
     </div>
 
@@ -50,9 +52,9 @@
       <%= form.submit "Join Game", class: "btn-primary mt-4" %>
     <% end %>
 
-    <div class="mt-8 pt-6 border-t-2 border-gray-200 text-center">
-      <span class="text-sm">
-        <%= link_to "Start a new game instead", create_room_path, class: "text-gray-500 italic underline" %>
+    <div class="divider">
+      <span class="text-sm body">
+        <%= link_to "Start a new game instead", create_room_path %>
       </span>
     </div>
   </div>

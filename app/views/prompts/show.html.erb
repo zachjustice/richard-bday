@@ -1,7 +1,7 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 
-<div class="min-h-screen flex items-center justify-center bg-linear-to-br from-[#f0f4ff] to-[#f8f4ff] overflow-auto" data-controller="prompt">
-  <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-4 max-sm:m-4 max-w-2xl w-full flex flex-col flex-1 min-h-0">
+<div class="min-h-screen flex items-center justify-center bg-page overflow-auto" data-controller="prompt">
+  <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-2xl w-full flex flex-col flex-1 min-h-0">
 
     <% if flash[:alert] %>
       <div class="alert-message animate-slide-in">
@@ -17,10 +17,10 @@
       </div>
     <% end %>
 
-    <div class="text-center p-8 max-sm:p-6 mb-8 bg-gradient-primary-tint rounded-2xl border-2 border-brand-purple/15">
+    <div class="text-center p-8 max-sm:p-6 mb-8 bg-accent-blue/10 rounded-2xl border-2 border-ink/10">
       <div class="text-6xl max-sm:text-5xl mb-4 animate-float">💭</div>
-      <h2 class="text-2xl max-sm:text-xl font-bold text-gray-900 mb-3 leading-snug"><%= @game_prompt.prompt.description %></h2>
-      <p class="text-base max-sm:text-sm text-gray-500 italic">Next, players vote on their favorite answer</p>
+      <h2 class="text-2xl max-sm:text-xl font-bold text-ink mb-3 leading-snug"><%= @game_prompt.prompt.description %></h2>
+      <p class="text-base max-sm:text-sm text-ink/60 italic">Next, players vote on their favorite answer</p>
     </div>
 
     <div data-controller="auto-submitter"

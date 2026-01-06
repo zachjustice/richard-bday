@@ -1,8 +1,8 @@
 <%# app/views/rooms/waiting_for_new_game.html.erb %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<div id="results" data-controller="prompt" class="min-h-screen flex items-center justify-center p-6 md:p-4 bg-linear-to-br from-purple-50 to-orange-50">
-  <div class="card-primary p-12 md:p-8 max-w-[600px] w-full animate-fade-in">
-    <div class="text-center mb-8">
+<div id="results" data-controller="prompt" class="min-h-screen flex items-center justify-center bg-page">
+  <div class="card-primary p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-[600px] w-full animate-fade-in">
+    <div class="text-center">
       <div class="text-6xl mb-6 animate-swing">⏳</div>
       <h2 class="text-3xl md:text-2xl font-bold text-gray-900 m-0 mb-3 leading-tight">Between Games</h2>
       <p class="text-base md:text-sm text-gray-500 m-0 mb-8 italic">Waiting for a new game to start...</p>
