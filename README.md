@@ -93,12 +93,3 @@ kamal app exec --interactive --reuse "bin/rails console"
 # SSH into container
 kamal app exec --interactive --reuse "bash"
 ```
-
-## Architecture
-
-- **Framework:** Ruby on Rails 8.0
-- **Database:** SQLite3 (production-ready with solid_cache, solid_queue, solid_cable)
-- **Web Server:** Puma with Thruster
-- **Deployment:** Kamal with Docker containers
-- **CI/CD:** GitHub Actions
-- **Container Registry:** GitHub Container Registry (ghcr.io)

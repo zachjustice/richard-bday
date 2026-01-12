@@ -44,6 +44,7 @@ This document outlines the expectations, coding standards, and general conventio
 ---
 
 ## Views and Frontend
+- Use **Tailwind v4** defaults unless specifiedo otherwise.
 - Use Turbo Frames and Turbo Streams where possible.
 - Avoid JavaScript unless required. Use Stimulus controllers instead.
 - Keep ERB templates clean — minimize logic in views.
@@ -84,19 +85,7 @@ This document outlines the expectations, coding standards, and general conventio
 
 ## Dependencies
 - Avoid adding gems unless necessary.
-- If adding a gem, document why in the Pull Request.
 - Favor gems that follow Rails 7+ conventions and are actively maintained.
-
----
-
-## Git and Code Review
-- Use feature branches.
-- Write clear, concise commit messages.
-- Squash commits before merging unless history is meaningful.
-- All PRs must:
-  - Be peer-reviewed.
-  - Pass all CI checks.
-  - Include tests for new/modified behavior.
 
 ---
 
@@ -104,11 +93,4 @@ This document outlines the expectations, coding standards, and general conventio
 - Write comments and documentation in plain, professional language.
 - Explain *why* something exists, not *what* it does (code should explain itself).
 - Output from Claude explaining changes should be succinct and concise. 
-
----
-
-## Tools & CI
-- Ensure:
-  - `rubocop` or `standardrb` passes.
-  - RSpec suite runs green.
-  - Any linting/CI tools configured per project pass before merge.
+- Comments should be succent and concise
