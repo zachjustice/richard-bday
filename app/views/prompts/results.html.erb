@@ -1,5 +1,5 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<div id="results" data-controller="prompt" class="h-screen flex items-center justify-center bg-page">
+<div id="results" data-controller="prompt" class="h-screen flex items-center max-sm:items-start justify-center bg-page">
   <div class="card-primary animate-fade-in m-4 p-12 max-sm:p-8 max-w-xl w-full max-h-[90vh] overflow-hidden">
     <% if @status == RoomStatus::FinalResults %>
       <div class="text-center">

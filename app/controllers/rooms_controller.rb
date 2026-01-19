@@ -211,6 +211,8 @@ class RoomsController < ApplicationController
   end
 
   def move_to_next_game_prompt(room, next_game_prompt_id)
+    User.players.where(room: room).update_all(status: UserStatus::Answering)
+
     ActionCable.server.broadcast(
       "rooms:#{room.id}",
       Events.create_next_prompt_event(next_game_prompt_id)

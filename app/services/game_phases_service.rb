@@ -10,6 +10,8 @@ class GamePhasesService
   end
 
   def move_to_voting
+    User.players.where(room: @room).update_all(status: UserStatus::Voting)
+
     # Schedule deadline for voting
     next_game_phase_time = Time.now + @room.time_to_vote_seconds + GameConstants::COUNTDOWN_FORGIVENESS_SECONDS
     @room.update!(status: RoomStatus::Voting)

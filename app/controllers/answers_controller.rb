@@ -1,29 +1,15 @@
 class AnswersController < ApplicationController
-  # TODO: clean up this logic.
-  # I think that it should:
-  # - Create answer should be idempotent (as it is today)
-  # - But if it fails, display the error message in the flash[:notice] instead of alert
-  # - I'm confusing by the routing.
   def create
-    exists = Answer.exists?(
+    answer = Answer.find_or_initialize_by(
       game_prompt_id: params[:prompt_id],
       user_id: @current_user.id,
       game_id: @current_room.current_game_id
     )
+    answer.text = params[:text]
 
-    # If the user has already submitted an answer for the prompt and room, then skip saving a new answer
-    # --> Direct the user to the prompt/:id/voting or prompt/:id/waiting page appropriately
-    if !exists
-      ans = Answer.new(
-        text: params[:text],
-        game_prompt_id: params[:prompt_id],
-        user_id: @current_user.id,
-        game_id: @current_room.current_game_id
-      )
-      if !ans.save
-        flash[:notice] = ans.errors.full_messages.to_json
-        return redirect_to controller: "prompts", action: "show", id: params[:prompt_id]
-      end
+    if !answer.save
+      flash[:alert] = answer.errors.full_messages.join(", ")
+      return redirect_to controller: "prompts", action: "show", id: params[:prompt_id]
     end
 
     users_in_room = User.players.where(room_id: @current_room.id).count

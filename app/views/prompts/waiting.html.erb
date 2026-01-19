@@ -1,6 +1,6 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 
-<div data-controller="prompt" class="h-screen flex items-center justify-center bg-page">
+<div data-controller="prompt" class="h-screen flex items-center max-sm:items-center justify-center bg-page">
   <div class="card-primary p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-[600px] w-full animate-fade-in">
     <div class="text-center">
       <div class="text-6xl mb-6 animate-swing">⏳</div>
@@ -12,6 +12,12 @@
         <div class="progress-dot"></div>
       </div>
       <%= render "shared/fun_facts" %>
+
+      <div class="mt-6">
+        <%= link_to "Change Answer",
+          { controller: "prompts", action: "show", id: @game_prompt.id },
+          class: "btn-secondary btn-sm" %>
+      </div>
     </div>
   </div>
 </div>

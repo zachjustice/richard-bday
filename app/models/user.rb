@@ -34,4 +34,12 @@ class User < ApplicationRecord
   def creator?
     role == CREATOR
   end
+
+  def answered?
+    status == UserStatus::Answered
+  end
+
+  def voted?
+    status == UserStatus::Voted
+  end
 end

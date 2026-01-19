@@ -1,6 +1,6 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 
-<div class="min-h-screen flex items-center justify-center bg-page overflow-auto" data-controller="prompt">
+<div class="min-h-screen flex items-center max-sm:items-start justify-center bg-page overflow-auto" data-controller="prompt">
   <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-2xl w-full flex flex-col flex-1 min-h-0">
 
     <% if flash[:alert] %>
@@ -36,6 +36,8 @@
               required: true,
               autocomplete: "off",
               placeholder: "...",
+              value: @existing_answer&.text,
+              maxlength: 150,
               class: "form-input min-h-24" %>
         </div>
 

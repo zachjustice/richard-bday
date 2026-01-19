@@ -1,13 +1,13 @@
 <%# app/views/prompts/_prompt.html.erb %>
 <div id="prompt_<%= prompt.id %>" class="prompt-item" data-controller="prompt-editor">
   <div class="flex flex-col gap-2" data-prompt-editor-target="display">
-    <div class="flex justify-between items-start gap-4 mb-3">
+    <div class="flex justify-between items-center max-sm:items-start gap-4 mb-3">
       <p class="flex-1 text-base font-medium text-gray-900 m-0 leading-snug"><%= prompt.description %></p>
       <div class="flex gap-2 shrink-0">
         <button type="button"
                 class="btn-icon"
                 data-action="click->prompt-editor#edit"
-                title="Edit">
+          title="Edit">
           ✏️
         </button>
         <%= button_to destroy_prompt_path(prompt),

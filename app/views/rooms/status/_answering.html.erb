@@ -12,7 +12,7 @@
     <div class="flex flex-col flex-1 min-h-0">
       <ul id="users-with-status-list" class="list-none p-0 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
         <% users.each do |user| %>
-          <%= render "rooms/partials/user_with_status_item", user: user, completed: users_with_submitted_answers.include?(user.name), color: "blue" %>
+          <%= render "rooms/partials/user_with_status_item", user: user, completed: user.answered?, color: "blue" %>
         <% end %>
       </ul>
     </div>

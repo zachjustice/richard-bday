@@ -2,18 +2,23 @@ class PromptsController < ApplicationController
   before_action :redirect_to_current_game_phase, except: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt, :tooltip ]
 
   def show
-    exists = Answer.exists?(
-      game_prompt_id: params[:id],
+    @game_prompt = GamePrompt.find_by(params.permit(:id))
+    @existing_answer = Answer.find_by(
+      game_prompt_id: @game_prompt.id,
       user_id: @current_user.id,
-      game: @current_room.current_game
+      game_id: @current_room.current_game_id
     )
 
-    # User already submitted an answer for this prompt; redirect to next page
-    if exists
-      return redirect_to controller: "prompts", action: "waiting", id: params[:id]
+    if @existing_answer.present?
+      Turbo::StreamsChannel.broadcast_replace_to(
+        "rooms:#{@current_room.id}:answers",
+        target: "user_list_user_#{@existing_answer.user.id}",
+        partial: "rooms/partials/user_with_status_item",
+        locals: { user: @existing_answer.user, completed: false, color: "blue" }
+      )
     end
 
-    @game_prompt = GamePrompt.find_by(params.permit(:id))
+    @current_user.update!(status: UserStatus::Answering)
   end
 
   def waiting
@@ -33,8 +38,15 @@ class PromptsController < ApplicationController
 
     # All answers have been collected, time to vote
     if exists
-      return redirect_to controller: "prompts", action: "results", id: params[:id]
+      Turbo::StreamsChannel.broadcast_replace_to(
+        "rooms:#{room.id}:answers",
+        target: "user_list_user_#{answer.user.id}",
+        partial: "rooms/partials/user_with_status_item",
+        locals: { user: answer.user, completed: false, color: "blue" }
+      )
     end
+
+    @current_user.update!(status: UserStatus::Voting)
     @game_prompt = GamePrompt.find_by(params.permit(:id))
     @answers = Answer.where(game_id: @current_room.current_game_id, game_prompt_id: params[:id]).reject do |ans|
       ans.user_id == @current_user.id
