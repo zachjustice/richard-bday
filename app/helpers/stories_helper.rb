@@ -76,4 +76,12 @@ module StoriesHelper
       )
     end
   end
+
+  def render_story_with_bold_underline(text, blank_id_map)
+    replacement_regex = /\{\d+\}/
+    text.gsub(replacement_regex) do |match|
+      answer_text, _ = blank_id_map[match]
+      tag.strong(tag.u(answer_text), style: "font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 2px;")
+    end
+  end
 end

@@ -1,13 +1,11 @@
-<div class="flex-1 flex flex-col justify-start min-h-0">
+<div class="flex-1 flex flex-col justify-start min-h-0"
+     data-controller="share-story">
   <div class="card-subdued text-center mb-8 border-l-4 border-accent-green/40 bg-accent-green/10 border-l-accent-green"
        data-controller="speech"
        data-speech-text-value="<%= render_plaintext(story_text, blank_id_to_answer_text) %>">
     <div class="relative w-full text-center">
       <h2 class="text-2xl max-md:text-xl font-bold text-ink m-0">
         <%= current_room.current_game.story.title %>
-        <button class="-translate-y-1/2 text-sm cursor-pointer" type="button" data-action="click->speech#speak">
-          🔊
-        </button>
       </h2>
     </div>
 
@@ -20,10 +18,67 @@
       </div>
     </div>
 
+    <div class="flex mt-6 gap-2 justify-center">
+      <button type="button"
+              class="btn-primary text-sm"
+              data-action="click->share-story#share"
+        data-share-story-target="shareButton">
+        📥 Download Story
+      </button>
+
+      <button class="btn-primary bg-accent-blue text-sm" type="button" data-action="click->speech#speak">
+        🔊 Read Aloud
+      </button>
+    </div>
   </div>
   <div class="card-subdued flex-1 min-h-0 overflow-y-auto border-l-4 border-accent-green/40 border-l-accent-green bg-accent-green/10">
     <p class="text-lg max-md:text-base text-ink leading-relaxed m-0 text-justify max-md:text-left">
       <%= simple_format(render_story_with_tooltips(story_text, blank_id_to_answer_text), {}, sanitize: false) %>
     </p>
+  </div>
+
+  <!-- Hidden export container for image download -->
+  <div id="story-export-container"
+       class="hidden"
+       data-share-story-target="exportContainer">
+    <!-- Doodle background with padding -->
+    <div style="background-color: #FFF8E7; background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' stroke=\'%231A1A2E\' stroke-width=\'1\' stroke-opacity=\'0.06\'%3E%3Cpath d=\'M5 5c2-2 4 0 4 2s-2 4-4 4-4-2-4-4 2-4 4-2\'/%3E%3Cpath d=\'M45 15l8 4-8 4\'/%3E%3Cpath d=\'M15 45c0 0 5-3 8 0s5 5 8 3\'/%3E%3Cpath d=\'M35 35l5 5m-5 0l5-5\'/%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'3\'/%3E%3Cpath d=\'M10 25h8\'/%3E%3Cpath d=\'M25 5v8\'/%3E%3E%3C/g%3E%3C/svg%3E'); padding: 3rem; min-width: 800px;">
+
+      <!-- BLANKSIES Branding -->
+      <h1 style="font-size: 2.5rem; font-weight: 900; text-align: center; margin-bottom: 2rem; color: #1A1A2E; text-shadow: 3px 3px 0px #FFD60A;">
+        BLANKSIES
+      </h1>
+
+      <!-- Primary Card -->
+      <div style="background: #FFFFFF; border-radius: 24px; padding: 2.5rem; border: 3px solid #1A1A2E; box-shadow: 8px 8px 0px #1A1A2E; max-width: 56rem; margin: 0 auto;">
+
+        <!-- Title Card (green with left border) -->
+        <div style="background: rgba(76, 175, 80, 0.1); backdrop-filter: blur(8px); border-radius: 16px; padding: 2rem; border: 2px solid rgba(76, 175, 80, 0.4); border-left: 4px solid #4CAF50; margin-bottom: 2rem; text-align: center;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #1A1A2E;">
+            <%= current_room.current_game.story.title %>
+          </h2>
+
+          <!-- Authors section -->
+          <div style="margin-top: 1rem;">
+            <span style="font-size: 0.875rem; font-weight: 500; color: rgba(26, 26, 46, 0.6); font-style: italic; display: block; margin-bottom: 0.5rem;">Written by:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; align-items: center;">
+              <% users.each do |user| %>
+                <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; color: #1A1A2E; border: 2px solid rgba(26, 26, 46, 0.2); background: rgba(76, 175, 80, 0.1); display: inline-flex; align-items: center; justify-content: center;">
+                  <%= user.name %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story Card (green with left border) -->
+        <div style="background: rgba(76, 175, 80, 0.1); backdrop-filter: blur(8px); border-radius: 16px; padding: 2rem; border: 2px solid rgba(76, 175, 80, 0.4); border-left: 4px solid #4CAF50;">
+          <div style="font-size: 1.125rem; line-height: 1.75; text-align: justify; color: #1A1A2E;">
+            <%= simple_format(render_story_with_bold_underline(story_text, blank_id_to_answer_text), {}, sanitize: false) %>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>

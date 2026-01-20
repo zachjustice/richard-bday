@@ -41,10 +41,10 @@ class PromptsController < ApplicationController
     # All answers have been collected, time to vote
     if exists
       Turbo::StreamsChannel.broadcast_replace_to(
-        "rooms:#{room.id}:answers",
-        target: "user_list_user_#{answer.user.id}",
+        "rooms:#{@current_room.id}:answers",
+        target: "user_list_user_#{@current_user.id}",
         partial: "rooms/partials/user_with_status_item",
-        locals: { user: answer.user, completed: false, color: "blue" }
+        locals: { user: @current_user, completed: false, color: "blue" }
       )
     end
 
