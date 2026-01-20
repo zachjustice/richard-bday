@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   post "/rooms/:id/end_game", to: "rooms#end_game", as: :end_room_game
   patch "/rooms/:id/settings", to: "rooms#update_settings", as: :update_room_settings
   get "/rooms/:id/waiting_for_new_game", to: "rooms#waiting_for_new_game", as: :waiting_for_new_game
+  get "/rooms/:id/check_navigation", to: "rooms#check_navigation", as: :check_room_navigation
 
   get "/prompts/:id", to: "prompts#show"
   get "/prompts/:id/waiting", to: "prompts#waiting"

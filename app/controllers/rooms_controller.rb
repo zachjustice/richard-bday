@@ -200,6 +200,19 @@ class RoomsController < ApplicationController
   def waiting_for_new_game
   end
 
+  def check_navigation
+    room = Room.find(params[:id])
+    current_path = params[:current_path]
+
+    expected_paths = valid_navigation_paths(room)
+
+    if expected_paths.empty? || expected_paths.include?(current_path)
+      render json: { redirect_to: nil }
+    else
+      render json: { redirect_to: expected_paths.first }
+    end
+  end
+
   private
 
   def in_room?
@@ -256,5 +269,33 @@ class RoomsController < ApplicationController
 
   def settings_params
     params.require(:room).permit(:time_to_answer_seconds, :time_to_vote_seconds)
+  end
+
+  def valid_navigation_paths(room)
+    current_game_prompt_id = room.current_game&.current_game_prompt&.id
+    return [] unless current_game_prompt_id
+
+    case room.status
+    when RoomStatus::WaitingRoom
+      [ waiting_for_new_game_path(room) ]
+    when RoomStatus::Answering
+      has_answered = @current_user.answered?
+      if has_answered
+        [ "/prompts/#{current_game_prompt_id}", "/prompts/#{current_game_prompt_id}/waiting" ]
+      else
+        [ "/prompts/#{current_game_prompt_id}" ]
+      end
+    when RoomStatus::Voting
+      has_voted = @current_user.voted?
+      if has_voted
+        [ "/prompts/#{current_game_prompt_id}/voting", "/prompts/#{current_game_prompt_id}/results" ]
+      else
+        [ "/prompts/#{current_game_prompt_id}/voting" ]
+      end
+    when RoomStatus::Results, RoomStatus::FinalResults
+      [ "/prompts/#{current_game_prompt_id}/results" ]
+    else
+      []
+    end
   end
 end
