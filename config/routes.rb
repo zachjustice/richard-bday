@@ -43,6 +43,7 @@ Rails.application.routes.draw do
 
   get "/prompts/:id", to: "prompts#show"
   get "/prompts/:id/waiting", to: "prompts#waiting"
+  post "/prompts/:id/change_answer", to: "prompts#change_answer", as: :change_answer
   get "/prompts/:id/voting", to: "prompts#voting"
   get "/prompts/:id/results", to: "prompts#results"
 

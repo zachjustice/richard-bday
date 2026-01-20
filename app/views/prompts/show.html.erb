@@ -3,20 +3,6 @@
 <div class="min-h-screen flex items-center max-sm:items-start justify-center bg-page overflow-auto" data-controller="prompt">
   <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-2xl w-full flex flex-col flex-1 min-h-0">
 
-    <% if flash[:alert] %>
-      <div class="alert-message animate-slide-in">
-        <span class="text-xl shrink-0">⚠️</span>
-        <%= flash[:alert] %>
-      </div>
-    <% end %>
-
-    <% if flash[:notice] %>
-      <div class="notice-message animate-slide-in">
-        <span class="text-xl shrink-0">✓</span>
-        <%= flash[:notice] %>
-      </div>
-    <% end %>
-
     <div class="text-center p-8 max-sm:p-6 mb-8 bg-accent-blue/10 rounded-2xl border-2 border-ink/10">
       <div class="text-6xl max-sm:text-5xl mb-4 animate-float">💭</div>
       <h2 class="text-2xl max-sm:text-xl font-bold text-ink mb-3 leading-snug"><%= @game_prompt.prompt.description %></h2>
@@ -37,7 +23,7 @@
               autocomplete: "off",
               placeholder: "...",
               value: @existing_answer&.text,
-              maxlength: 150,
+              maxlength: Answer::ANSWER_MAX_LENGTH,
               class: "form-input min-h-24" %>
         </div>
 

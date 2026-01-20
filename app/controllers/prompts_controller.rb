@@ -1,5 +1,5 @@
 class PromptsController < ApplicationController
-  before_action :redirect_to_current_game_phase, except: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt, :tooltip ]
+  before_action :redirect_to_current_game_phase, except: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt, :tooltip, :change_answer ]
 
   def show
     @game_prompt = GamePrompt.find_by(params.permit(:id))
@@ -8,17 +8,6 @@ class PromptsController < ApplicationController
       user_id: @current_user.id,
       game_id: @current_room.current_game_id
     )
-
-    if @existing_answer.present?
-      Turbo::StreamsChannel.broadcast_replace_to(
-        "rooms:#{@current_room.id}:answers",
-        target: "user_list_user_#{@existing_answer.user.id}",
-        partial: "rooms/partials/user_with_status_item",
-        locals: { user: @existing_answer.user, completed: false, color: "blue" }
-      )
-    end
-
-    @current_user.update!(status: UserStatus::Answering)
   end
 
   def waiting
@@ -28,6 +17,19 @@ class PromptsController < ApplicationController
     if @current_room.status == RoomStatus::Voting
       redirect_to controller: "prompts", action: "voting", id: params[:id]
     end
+  end
+
+  def change_answer
+    @current_user.update!(status: UserStatus::Answering)
+
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "rooms:#{@current_room.id}:answers",
+      target: "user_list_user_#{@current_user.id}",
+      partial: "rooms/partials/user_with_status_item",
+      locals: { user: @current_user, completed: false, color: "blue" }
+    )
+
+    redirect_to controller: "prompts", action: "show", id: params[:id]
   end
 
   def voting

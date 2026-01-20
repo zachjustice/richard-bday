@@ -14,9 +14,9 @@
       <%= render "shared/fun_facts" %>
 
       <div class="mt-6">
-        <%= link_to "Change Answer",
-          { controller: "prompts", action: "show", id: @game_prompt.id },
-          class: "btn-secondary btn-sm" %>
+        <%= form_with url: change_answer_path(@game_prompt.id), method: :post do %>
+          <%= submit_tag "Change Answer", class: "btn-secondary btn-sm" %>
+        <% end %>
       </div>
     </div>
   </div>
