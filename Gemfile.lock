@@ -120,6 +120,8 @@ GEM
     et-orbi (1.4.0)
       tzinfo
     execjs (2.10.0)
+    faker (3.6.0)
+      i18n (>= 1.8.11, < 2)
     ferrum (0.17.1)
       addressable (~> 2.5)
       base64 (~> 0.2)
@@ -406,6 +408,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   cuprite
   debug
+  faker (~> 3.6)
   htmlbeautifier (~> 1.4)
   importmap-rails
   jbuilder

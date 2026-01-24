@@ -79,3 +79,5 @@ gem "wahwah", "~> 1.6"
 gem "tailwindcss-rails", "~> 4.4"
 
 gem "watchman-rails", "~> 0.2.0"
+
+gem "faker", "~> 3.6"
