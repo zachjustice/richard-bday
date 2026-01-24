@@ -1,6 +1,7 @@
 # app/controllers/blanks_controller.rb
 class BlanksController < ApplicationController
-  allow_unauthenticated_access only: %i[ create update destroy ]
+  skip_before_action :require_authentication
+  before_action :require_editor_auth
 
   def create
     @story = Story.find(params[:story_id])

@@ -374,3 +374,12 @@ stories =  [
 # seed_example_data
 puts("Creating stories")
 stories.each { |s| create_story(s) }
+
+# Create default editor for development
+if Rails.env.development?
+  editor = Editor.find_or_create_by!(username: "admin") do |e|
+    e.password = "password123"
+    e.password_confirmation = "password123"
+  end
+  puts("Created default editor: admin / password123") if editor.persisted?
+end

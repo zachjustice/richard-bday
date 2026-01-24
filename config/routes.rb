@@ -5,8 +5,15 @@ Rails.application.routes.draw do
   resource :session
   get "up" => "rails/health#show", as: :rails_health_check
   post "/session/resume", to: "sessions#resume" unless Rails.env.production?
-  get "/session/editor", to: "sessions#editor", as: :session_editor
-  post "/session/editor", to: "sessions#create_editor", as: :create_session_editor
+
+  # Editor authentication
+  get "/editor/login", to: "editor_sessions#new", as: :editor_login
+  post "/editor/login", to: "editor_sessions#create"
+  delete "/editor/logout", to: "editor_sessions#destroy", as: :editor_logout
+
+  # Editor settings
+  get "/editor/settings", to: "editor_settings#edit", as: :edit_editor_settings
+  patch "/editor/settings", to: "editor_settings#update", as: :editor_settings
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest

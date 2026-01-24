@@ -1,4 +1,6 @@
 class PromptsController < ApplicationController
+  skip_before_action :require_authentication, only: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt, :tooltip ]
+  before_action :require_editor_auth, only: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt ]
   before_action :redirect_to_current_game_phase, except: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt, :tooltip, :change_answer ]
 
   def show

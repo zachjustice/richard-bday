@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
-  allow_unauthenticated_access only: %i[ new create resume editor create_editor ]
-  rate_limit to: 10, within: 3.minutes, only: [ :create, :create_editor, :new ], with: -> { redirect_to new_session_url, alert: "Try again later." }
+  allow_unauthenticated_access only: %i[ new create resume ]
+  rate_limit to: 10, within: 3.minutes, only: [ :create, :new ], with: -> { redirect_to new_session_url, alert: "Try again later." }
 
   def new
     session_id = cookies.signed[:session_id]
@@ -67,40 +67,6 @@ class SessionsController < ApplicationController
       redirect_to after_authentication_url
     else
       redirect_to new_session_path
-    end
-  end
-
-  def editor
-  end
-
-  def create_editor
-    # Get room
-    code = params[:code]
-    room = Room.first
-    # Gotta know the secret to get in here. This is set manually in production to a random secret. :)
-    if code != room.code
-      return redirect_to after_authentication_url
-    end
-
-    user = User.find_by(name: params[:name], room_id: room.id)
-    if user
-      session[:user_id] = user.id
-      @current_user = user
-      @current_room = room
-      start_new_session_for user
-      return redirect_to stories_path
-    end
-
-    user = User.new(name: params[:name], room_id: room.id, role: User::EDITOR)
-
-    if user.save
-      session[:user_id] = user.id
-      @current_user = user
-      @current_room = room
-      start_new_session_for user
-      redirect_to stories_path
-    else
-      redirect_to session_editor, notice: "Something went wrong"
     end
   end
 

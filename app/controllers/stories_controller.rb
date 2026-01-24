@@ -1,6 +1,7 @@
 # app/controllers/stories_controller.rb
 class StoriesController < ApplicationController
-  before_action :is_editor
+  skip_before_action :require_authentication
+  before_action :require_editor_auth
 
   def index
     @stories = Story.all.order(created_at: :desc)
@@ -96,12 +97,6 @@ class StoriesController < ApplicationController
       permitted_params[key] = value.strip if value.is_a?(String)
     end
     permitted_params
-  end
-
-  def is_editor
-    if !@current_user.editor?
-      redirect_to root_path
-    end
   end
 
   def story_params

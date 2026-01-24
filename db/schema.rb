@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_19_210319) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_21_021941) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -32,6 +32,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_210319) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["story_id"], name: "index_blanks_on_story_id"
+  end
+
+  create_table "editor_sessions", force: :cascade do |t|
+    t.integer "editor_id", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["editor_id"], name: "index_editor_sessions_on_editor_id"
+  end
+
+  create_table "editors", force: :cascade do |t|
+    t.string "username", null: false
+    t.string "password_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["username"], name: "index_editors_on_username", unique: true
   end
 
   create_table "game_prompts", force: :cascade do |t|
@@ -140,6 +157,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_210319) do
   add_foreign_key "answers", "games"
   add_foreign_key "answers", "users"
   add_foreign_key "blanks", "stories"
+  add_foreign_key "editor_sessions", "editors"
   add_foreign_key "game_prompts", "blanks"
   add_foreign_key "game_prompts", "games"
   add_foreign_key "game_prompts", "prompts"

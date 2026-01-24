@@ -1,0 +1,59 @@
+<div class="min-h-screen bg-page flex items-center justify-center p-6 max-sm:p-4 max-sm:pt-16">
+  <div class="relative z-10 card-primary animate-slide-up p-10 max-sm:p-8 max-w-md w-full">
+    <div class="text-center mb-8">
+      <h1 class="form-header max-sm:text-2xl">Editor Settings</h1>
+      <p class="form-subheader max-sm:text-sm">Change your password</p>
+    </div>
+
+    <% if flash[:alert] %>
+      <div class="alert-message mb-4"><%= flash[:alert] %></div>
+    <% end %>
+    <% if flash[:notice] %>
+      <div class="notice-message mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded"><%= flash[:notice] %></div>
+    <% end %>
+
+    <%= form_with url: editor_settings_path, method: :patch, class: "flex flex-col gap-6" do |form| %>
+      <div class="flex flex-col gap-2">
+        <label for="current_password" class="form-label">
+          <span class="text-lg">🔒</span>
+          Current Password
+        </label>
+        <%= form.password_field :current_password,
+            id: "current_password",
+            required: true,
+            autocomplete: "current-password",
+            class: "form-input" %>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="password" class="form-label">
+          <span class="text-lg">🔑</span>
+          New Password
+        </label>
+        <%= form.password_field :password,
+            id: "password",
+            required: true,
+            autocomplete: "new-password",
+            placeholder: "Minimum 8 characters",
+            class: "form-input" %>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="password_confirmation" class="form-label">
+          <span class="text-lg">✓</span>
+          Confirm New Password
+        </label>
+        <%= form.password_field :password_confirmation,
+            id: "password_confirmation",
+            required: true,
+            autocomplete: "new-password",
+            class: "form-input" %>
+      </div>
+
+      <div class="flex gap-4 max-sm:flex-col">
+        <%= link_to "Back to Stories", stories_path, class: "btn-secondary flex-1 text-center" %>
+        <%= form.submit "Update Password", class: "btn-primary flex-1" %>
+      </div>
+    <% end %>
+  </div>
+</div>
