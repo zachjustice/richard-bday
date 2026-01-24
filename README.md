@@ -1,12 +1,13 @@
-# Richard Birthday App
+# Blanksies
 
-A Rails application for managing birthday party games and activities.
+A Rails application for playing collaborative fill-in-the-blank stories with friends.
 
 ## Development Setup
 
 ### Prerequisites
 - Ruby 3.4.1
 - SQLite3
+- Foreman
 
 ### Local Development
 ```bash
@@ -17,61 +18,8 @@ bundle install
 bin/rails db:setup
 
 # Start the server
-bin/rails server
+./bin/dev
 ```
-
-## Deployment to Digital Ocean
-
-This application is configured for deployment to Digital Ocean using Kamal with GitHub Actions for continuous deployment.
-
-### Prerequisites
-- Digital Ocean Ubuntu 22.04 droplet
-- GitHub repository with Actions enabled
-- GitHub Personal Access Token with packages:write permission
-
-### Server Setup
-
-1. **Run the setup script on your Digital Ocean droplet:**
-   ```bash
-   # Copy the setup script to your server
-   scp server-setup.sh root@YOUR_DROPLET_IP:/tmp/
-   
-   # SSH into your server and run the setup
-   ssh root@YOUR_DROPLET_IP
-   chmod +x /tmp/server-setup.sh
-   /tmp/server-setup.sh
-   ```
-
-2. **Log out and back in** for Docker group changes to take effect.
-
-### Configuration
-
-3. **Set up GitHub Repository Secrets:**
-   Go to your GitHub repository → Settings → Secrets and variables → Actions, and add:
-   - `DEPLOY_SSH_KEY`: Private SSH key for server access
-   - `RAILS_MASTER_KEY`: Rails credentials master key
-   - `GHCR_TOKEN`: GitHub Personal Access Token with packages:write scope
-   - `DROPLET_IP`: Digital Ocean droplet IP address
-
-### Deployment
-
-1. **Generate SSH key pair for deployment:**
-   ```bash
-   ssh-keygen -t ed25519 -C "deploy@richard-bday"
-   # Copy the public key to your server's ~/.ssh/authorized_keys
-   # Add the private key to GitHub Secrets as DEPLOY_SSH_KEY
-   ```
-
-2. **Push to main branch:**
-   ```bash
-   git add .
-   git commit -m "Deploy to Digital Ocean"
-   git push origin main
-   ```
-
-3. **Monitor deployment:**
-   - Check GitHub Actions tab for deployment progress
-   - Access your app at `http://YOUR_DROPLET_IP`
 
 ### Manual Deployment (if needed)
 ```bash
@@ -80,6 +28,21 @@ gem install kamal
 
 # Deploy manually
 kamal deploy
+```
+
+### Editor Management
+```bash
+# Invite a new editor by email (sends invitation email)
+rake editors:invite[email@example.com]
+
+# Create an editor directly (for testing)
+rake editors:create[username,password]
+
+# List all editors
+rake editors:list
+
+# Delete an editor
+rake editors:delete[username]
 ```
 
 ### Useful Commands

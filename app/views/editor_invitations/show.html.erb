@@ -1,0 +1,61 @@
+<div class="min-h-screen bg-page flex items-center justify-center p-6 max-sm:p-4 max-sm:pt-16">
+  <%= render "shared/login_doodles" %>
+
+  <div class="relative z-10 card-primary animate-slide-up p-10 max-sm:p-8 max-w-md w-full">
+    <div class="text-center mb-8">
+      <h1 class="form-header max-sm:text-2xl">Become an Editor</h1>
+      <p class="form-subheader max-sm:text-sm">Create your account to start crafting stories</p>
+    </div>
+
+    <% if flash[:alert] %>
+      <div class="alert-message mb-4"><%= flash[:alert] %></div>
+    <% end %>
+
+    <%= form_with model: @editor, url: editor_signup_path(token: params[:token]), method: :post, class: "flex flex-col gap-6" do |form| %>
+      <div class="flex flex-col gap-2">
+        <label for="email" class="form-label">Email</label>
+        <%= form.email_field :email,
+            id: "email",
+            value: @invitation.email,
+            readonly: true,
+            class: "form-input bg-gray-100 cursor-not-allowed" %>
+        <p class="text-xs text-gray-500">This is the email your invitation was sent to</p>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="username" class="form-label">Username</label>
+        <%= form.text_field :username,
+            id: "username",
+            required: true,
+            autofocus: true,
+            autocomplete: "username",
+            placeholder: "Choose a username (3-30 characters)",
+            class: "form-input" %>
+        <% if @editor.errors[:username].any? %>
+          <p class="text-sm text-red-600"><%= @editor.errors[:username].first %></p>
+        <% end %>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="password" class="form-label">Password</label>
+        <%= form.password_field :password,
+            id: "password",
+            required: true,
+            autocomplete: "new-password",
+            placeholder: "Minimum 8 characters",
+            class: "form-input" %>
+        <% if @editor.errors[:password].any? %>
+          <p class="text-sm text-red-600"><%= @editor.errors[:password].first %></p>
+        <% end %>
+      </div>
+
+      <%= form.submit "Create Account", class: "btn-primary mt-4" %>
+    <% end %>
+
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-500">
+        Already have an account? <%= link_to "Sign in", editor_login_path, class: "font-semibold text-accent-secondary hover:underline" %>
+      </p>
+    </div>
+  </div>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_21_021941) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_24_192120) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -34,6 +34,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_21_021941) do
     t.index ["story_id"], name: "index_blanks_on_story_id"
   end
 
+  create_table "editor_invitations", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "token_digest", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "accepted_at"
+    t.integer "editor_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["editor_id"], name: "index_editor_invitations_on_editor_id"
+    t.index ["email"], name: "index_editor_invitations_on_email"
+    t.index ["token_digest"], name: "index_editor_invitations_on_token_digest", unique: true
+  end
+
+  create_table "editor_password_resets", force: :cascade do |t|
+    t.integer "editor_id", null: false
+    t.string "token_digest", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["editor_id"], name: "index_editor_password_resets_on_editor_id"
+    t.index ["token_digest"], name: "index_editor_password_resets_on_token_digest", unique: true
+  end
+
   create_table "editor_sessions", force: :cascade do |t|
     t.integer "editor_id", null: false
     t.string "ip_address"
@@ -48,6 +72,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_21_021941) do
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email"
+    t.index ["email"], name: "index_editors_on_email", unique: true
     t.index ["username"], name: "index_editors_on_username", unique: true
   end
 
@@ -157,6 +183,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_21_021941) do
   add_foreign_key "answers", "games"
   add_foreign_key "answers", "users"
   add_foreign_key "blanks", "stories"
+  add_foreign_key "editor_invitations", "editors"
+  add_foreign_key "editor_password_resets", "editors"
   add_foreign_key "editor_sessions", "editors"
   add_foreign_key "game_prompts", "blanks"
   add_foreign_key "game_prompts", "games"

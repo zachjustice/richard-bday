@@ -15,6 +15,16 @@ Rails.application.routes.draw do
   get "/editor/settings", to: "editor_settings#edit", as: :edit_editor_settings
   patch "/editor/settings", to: "editor_settings#update", as: :editor_settings
 
+  # Editor signup via invitation
+  get "/editor/signup/:token", to: "editor_invitations#show", as: :editor_signup
+  post "/editor/signup/:token", to: "editor_invitations#create"
+
+  # Password reset
+  get "/editor/forgot_password", to: "editor_password_resets#new", as: :editor_forgot_password
+  post "/editor/forgot_password", to: "editor_password_resets#create"
+  get "/editor/reset_password/:token", to: "editor_password_resets#edit", as: :editor_reset_password
+  patch "/editor/reset_password/:token", to: "editor_password_resets#update"
+
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
