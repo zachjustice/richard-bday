@@ -326,6 +326,113 @@
   outline-offset: 3px;
 }
 
+/* Ranked Voting Components
+   Note: Medal emojis (🥇🥈🥉) are used in ranking UI despite the general "avoid emojis" guideline.
+   Exception made because medals are universally recognized symbols for 1st/2nd/3rd place rankings
+   and provide immediate visual hierarchy without requiring custom iconography. */
+.ranking-slot {
+  @apply flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-ink/20 min-h-[70px] transition-all;
+}
+
+.ranking-slot-filled {
+  @apply border-0 p-0 bg-transparent;
+}
+
+.ranking-slot.drag-over {
+  @apply border-accent-secondary bg-accent-secondary/10 border-solid;
+}
+
+.ranking-slot .ranking-answer {
+  @apply flex-1 min-w-0;
+}
+
+.ranking-slot .ranking-answer .answer-text {
+  @apply truncate block;
+}
+
+.ranking-medal {
+  @apply text-3xl flex-none;
+}
+
+.ranking-points {
+  @apply text-sm font-bold text-ink/60 min-w-[50px] flex-none;
+}
+
+.ranking-placeholder {
+  @apply flex-1 text-ink/40 italic text-sm;
+}
+
+.ranking-answer {
+  @apply flex items-center gap-3 p-4 rounded-xl border-2 border-ink cursor-grab transition-all select-none;
+  box-shadow: 2px 2px 0 var(--color-ink);
+  -webkit-user-drag: element;
+  touch-action: none;
+}
+
+.ranking-answer.dragging {
+  @apply cursor-grabbing;
+  opacity: 0.5;
+}
+
+.ranking-answer.swapping {
+  animation: swap-pulse 150ms ease-in-out;
+}
+
+@keyframes swap-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.ranking-answer:active {
+  @apply cursor-grabbing;
+}
+
+.ranking-handle {
+  @apply text-ink/40 select-none flex-none;
+}
+
+.answer-medal {
+  @apply text-2xl mr-2 flex-none;
+}
+
+/* Wider scrollbar for ranked voting answers - always visible */
+.ranking-answers-scrollable {
+  scrollbar-width: auto;
+  scrollbar-color: var(--color-accent-secondary) rgba(0, 0, 0, 0.15);
+  scrollbar-gutter: stable;
+}
+
+.ranking-answers-scrollable::-webkit-scrollbar {
+  width: 14px;
+  -webkit-appearance: none;
+}
+
+@media (max-width: 640px) {
+  .ranking-answers-scrollable::-webkit-scrollbar {
+    width: 20px;
+  }
+}
+
+.ranking-answers-scrollable::-webkit-scrollbar-track {
+  @apply bg-ink/15 rounded-lg;
+  border: 1px solid var(--color-ink);
+  margin: 4px 0;
+}
+
+.ranking-answers-scrollable::-webkit-scrollbar-thumb {
+  @apply bg-accent-secondary rounded-lg;
+  border: 2px solid var(--color-ink);
+  min-height: 40px;
+}
+
+.ranking-answers-scrollable::-webkit-scrollbar-thumb:hover {
+  @apply bg-accent-tertiary;
+}
+
 /* Glass Morphism Effects */
 .glass-light {
   background: rgba(255, 255, 255, 0.2);
@@ -893,11 +1000,11 @@
     /* Shadow Cover BOTTOM */
     linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
     /* Shadow TOP */
-    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top,
+    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) center top,
     /* Shadow BOTTOM */
-    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center bottom;
+    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) center bottom;
   background-repeat: no-repeat;
-  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+  background-size: 100% 60px, 100% 50px, 100% 14px, 100% 14px;
   background-attachment: local, local, scroll, scroll;
 }
 

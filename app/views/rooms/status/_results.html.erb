@@ -16,15 +16,34 @@
           <div class="w-full flex flex-col flex-1">
             <span class="text-2xl block text-ink leading-tight font-bold"><%= answer.text %> <%= '🏆' if winner&.id == answer&.id %></span>
             <span class="text-2xl block text-ink/60 leading-tight font-medium whitespace-nowrap overflow-hidden text-ellipsis"><%= answer.user.name %></span>
+            <% if local_assigns[:ranked_voting] && local_assigns[:points_by_answer] %>
+              <span class="text-lg font-bold text-accent-primary mt-1">
+                <%= points_by_answer[answer.id] %> points
+              </span>
+            <% end %>
           </div>
           <div class="flex flex-1 flex-col items-end w-full text-ink/60">
             <% if votes_by_answer[answer.id]&.any? %>
               <div class="flex flex-col gap-2">
-                <div class="flex flex-wrap gap-2">
-                  <% votes_by_answer[answer.id].each do |vote| %>
-                    <span class="px-3 py-1 border border-accent-violet rounded-full font-medium text-ink max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis bg-accent-violet/10"><%= vote.user.name %></span>
+                <% if local_assigns[:ranked_voting] %>
+                  <%# Grouped by rank for ranked voting %>
+                  <% votes_by_answer[answer.id].group_by(&:rank).sort_by { |rank, _| rank || 999 }.each do |rank, rank_votes| %>
+                    <% next if rank.nil? %>
+                    <div class="flex items-center gap-1 flex-wrap">
+                      <span class="text-xl"><%= GameConstants::RANKED_MEDALS[rank - 1] %></span>
+                      <% rank_votes.each do |vote| %>
+                        <span class="px-2 py-1 text-sm border border-accent-violet rounded-full font-medium text-ink max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis bg-accent-violet/10"><%= vote.user.name %></span>
+                      <% end %>
+                    </div>
                   <% end %>
-                </div>
+                <% else %>
+                  <%# Simple list for vote-once %>
+                  <div class="flex flex-wrap gap-2">
+                    <% votes_by_answer[answer.id].each do |vote| %>
+                      <span class="px-3 py-1 border border-accent-violet rounded-full font-medium text-ink max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis bg-accent-violet/10"><%= vote.user.name %></span>
+                    <% end %>
+                  </div>
+                <% end %>
               </div>
             <% end %>
           </div>

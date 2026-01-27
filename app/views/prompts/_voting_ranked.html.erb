@@ -1,0 +1,63 @@
+<%
+  max_slots = [@answers.count, @current_room.max_ranks].min
+  medals = GameConstants::RANKED_MEDALS
+  config = @current_room.voting_config
+%>
+
+<div data-controller="prompt ranked-voting"
+     data-ranked-voting-max-slots-value="<%= max_slots %>"
+     data-ranked-voting-medals-value="<%= medals.to_json %>"
+     class="min-h-screen flex items-center max-sm:items-start justify-center bg-page">
+  <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-4 max-sm:m-4 max-w-2xl w-full flex flex-col min-h-[600px]">
+
+    <div class="text-center mb-6">
+      <div class="text-6xl max-sm:text-5xl mb-4 animate-float">🏆</div>
+      <h2 class="text-2xl max-sm:text-xl font-bold text-gray-900 leading-snug">
+        <%= @game_prompt.prompt.description %>
+      </h2>
+      <p class="text-ink/60 mt-2 text-sm">Drag answers to rank your top <%= max_slots %></p>
+    </div>
+
+    <%= form_with url: "/vote", method: :post,
+                  data: { ranked_voting_target: "form" },
+                  class: "flex flex-col gap-6 flex-1" do |form| %>
+      <%= form.hidden_field :game_prompt_id, value: @game_prompt.id %>
+
+      <%# Ranking slots %>
+      <div class="flex flex-col gap-3" data-ranked-voting-target="slots">
+        <% max_slots.times do |i| %>
+          <div class="ranking-slot"
+               data-rank="<%= i + 1 %>"
+               data-ranked-voting-target="slot">
+            <span class="ranking-medal"><%= medals[i] %></span>
+            <span class="ranking-points"><%= config.dig("points", (i + 1).to_s) %> pts</span>
+            <div class="ranking-placeholder" data-ranked-voting-target="placeholder">
+              Drop answer here
+            </div>
+            <%= hidden_field_tag "rankings[#{i + 1}]", "", data: { ranked_voting_target: "input" } %>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Available answers %>
+      <div class="flex flex-col gap-3 p-1 ranking-answers-scrollable scroll-fade-indicators overflow-y-auto shrink-0"
+           style="max-height: 250px;"
+           data-ranked-voting-target="answersContainer">
+        <% @answers.each do |answer| %>
+          <div class="ranking-answer"
+               draggable="false"
+               data-answer-id="<%= answer.id %>"
+               data-ranked-voting-target="answer">
+            <span class="ranking-handle">⋮⋮</span>
+            <p class="answer-text"><%= answer.text %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <%= form.submit "Submit Rankings",
+                      class: "btn-primary mt-4",
+                      data: { ranked_voting_target: "submit" },
+                      disabled: true %>
+    <% end %>
+  </div>
+</div>

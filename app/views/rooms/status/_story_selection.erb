@@ -27,6 +27,29 @@
           <% end %>
         </div>
 
+        <%# Voting Style Selector %>
+        <div class="mt-6 p-4 border-t-2 border-ink/10">
+          <h3 class="text-lg font-bold mb-3">Voting Style</h3>
+          <div class="flex flex-col gap-3">
+            <label class="cursor-pointer block">
+              <input type="radio" name="room[voting_style]" value="vote_once"
+                     <%= "checked" if room.vote_once? %> class="peer sr-only">
+              <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                <span class="font-bold text-ink">Vote Once</span>
+                <span class="text-sm text-ink/60">Pick your favorite answer</span>
+              </div>
+            </label>
+            <label class="cursor-pointer block">
+              <input type="radio" name="room[voting_style]" value="ranked_top_3"
+                     <%= "checked" if room.ranked_voting? %> class="peer sr-only">
+              <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                <span class="font-bold text-ink">Ranked Top 3</span>
+                <span class="text-sm text-ink/60">Drag to rank (30/20/10 pts)</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
         <button type="submit" class="btn-primary mt-4 ml-4">Start Game</button>
       <% end %>
     </div>

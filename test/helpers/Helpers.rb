@@ -5,10 +5,6 @@ class Helpers
     @room_id = room_id
   end
 
-  def create_user(name)
-    User.find_or_create_by!(room_id: @room_id, name: name)
-  end
-
   def create_users(names_or_num)
     if names_or_num.is_a? Numeric
       names = create_fake_names(names_or_num)
@@ -22,41 +18,35 @@ class Helpers
   end
 
   def create_answers(answers_or_num)
+    return "No answers" if !answers_or_num
+
     if answers_or_num.is_a? Numeric
       answers = create_fake_answers(answers_or_num)
     else
-      answers = answers_or_num
+      answers = answers_or_num.dup
     end
 
     room = Room.find(@room_id)
     g = room.current_game
     gp = g.current_game_prompt
 
-    if !answers.size
-      return
+
+    # Get players who haven't answered yet
+    players = User.players.where(room: room).to_a
+    players_without_answers = players.reject do |u|
+      Answer.where(game: g, game_prompt: gp, user: u).exists?
     end
 
-    created_answers = 0
-    User.players.where(room: room).each do |u|
-      if created_answers >= answers.size
-        break
-      end
-
-      missing = Answer.where(
+    # Create answers
+    # Chose the smaller value- i.e. if there are fewer players or requested num of votes
+    num_desired_answers = [ answers.length, players_without_answers.length ].min
+    answers[0...num_desired_answers].each_with_index do |text, idx|
+      Answer.create!(
         game: g,
         game_prompt: gp,
-        user: u
-      ).count == 0
-
-      if missing
-        created_answers += 1
-        Answer.find_or_create_by!(
-          game: g,
-          game_prompt: gp,
-          user: u,
-          text: answers.pop
-        )
-      end
+        user: players_without_answers[idx],
+        text: text
+      )
     end
   end
 
@@ -64,27 +54,38 @@ class Helpers
     room = Room.find(@room_id)
     g = room.current_game
     gp = g.current_game_prompt
-    answers = Answer.where(
-      game: g,
-      game_prompt: gp,
-    ).to_a
+    answers = Answer.where(game: g, game_prompt: gp).to_a
 
-    User.players.where(room: room).each do |u|
-      if num_votes > 0
-        missing = Vote.where(
-          game: g,
-          game_prompt: gp,
-          user: u,
-        ).count == 0
-        if missing
-          Vote.find_or_create_by!(
+    # Get players who haven't voted yet
+    players = User.players.where(room: room).to_a
+    players_without_votes = players.reject do |u|
+      Vote.where(game: g, game_prompt: gp, user: u).exists?
+    end
+
+    # Create votes
+    # Chose the smaller value- i.e. if there are fewer players or requested num of votes
+    [ num_votes, players_without_votes.length ].min.times do |idx|
+      user = players_without_votes[idx]
+
+      if room.ranked_voting?
+        max_ranks = [ room.max_ranks, answers.size ].min
+        ranked_answers = tie ? answers.first(max_ranks) : answers.sample(max_ranks)
+        ranked_answers.each_with_index do |answer, rank_idx|
+          Vote.create!(
             game: g,
             game_prompt: gp,
-            user: u,
-            answer: tie ? answers.pop : answers.sample
+            user: user,
+            answer: answer,
+            rank: rank_idx + 1
           )
-          num_votes -= 1
         end
+      else
+        Vote.create!(
+          game: g,
+          game_prompt: gp,
+          user: user,
+          answer: tie ? answers[idx % answers.size] : answers.sample
+        )
       end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_24_192120) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_28_135932) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -117,6 +117,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_24_192120) do
     t.integer "current_game_id"
     t.integer "time_to_answer_seconds", default: 180, null: false
     t.integer "time_to_vote_seconds", default: 120, null: false
+    t.string "voting_style", default: "vote_once", null: false
     t.index ["code"], name: "index_rooms_on_code", unique: true
     t.index ["current_game_id"], name: "index_rooms_on_current_game_id"
   end
@@ -171,11 +172,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_24_192120) do
     t.datetime "updated_at", null: false
     t.integer "game_id", null: false
     t.integer "game_prompt_id", null: false
+    t.integer "rank"
     t.index ["answer_id"], name: "index_votes_on_answer_id"
-    t.index ["game_id", "user_id", "answer_id"], name: "index_votes_on_game_id_and_user_id_and_answer_id", unique: true
     t.index ["game_id"], name: "index_votes_on_game_id"
+    t.index ["game_prompt_id", "rank"], name: "index_votes_on_game_prompt_id_and_rank"
+    t.index ["game_prompt_id", "user_id", "answer_id"], name: "idx_votes_prompt_user_answer_unique", unique: true
+    t.index ["game_prompt_id", "user_id", "rank"], name: "idx_votes_prompt_user_rank_unique", unique: true, where: "rank IS NOT NULL"
     t.index ["game_prompt_id"], name: "index_votes_on_game_prompt_id"
-    t.index ["user_id", "answer_id"], name: "index_votes_on_room_id_and_user_id_and_answer_id", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
 

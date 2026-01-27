@@ -68,22 +68,18 @@ class RoomStatusService
   end
 
   def results_specific_data(answers, votes)
-    votes_by_answer = {}
-    most_votes = -1
-    winners = []
+    # Unified points-based calculation that works for all voting modes
+    points_by_answer = Hash.new(0)
+    votes_by_answer = Hash.new { |h, k| h[k] = [] }
     answers_by_id = answers.index_by(&:id)
 
     votes.each do |vote|
-      votes_by_answer[vote.answer_id] ||= []
-      votes_by_answer[vote.answer_id].push(vote)
-
-      if votes_by_answer[vote.answer_id].size > most_votes
-        most_votes = votes_by_answer[vote.answer_id].size
-        winners = [ answers_by_id[vote.answer_id] ]
-      elsif votes_by_answer[vote.answer_id].size == most_votes
-        winners.push(answers_by_id[vote.answer_id])
-      end
+      points_by_answer[vote.answer_id] += vote.points
+      votes_by_answer[vote.answer_id] << vote
     end
+
+    max_points = points_by_answer.values.max || 0
+    winners = answers.select { |a| points_by_answer[a.id] == max_points }
 
     winner = Answer.where(
       game_prompt: @room.current_game.current_game_prompt,
@@ -93,25 +89,26 @@ class RoomStatusService
     if winner.nil? && winners.any?
       winner = winners.sample
       winner.update!(won: true)
-    else
-      # No one voted. Set the answer to "poop"
-      Answer.new(
+    elsif winner.nil?
+      # No one voted. Create a default answer
+      winner = Answer.create!(
         game: @room.current_game,
         game_prompt: @room.current_game.current_game_prompt,
         user: User.creator.find_by(room: @room),
-        text: Answer::DEFAULT_ANSWER
+        text: Answer::DEFAULT_ANSWER,
+        won: true
       )
     end
 
-    answers_sorted_by_votes = answers.sort do |a, b|
-      (votes_by_answer[b.id]&.size || 0) <=> (votes_by_answer[a.id]&.size || 0)
-    end
+    answers_sorted_by_points = answers.sort_by { |a| -points_by_answer[a.id] }
 
     {
       votes_by_answer: votes_by_answer,
+      points_by_answer: points_by_answer,
       winners: winners,
       winner: winner,
-      answers_sorted_by_votes: answers_sorted_by_votes
+      answers_sorted_by_votes: answers_sorted_by_points,
+      ranked_voting: @room.ranked_voting?
     }
   end
 

@@ -10,6 +10,21 @@ class VoteSubmittedJob < ApplicationJob
       return
     end
 
+    # For ranked voting, check if user has submitted all required ranks before marking as voted
+    if room.ranked_voting?
+      answers_count = Answer.where(
+        game_prompt_id: vote.game_prompt_id
+      ).where.not(user_id: user.id).count  # Exclude user's own answer
+      required_ranks = [ answers_count, room.max_ranks ].min
+      submitted_ranks = Vote.where(
+        user_id: user.id,
+        game_prompt_id: vote.game_prompt_id
+      ).count
+
+      # Only mark as voted when all ranks are submitted
+      return unless submitted_ranks >= required_ranks
+    end
+
     vote.user.update!(status: UserStatus::Voted)
 
     Turbo::StreamsChannel.broadcast_replace_to(

@@ -24,6 +24,13 @@ class RoomsController < ApplicationController
     room_id = params[:id]
 
     story = Story.find(story_id)
+    room = Room.find(room_id)
+
+    # Update voting style if provided
+    if params[:room] && params[:room][:voting_style]
+      room.update!(voting_style: params[:room][:voting_style])
+    end
+
     game = Game.new(
       story_id: story_id,
       room_id: room_id,
@@ -35,7 +42,6 @@ class RoomsController < ApplicationController
 
     first_game_prompt_id = create_game_prompts(story, game).first.id
 
-    room = Room.find(room_id)
     room.update!(current_game_id: game.id)
 
     move_to_next_game_prompt(room, first_game_prompt_id)
@@ -268,7 +274,7 @@ class RoomsController < ApplicationController
   end
 
   def settings_params
-    params.require(:room).permit(:time_to_answer_seconds, :time_to_vote_seconds)
+    params.require(:room).permit(:time_to_answer_seconds, :time_to_vote_seconds, :voting_style)
   end
 
   def valid_navigation_paths(room)
