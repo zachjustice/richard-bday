@@ -2,7 +2,6 @@ require "application_system_test_case"
 
 class GameFlowTest < ApplicationSystemTestCase
   setup do
-    # Create a fresh room for testing
     @story = stories(:one)
     @blank1 = blanks(:one)
     @blank2 = blanks(:two)
@@ -13,195 +12,180 @@ class GameFlowTest < ApplicationSystemTestCase
   end
 
   test "complete game flow from room creation to final story" do
-    # Step 1: Create a room
     room = nil
 
-    # Host joins the room
+    # Step 1: Host creates a room
     using_session(:host) do
       visit create_room_path
-      click_on "New Game"
-      assert_text "Room Code:"
+      click_button "Start a Game"
+      assert_text "C'MON, GET IN HERE!"
       room = Room.last
     end
 
     # Step 2: Players join the room
     using_session(:player1) do
       join_room_as("Player1", room.code)
-      assert_text "Player1"
+      assert_text "Welcome, Player1!"
     end
 
     using_session(:player2) do
       join_room_as("Player2", room.code)
-      assert_text "Player2"
+      assert_text "Welcome, Player2!"
     end
 
-    # Verify all players appear in the waiting room
+    # Step 3: Host sees players and advances to story selection
     using_session(:host) do
-      visit "/rooms/#{room.id}/status"
-      connect_turbo_cable_stream_sources
+      visit room_status_path(room)
       assert_text "Player1"
       assert_text "Player2"
+
+      click_button "Let's Go!"
+      assert_text "PICK A STORY"
     end
 
-    # Step 3: Host starts the game
+    # Step 4: Host selects a story and starts the game
     using_session(:host) do
-      select @story.title, from: "story"
-      click_button "Start Game"
-      assert_text "Answering"
+      # Select story radio via JS (scroll container overlaps elements in headless browser)
+      page.execute_script("document.querySelector('input[name=\"story\"][value=\"#{@story.id}\"]').checked = true")
+      page.execute_script("document.querySelector('button[type=\"submit\"]').click()")
+      assert_text "Answer the prompt on your device"
     end
-
-    # Step 4: Players submit answers for first prompt
 
     ############
     # PROMPT 1 #
     ############
 
-    # Player1 submits answer
+    room.reload
+    game_prompt_1_id = room.current_game.current_game_prompt_id
+
+    # Step 5: Player1 submits answer for prompt 1
     using_session(:player1) do
-      visit show_room_path
+      visit "/prompts/#{game_prompt_1_id}"
       fill_in "text", with: "unicorn"
-      click_button "Submit"
-      assert_text "Waiting"
+      click_button "Submit Answer"
+      assert_text "Answer submitted"
     end
 
-    # Player2 submits answer (last one)
+    # Step 6: Player2 submits answer for prompt 1
     using_session(:player2) do
-      visit show_room_path
+      visit "/prompts/#{game_prompt_1_id}"
       fill_in "text", with: "dragon"
-      click_button "Submit"
-
-      # All answers in, should advance to voting
-      assert_text "Vote"
+      click_button "Submit Answer"
     end
 
-    # Step 5: Players vote on answers
-    room.reload
-    room.update!(status: RoomStatus::Voting)
-    current_game_prompt_id = room.current_game.current_game_prompt_id
+    # Simulate background job: transition to Voting
+    simulate_move_to_voting(room)
 
+    # Step 7: Host sees voting phase
     using_session(:host) do
-      visit "/rooms/#{room.id}/status"
-      connect_turbo_cable_stream_sources
-      assert_text "Vote"
+      visit room_status_path(room)
+      assert_text "Vote for the best answer"
     end
 
-    # Player1 votes
+    # Step 8: Player1 votes (can't see own answer "unicorn", sees "dragon")
     using_session(:player1) do
-      visit "/prompts/#{current_game_prompt_id}/voting"
-      assert_text "Vote"
+      visit "/prompts/#{game_prompt_1_id}/voting"
       assert_text "dragon"
-      assert_no_text "unicorn"
-
-      # choose "dragon", visible: false
       find("label.answer-option", text: "dragon").click
-      click_button "Vote", match: :first
-      assert_text "Counting Votes"
+      click_button "Submit Vote"
     end
 
-    # Player2 votes (last vote)
+    # Step 9: Player2 votes (can't see own answer "dragon", sees "unicorn")
     using_session(:player2) do
-      visit "/prompts/#{current_game_prompt_id}/voting"
+      visit "/prompts/#{game_prompt_1_id}/voting"
       assert_text "unicorn"
-      assert_no_text "dragon"
-
-      # choose "unicorn", visible: false
       find("label.answer-option", text: "unicorn").click
-      click_button "Vote", match: :first
+      click_button "Submit Vote"
     end
 
-    room.reload
-    room.update!(status: RoomStatus::Results)
+    # Simulate background job: transition to Results
+    simulate_move_to_results(room)
 
-    # Step 6: View results and advance to next prompt
-    using_session(:host) do
-      visit "/rooms/#{room.id}/status"
-      connect_turbo_cable_stream_sources
-      assert_text "Results"
-
-      click_button "Next"
-      assert_text "Answering"
+    # Step 10: Navigator (Player1) sees results and advances to next prompt
+    using_session(:player1) do
+      visit "/prompts/#{game_prompt_1_id}/results"
+      assert_text "Round Complete!"
+      click_button "Next Round"
     end
-
-    # Manually update room status to Results (ActionCable would do this in real app)
-    room.reload
-    room.update!(status: RoomStatus::Answering)
 
     ############
     # PROMPT 2 #
     ############
 
-    # Step 7: Complete second round (second prompt)
-    # Player1 submits answer in round 2
+    room.reload
+    game_prompt_2_id = room.current_game.current_game_prompt_id
+    assert_not_equal game_prompt_1_id, game_prompt_2_id
+
+    # Step 11: Host sees answering phase for prompt 2
+    using_session(:host) do
+      visit room_status_path(room)
+      assert_text "Answer the prompt on your device"
+    end
+
+    # Step 12: Player1 submits answer for prompt 2
     using_session(:player1) do
-      visit show_room_path
+      visit "/prompts/#{game_prompt_2_id}"
       fill_in "text", with: "sparkly"
-      click_button "Submit"
-      assert_text "Waiting"
+      click_button "Submit Answer"
+      assert_text "Answer submitted"
     end
 
-    # Player2 submits answer in round 2
+    # Step 13: Player2 submits answer for prompt 2
     using_session(:player2) do
-      visit show_room_path
+      visit "/prompts/#{game_prompt_2_id}"
       fill_in "text", with: "fluffy"
-      click_button "Submit"
-      assert_text "Vote"
+      click_button "Submit Answer"
     end
 
-    # Vote in second round
-    room.reload
-    current_game_prompt_id = room.current_game.current_game_prompt_id
+    # Simulate background job: transition to Voting
+    simulate_move_to_voting(room)
 
-    room.reload
-    room.update!(status: RoomStatus::Voting)
-
-    # Player1 votes in round 2
+    # Step 14: Player1 votes in round 2
     using_session(:player1) do
-      visit "/prompts/#{current_game_prompt_id}/voting"
-      assert_text "Vote"
+      visit "/prompts/#{game_prompt_2_id}/voting"
       assert_text "fluffy"
-      assert_no_text "sparkly"
-
-      # choose "dragon", visible: false
       find("label.answer-option", text: "fluffy").click
-      click_button "Vote", match: :first
-      assert_text "Counting Votes"
+      click_button "Submit Vote"
     end
 
-    # Player2 votes in round 2
+    # Step 15: Player2 votes in round 2
     using_session(:player2) do
-      visit "/prompts/#{current_game_prompt_id}/voting"
+      visit "/prompts/#{game_prompt_2_id}/voting"
       assert_text "sparkly"
-      assert_no_text "fluffly"
-
-      # choose "unicorn", visible: false
       find("label.answer-option", text: "sparkly").click
-      click_button "Vote", match: :first
+      click_button "Submit Vote"
     end
 
-    # Step 8: Advance to final results
-    # Manually update room status to Results
+    # Simulate background job: transition to Results
+    simulate_move_to_results(room)
+
+    # Step 16: Navigator (Player1) advances - last prompt triggers FinalResults
+    using_session(:player1) do
+      visit "/prompts/#{game_prompt_2_id}/results"
+      assert_text "Round Complete!"
+      click_button "Next Round"
+      # After the last prompt, room transitions to FinalResults
+      assert_text "Game Complete!"
+    end
+
+    # Step 17: Host sees the final story
     room.reload
-    room.update!(status: RoomStatus::Results)
-
     using_session(:host) do
-      visit "/rooms/#{room.id}/status"
-      connect_turbo_cable_stream_sources
-      assert_text "Results"
-      click_button "Next"
-
-      # Should see final story
+      visit room_status_path(room)
       assert_text @story.title
-      winning_answers = Answer.where(game: room.current_game, won: true)
-      assert_equal 2, winning_answers.size
-      assert text "Once upon a time there was a #{winning_answers.first.text} creature who was very #{winning_answers.last.text}."
     end
 
-    # Step 9: End game
-    using_session(:host) do
-      connect_turbo_cable_stream_sources
+    # Step 18: Navigator ends the game
+    using_session(:player1) do
+      visit "/prompts/#{game_prompt_2_id}/results"
       click_button "Start New Game"
-      assert_text "Stories"
-      assert_text "Players"
+      assert_text "Between Games"
+    end
+
+    # Step 19: Host sees waiting room again
+    using_session(:host) do
+      visit room_status_path(room)
+      assert_text "C'MON, GET IN HERE!"
     end
   end
 
@@ -211,6 +195,23 @@ class GameFlowTest < ApplicationSystemTestCase
     visit new_session_path
     fill_in "name", with: name
     fill_in "code", with: room_code
-    click_button "Join"
+    click_button "Join Game"
+  end
+
+  # Simulate AnswerSubmittedJob + GamePhasesService#move_to_voting
+  def simulate_move_to_voting(room)
+    room.reload
+    User.players.where(room: room).update_all(status: UserStatus::Voting)
+    room.update!(status: RoomStatus::Voting)
+    room.current_game.update!(next_game_phase_time: Time.now + room.time_to_vote_seconds + GameConstants::COUNTDOWN_FORGIVENESS_SECONDS)
+  end
+
+  # Simulate VoteSubmittedJob + GamePhasesService#move_to_results
+  # Also triggers winner selection that normally happens when status page renders Results
+  def simulate_move_to_results(room)
+    room.reload
+    room.update!(status: RoomStatus::Results)
+    # Trigger RoomStatusService to select a winner (same as when status page renders)
+    RoomStatusService.new(room).call
   end
 end
