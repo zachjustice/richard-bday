@@ -75,3 +75,4 @@ Following the Style Guide is critical.
 - Corporate/enterprise software aesthetic
 - Generic LLM-generated UI patterns
 - Overly polished or sterile feel
+- DON'T using the btn-primary class in a link_to class. The link_to styling and btn-primary styling do not mesh well and serve different purposes.

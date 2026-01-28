@@ -6,13 +6,15 @@
      aria-modal="true">
   <div class="settings-backdrop" data-action="click->settings-modal#close"></div>
   <div class="settings-content">
-    <div class="flex items-center justify-between px-8 py-6 border-b-2 border-gray-200">
-      <h2 id="settings-modal-title" class="text-2xl font-bold text-gray-900 m-0">Room Settings</h2>
+    <div class="flex items-center justify-between px-8 py-6 border-b-3 border-ink">
+      <h2 id="settings-modal-title" class="text-2xl font-bold text-ink m-0">Room Settings</h2>
       <button type="button"
-              class="bg-transparent border-none text-2xl text-gray-500 cursor-pointer p-2 rounded-md leading-none transition-all hover:bg-gray-100 hover:text-gray-900"
+              class="modal-close-btn"
               data-action="click->settings-modal#close"
               aria-label="Close settings">
-        ✕
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M4 4l12 12M16 4l-12 12"/>
+        </svg>
       </button>
     </div>
     <div id="settings-form">

@@ -6,7 +6,11 @@
     class="music-player-button"
     data-action="click->music-player#openModal"
     title="Open Music Player">
-    🎵
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18V5l12-2v13"/>
+      <circle cx="6" cy="18" r="3"/>
+      <circle cx="18" cy="16" r="3"/>
+    </svg>
   </button>
 
   <!-- Music Player Modal -->
@@ -28,17 +32,19 @@
               href="#"
               target="_blank"
               rel="noopener noreferrer"
-              class="text-white underline opacity-90 hover:opacity-100"
+              class="text-ink-inverted underline opacity-90 hover:opacity-100"
               data-music-player-target="artistLink">
               <span data-music-player-target="artistName">Select a song</span>
             </a>
           </p>
         </div>
         <button
-          class="music-player-close-btn"
+          class="modal-close-btn modal-close-btn--light"
           data-action="click->music-player#closeModal"
           aria-label="Close music player">
-          ✕
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M4 4l12 12M16 4l-12 12"/>
+          </svg>
         </button>
       </div>
 
@@ -49,25 +55,37 @@
             class="control-btn"
             data-action="click->music-player#previousSong"
             title="Previous song">
-            ⏮️
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+            </svg>
           </button>
 
           <button
             class="control-btn play-pause"
             data-action="click->music-player#togglePlay"
             title="Play/Pause">
-            <span data-music-player-target="playIcon">▶️</span>
-            <span data-music-player-target="pauseIcon" class="hidden">⏸️</span>
+            <span data-music-player-target="playIcon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </span>
+            <span data-music-player-target="pauseIcon" class="hidden">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+              </svg>
+            </span>
           </button>
 
           <button
             class="control-btn"
             data-action="click->music-player#nextSong"
             title="Next song">
-            ⏭️
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+            </svg>
           </button>
         </div>
-        <div class="flex justify-between text-sm text-gray-500 mb-2 tabular-nums">
+        <div class="flex justify-between text-sm body mb-2 tabular-nums">
           <span data-music-player-target="currentTime">0:00</span>
           <span data-music-player-target="totalTime">0:00</span>
         </div>
@@ -87,7 +105,7 @@
         <div class="shrink-0">
           <input
             type="text"
-            class="music-search-input"
+            class="form-input"
             placeholder="Search songs or artists..."
             data-music-player-target="searchInput"
             data-action="input->music-player#search">
@@ -97,7 +115,7 @@
         <div
           class="music-player-songs"
           data-music-player-target="songList">
-          <div class="p-4 text-center text-gray-500">Loading songs...</div>
+          <div class="p-4 text-center body">Loading songs...</div>
         </div>
       </div>
     </div>
