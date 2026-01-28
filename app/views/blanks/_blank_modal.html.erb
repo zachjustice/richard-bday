@@ -7,17 +7,17 @@
      aria-modal="true">
   <div class="blank-backdrop" data-action="click->blank-modal#close"></div>
   <div class="blank-content">
-    <div class="flex items-center justify-between px-8 py-6 border-b-2 border-gray-200 shrink-0">
+    <div class="flex items-center justify-between px-8 py-6 border-b-3 border-ink shrink-0">
       <h2 id="blank-modal-title"
-          class="text-2xl font-bold text-gray-900 m-0"
+          class="text-2xl font-bold text-ink m-0"
           data-blank-modal-target="title">
         Add New Blank
       </h2>
       <button type="button"
-              class="bg-transparent border-none text-2xl text-gray-500 cursor-pointer p-2 rounded-md leading-none transition-all hover:bg-gray-100 hover:text-gray-900"
+              class="modal-close-btn"
               data-action="click->blank-modal#close"
               aria-label="Close">
-        ✕
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="p-8 overflow-y-auto flex-1 md:p-6">

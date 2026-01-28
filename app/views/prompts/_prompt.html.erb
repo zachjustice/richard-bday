@@ -2,20 +2,20 @@
 <div id="prompt_<%= prompt.id %>" class="prompt-item" data-controller="prompt-editor">
   <div class="flex flex-col gap-2" data-prompt-editor-target="display">
     <div class="flex justify-between items-center max-sm:items-start gap-4 mb-3">
-      <p class="flex-1 text-base font-medium text-gray-900 m-0 leading-snug"><%= prompt.description %></p>
+      <p class="flex-1 text-base font-medium text-ink m-0 leading-snug"><%= prompt.description %></p>
       <div class="flex gap-2 shrink-0">
         <button type="button"
                 class="btn-icon"
                 data-action="click->prompt-editor#edit"
           title="Edit">
-          ✏️
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
         </button>
         <%= button_to destroy_prompt_path(prompt),
             method: :delete,
             data: { turbo_confirm: "Delete this prompt?" },
             class: "btn-icon",
             title: "Delete" do %>
-          🗑️
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
         <% end %>
       </div>
     </div>
@@ -24,7 +24,7 @@
         <span class="tag"><%= tag %></span>
       <% end %>
     </div>
-    <p class="text-xs text-gray-500 m-0">
+    <p class="text-xs text-ink/60 m-0">
       <%= pluralize(prompt.matching_blanks.count, "matching blank") %>
     </p>
   </div>

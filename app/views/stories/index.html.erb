@@ -1,19 +1,19 @@
 <%# app/views/stories/index.html.erb %>
-<div class="max-w-[1400px] flex flex-col flex-1 p-8 md:p-4">
+<div class="max-w-[1400px] w-full flex flex-col flex-1 p-8 md:p-4 m-auto">
   <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
-    <h1 class="text-3xl font-bold text-gray-900 m-0">Stories</h1>
+    <h1 class="text-3xl font-bold text-ink m-0">Stories</h1>
     <div class="flex gap-4">
       <%= link_to "Create New Story", new_story_path, class: "btn-primary" %>
       <%= link_to "Prompts", prompts_index_path, class: "btn-secondary" %>
     </div>
   </div>
 
-  <div class="flex flex-col flex-1 overflow-y-auto min-h-0 gap-6 border border-gray-200 p-2 z-1 rounded-lg scroll-fade-indicators">
+  <div class="flex flex-col flex-1 overflow-y-auto min-h-0 gap-6 border-2 border-ink/20 p-2 z-1 rounded-lg scroll-fade-indicators">
     <% @stories.each do |story| %>
       <div class="story-card">
         <div class="flex flex-1 flex-col">
-          <h3 class="m-0 mb-2 text-gray-900 font-semibold"><%= story.title %></h3>
-          <p class="text-gray-500 text-sm m-0">
+          <h3 class="m-0 mb-2 text-ink font-semibold"><%= story.title %></h3>
+          <p class="text-ink/60 text-sm m-0">
             <%= pluralize(story.blanks.count, "blank") %>
           </p>
         </div>

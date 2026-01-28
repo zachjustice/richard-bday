@@ -14,12 +14,12 @@
   a:hover {
     color: var(--color-accent-secondary);
   }
-  a::after {
+  a:not(.btn-primary):not(.btn-secondary):not(.btn-icon)::after {
     content: '';
     @apply absolute left-0 bottom-0 w-0 h-0.5 transition-all duration-300;
     background-color: var(--color-accent-secondary);
   }
-  a:hover::after {
+  a:not(.btn-primary):not(.btn-secondary):not(.btn-icon):hover::after {
     @apply w-full;
   }
 }
@@ -493,74 +493,77 @@
 
 /* Story Editor Components */
 .story-card {
-  @apply flex flex-row p-6 border-2 border-gray-200 rounded-xl transition-all justify-between;
+  @apply flex flex-row p-6 border-3 border-ink rounded-xl transition-all justify-between bg-white;
+  box-shadow: 4px 4px 0px var(--color-ink);
 }
 
 .story-card:hover {
-  @apply -translate-y-1 shadow-lg border-brand-purple;
+  @apply -translate-y-1;
+  box-shadow: 6px 6px 0px var(--color-ink);
 }
 
 .story-form-input {
-  @apply p-4 border-2 border-gray-200 rounded-lg text-base transition-all outline-none;
+  @apply p-4 border-2 border-ink/30 rounded-lg text-base transition-all outline-none bg-white;
 }
 
 .story-form-input:focus {
-  @apply border-brand-purple ring-4 ring-brand-purple/10;
+  @apply border-accent-secondary ring-4 ring-accent-secondary/10;
 }
 
 .story-form-textarea {
-  @apply p-4 border-2 border-gray-200 rounded-lg text-base transition-all outline-none;
+  @apply p-4 border-2 border-ink/30 rounded-lg text-base transition-all outline-none bg-white;
   @apply resize-y font-mono leading-relaxed;
 }
 
 .story-form-textarea:focus {
-  @apply border-brand-purple ring-4 ring-brand-purple/10;
+  @apply border-accent-secondary ring-4 ring-accent-secondary/10;
 }
 
 .blank-item {
-  @apply bg-white border-2 border-gray-200 rounded-lg p-4 transition-all;
+  @apply bg-white border-2 border-ink/30 rounded-lg p-4 transition-all;
 }
 
 .blank-item:hover {
-  @apply border-brand-purple;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+  @apply border-ink;
+  box-shadow: 3px 3px 0px var(--color-ink);
 }
 
 .blank-card {
-  @apply flex flex-col bg-white p-4 rounded-lg border-2 border-gray-200 transition-all gap-2;
+  @apply flex flex-col bg-white p-4 rounded-lg border-2 border-ink/30 transition-all gap-2;
 }
 
 .blank-card:hover {
-  @apply -translate-y-0.5 shadow-md border-brand-purple;
+  @apply -translate-y-0.5 border-ink;
+  box-shadow: 3px 3px 0px var(--color-ink);
 }
 
 .blank-id {
-  @apply font-mono font-bold text-black rounded-sm text-sm;
+  @apply font-mono font-bold text-ink rounded-sm text-sm;
 }
 
 .tag {
-  @apply inline-block px-2.5 py-1 rounded-full text-xs font-medium text-gray-900;
-  background: linear-gradient(135deg, rgba(118, 75, 162, 0.15) 0%, rgba(240, 147, 251, 0.15) 100%);
-  border: 1px solid rgba(118, 75, 162, 0.3);
+  @apply inline-block px-2.5 py-1 rounded-full text-xs font-bold text-ink;
+  background: var(--color-accent-tertiary);
+  border: 2px solid var(--color-ink);
 }
 
 .blanks-help {
   @apply p-4 rounded-lg mb-6;
-  background: rgba(102, 126, 234, 0.05);
-  border: 1px solid rgba(102, 126, 234, 0.2);
+  background: rgba(255, 214, 10, 0.15);
+  border: 2px dashed var(--color-ink);
 }
 
 .prompts-checklist {
-  @apply flex flex-col gap-3 max-h-[300px] overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200;
+  @apply flex flex-col gap-3 max-h-[300px] overflow-y-auto p-4 bg-white rounded-lg border-2 border-ink/20;
 }
 
 .prompt-item {
-  @apply bg-gray-50 border-2 border-gray-200 rounded-lg p-5 transition-all;
+  @apply bg-white border-2 border-ink/30 rounded-lg p-5 transition-all;
 }
 
 .prompt-item:hover {
-  @apply border-brand-purple;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+  @apply border-ink;
+  box-shadow: 3px 3px 0px var(--color-ink);
 }
 
 .prompt-form {
@@ -568,12 +571,12 @@
 }
 
 .prompt-checkbox {
-  @apply flex gap-3 p-3 bg-white border-2 border-gray-200 rounded-md cursor-pointer transition-all;
+  @apply flex gap-3 p-3 bg-white border-2 border-ink/20 rounded-md cursor-pointer transition-all;
 }
 
 .prompt-checkbox:hover {
-  @apply border-brand-purple;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  @apply border-ink;
+  box-shadow: 2px 2px 0px var(--color-ink);
 }
 
 /* Blank Modal Component */
@@ -590,24 +593,22 @@
 }
 
 .blank-content {
-  @apply relative bg-white rounded-2xl shadow-3xl w-full max-w-[700px] max-h-[90vh];
+  @apply relative bg-white w-full max-w-[700px] max-h-[90vh];
   @apply overflow-hidden flex flex-col animate-slide-up;
-}
-
-.blank-content::before {
-  content: '';
-  @apply absolute top-0 left-0 right-0 h-1;
-  background: var(--gradient-primary-simple);
+  border: 3px solid var(--color-ink);
+  border-radius: 1rem;
+  box-shadow: 8px 8px 0px var(--color-ink);
 }
 
 /* Story Editor Buttons */
 .btn-secondary {
   @apply px-6 py-3 rounded-lg font-semibold cursor-pointer transition-all text-base;
-  @apply inline-block text-gray-900 no-underline bg-gray-100 border-2 border-gray-200 whitespace-nowrap;
+  @apply inline-flex items-center justify-center text-ink no-underline bg-white border-2 border-ink/30 whitespace-nowrap;
 }
 
 .btn-secondary:hover {
-  @apply bg-gray-200 border-gray-300;
+  @apply border-ink;
+  box-shadow: 3px 3px 0px var(--color-ink);
 }
 
 .btn-sm {
@@ -615,11 +616,13 @@
 }
 
 .btn-icon {
-  @apply p-2 bg-transparent border border-transparent rounded-lg text-lg cursor-pointer transition-all;
+  @apply p-2 bg-transparent border-2 border-transparent rounded-lg cursor-pointer transition-all;
+  @apply flex items-center justify-center;
 }
 
 .btn-icon:hover {
-  @apply bg-gray-100 border-gray-200 scale-110;
+  @apply border-ink/20 scale-110;
+  background: rgba(255, 214, 10, 0.2);
 }
 
 @media (prefers-reduced-motion: reduce) {

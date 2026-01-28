@@ -1,9 +1,9 @@
 <%# app/views/prompts/_form.html.erb %>
 <%= form_with model: prompt,
     url: create_prompt_path,
-    class: "bg-white border-2 border-dashed border-gray-300 rounded-lg p-6" do |form| %>
+    class: "bg-white border-2 border-dashed border-ink/30 rounded-lg p-6" do |form| %>
 
-  <h3 class="m-0 mb-4 text-lg font-bold text-gray-900">Add New Prompt</h3>
+  <h3 class="m-0 mb-4 text-lg font-bold text-ink">Add New Prompt</h3>
 
   <% if prompt.errors.any? %>
     <div class="bg-red-500/10 border-2 border-error-light rounded-lg p-4 mb-4">
@@ -15,7 +15,7 @@
 
   <div class="flex flex-col gap-4">
     <div class="flex flex-col gap-2">
-      <%= form.label :description, "Prompt Question", class: "font-semibold text-gray-900" %>
+      <%= form.label :description, "Prompt Question", class: "font-semibold text-ink" %>
       <%= form.text_area :description,
           rows: 3,
           placeholder: "What is a funny animal?",
@@ -23,11 +23,11 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-gray-900" %>
+      <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-ink" %>
       <%= form.text_field :tags,
           placeholder: "noun,animal,funny",
           class: "story-form-input" %>
-      <p class="text-sm text-gray-500 italic m-0">Tags match prompts to story blanks</p>
+      <p class="text-sm text-ink/60 italic m-0">Tags match prompts to story blanks</p>
     </div>
 
     <div class="flex gap-4 pt-2">

@@ -5,7 +5,7 @@
     class: "flex flex-col gap-4 animate-slide-in" do |form| %>
 
   <div class="flex flex-col gap-2">
-    <%= form.label :description, "Prompt Question", class: "font-semibold text-gray-900" %>
+    <%= form.label :description, "Prompt Question", class: "font-semibold text-ink" %>
     <%= form.text_area :description,
         rows: 2,
         placeholder: "What is a funny animal?",
@@ -13,7 +13,7 @@
   </div>
 
   <div class="flex flex-col gap-2">
-    <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-gray-900" %>
+    <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-ink" %>
     <%= form.text_field :tags,
         placeholder: "noun,animal,funny",
         class: "story-form-input" %>

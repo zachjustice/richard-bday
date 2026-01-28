@@ -1,22 +1,22 @@
 <%# app/views/stories/edit.html.erb %>
-<div class="max-w-[1400px] flex flex-col flex-1 p-8 md:p-4" data-controller="story-editor blank-modal">
+<div class="max-w-[1400px] w-full flex flex-col flex-1 p-8 md:p-4 m-auto" data-controller="story-editor blank-modal">
   <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
-    <h1 class="text-3xl font-bold text-gray-900 m-0">Edit Story: <%= @story.title %></h1>
+    <h1 class="text-3xl font-bold text-ink m-0">Edit Story: <%= @story.title %></h1>
     <%= link_to "← Back to Story", story_path(@story), class: "btn-secondary" %>
   </div>
 
   <div class="grid grid-cols-[2fr_1fr] gap-8 lg:grid-cols-1">
     <!-- Left: Story Form -->
-    <div class="bg-white p-8 rounded-xl border-2 border-gray-200">
+    <div class="bg-white p-8 rounded-xl border-3 border-ink" style="box-shadow: 4px 4px 0px var(--color-ink);">
       <div id="story_form">
         <%= render "form", story: @story %>
       </div>
     </div>
 
     <!-- Right: Blanks Panel -->
-    <div class="bg-gray-50 p-6 rounded-xl border-2 border-gray-200 overflow-y-auto lg:max-h-none lg:static">
+    <div class="bg-page p-6 rounded-xl border-3 border-ink overflow-y-auto lg:max-h-none lg:static" style="box-shadow: 4px 4px 0px var(--color-ink);">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-900 m-0">Blanks</h2>
+        <h2 class="text-xl font-bold text-ink m-0">Blanks</h2>
         <button type="button"
                 class="btn-primary btn-sm"
                 data-action="click->blank-modal#open">
@@ -25,8 +25,8 @@
       </div>
 
       <div class="blanks-help">
-        <p class="m-1 text-sm text-gray-500">Insert blanks in your story text using <code class="bg-brand-purple/15 px-1.5 py-0.5 rounded-sm font-mono text-brand-purple font-semibold">{blank_id}</code></p>
-        <p class="m-1 text-sm text-gray-500">Example: "Once upon a time there was a <code class="bg-brand-purple/15 px-1.5 py-0.5 rounded-sm font-mono text-brand-purple font-semibold">{1}</code>."</p>
+        <p class="m-1 text-sm text-ink/60">Insert blanks in your story text using <code class="bg-accent-secondary/15 px-1.5 py-0.5 rounded-sm font-mono text-accent-secondary font-semibold">{blank_id}</code></p>
+        <p class="m-1 text-sm text-ink/60">Example: "Once upon a time there was a <code class="bg-accent-secondary/15 px-1.5 py-0.5 rounded-sm font-mono text-accent-secondary font-semibold">{1}</code>."</p>
       </div>
 
       <div id="blanks_list" class="flex flex-col gap-4 mb-6">

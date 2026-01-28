@@ -1,7 +1,7 @@
 <%# app/views/stories/_form.html.erb %>
 <%= form_with model: story, class: "flex flex-col gap-6" do |form| %>
   <div class="flex flex-col gap-2">
-    <%= form.label :title, "Story Title", class: "font-semibold text-gray-900" %>
+    <%= form.label :title, "Story Title", class: "font-semibold text-ink" %>
     <%= form.text_field :title,
         placeholder: "...",
         class: "story-form-input" %>
@@ -9,7 +9,7 @@
 
   <% if story.persisted? %>
     <div class="flex flex-col gap-2">
-      <%= form.label :text, "Story Text (with blanks)", class: "font-semibold text-gray-900" %>
+      <%= form.label :text, "Story Text (with blanks)", class: "font-semibold text-ink" %>
       <%= form.text_area :text,
           rows: 12,
           placeholder: "Write your story here. Use {1}, {2}, etc. for blanks.",
@@ -21,7 +21,7 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <%= form.label :original_text, "Original Text (for reference)", class: "font-semibold text-gray-900" %>
+      <%= form.label :original_text, "Original Text (for reference)", class: "font-semibold text-ink" %>
       <%= form.text_area :original_text,
           rows: 6,
           placeholder: "Original unmodified version (optional)",
@@ -30,8 +30,8 @@
 
     <div class="flex flex-row items-center gap-3">
       <%= form.checkbox :published,
-          class: "w-5 h-5 cursor-pointer accent-brand-purple" %>
-      <%= form.label :published, "Publish?", class: "font-semibold text-gray-900" %>
+          class: "w-5 h-5 cursor-pointer accent-accent-primary" %>
+      <%= form.label :published, "Publish?", class: "font-semibold text-ink" %>
     </div>
   <% end %>
 
