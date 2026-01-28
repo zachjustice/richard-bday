@@ -1,64 +1,19 @@
 <!doctype html>
-
 <html lang="en">
-
 <head>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Page not found · 404</title>
 
-  <!-- Self-contained styles for static error page. Mirrors project tokens and create-page look. -->
   <style>
     :root {
-      --color-primary-purple: #667eea;
-      --color-primary-deep-purple: #764ba2;
-      --color-primary-pink: #f093fb;
-
-      --color-white: #ffffff;
-      --color-gray-50: #f9fafb;
-      --color-gray-100: #f5f5f5;
-      --color-gray-400: #9ca3af;
-      --color-gray-600: #6b7280;
-      --color-gray-900: #333333;
-
-      --bg-primary: var(--color-white);
-      --text-primary: var(--color-gray-900);
-      --text-secondary: var(--color-gray-600);
-      --text-on-primary: var(--color-white);
-
-      --gradient-primary: linear-gradient(135deg, var(--color-primary-purple) 0%, var(--color-primary-deep-purple) 50%, var(--color-primary-pink) 100%);
-      --gradient-primary-simple: linear-gradient(135deg, var(--color-primary-purple) 0%, var(--color-primary-deep-purple) 100%);
-      --gradient-primary-reverse: linear-gradient(135deg, var(--color-primary-deep-purple) 0%, var(--color-primary-purple) 100%);
-
-      --space-2: 0.5rem;
-      --space-4: 1rem;
-      --space-6: 1.5rem;
-      --space-8: 2rem;
-      --space-12: 3rem;
-      --space-16: 4rem;
-
-      --font-size-base: 16px;
-      --font-size-md: 1.1rem;
-      --font-size-lg: 1.2rem;
-      --font-size-3xl: 2rem;
-      --font-size-4xl: 2.5rem;
-      --font-size-5xl: 3rem;
-      --font-size-6xl: 4rem;
-
-      --font-weight-semibold: 600;
-      --font-weight-bold: 700;
-
-      --radius-xl: 12px;
-      --radius-3xl: 24px;
-
-      --shadow-3xl: 0 20px 60px rgba(102, 126, 234, 0.3);
-      --shadow-xl: 0 8px 25px rgba(102, 126, 234, 0.6);
-      --shadow-button: 0 4px 15px rgba(102, 126, 234, 0.4);
-
-      --transition-normal: 0.3s ease;
-      --line-height-snug: 1.3;
+      --color-accent-primary: #E63946;
+      --color-accent-secondary: #2196F3;
+      --color-accent-tertiary: #FFD60A;
+      --color-bg-page: #FFF8E7;
+      --color-ink: #1A1A2E;
+      --color-ink-muted: rgba(26, 26, 46, 0.7);
     }
 
     * {
@@ -67,182 +22,222 @@
       padding: 0;
     }
 
-    html {
-      font-size: var(--font-size-base);
-    }
-
     body {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-      color: var(--text-primary);
-      background: var(--gradient-primary);
+      color: var(--color-ink);
+      background-color: var(--color-bg-page);
+      padding: 1rem;
     }
 
-    /* Reused component classes from create page */
-    .create-page {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-4);
-      overflow: hidden;
-    }
-
-    .create-card {
-      background: var(--bg-primary);
-      border-radius: var(--radius-3xl);
-      box-shadow: var(--shadow-3xl);
-      padding: var(--space-12) var(--space-8);
+    .page-wrapper {
+      position: relative;
       width: 100%;
       max-width: 500px;
-      text-align: center;
-      animation: fadeInUp 0.6s ease-out;
     }
 
-    @keyframes fadeInUp {
+    .card {
+      background: white;
+      border: 3px solid var(--color-ink);
+      border-radius: 1.5rem;
+      box-shadow: 8px 8px 0px var(--color-ink);
+      padding: 3rem 2rem;
+      text-align: center;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
       from {
         opacity: 0;
         transform: translateY(30px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
 
-    .create-content {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-6);
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--color-ink);
     }
 
-    .emoji-header {
-      font-size: var(--font-size-5xl);
-      animation: bounce 2s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-
-    .create-title {
-      font-size: var(--font-size-3xl);
-      font-weight: var(--font-weight-bold);
-      background: var(--gradient-primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: var(--line-height-snug);
-      margin-bottom: 0;
-    }
-
-    .create-subtitle {
-      font-size: var(--font-size-md);
-      color: var(--text-secondary);
-    }
-
-    .create-button {
-      width: 100%;
-      padding: var(--space-4) var(--space-8);
-      font-size: var(--font-size-lg);
-      font-weight: var(--font-weight-semibold);
-      background: var(--gradient-primary-simple);
-      color: var(--text-on-primary);
-      border: none;
-      border-radius: var(--radius-xl);
-      cursor: pointer;
-      transition: all var(--transition-normal);
-      box-shadow: var(--shadow-button);
-      display: block;
-    }
-
-    .create-button:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-xl);
-      background: var(--gradient-primary-reverse);
-    }
-
-    .create-button:active {
-      transform: translateY(0);
-      box-shadow: var(--shadow-button);
+    .subtitle {
+      font-size: 1rem;
+      color: var(--color-ink-muted);
+      margin-bottom: 2rem;
     }
 
     .actions {
       display: flex;
       flex-direction: column;
-      gap: var(--space-4);
+      gap: 1rem;
+    }
+
+    .btn {
+      display: block;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: var(--color-accent-primary);
+      color: white;
+      border: 3px solid var(--color-ink);
+      border-radius: 0.75rem;
+      box-shadow: 4px 4px 0px var(--color-ink);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--color-ink);
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--color-ink);
     }
 
     .links {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      font-size: 12px;
-      color: var(--color-gray-400);
-      padding: var(--space-2);
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: var(--color-ink-muted);
     }
 
     .links a {
-      color: var(--color-gray-400);
-      text-decoration: underline;
+      color: var(--color-ink);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+
+    .links a:hover {
+      color: var(--color-accent-secondary);
+    }
+
+    /* Doodle decorations */
+    .doodles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .doodle {
+      position: absolute;
+      animation: wiggle 3s ease-in-out infinite;
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(var(--rotation)) translate(0, 0); }
+      50% { transform: rotate(calc(var(--rotation) + 3deg)) translate(2px, -2px); }
+    }
+
+    .doodle-star {
+      top: 10%;
+      left: 5%;
+      width: 48px;
+      height: 48px;
+      --rotation: 12deg;
+    }
+
+    .doodle-squiggle {
+      top: 20%;
+      right: 8%;
+      width: 64px;
+      height: 32px;
+      --rotation: -6deg;
+    }
+
+    .doodle-circle {
+      bottom: 25%;
+      left: 8%;
+      width: 56px;
+      height: 56px;
+      --rotation: -15deg;
+    }
+
+    .doodle-arrow {
+      top: 45%;
+      right: 6%;
+      width: 40px;
+      height: 40px;
+      --rotation: 12deg;
+    }
+
+    .doodle-x {
+      bottom: 35%;
+      right: 12%;
+      width: 40px;
+      height: 40px;
+      --rotation: 6deg;
     }
 
     @media (min-width: 768px) {
-      .create-card {
-        padding: var(--space-16) var(--space-12);
+      .card {
+        padding: 4rem 3rem;
       }
 
-      .emoji-header {
-        font-size: var(--font-size-6xl);
-      }
-
-      .create-title {
-        font-size: var(--font-size-4xl);
+      .title {
+        font-size: 2.5rem;
       }
 
       .actions {
         flex-direction: row;
+        justify-content: center;
       }
 
-      .actions .create-button {
+      .btn {
         width: auto;
       }
     }
   </style>
-
 </head>
 
 <body>
-  <div class="create-page" role="main">
-    <div class="create-card" role="region" aria-labelledby="error-title">
-      <div class="create-content">
-        <h1 id="error-title" class="create-title">Page not found</h1>
-        <p class="create-subtitle">Sorry, we couldn't find that page. Try one of these:</p>
+  <div class="doodles" aria-hidden="true">
+    <svg class="doodle doodle-star" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <path d="M24 4v8M24 36v8M4 24h8M36 24h8M10 10l6 6M32 32l6 6M10 38l6-6M32 16l6-6" style="color: var(--color-accent-tertiary)"/>
+    </svg>
 
-        <div class="actions" role="group" aria-label="Suggested actions">
-          <a href="/rooms/create" class="create-button" role="button">Start a New Game</a>
-          <a href="/session/new" class="create-button" role="button">Join a Game</a>
-        </div>
+    <svg class="doodle doodle-squiggle" viewBox="0 0 64 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+      <path d="M4 16c8-12 16 12 24 0s16 12 24 0" style="color: var(--color-accent-primary)"/>
+    </svg>
+
+    <svg class="doodle doodle-circle" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <circle cx="28" cy="28" r="20" stroke-dasharray="8 6" style="color: var(--color-accent-secondary)"/>
+      <circle cx="28" cy="28" r="4" fill="currentColor" style="color: var(--color-accent-secondary)"/>
+    </svg>
+
+    <svg class="doodle doodle-arrow" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 32C14 24 22 18 32 8M24 6l10 2-2 10" style="color: var(--color-accent-tertiary)"/>
+    </svg>
+
+    <svg class="doodle doodle-x" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+      <path d="M10 10l20 20M30 10l-20 20" style="color: var(--color-accent-primary)"/>
+    </svg>
+  </div>
+
+  <div class="page-wrapper" role="main">
+    <div class="card" role="region" aria-labelledby="error-title">
+      <h1 id="error-title" class="title">Page not found</h1>
+      <p class="subtitle">Sorry, we couldn't find that page. Try one of these:</p>
+
+      <div class="actions" role="group" aria-label="Suggested actions">
+        <a href="/rooms/create" class="btn" role="button">Start a New Game</a>
+        <a href="/session/new" class="btn" role="button">Join a Game</a>
+      </div>
+
+      <div class="links">
+        <a href="/about">about</a> · <a href="/copyright">copyright</a>
       </div>
     </div>
   </div>
-
-  <div class="links" aria-label="Helpful links">
-    <a href="/about">about</a> · <a href="/copyright">copyright</a>
-  </div>
 </body>
-
 </html>
