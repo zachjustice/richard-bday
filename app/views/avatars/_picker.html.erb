@@ -1,0 +1,41 @@
+<div id="avatar-picker" class="mb-6" data-controller="avatar-shuffle">
+  <% if local_assigns[:error] %>
+    <div class="text-center mb-3 p-2 rounded-lg bg-accent-red/15 border border-accent-red/30">
+      <span class="text-sm font-medium text-ink"><%= error %></span>
+    </div>
+  <% end %>
+
+  <% taken_avatars = User.where(room_id: room.id).where.not(id: user.id).pluck(:avatar) %>
+  <% available_avatars = User::AVATARS - taken_avatars - [user.avatar] %>
+
+  <div class="grid grid-cols-6 max-sm:grid-cols-5 gap-2"
+       data-avatar-shuffle-target="grid"
+       data-avatar-shuffle-available-value="<%= available_avatars.to_json %>">
+    <% User::AVATARS.each do |emoji| %>
+      <% is_taken = taken_avatars.include?(emoji) %>
+      <% is_current = user.avatar == emoji %>
+      <% if is_taken %>
+        <div class="text-3xl text-center p-2 rounded-xl opacity-30 cursor-not-allowed grayscale">
+          <%= emoji %>
+        </div>
+      <% elsif is_current %>
+        <div class="text-3xl text-center p-2 rounded-xl border-3 border-accent-yellow bg-accent-yellow/20" style="box-shadow: 2px 2px 0px var(--color-ink);">
+          <%= emoji %>
+        </div>
+      <% else %>
+        <%= form_with url: update_avatar_path, method: :patch, class: "inline", data: { avatar_shuffle_target: "form", avatar: emoji } do %>
+          <%= hidden_field_tag :avatar, emoji %>
+          <button type="submit" class="text-3xl text-center p-2 rounded-xl cursor-pointer transition-all hover:scale-110 hover:bg-accent-yellow/20 active:scale-95 w-full border-0 bg-transparent">
+            <%= emoji %>
+          </button>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="text-center mt-4">
+    <button type="button" class="btn-secondary btn-sm" data-action="avatar-shuffle#shuffle">
+      Shuffle
+    </button>
+  </div>
+</div>

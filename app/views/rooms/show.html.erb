@@ -1,11 +1,14 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 <div data-controller="prompt" class="min-h-screen flex items-center justify-center p-6 max-sm:p-4 max-[480px]:items-start max-[480px]:pt-16 bg-page">
   <div class="card-primary animate-fade-in p-12 max-sm:p-8 max-w-xl w-full">
-    <div class="text-center mb-10">
-      <div class="text-6xl max-sm:text-5xl mb-4 animate-swing">☺️</div>
+    <div class="text-center mb-6">
+      <%= render "avatars/current_avatar", user: @current_user %>
       <h1 class="text-3xl max-sm:text-2xl font-bold text-ink mb-3 leading-tight">Welcome, <%= @current_user.name %>!</h1>
     </div>
-    <div class="card-secondary flex flex-col items-center gap-6 py-10 px-6 max-sm:py-8 max-sm:px-4 mb-10 bg-accent-orange/10">
+
+    <%= render "avatars/picker", user: @current_user, room: @current_room %>
+
+    <div class="card-secondary flex flex-col items-center gap-6 py-10 px-6 max-sm:py-8 max-sm:px-4 bg-accent-orange/10">
       <p class="text-lg max-sm:text-base font-medium text-ink text-center m-0">Waiting for other players to join...</p>
     </div>
   </div>
