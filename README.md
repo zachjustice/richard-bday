@@ -36,7 +36,7 @@ kamal deploy
 rake editors:invite[email@example.com]
 
 # Create an editor directly (for testing)
-rake editors:create[username,password]
+rake editors:create[username,password,email]
 
 # List all editors
 rake editors:list
