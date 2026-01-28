@@ -71,7 +71,3 @@ Following the Style Guide is critical.
 - Visual design should be universally appealing while hinting at playful irreverence
 - This game is played with friends in the same room in front of a shared screen like TV or computer monitor
 
-### Design Inspiration
-- **Jackbox Games** - Bold, colorful, TV-game-show polish with humor
-- **Figma/Notion** - Clean, modern SaaS with playful illustrations
-- Blend the party energy of Jackbox with the refined polish of modern SaaS
