@@ -13,7 +13,7 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
 
     # Set up the room with the current game
     @room.update!(current_game_id: @game.id, status: RoomStatus::Answering)
-    @game.update!(current_game_prompt_id: @game_prompt.id)
+    @game.update!(current_game_prompt_id: @game_prompt.id, next_game_phase_time: 30.seconds.from_now)
     @user.update!(room_id: @room.id)
     resume_session_as(@room.code, @user.name)
   end
@@ -30,7 +30,7 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
     assert_select "body" # Just verify page renders
   end
 
-  test "show should redirect to waiting when answer already exists" do
+  test "show should pre-fill answer when answer already exists" do
     # Create an answer for this user and prompt
     Answer.create!(
       user_id: @user.id,
@@ -41,7 +41,9 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
 
     get "/prompts/#{@game_prompt.id}"
 
-    assert_redirected_to controller: "prompts", action: "waiting", id: @game_prompt.id
+    # The page renders with the existing answer pre-filled
+    assert_response :success
+    assert_select "textarea", text: /Test answer/
   end
 
   test "show should check answer existence for current user only" do
@@ -111,6 +113,9 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
   # Tests for PromptsController#voting
 
   test "voting should display voting page when no vote exists" do
+    # Room must be in Voting status to access voting page
+    @room.update!(status: RoomStatus::Voting)
+
     # Ensure no vote exists
     Vote.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
 
@@ -128,7 +133,10 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "voting should redirect to results when vote already exists" do
+  test "voting page renders even when vote already exists" do
+    # Room must be in Voting status to access voting page
+    @room.update!(status: RoomStatus::Voting)
+
     # Create a vote for this user
     answer = Answer.create!(
       user_id: users(:two).id,
@@ -145,10 +153,14 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
 
     get "/prompts/#{@game_prompt.id}/voting"
 
-    assert_redirected_to controller: "prompts", action: "results", id: @game_prompt.id
+    # Page renders successfully (user can see voting page even if voted)
+    assert_response :success
   end
 
   test "voting should exclude current user's answer from voting options" do
+    # Room must be in Voting status to access voting page
+    @room.update!(status: RoomStatus::Voting)
+
     # Ensure no vote exists
     Vote.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
 
@@ -180,6 +192,9 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "voting should load answers for current game and prompt" do
+    # Room must be in Voting status to access voting page
+    @room.update!(status: RoomStatus::Voting)
+
     # Ensure no vote exists
     Vote.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
 
@@ -266,53 +281,13 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
-  # Tests for different room status transitions
+  # Tests for room status transitions
 
-  test "should handle full workflow from show to waiting to voting to results" do
-    # Start at show (Answering status)
-    @room.update!(status: RoomStatus::Answering)
-    Answer.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
-
-    get "/prompts/#{@game_prompt.id}"
-    assert_response :success
-
-    # Create answer, go to waiting
-    Answer.create!(
-      user_id: @user.id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "My answer"
-    )
-
-    get "/prompts/#{@game_prompt.id}"
-    assert_redirected_to controller: "prompts", action: "waiting", id: @game_prompt.id
-
-    # Room transitions to Voting
+  test "waiting should redirect to voting when room status transitions" do
     @room.update!(status: RoomStatus::Voting)
 
     get "/prompts/#{@game_prompt.id}/waiting"
+
     assert_redirected_to controller: "prompts", action: "voting", id: @game_prompt.id
-
-    # Vote on an answer
-    other_answer = Answer.create!(
-      user_id: users(:two).id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "Other answer"
-    )
-    Vote.create!(
-      user_id: @user.id,
-      answer_id: other_answer.id,
-      game_id: @game.id,
-      game_prompt_id: @game_prompt.id
-    )
-
-    get "/prompts/#{@game_prompt.id}/voting"
-    assert_redirected_to controller: "prompts", action: "results", id: @game_prompt.id
-
-    # View results
-    @room.update!(status: RoomStatus::Results)
-    get "/prompts/#{@game_prompt.id}/results"
-    assert_response :success
   end
 end

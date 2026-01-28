@@ -1,0 +1,16 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  story: one
+  blank: one
+  prompt: one
+
+two:
+  story: one
+  blank: two
+  prompt: two
+
+three:
+  story: two
+  blank: three
+  prompt: three

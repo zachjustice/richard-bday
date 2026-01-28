@@ -24,7 +24,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "complete game flow from start to finish" do
-    # Step 1: Authenticate as Player 1 and verify room status page shows both players
+    # Step 1: Creator can view room status page showing players
     resume_session_as(@room.code, @creator.name)
 
     get room_status_path(@room)
@@ -32,8 +32,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     assert_select "body", text: /Player1/
     assert_select "body", text: /Player2/
 
-    # Step 2: Start the game (as Player 1 / host)
-
+    # Step 2: Start the game
     post start_room_path(@room), params: { story: @story.id }
     assert_redirected_to room_status_path(@room)
 
@@ -58,13 +57,16 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     resume_session_as(@room.code, @player2.name)
 
     post answer_path, params: { text: "dragon", prompt_id: first_prompt.id }
-    # Should redirect to voting since all answers are in
+    # Redirects to voting (all answers in), but room status hasn't changed yet
     assert_redirected_to "/prompts/#{first_prompt.id}/voting"
 
     answer2 = Answer.find_by(user: @player2, game_prompt: first_prompt)
     assert_equal "dragon", answer2.text
 
-    # Step 5: Verify voting page displays answers
+    # Step 5: Simulate room transitioning to Voting (normally done by job)
+    @room.update!(status: RoomStatus::Voting)
+
+    # Now voting page displays answers
     get "/prompts/#{first_prompt.id}/voting"
     assert_response :success
     # Player 2 should see Player 1's answer but not their own
@@ -104,12 +106,13 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
 
     # Step 8: Advance to next prompt
     post next_room_path(@room)
-    assert_redirected_to room_status_path(@room)
+    # next redirects to the next prompt's show page
+    second_prompt = GamePrompt.find_by(game_id: @room.current_game_id, order: 1)
+    assert_redirected_to controller: "prompts", action: "show", id: second_prompt.id
 
     @room.reload
     game.reload
-    second_prompt = game.current_game_prompt
-    assert_equal 1, second_prompt.order
+    assert_equal 1, game.current_game_prompt.order
     assert_equal RoomStatus::Answering, @room.status
 
     # Quick second round: both players submit answers
@@ -120,6 +123,9 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     end_session
     resume_session_as(@room.code, @player2.name)
     post answer_path, params: { text: "fluffy", prompt_id: second_prompt.id }
+
+    # Simulate room transitioning to Voting
+    @room.update!(status: RoomStatus::Voting)
 
     # Both players vote
     answer1_p2 = Answer.find_by(user: @player1, game_prompt: second_prompt)
@@ -135,23 +141,22 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     answer1_p2.update!(won: true)
 
     # Step 9: Advance to final results (no more prompts)
+    resume_session_as(@room.code, @creator.name)
     post next_room_path(@room)
-    assert_redirected_to room_status_path(@room)
+    # When there are no more prompts, redirects to results page for previous prompt
+    assert_redirected_to controller: "prompts", action: "results", id: second_prompt.id
 
     @room.reload
     assert_equal RoomStatus::FinalResults, @room.status
 
     # Verify final results page shows complete story
-    resume_session_as(@room.code, @creator.name)
     get room_status_path(@room)
     assert_response :success
     assert_select "body", text: /#{@story.title}/
-    # Story should contain winning answers
-    # (exact text depends on which answers won)
 
     # Step 10: End game and return to waiting room
     post end_room_game_path(@room)
-    assert_redirected_to room_status_path(@room)
+    assert_redirected_to waiting_for_new_game_path(@room)
 
     @room.reload
     assert_equal RoomStatus::WaitingRoom, @room.status

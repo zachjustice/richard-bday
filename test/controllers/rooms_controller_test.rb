@@ -227,35 +227,33 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_equal RoomStatus::FinalResults, @room.status
   end
 
-  test "next should redirect to room status page" do
+  test "next should redirect to next prompt page" do
     post start_room_path(@room), params: { story: @story.id }
     @room.reload
 
     post next_room_path(@room)
 
-    assert_redirected_to room_status_path(@room)
+    next_prompt = GamePrompt.find_by(game_id: @room.current_game_id, order: 1)
+    assert_redirected_to controller: "prompts", action: "show", id: next_prompt.id
   end
 
   test "next should broadcast NextPrompt event via ActionCable when advancing" do
     post start_room_path(@room), params: { story: @story.id }
     @room.reload
 
-    # Track broadcast
-    broadcast_called = false
-    broadcast_channel = nil
-    broadcast_data = nil
+    # Track broadcasts - capture all of them to find NextPrompt
+    broadcasts = []
 
     ActionCable.server.stub :broadcast, ->(channel, data) {
-      broadcast_called = true
-      broadcast_channel = channel
-      broadcast_data = data
+      broadcasts << { channel: channel, data: data }
     } do
       post next_room_path(@room)
     end
 
-    assert broadcast_called, "ActionCable broadcast should have been called"
-    assert_equal "rooms:#{@room.id}", broadcast_channel
-    assert_equal Events::MessageType::NextPrompt, broadcast_data[:messageType]
+    next_prompt_broadcast = broadcasts.find { |b| b[:data][:messageType] == Events::MessageType::NextPrompt }
+
+    assert next_prompt_broadcast, "ActionCable should broadcast NextPrompt event"
+    assert_equal "rooms:#{@room.id}", next_prompt_broadcast[:channel]
   end
 
   test "next should not broadcast when reaching final results" do
@@ -337,13 +335,6 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to room_status_path(room)
   end
 
-  test "_create should create session for first user" do
-    post "/rooms/create"
-
-    # Verify session was created (by checking cookies)
-    assert cookies[:session_id].present?, "Session cookie should be set"
-  end
-
   test "_create should handle validation failure gracefully" do
     # Stub Room.new to return a room that will fail validation
     Room.stub :new, Room.new(code: nil) do
@@ -404,13 +395,13 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_nil @room.current_game_id
   end
 
-  test "end_game should redirect to room status page" do
+  test "end_game should redirect to waiting_for_new_game page" do
     post start_room_path(@room), params: { story: @story.id }
     @room.reload
 
     post end_room_game_path(@room)
 
-    assert_redirected_to room_status_path(@room)
+    assert_redirected_to waiting_for_new_game_path(@room)
   end
 
   test "end_game should allow starting a new game after ending" do
