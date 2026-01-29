@@ -46,6 +46,9 @@ Rails.application.routes.draw do
   delete "/prompts/:id", to: "prompts#destroy_prompt", as: :destroy_prompt
   get "/prompts/:id/tooltip", to: "prompts#tooltip", as: :prompt_tooltip
 
+  # avatar
+  patch "/avatar", to: "avatars#update", as: :update_avatar
+
   # rooms
   get "/rooms", to: "rooms#show", as: :show_room
   get "/rooms/create", to: "rooms#create", as: :create_room

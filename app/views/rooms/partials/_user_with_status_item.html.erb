@@ -47,5 +47,5 @@
 <li id="<%= dom_id(user, :user_list) %>"
     class="px-4 py-3 rounded-lg font-semibold text-ink transition-all animate-slide-in whitespace-nowrap text-ellipsis overflow-clip
            <%= completed ? completed_color_classes : pending_color_classes %> <%= color_classes %>">
-  <% if completed %><span class="<%= checkmark_color_class %> mr-2">✓</span><% end %><%= user.name %>
+  <% if completed %><span class="<%= checkmark_color_class %> mr-2">✓</span><% end %><%= user.avatar_with_name %>
 </li>

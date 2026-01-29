@@ -4,11 +4,14 @@ admin:
   id: 1
   name: AdminUser
   room: admin
+  avatar: "🍆"
 
 one:
   name: TestUser1
   room: one
+  avatar: "🦊"
 
 two:
   name: TestUser2
   room: two
+  avatar: "🐸"
