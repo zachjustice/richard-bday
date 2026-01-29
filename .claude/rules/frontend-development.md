@@ -1,5 +1,13 @@
 # Frontend Development Rules
 
+## Things to AVOID
+- Gradients (especially purple gradients)
+- Emoji's unless already existing or explicity specified
+- Stock photos of people playing games
+- Corporate/enterprise software aesthetic
+- Generic LLM-generated UI patterns
+- Overly polished or sterile feel
+
 ## Design Guide
 
 ### Philosophy
@@ -9,12 +17,12 @@
 
 ### Style Guide for CSS / Tailwind
 Following the Style Guide is critical.
-- Before adding new components in components.css check, first check components.css 
-- Strongly perfer using tailwind utility classes whenever possible 
+- Before adding new components in components.css check, first check if it already exists in components.css 
+- Strongly prefer using tailwind utility classes whenever possible 
 - However, create component classes when:
   - The pattern is reused multiple times, OR
-  - Utility-based implementation is excessively complex
-- Create partials when any of the following true:
+  - Utility-based implementation is not possible
+- Create partials when any of the following is true:
   - Required for Turbo Streams
   - Component is frequently reused
   - Component is highly complex
@@ -67,11 +75,3 @@ Following the Style Guide is critical.
 - **Jackbox Games** - Bold, colorful, TV-game-show polish with humor
 - **Figma/Notion** - Clean, modern SaaS with playful illustrations
 - Blend the party energy of Jackbox with the refined polish of modern SaaS
-
-### Things to AVOID
-- Gradients (especially purple gradients)
-- Emoji's
-- Stock photos of people playing games
-- Corporate/enterprise software aesthetic
-- Generic LLM-generated UI patterns
-- Overly polished or sterile feel

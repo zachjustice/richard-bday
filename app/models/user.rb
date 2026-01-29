@@ -8,7 +8,10 @@ class User < ApplicationRecord
     🦊 🐸 🦄 🐙 🦖 🐝 🦋 🐧 🦀 🐳
     🦩 🐨 🦎 🐲 🦈 🐼 🦉 🐒 🦜 🐬
     🦁 🐢 🐿️ 🦚 🐊 🐴 🦂 🐋 🐺 🦥
+    🥕 🥦 🌽 🍄 🥬 🌶️ 🥒 🍅 🧅 🥔
   ].freeze
+
+  MAX_PLAYERS = AVATARS.size
 
   CREATOR_AVATAR = "🍆"
 
@@ -22,6 +25,8 @@ class User < ApplicationRecord
   validates :avatar, presence: true
   validates :avatar, inclusion: { in: AVATARS + [ CREATOR_AVATAR ] }
   validates :avatar, uniqueness: { scope: :room_id }
+
+  validate :room_has_capacity, on: :create
 
   before_validation :assign_avatar, on: :create
 
@@ -66,6 +71,15 @@ class User < ApplicationRecord
   end
 
   private
+
+  def room_has_capacity
+    return unless player? && room_id.present?
+
+    current_count = User.where(room_id: room_id, role: [ PLAYER, NAVIGATOR ]).count
+    if current_count >= MAX_PLAYERS
+      errors.add(:base, "Room is full (max #{MAX_PLAYERS} players)")
+    end
+  end
 
   def assign_avatar
     return if avatar.present?

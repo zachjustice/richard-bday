@@ -11,13 +11,13 @@
   </div>
 
   <div class="grid grid-cols-[2fr_1fr] gap-8 lg:grid-cols-1">
-    <div class="bg-page p-6 rounded-xl border-3 border-ink sticky top-8 lg:static" style="box-shadow: 4px 4px 0px var(--color-ink);">
+    <div class="bg-page p-6 rounded-xl border-3 border-ink sticky top-8 lg:static shadow-strong">
       <div id="new_prompt_form">
         <%= render "prompts/form", prompt: Prompt.new %>
       </div>
     </div>
 
-    <div class="bg-white p-8 rounded-xl border-3 border-ink" style="box-shadow: 4px 4px 0px var(--color-ink);">
+    <div class="bg-white p-8 rounded-xl border-3 border-ink shadow-strong">
       <h2 class="text-xl font-bold text-ink m-0 mb-4">All Prompts (<%= @prompts.count %>)</h2>
       <div id="prompts_list" class="flex flex-col gap-4 max-h-screen overflow-y-auto">
         <% @prompts.each do |prompt| %>

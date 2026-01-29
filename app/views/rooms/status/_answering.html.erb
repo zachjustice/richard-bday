@@ -1,13 +1,13 @@
 <%= turbo_stream_from "rooms:#{room.id}:answers" %>
 
 <div class="flex-1 flex flex-col justify-start min-h-0">
-  <div class="card-subdued text-center mb-8 border-l-4 border-accent-blue/40 border-l-accent-blue bg-accent-blue/10">
+  <div class="card-status-header-blue">
     <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
     <h1 class="text-4xl font-bold text-ink mb-3 leading-tight">Answer the prompt on your device</h1>
     <p class="text-ink/60 italic m-0">Everyone answers the same prompt</p>
   </div>
 
-  <div class="card-subdued flex-1 min-h-0 border-l-4 border-accent-blue/40 border-l-accent-blue">
+  <div class="card-status-content-blue">
     <h3 class="text-xl font-bold text-ink mb-4 flex items-center gap-2">Answers</h3>
     <div class="flex flex-col flex-1 min-h-0">
       <ul id="users-with-status-list" class="list-none p-0 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">

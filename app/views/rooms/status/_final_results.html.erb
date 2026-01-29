@@ -1,6 +1,6 @@
 <div class="flex-1 flex flex-col justify-start min-h-0"
      data-controller="share-story">
-  <div class="card-subdued text-center mb-8 border-l-4 border-accent-green/40 bg-accent-green/10 border-l-accent-green"
+  <div class="card-status-header-green"
        data-controller="speech"
        data-speech-text-value="<%= render_plaintext(story_text, blank_id_to_answer_text) %>">
     <div class="relative w-full text-center">
@@ -31,7 +31,7 @@
       </button>
     </div>
   </div>
-  <div class="card-subdued flex-1 min-h-0 overflow-y-auto border-l-4 border-accent-green/40 border-l-accent-green bg-accent-green/10">
+  <div class="card-status-content-green overflow-y-auto">
     <p class="text-lg max-md:text-base text-ink leading-relaxed m-0 text-justify max-md:text-left">
       <%= simple_format(render_story_with_tooltips(story_text, blank_id_to_answer_text), {}, sanitize: false) %>
     </p>

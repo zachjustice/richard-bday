@@ -66,7 +66,8 @@ class SessionsController < ApplicationController
       start_new_session_for user
       redirect_to after_authentication_url
     else
-      redirect_to new_session_path
+      error_message = user.errors[:base].first || "Unable to join room"
+      redirect_to new_session_path, alert: error_message
     end
   end
 

@@ -36,7 +36,7 @@ class AvatarsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: [
           turbo_stream.replace("avatar-display", partial: "avatars/current_avatar", locals: { user: @current_user }),
-          turbo_stream.replace("avatar-picker", partial: "avatars/picker", locals: { user: @current_user, room: @current_user.room })
+          turbo_stream.replace("avatar-picker", partial: "avatars/picker", locals: { user: @current_user, room: @current_user.room, just_selected: true })
         ]
       end
     end

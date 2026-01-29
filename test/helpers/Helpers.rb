@@ -13,7 +13,11 @@ class Helpers
     end
 
     names.each do |name|
-      User.find_or_create_by!(room_id: @room_id, name: name)
+      User.find_or_create_by!(
+        room_id: @room_id,
+        name: name,
+        avatar: User.available_avatars(@room_id).sample
+      )
     end
   end
 

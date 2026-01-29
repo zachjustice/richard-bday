@@ -1,5 +1,5 @@
 <div class="flex-1 flex flex-col justify-start min-h-0">
-  <div class="card-subdued mb-8 text-center border-l-4 border-accent-violet/40 border-l-accent-violet bg-accent-violet/10">
+  <div class="card-status-header-violet">
     <% if winners.size == 1 %>
       <h1 class="text-4xl font-bold text-ink m-0 flex items-center justify-center gap-2">Winner!</h1>
     <% elsif winners.size > 1 %>
@@ -9,7 +9,7 @@
     <% end %>
   </div>
 
-  <div class="card-subdued flex flex-1 min-h-0 border-l-4 border-accent-violet/40 border-l-accent-violet py-4">
+  <div class="card-status-content-violet py-4 flex">
     <div class="flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto scroll-fade-indicators">
       <% answers_sorted_by_votes.each do |answer| %>
         <div class="flex flex-row p-4 border-2 rounded-3xl border-accent-violet/40 <%= winner&.id == answer&.id ? 'bg-accent-violet/40' : 'bg-accent-violet/10'  %>">
@@ -22,7 +22,7 @@
               </span>
             <% end %>
           </div>
-          <div class="flex flex-1 flex-col items-end w-full text-ink/60">
+          <div class="flex flex-1 flex-col items-end w-full">
             <% if votes_by_answer[answer.id]&.any? %>
               <div class="flex flex-col gap-2">
                 <% if local_assigns[:ranked_voting] %>
@@ -31,16 +31,26 @@
                     <% next if rank.nil? %>
                     <div class="flex items-center gap-1 flex-wrap">
                       <span class="text-xl"><%= GameConstants::RANKED_MEDALS[rank - 1] %></span>
-                      <% rank_votes.each do |vote| %>
-                        <span class="px-2 py-1 text-sm border border-accent-violet rounded-full font-medium text-ink max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis bg-accent-violet/10"><%= vote.user.avatar %></span>
+                      <% visible_votes = rank_votes.first(5) %>
+                      <% remaining_count = rank_votes.size - 5 %>
+                      <% visible_votes.each do |vote| %>
+                        <span class="text-2xl"><%= vote.user.avatar %></span>
+                      <% end %>
+                      <% if remaining_count > 0 %>
+                        <span class="text-lg font-bold text-ink/60">+<%= remaining_count %></span>
                       <% end %>
                     </div>
                   <% end %>
                 <% else %>
                   <%# Simple list for vote-once %>
                   <div class="flex flex-wrap gap-2">
-                    <% votes_by_answer[answer.id].each do |vote| %>
-                      <span class="px-3 py-1 border border-accent-violet rounded-full font-medium text-ink max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis bg-accent-violet/10"><%= vote.user.avatar %></span>
+                    <% visible_votes = votes_by_answer[answer.id].first(5) %>
+                    <% remaining_count = votes_by_answer[answer.id].size - 5 %>
+                    <% visible_votes.each do |vote| %>
+                      <span class="text-3xl"><%= vote.user.avatar %></span>
+                    <% end %>
+                    <% if remaining_count > 0 %>
+                      <span class="text-lg font-bold text-ink/60">+<%= remaining_count %></span>
                     <% end %>
                   </div>
                 <% end %>

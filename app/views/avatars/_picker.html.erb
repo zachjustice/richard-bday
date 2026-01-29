@@ -1,41 +1,119 @@
-<div id="avatar-picker" class="mb-6" data-controller="avatar-shuffle">
+<% taken_avatars = User.where(room_id: room.id).where.not(id: user.id).pluck(:avatar) %>
+<% available_avatars = User::AVATARS - taken_avatars %>
+<% current_index = User::AVATARS.index(user.avatar) || 0 %>
+<% just_selected = local_assigns[:just_selected] || false %>
+
+<div id="avatar-picker"
+     class="mt-6"
+     data-controller="avatar-carousel"
+     data-avatar-carousel-avatars-value="<%= User::AVATARS.to_json %>"
+     data-avatar-carousel-taken-value="<%= taken_avatars.to_json %>"
+     data-avatar-carousel-current-value="<%= user.avatar %>"
+     data-avatar-carousel-index-value="<%= current_index %>"
+     data-avatar-carousel-just-selected-value="<%= just_selected %>"
+     tabindex="0">
+
+  <%# Loading state - shown until JS initializes %>
+  <div data-avatar-carousel-target="loading">
+    <div class="flex items-center justify-center gap-3 max-sm:gap-2">
+      <button type="button" class="carousel-arrow opacity-50 cursor-not-allowed" disabled aria-label="Previous avatar">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="avatar-carousel-container">
+        <div class="avatar-main-display">
+          <svg class="w-10 h-10 animate-spin text-ink/40" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <button type="button" class="carousel-arrow opacity-50 cursor-not-allowed" disabled aria-label="Next avatar">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex justify-center gap-3 mt-4">
+      <button type="button" class="btn-primary py-3 px-6 text-base opacity-50 cursor-not-allowed" disabled>
+        Submit
+      </button>
+      <button type="button" class="btn-secondary btn-sm opacity-50 cursor-not-allowed" disabled>
+        Shuffle
+      </button>
+    </div>
+
+    <p class="text-center text-sm text-ink/50 mt-3">Swipe or use arrows to browse</p>
+  </div>
+
+  <%# Main carousel - hidden until JS initializes %>
+  <div data-avatar-carousel-target="carousel" class="hidden">
+
   <% if local_assigns[:error] %>
-    <div class="text-center mb-3 p-2 rounded-lg bg-accent-red/15 border border-accent-red/30">
-      <span class="text-sm font-medium text-ink"><%= error %></span>
+    <div role="alert" class="text-center mb-4 p-3 rounded-xl bg-accent-red/15 border-2 border-accent-red/30">
+      <span class="text-sm font-bold text-ink"><%= error %></span>
     </div>
   <% end %>
 
-  <% taken_avatars = User.where(room_id: room.id).where.not(id: user.id).pluck(:avatar) %>
-  <% available_avatars = User::AVATARS - taken_avatars - [user.avatar] %>
+  <div class="flex items-center justify-center gap-3 max-sm:gap-2">
+    <%# Left Arrow %>
+    <button type="button"
+            class="carousel-arrow"
+            data-action="avatar-carousel#previous"
+            aria-label="Previous avatar">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
 
-  <div class="grid grid-cols-6 max-sm:grid-cols-5 gap-2"
-       data-avatar-shuffle-target="grid"
-       data-avatar-shuffle-available-value="<%= available_avatars.to_json %>">
-    <% User::AVATARS.each do |emoji| %>
-      <% is_taken = taken_avatars.include?(emoji) %>
-      <% is_current = user.avatar == emoji %>
-      <% if is_taken %>
-        <div class="text-3xl text-center p-2 rounded-xl opacity-30 cursor-not-allowed grayscale">
-          <%= emoji %>
-        </div>
-      <% elsif is_current %>
-        <div class="text-3xl text-center p-2 rounded-xl border-3 border-accent-yellow bg-accent-yellow/20" style="box-shadow: 2px 2px 0px var(--color-ink);">
-          <%= emoji %>
-        </div>
-      <% else %>
-        <%= form_with url: update_avatar_path, method: :patch, class: "inline", data: { avatar_shuffle_target: "form", avatar: emoji } do %>
-          <%= hidden_field_tag :avatar, emoji %>
-          <button type="submit" class="text-3xl text-center p-2 rounded-xl cursor-pointer transition-all hover:scale-110 hover:bg-accent-yellow/20 active:scale-95 w-full border-0 bg-transparent">
-            <%= emoji %>
-          </button>
-        <% end %>
-      <% end %>
-    <% end %>
+    <%# Avatar Display Area %>
+    <div class="avatar-carousel-container avatar-available" data-avatar-container>
+      <%# Left side indicator - half visible %>
+      <div class="avatar-side-indicator left" data-avatar-carousel-target="indicator"></div>
+
+      <%# Main avatar display %>
+      <div class="avatar-main-display">
+        <span class="avatar-emoji" data-avatar-carousel-target="display"><%= user.avatar %></span>
+      </div>
+
+      <%# Right side indicator - half visible %>
+      <div class="avatar-side-indicator right" data-avatar-carousel-target="indicator"></div>
+    </div>
+
+    <%# Right Arrow %>
+    <button type="button"
+            class="carousel-arrow"
+            data-action="avatar-carousel#next"
+            aria-label="Next avatar">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
   </div>
 
-  <div class="text-center mt-4">
-    <button type="button" class="btn-secondary btn-sm" data-action="avatar-shuffle#shuffle">
-      Shuffle
-    </button>
+  <%# Hidden form for submission %>
+  <%= form_with url: update_avatar_path, method: :patch, class: "mt-4", data: { avatar_carousel_target: "form" } do %>
+    <%= hidden_field_tag :avatar, user.avatar %>
+
+    <div class="flex justify-center gap-3">
+      <button type="submit"
+              class="btn-primary py-3 px-6 text-base"
+              data-action="avatar-carousel#select">
+        Submit
+      </button>
+
+      <button type="button"
+              class="btn-secondary btn-sm"
+              data-action="avatar-carousel#shuffle">
+        Shuffle
+      </button>
+    </div>
+  <% end %>
+
+    <p class="text-center text-sm text-ink/50 mt-3">Swipe or use arrows to browse</p>
   </div>
 </div>
