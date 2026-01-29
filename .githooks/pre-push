@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "Running unit tests before push..."
-bin/rails test
-exit $?
+bin/rails test 2>&1 | grep -v "^≈ tailwindcss\|^$\|^Done in"
+exit ${PIPESTATUS[0]}
