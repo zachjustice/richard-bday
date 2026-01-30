@@ -252,7 +252,7 @@
 .answer-content {
   @apply relative flex items-center gap-4
          rounded-xl border-[3px] border-ink
-         bg-white px-5 py-4
+         px-5 py-4
          transition-all duration-200 ease-out
          shadow-[4px_4px_0_0_var(--color-ink)];
 }
@@ -910,24 +910,18 @@
 }
 
 
-/* Scroll fade indicators - fades content at top/bottom edges when scrollable */
-/* Uses mask-image which works even when child elements have opaque backgrounds */
+/* Scroll fade indicators - shows shadow-style fades at top/bottom edges when scrollable */
+/* Uses background-attachment: local/scroll technique for shadow effect */
 .scroll-fade-indicators {
-  --fade-size: 24px;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    black var(--fade-size),
-    black calc(100% - var(--fade-size)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    black var(--fade-size),
-    black calc(100% - var(--fade-size)),
-    transparent 100%
-  );
+  --fade-size: 32px;
+  background:
+    linear-gradient(white 30%, rgba(255, 255, 255, 0)) center top,
+    linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
+    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) center top,
+    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) center bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 60px, 100% 50px, 100% 14px, 100% 14px;
+  background-attachment: local, local, scroll, scroll;
 }
 
 /* TODO: can the below classes be accomplished with out components.css? Does it matter? */

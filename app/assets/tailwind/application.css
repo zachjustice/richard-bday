@@ -1,5 +1,5 @@
-@import "../stylesheets/components.css";
 @import "tailwindcss";
+@import "../stylesheets/components.css";
 
 /* Tailwind v4 CSS-first configuration */
 @theme {
