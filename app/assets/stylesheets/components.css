@@ -170,6 +170,17 @@
   @apply bg-white border-2 border-brand-purple rounded-xl shadow-2xl overflow-hidden;
 }
 
+/* Used on final results page by StroriesHelper#render_story_with_tooltips method */
+.game-prompt-answer {
+  @apply cursor-help transition-all font-bold;
+  border-bottom: 2px dotted var(--color-brand-purple);
+}
+
+.game-prompt-answer:hover {
+  @apply text-brand-purple;
+  border-bottom-style: solid;
+}
+
 /* Form Components */
 .form-input {
   @apply w-full px-4 py-4 text-base font-medium rounded-xl outline-none transition-all;
@@ -899,21 +910,24 @@
 }
 
 
-/* Scroll fade indicators - shows subtle shadows at top/bottom when content is scrollable */
+/* Scroll fade indicators - fades content at top/bottom edges when scrollable */
+/* Uses mask-image which works even when child elements have opaque backgrounds */
 .scroll-fade-indicators {
-  --fade-size: 32px;
-  background:
-    /* Shadow Cover TOP */
-    linear-gradient(white 30%, rgba(255, 255, 255, 0)) center top,
-    /* Shadow Cover BOTTOM */
-    linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
-    /* Shadow TOP */
-    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) center top,
-    /* Shadow BOTTOM */
-    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) center bottom;
-  background-repeat: no-repeat;
-  background-size: 100% 60px, 100% 50px, 100% 14px, 100% 14px;
-  background-attachment: local, local, scroll, scroll;
+  --fade-size: 24px;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--fade-size),
+    black calc(100% - var(--fade-size)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--fade-size),
+    black calc(100% - var(--fade-size)),
+    transparent 100%
+  );
 }
 
 /* TODO: can the below classes be accomplished with out components.css? Does it matter? */
@@ -1142,3 +1156,133 @@
     @apply border-accent-green/40 border-l-accent-green bg-accent-green/10;
     border: 2px solid rgba(26, 26, 46, 0.2);
   }
+
+/* ============================================
+   TUTORIAL HINTS COMPONENT
+   ============================================ */
+
+.tutorial-hint {
+  @apply fixed z-[60] pointer-events-auto animate-tooltip-fade-in;
+}
+
+.tutorial-hint.hidden {
+  @apply hidden;
+}
+
+/* Settings hint - top right, pointing toward gear button */
+.tutorial-hint--settings {
+  top: 12px;
+  right: 70px;
+}
+
+/* Music hint - bottom left, pointing toward music button */
+.tutorial-hint--music {
+  bottom: 18px;
+  left: 70px;
+}
+
+.tutorial-hint-content {
+  @apply relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold;
+  background-color: var(--color-accent-tertiary);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 3px 3px 0px var(--color-ink);
+  animation: hint-bounce 2s ease-in-out 0.3s infinite;
+}
+
+@keyframes hint-bounce {
+  0%, 100% { transform: translateX(0); }
+  10%, 30% { transform: translateX(-4px); }
+  20% { transform: translateX(4px); }
+  40% { transform: translateX(0); }
+}
+
+.tutorial-hint--music .tutorial-hint-content {
+  animation-name: hint-bounce-right;
+}
+
+@keyframes hint-bounce-right {
+  0%, 100% { transform: translateX(0); }
+  10%, 30% { transform: translateX(4px); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(0); }
+}
+
+.tutorial-hint-text {
+  @apply whitespace-nowrap;
+}
+
+.tutorial-hint-dismiss {
+  @apply flex items-center justify-center w-5 h-5 rounded-full cursor-pointer transition-opacity;
+  @apply bg-transparent border-none p-0;
+  color: var(--color-ink);
+  opacity: 0.5;
+}
+
+.tutorial-hint-dismiss:hover {
+  opacity: 1;
+}
+
+/* Arrow pointing right (toward settings gear) */
+.tutorial-hint-arrow--right {
+  @apply absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 10px solid var(--color-ink);
+}
+
+.tutorial-hint-arrow--right::before {
+  content: '';
+  @apply absolute;
+  right: 2px;
+  top: -6px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 8px solid var(--color-accent-tertiary);
+}
+
+/* Arrow pointing left (toward music button) */
+.tutorial-hint-arrow--left {
+  @apply absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 10px solid var(--color-ink);
+}
+
+.tutorial-hint-arrow--left::before {
+  content: '';
+  @apply absolute;
+  left: 2px;
+  top: -6px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 8px solid var(--color-accent-tertiary);
+}
+
+/* Hide on very small screens */
+@media (max-width: 400px) {
+  .tutorial-hint {
+    @apply hidden;
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-hint-content {
+    animation: none;
+  }
+}
