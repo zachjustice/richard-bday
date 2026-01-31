@@ -19,7 +19,7 @@ class EditorPasswordReset < ApplicationRecord
       editor: editor,
       token_digest: digest(token)
     )
-    reset.save ? [reset, token] : [reset, nil]
+    reset.save ? [ reset, token ] : [ reset, nil ]
   end
 
   def self.find_by_token(token)

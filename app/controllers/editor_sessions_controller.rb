@@ -1,6 +1,6 @@
 class EditorSessionsController < ApplicationController
   allow_unauthenticated_access
-  rate_limit to: 10, within: 3.minutes, only: [:create], with: -> { redirect_to editor_login_path, alert: "Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: [ :create ], with: -> { redirect_to editor_login_path, alert: "Try again later." }
 
   def new
     # Already logged in as editor? Redirect to dashboard

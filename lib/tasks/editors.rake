@@ -54,7 +54,7 @@ namespace :editors do
   end
 
   desc "Create a new editor account (non-production only)"
-  task :create, [:username, :password, :email] => :environment do |t, args|
+  task :create, [ :username, :password, :email ] => :environment do |t, args|
     if Rails.env.production?
       puts "Error: This task is disabled in production. Use editors:invite instead."
       exit 1
@@ -97,7 +97,7 @@ namespace :editors do
   end
 
   desc "Delete an editor account"
-  task :delete, [:username] => :environment do |t, args|
+  task :delete, [ :username ] => :environment do |t, args|
     editor = Editor.find_by(username: args[:username])
     if editor
       editor.destroy

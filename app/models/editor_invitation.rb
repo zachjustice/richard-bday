@@ -17,7 +17,7 @@ class EditorInvitation < ApplicationRecord
       email: email.downcase.strip,
       token_digest: digest(token)
     )
-    invitation.save ? [invitation, token] : [invitation, nil]
+    invitation.save ? [ invitation, token ] : [ invitation, nil ]
   end
 
   def self.find_by_token(token)
