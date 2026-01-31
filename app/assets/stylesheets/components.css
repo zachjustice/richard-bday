@@ -1161,6 +1161,7 @@
    TUTORIAL HINTS COMPONENT
    ============================================ */
 
+/* z-60: Above settings button (z-50), below modals (z-1000) */
 .tutorial-hint {
   @apply fixed z-[60] pointer-events-auto animate-tooltip-fade-in;
 }
@@ -1178,7 +1179,7 @@
 /* Music hint - bottom left, pointing toward music button */
 .tutorial-hint--music {
   bottom: 18px;
-  left: 70px;
+  left: 85px;
 }
 
 .tutorial-hint-content {
@@ -1187,7 +1188,7 @@
   color: var(--color-ink);
   border: 2px solid var(--color-ink);
   box-shadow: 3px 3px 0px var(--color-ink);
-  animation: hint-bounce 2s ease-in-out 0.3s infinite;
+  animation: hint-bounce 2s ease-in-out 0.3s 3;
 }
 
 @keyframes hint-bounce {
@@ -1198,7 +1199,7 @@
 }
 
 .tutorial-hint--music .tutorial-hint-content {
-  animation-name: hint-bounce-right;
+  animation: hint-bounce-right 2s ease-in-out 0.3s 3;
 }
 
 @keyframes hint-bounce-right {

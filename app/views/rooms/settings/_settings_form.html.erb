@@ -53,6 +53,19 @@
     <span class="text-sm body italic">Between 30 seconds and 20 minutes</span>
   </div>
 
+  <%# Display Preferences - stored in localStorage, not submitted with form %>
+  <div class="flex flex-col gap-2 pt-4 border-t border-ink/10">
+    <label class="label">Display Preferences</label>
+    <label class="flex items-center gap-3 cursor-pointer">
+      <input type="checkbox"
+             class="w-5 h-5 rounded border-2 border-ink/30 cursor-pointer accent-accent-secondary"
+             data-tutorial-hints-target="dismissCheckbox"
+             data-action="change->tutorial-hints#updatePreference">
+      <span class="text-sm body">Don't show tutorial hints</span>
+    </label>
+    <span class="text-sm body italic text-ink/60">Hides the popups that point to settings and music buttons</span>
+  </div>
+
   <div class="flex gap-4 mt-4 flex-col sm:flex-row">
     <%= form.submit "Save Settings",
         class: "btn-primary flex-1",

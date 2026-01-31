@@ -23,7 +23,10 @@ export default class extends Controller {
   open() {
     this.modalTarget.classList.remove("hidden")
     document.addEventListener("keydown", this.boundHandleEscape)
-    
+
+    // Dispatch event for other controllers to sync state
+    this.dispatch("opened")
+
     // Focus the first input field
     const firstInput = this.modalTarget.querySelector("input[type='number']")
     if (firstInput) {

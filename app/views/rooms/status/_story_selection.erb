@@ -19,7 +19,7 @@
             <label class="cursor-pointer block">
               <input type="radio" name="story" value="<%= story.id %>"
                 class="peer sr-only" required>
-              <div class="flex badge-primary peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 transition-all">
+              <div class="flex w-full justify-between p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
                 <span class="font-bold"><%= story.title %></span>
                 <span class="text-sm text-ink/60"><%= pluralize(story.blanks.count, "blank") %></span>
               </div>

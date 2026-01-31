@@ -2,7 +2,10 @@
 
 <%# This page is typically viewed by players from a shared screen. Normally a TV. %>
 <%# Text and content should be easily viewable from a distance %>
-<div class="h-screen flex flex-col bg-page relative" data-controller="room-status settings-modal">
+<div class="h-screen flex flex-col bg-page relative"
+     data-controller="room-status settings-modal tutorial-hints"
+     data-tutorial-hints-editor-authenticated-value="<%= !!editor_authenticated? %>"
+     data-action="settings-modal:opened->tutorial-hints#syncCheckbox">
   <%# Floating branded text - top left %>
   <div class="fixed top-4 left-4 z-50">
     <span class="text-2xl font-bold text-ink text-shadow-brand"><%= link_to "Blanksies", root_path %></span>
@@ -19,8 +22,23 @@
 
   <%= render "rooms/settings/settings_modal", room: @room %>
 
+  <%# Tutorial hints for first-time users %>
+  <%= render "shared/tutorial_hint",
+      position: "settings",
+      target: "settingsHint",
+      dismiss_action: "dismissSettings",
+      text: "Adjust game timing here",
+      arrow_direction: "right" %>
+
+  <%= render "shared/tutorial_hint",
+      position: "music",
+      target: "musicHint",
+      dismiss_action: "dismissMusic",
+      text: "Play background music",
+      arrow_direction: "left" %>
+
   <div id="status-content-inner" class="flex-1 flex items-center justify-center p-6">
-    <div class="card-primary p-0 max-w-[1400px] w-full max-h-[950px] flex flex-row min-h-0">
+    <div class="card-primary p-0 m-0 max-w-[1400px] w-full max-h-[950px] flex flex-row min-h-0">
       <div id="turbo-target-sidebar" class="flex">
         <% if @room.current_game&.story.present? %>
           <%= render partial: "rooms/status/sidebar", locals: @status_data %>
