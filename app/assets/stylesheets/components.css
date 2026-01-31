@@ -115,6 +115,12 @@
     box-shadow: 3px 3px 0px var(--color-ink);
   }
 
+  /* Primary title with text shadow */
+  .title-primary {
+    @apply text-5xl md:text-6xl lg:text-7xl font-black tracking-tight;
+    color: var(--color-ink);
+    text-shadow: 3px 3px 0px var(--color-accent-tertiary);
+  }
 
   /* Doodle decorations with wiggle animation */
   .doodle-decoration {
