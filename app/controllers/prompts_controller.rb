@@ -1,6 +1,8 @@
 class PromptsController < ApplicationController
   skip_before_action :require_authentication, only: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt, :tooltip ]
   before_action :require_editor_auth, only: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt ]
+  before_action :set_prompt, only: [ :edit_prompt, :update_prompt, :destroy_prompt ]
+  before_action :authorize_prompt_owner!, only: [ :edit_prompt, :update_prompt, :destroy_prompt ]
   before_action :redirect_to_current_game_phase, except: [ :index, :new, :create_prompt, :edit_prompt, :update_prompt, :destroy_prompt, :tooltip, :change_answer ]
 
   def show
@@ -87,6 +89,7 @@ class PromptsController < ApplicationController
 
   def create_prompt
     @prompt = Prompt.new(prompt_params)
+    @prompt.creator = current_editor
 
     if @prompt.save
       respond_to do |format|
@@ -121,12 +124,9 @@ class PromptsController < ApplicationController
   end
 
   def edit_prompt
-    @prompt = Prompt.find(params[:id])
   end
 
   def update_prompt
-    @prompt = Prompt.find(params[:id])
-
     if @prompt.update(prompt_params)
       respond_to do |format|
         format.turbo_stream do
@@ -153,7 +153,6 @@ class PromptsController < ApplicationController
   end
 
   def destroy_prompt
-    @prompt = Prompt.find(params[:id])
     @prompt.destroy
 
     respond_to do |format|
@@ -165,6 +164,20 @@ class PromptsController < ApplicationController
   end
 
   private
+
+  def set_prompt
+    @prompt = Prompt.find(params[:id])
+  end
+
+  def authorize_prompt_owner!
+    unless @prompt.owned_by?(current_editor)
+      respond_to do |format|
+        format.turbo_stream { head :forbidden }
+        format.html { redirect_to prompts_index_path, alert: "You are not authorized to edit this prompt" }
+      end
+    end
+  end
+
   def trim_params(permitted_params)
     permitted_params.each do |key, value|
       permitted_params[key] = value.strip if value.is_a?(String)

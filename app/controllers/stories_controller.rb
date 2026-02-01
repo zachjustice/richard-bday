@@ -91,7 +91,8 @@ class StoriesController < ApplicationController
   private
 
   def set_story
-    @story = Story.find(params[:id])
+    @story = Story.visible_to(current_editor).find_by(id: params[:id])
+    redirect_to stories_path, alert: "Story not found" unless @story
   end
 
   def authorize_story_owner!

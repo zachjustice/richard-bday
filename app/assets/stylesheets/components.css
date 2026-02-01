@@ -1326,6 +1326,10 @@
   box-shadow: 2px 2px 0px var(--color-ink);
 }
 
+.multi-select-pill.animate-pop {
+  animation: var(--animate-pop);
+}
+
 .multi-select-pill-remove {
   @apply flex items-center justify-center w-5 h-5 -mr-1 rounded-full;
   @apply bg-transparent border-none cursor-pointer transition-all;

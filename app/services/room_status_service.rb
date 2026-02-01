@@ -44,7 +44,7 @@ class RoomStatusService
   end
 
   def story_selection_data
-    { stories: Story.where(published: true).order(:title) }
+    { stories: Story.where(published: true).includes(:genres, :blanks, :author).order(:title) }
   end
 
   def answering_voting_results_data
