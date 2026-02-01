@@ -395,7 +395,20 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_nil @room.current_game_id
   end
 
-  test "end_game should redirect to waiting_for_new_game page" do
+  test "end_game should redirect creator to status page" do
+    post start_room_path(@room), params: { story: @story.id }
+    @room.reload
+
+    post end_room_game_path(@room)
+
+    assert_redirected_to room_status_path(@room)
+  end
+
+  test "end_game should redirect non-creator to waiting_for_new_game page" do
+    # Create a non-creator user and authenticate as them
+    player = User.create!(name: "Player", room_id: @room.id, role: User::PLAYER)
+    resume_session_as(@room.code, player.name)
+
     post start_room_path(@room), params: { story: @story.id }
     @room.reload
 

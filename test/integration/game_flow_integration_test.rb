@@ -156,7 +156,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
 
     # Step 10: End game and return to waiting room
     post end_room_game_path(@room)
-    assert_redirected_to waiting_for_new_game_path(@room)
+    assert_redirected_to room_status_path(@room)
 
     @room.reload
     assert_equal RoomStatus::WaitingRoom, @room.status

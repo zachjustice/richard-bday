@@ -10,9 +10,24 @@
 %>
 <%# Using p-7 as the game phase items each have a m-1. The margin on the game phase items is because they have ring-2 %>
 <%# Since ring uses box-shadow, there needs to be extra space to avoid the element from being clipped on the edges %>
-<div id="game-progress-sidebar" class="flex flex-col flex-1 w-[375px] min-w-[280px] <%= current_phase_color[:bg_light] %> border-r-3 rounded-3xl border-ink/10 p-7">
+<div id="game-progress-sidebar" class="flex flex-col flex-1 w-[375px] min-w-[280px] <%= current_phase_color[:bg_light] %> border-r-3 rounded-3xl border-ink/10 p-6">
   <div class="mb-6 pb-4 border-b-2 border-ink/20">
-    <h3 class="text-4xl font-semibold text-ink m-0">Game Status</h3>
+    <div class="flex items-center justify-between">
+      <h3 class="text-3xl font-semibold text-ink m-0">Game Status</h3>
+      <div data-controller="copy-code" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-white/60 border border-ink/20">
+        <span class="text-ink/50 uppercase tracking-wide text-xs">Room</span>
+        <span class="tracking-widest text-ink font-bold"><%= room.code.upcase %></span>
+        <button class="p-0.5 rounded cursor-pointer transition-all hover:scale-110 active:scale-95"
+                data-room-code="<%= room.code.upcase %>"
+                data-action="click->copy-code#copy"
+          title="Copy room code">
+          <svg class="w-3.5 h-3.5 text-ink/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15V5a2 2 0 012-2h10"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
   <div class="flex flex-col gap-3">
     <p class="m-0 text-ink/70">Round <%= (room.current_game&.current_game_prompt&.order || 0) + 1 %> of <%= total_game_prompts %></p>

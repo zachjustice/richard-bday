@@ -31,12 +31,12 @@ kamal deploy
 ```
 
 ### Editor Management
-```bash
+```bash"
 # Invite a new editor by email (sends invitation email)
-rake editors:invite[email@example.com]
+rake "editors:invite[email@example.com]
 
 # Create an editor directly (for testing)
-rake editors:create[username,password,email]
+rake "editors:create[username,password,email]"
 
 # List all editors
 rake editors:list
