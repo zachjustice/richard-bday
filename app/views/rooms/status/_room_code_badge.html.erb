@@ -1,0 +1,16 @@
+<%# Compact room code badge for status pages - visible during all game phases %>
+<div class="flex justify-center mb-4" data-controller="copy-code">
+  <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-white/60 border border-ink/20">
+    <span class="text-ink/50 uppercase tracking-wide text-xs">Room</span>
+    <span class="tracking-widest text-ink font-bold"><%= room.code.upcase %></span>
+    <button class="p-0.5 rounded cursor-pointer transition-all hover:scale-110 active:scale-95"
+            data-room-code="<%= room.code.upcase %>"
+            data-action="click->copy-code#copy"
+            title="Copy room code">
+      <svg class="w-3.5 h-3.5 text-ink/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="13" height="13" rx="2"/>
+        <path d="M5 15V5a2 2 0 012-2h10"/>
+      </svg>
+    </button>
+  </span>
+</div>
