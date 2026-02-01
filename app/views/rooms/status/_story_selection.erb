@@ -3,7 +3,7 @@
 <%# Doodle decorations %>
 <%= render "shared/waiting_room_doodles" %>
 
-<div class="flex-1 flex flex-col justify-start min-h-0 relative z-10">
+<div class="flex-1 flex flex-col justify-start min-h-0 relative z-10" data-controller="story-selection">
   <%# Header section with title styling %>
   <div class="text-center mb-4 animate-slide-up">
     <h1 class="text-4xl md:text-5xl font-bold mb-3 text-shadow-heading">PICK A STORY</h1>
@@ -11,62 +11,120 @@
 
   <%# Bottom Section %>
   <div class="flex flex-1 min-h-0 flex-row gap-8">
-    <%# Player grid - main content with staggered animation %>
+    <%# Main content area %>
     <div id="story-list-container" class="flex flex-1 flex-col min-h-0">
-      <%= form_with url: start_room_path(room), method: :post, class: "flex flex-1 flex-col min-h-0" do %>
-        <div class="flex-1 min-h-0 overflow-y-auto gap-2 flex flex-col stagger-animation p-4 scroll-fade-indicators">
-          <% stories.each do |story| %>
-            <label class="cursor-pointer block">
-              <input type="radio" name="story" value="<%= story.id %>"
-                class="peer sr-only" required>
-              <div class="flex flex-col gap-1 w-full p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
-                <div class="flex justify-between items-center">
-                  <span class="font-bold"><%= story.title %></span>
-                  <% if story.genres.any? %>
-                    <div class="flex flex-wrap gap-1 justify-end">
-                      <% story.genres.each do |genre| %>
-                        <span class="tag text-xs"><%= genre.name %></span>
-                      <% end %>
-                    </div>
-                  <% end %>
-                </div>
-                <div class="flex justify-between items-center">
-                  <% if story.author.present? %>
-                    <span class="text-sm text-ink/60">by <%= story.author.username %></span>
-                  <% else %>
-                    <span></span>
-                  <% end %>
-                  <span class="text-sm text-ink/60"><%= pluralize(story.blanks.count, "blank") %></span>
-                </div>
-              </div>
-            </label>
-          <% end %>
-        </div>
+      <%= form_with url: start_room_path(room), method: :post, class: "flex flex-1 flex-col min-h-0 gap-4" do %>
 
-        <%# Voting Style Selector %>
-        <div class="mt-6 p-4 border-t-2 border-ink/10">
-          <h3 class="text-lg font-bold mb-3">Voting Style</h3>
-          <div class="flex flex-col gap-3">
-            <label class="cursor-pointer block">
-              <input type="radio" name="room[voting_style]" value="vote_once"
-                     <%= "checked" if room.vote_once? %> class="peer sr-only">
-              <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
-                <span class="font-bold text-ink">Vote Once</span>
-                <span class="text-sm text-ink/60">Pick your favorite answer</span>
+        <%# Story Selection Accordion %>
+        <div class="accordion-section" data-story-selection-target="storySection">
+          <div class="accordion-header" data-action="click->story-selection#toggleStorySection">
+            <span>Choose a Story</span>
+            <svg data-story-selection-target="storyChevron" class="accordion-chevron accordion-chevron-expanded w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+
+          <%# Summary shown when collapsed %>
+          <div class="accordion-summary hidden" data-story-selection-target="storySectionSummary">
+            Selected: <strong data-story-selection-target="selectedStoryName"></strong>
+          </div>
+
+          <div class="accordion-content" data-story-selection-target="storySectionContent">
+            <div class="p-4">
+              <%# Search Input %>
+              <div class="search-input-container mb-4">
+                <svg class="search-input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text"
+                       class="search-input"
+                       placeholder="Search by title, author, or genre..."
+                       data-story-selection-target="searchInput"
+                       data-action="input->story-selection#filterStories">
               </div>
-            </label>
-            <label class="cursor-pointer block">
-              <input type="radio" name="room[voting_style]" value="ranked_top_3"
-                     <%= "checked" if room.ranked_voting? %> class="peer sr-only">
-              <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
-                <span class="font-bold text-ink">Ranked Top 3</span>
-                <span class="text-sm text-ink/60">Drag to rank (30/20/10 pts)</span>
+
+              <%# Story List %>
+              <div class="flex-1 min-h-0 overflow-y-auto gap-2 flex flex-col max-h-[400px] scroll-fade-indicators">
+                <% stories.each do |story| %>
+                  <label class="cursor-pointer block"
+                         data-story-selection-target="storyItem"
+                         data-story-title="<%= story.title %>"
+                         data-story-author="<%= story.author&.username %>"
+                         data-story-genres="<%= story.genres.map(&:name).join(' ') %>">
+                    <input type="radio" name="story" value="<%= story.id %>"
+                      class="peer sr-only" required
+                      data-action="change->story-selection#selectStory">
+                    <div class="flex flex-col gap-1 w-full p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                      <div class="flex justify-between items-center">
+                        <span class="font-bold"><%= story.title %></span>
+                        <% if story.genres.any? %>
+                          <div class="flex flex-wrap gap-1 justify-end">
+                            <% story.genres.each do |genre| %>
+                              <span class="tag text-xs"><%= genre.name %></span>
+                            <% end %>
+                          </div>
+                        <% end %>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <% if story.author.present? %>
+                          <span class="text-sm text-ink/60">by <%= story.author.username %></span>
+                        <% else %>
+                          <span></span>
+                        <% end %>
+                        <span class="text-sm text-ink/60"><%= pluralize(story.blanks.count, "blank") %></span>
+                      </div>
+                    </div>
+                  </label>
+                <% end %>
+
+                <%# No results message %>
+                <div class="hidden text-center py-8 text-ink/50 italic" data-story-selection-target="noResults">
+                  No stories match your search
+                </div>
               </div>
-            </label>
+            </div>
           </div>
         </div>
 
-        <button type="submit" class="btn-primary mt-4 ml-4">Start Game</button>
+        <%# Voting Style Accordion %>
+        <div class="accordion-section" data-story-selection-target="votingSection">
+          <div class="accordion-header" data-action="click->story-selection#toggleVotingSection">
+            <span>Voting Style</span>
+            <svg data-story-selection-target="votingChevron" class="accordion-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+
+          <%# Summary shown when collapsed %>
+          <div class="accordion-summary hidden" data-story-selection-target="votingSectionSummary">
+            Selected: <strong data-story-selection-target="selectedVotingStyle"></strong>
+          </div>
+
+          <div class="accordion-content accordion-content-collapsed" data-story-selection-target="votingSectionContent">
+            <div class="p-4 flex flex-col gap-3">
+              <label class="cursor-pointer block" data-voting-style-name="Vote Once">
+                <input type="radio" name="room[voting_style]" value="vote_once"
+                       <%= "checked" if room.vote_once? %> class="peer sr-only"
+                       data-action="change->story-selection#selectVotingStyle">
+                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                  <span class="font-bold text-ink">Vote Once</span>
+                  <span class="text-sm text-ink/60">Pick your favorite answer</span>
+                </div>
+              </label>
+              <label class="cursor-pointer block" data-voting-style-name="Ranked Top 3">
+                <input type="radio" name="room[voting_style]" value="ranked_top_3"
+                       <%= "checked" if room.ranked_voting? %> class="peer sr-only"
+                       data-action="change->story-selection#selectVotingStyle">
+                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                  <span class="font-bold text-ink">Ranked Top 3</span>
+                  <span class="text-sm text-ink/60">Drag to rank (30/20/10 pts)</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Start Game</button>
       <% end %>
     </div>
   </div>

@@ -1289,6 +1289,96 @@
 }
 
 /* ============================================
+   ACCORDION COMPONENT
+   Playful collapsible sections for story selection
+   ============================================ */
+
+.accordion-section {
+  @apply bg-white rounded-xl overflow-hidden;
+  border: 3px solid var(--color-ink);
+  box-shadow: 4px 4px 0px var(--color-ink);
+}
+
+.accordion-header {
+  @apply flex items-center justify-between px-5 py-4 cursor-pointer select-none;
+  @apply font-bold text-lg transition-colors;
+  background: var(--color-accent-tertiary-light);
+  color: var(--color-ink);
+}
+
+.accordion-header:hover {
+  background: var(--color-accent-tertiary);
+}
+
+.accordion-chevron {
+  @apply transition-transform duration-300;
+}
+
+.accordion-chevron-expanded {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  @apply overflow-hidden transition-all duration-300 ease-out;
+  max-height: 2000px;
+}
+
+.accordion-content-collapsed {
+  max-height: 0;
+}
+
+.accordion-summary {
+  @apply px-5 py-3 text-sm font-medium border-t-2;
+  border-color: rgba(26, 26, 46, 0.1);
+  color: rgba(26, 26, 46, 0.7);
+  background: var(--color-bg-page);
+}
+
+.accordion-summary strong {
+  color: var(--color-ink);
+}
+
+/* Search input with icon */
+.search-input-container {
+  @apply relative;
+}
+
+.search-input {
+  @apply w-full pl-11 pr-4 py-3 text-base font-medium rounded-xl outline-none transition-all;
+  border: 2px solid rgba(26, 26, 46, 0.2);
+  background: white;
+}
+
+.search-input:hover {
+  border-color: var(--color-ink);
+}
+
+.search-input:focus {
+  border-color: var(--color-accent-secondary);
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.1);
+}
+
+.search-input::placeholder {
+  @apply font-normal;
+  color: rgba(26, 26, 46, 0.4);
+}
+
+.search-input-icon {
+  @apply absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none;
+  color: rgba(26, 26, 46, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-content {
+    transition: none;
+  }
+
+  .accordion-chevron {
+    transition: none;
+  }
+}
+
+/* ============================================
    MULTI-SELECT COMPONENT
    Mantine-inspired with Blanksies playful styling
    ============================================ */
