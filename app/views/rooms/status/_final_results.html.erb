@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="flex mt-6 gap-2 justify-center">
+    <div class="flex mt-6 gap-2 justify-center flex-wrap">
       <button type="button"
               class="btn-primary text-sm"
               data-action="click->share-story#share"
@@ -29,6 +29,10 @@
       <button class="btn-primary bg-accent-blue text-sm" type="button" data-action="click->speech#speak">
         🔊 Read Aloud
       </button>
+
+      <%= form_with url: end_room_game_path(current_room), method: :post, class: "inline" do |form| %>
+        <%= form.submit "Start New Game", class: "btn-primary bg-accent-green text-sm" %>
+      <% end %>
     </div>
   </div>
   <div class="card-status-content-green overflow-y-auto">

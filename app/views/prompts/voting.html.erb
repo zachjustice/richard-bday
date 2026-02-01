@@ -1,4 +1,5 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+<%= render "shared/leave_game_button" %>
 
 <% if @current_room.vote_once? %>
   <div data-controller="prompt" class="min-h-screen flex items-center max-sm:items-start justify-center bg-page overflow-auto">

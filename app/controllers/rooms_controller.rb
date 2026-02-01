@@ -200,7 +200,11 @@ class RoomsController < ApplicationController
     )
     status_data = RoomStatusService.new(current_room).call
     GamePhasesService.new(current_room).update_room_status_view("rooms/status/waiting_room", status_data, true)
-    redirect_to controller: "rooms", action: "waiting_for_new_game", id: params[:id]
+    if @current_user&.role == User::CREATOR
+      redirect_to controller: "rooms", action: "status", id: params[:id]
+    else
+      redirect_to controller: "rooms", action: "waiting_for_new_game", id: params[:id]
+    end
   end
 
   def waiting_for_new_game

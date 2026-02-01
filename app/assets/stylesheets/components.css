@@ -637,6 +637,57 @@
   box-shadow: 8px 8px 0px var(--color-ink);
 }
 
+/* Leave Game Modal */
+.leave-game-modal {
+  @apply fixed inset-0 z-[1000] flex items-center justify-center p-4 animate-fade-in;
+}
+
+.leave-game-modal.hidden {
+  @apply hidden;
+}
+
+.leave-game-backdrop {
+  @apply absolute inset-0 bg-black/50 backdrop-blur-sm;
+}
+
+.leave-game-content {
+  @apply relative bg-white rounded-2xl w-full max-w-[380px] overflow-hidden animate-slide-up;
+  border: 3px solid var(--color-ink);
+  box-shadow: 8px 8px 0px var(--color-ink);
+}
+
+/* Leave Game Button - fixed bottom-left */
+.leave-game-btn {
+  @apply fixed bottom-4 left-4 z-50 p-2 bg-white rounded-xl cursor-pointer transition-all;
+  @apply flex items-center justify-center;
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 2px 2px 0px var(--color-ink);
+}
+
+@media (min-width: 640px) {
+  .leave-game-btn {
+    @apply bottom-5 left-5 p-2.5;
+  }
+}
+
+.leave-game-btn:hover {
+  box-shadow: 3px 3px 0px var(--color-ink);
+  transform: translate(-1px, -1px);
+}
+
+.leave-game-btn:active {
+  box-shadow: 1px 1px 0px var(--color-ink);
+  transform: translate(1px, 1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leave-game-btn:hover,
+  .leave-game-btn:active {
+    transform: none;
+  }
+}
+
 /* Music Player Component */
 .music-player-button {
   @apply fixed bottom-5 left-5 w-[50px] h-[50px] bg-white rounded-xl;
