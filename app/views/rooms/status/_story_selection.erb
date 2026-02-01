@@ -48,9 +48,9 @@
                 <% stories.each do |story| %>
                   <label class="cursor-pointer block"
                          data-story-selection-target="storyItem"
-                         data-story-title="<%= story.title %>"
-                         data-story-author="<%= story.author&.username %>"
-                         data-story-genres="<%= story.genres.map(&:name).join(' ') %>">
+                         data-story-title="<%= h(story.title) %>"
+                         data-story-author="<%= h(story.author&.username) %>"
+                         data-story-genres="<%= h(story.genres.map(&:name).join(' ')) %>">
                     <input type="radio" name="story" value="<%= story.id %>"
                       class="peer sr-only" required
                       data-action="change->story-selection#selectStory">

@@ -1371,7 +1371,7 @@
 
 .accordion-content {
   @apply overflow-hidden transition-all duration-300 ease-out;
-  max-height: 2000px;
+  max-height: var(--accordion-max-height, 100vh);
 }
 
 .accordion-content-collapsed {

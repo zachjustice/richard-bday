@@ -83,9 +83,10 @@ const subscribe = (eventType, callback, channel = "RoomChannel") => {
       console.log('installPageChangeCallback')
       if (!this.installedPageChangeCallback) {
         this.installedPageChangeCallback = true;
-        return $(document).on('turbolinks:load', function () {
-          console.log('turbolinks:load callback')
-          return this.followCurrentMessage();
+        const subscription = this;
+        document.addEventListener('turbo:load', () => {
+          console.log('turbo:load callback')
+          subscription.followCurrentMessage();
         });
       }
     }

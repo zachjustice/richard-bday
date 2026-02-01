@@ -34,8 +34,9 @@ export default class extends Controller {
         console.log('installPageChangeCallback')
         if (!this.installedPageChangeCallback) {
           this.installedPageChangeCallback = true;
-          return $(document).on('turbolinks:load', function () {
-            return this.followCurrentMessage();
+          const subscription = this;
+          document.addEventListener('turbo:load', () => {
+            subscription.followCurrentMessage();
           });
         }
       }

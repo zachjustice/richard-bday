@@ -20,10 +20,32 @@ export default class extends Controller {
   connect() {
     this.storySectionExpanded = true
     this.votingSectionExpanded = false
+    this.filterTimeout = null
+    this.initializeVotingStyleSummary()
+  }
+
+  disconnect() {
+    clearTimeout(this.filterTimeout)
+  }
+
+  initializeVotingStyleSummary() {
+    const checkedInput = this.element.querySelector('input[name="room[voting_style]"]:checked')
+    if (checkedInput) {
+      const label = checkedInput.closest('label')
+      const styleName = label?.dataset.votingStyleName || ''
+      this.selectedVotingStyleTarget.textContent = styleName
+    }
   }
 
   filterStories(event) {
-    const query = event.target.value.toLowerCase().trim()
+    clearTimeout(this.filterTimeout)
+    this.filterTimeout = setTimeout(() => {
+      this.performFilter(event.target.value)
+    }, 150)
+  }
+
+  performFilter(value) {
+    const query = value.toLowerCase().trim()
 
     let visibleCount = 0
     this.storyItemTargets.forEach(item => {
