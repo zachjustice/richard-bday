@@ -1,0 +1,42 @@
+<div data-controller="leave-game-modal">
+  <%# Floating leave button - top right %>
+  <button type="button"
+          class="leave-game-btn"
+          data-action="click->leave-game-modal#open"
+          aria-label="Leave game"
+          title="Leave game">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+    </svg>
+  </button>
+
+  <%# Leave Game Modal %>
+  <div class="leave-game-modal hidden"
+       data-leave-game-modal-target="modal"
+       role="dialog"
+       aria-labelledby="leave-game-modal-title"
+       aria-modal="true">
+    <div class="leave-game-backdrop" data-action="click->leave-game-modal#close"></div>
+    <div class="leave-game-content">
+      <div class="text-center p-8">
+        <div class="text-5xl mb-4">
+          <svg class="w-16 h-16 mx-auto text-ink" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+          </svg>
+        </div>
+        <h2 id="leave-game-modal-title" class="text-2xl font-bold text-ink mb-3">Leaving so soon?</h2>
+        <p class="text-ink/60 mb-6">You'll have to rejoin if you want to play again.</p>
+        <div class="flex flex-col gap-3">
+          <%= button_to session_path, method: :delete, class: "btn-primary w-full" do %>
+            Leave the Game
+          <% end %>
+          <button type="button"
+                  class="btn-secondary w-full"
+                  data-action="click->leave-game-modal#close">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
