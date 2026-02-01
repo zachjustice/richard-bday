@@ -107,7 +107,7 @@ class PromptsController < ApplicationController
             )
           ]
         end
-        format.html { redirect_to prompts_path, notice: "Prompt created successfully" }
+        format.html { redirect_to prompts_index_path, notice: "Prompt created successfully" }
       end
     else
       respond_to do |format|
@@ -136,7 +136,7 @@ class PromptsController < ApplicationController
             locals: { prompt: @prompt }
           )
         end
-        format.html { redirect_to prompts_path, notice: "Prompt updated successfully" }
+        format.html { redirect_to prompts_index_path, notice: "Prompt updated successfully" }
       end
     else
       respond_to do |format|
@@ -159,7 +159,7 @@ class PromptsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.remove("prompt_#{@prompt.id}")
       end
-      format.html { redirect_to prompts_path, notice: "Prompt deleted successfully" }
+      format.html { redirect_to prompts_index_path, notice: "Prompt deleted successfully" }
     end
   end
 
