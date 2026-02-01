@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  editor: one
+  ip_address: 127.0.0.1
+  user_agent: Test Agent
+
+two:
+  editor: two
+  ip_address: 127.0.0.1
+  user_agent: Test Agent

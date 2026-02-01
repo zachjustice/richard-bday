@@ -5,7 +5,7 @@
 
 <div class="flex-1 flex flex-col justify-start min-h-0 relative z-10">
   <%# Header section with title styling %>
-  <div class="text-center mb-8 animate-slide-up">
+  <div class="text-center mb-4 animate-slide-up">
     <h1 class="text-4xl md:text-5xl font-bold mb-3 text-shadow-heading">PICK A STORY</h1>
   </div>
 
@@ -19,9 +19,25 @@
             <label class="cursor-pointer block">
               <input type="radio" name="story" value="<%= story.id %>"
                 class="peer sr-only" required>
-              <div class="flex w-full justify-between p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
-                <span class="font-bold"><%= story.title %></span>
-                <span class="text-sm text-ink/60"><%= pluralize(story.blanks.count, "blank") %></span>
+              <div class="flex flex-col gap-1 w-full p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                <div class="flex justify-between items-center">
+                  <span class="font-bold"><%= story.title %></span>
+                  <% if story.genres.any? %>
+                    <div class="flex flex-wrap gap-1 justify-end">
+                      <% story.genres.each do |genre| %>
+                        <span class="tag text-xs"><%= genre.name %></span>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="flex justify-between items-center">
+                  <% if story.author.present? %>
+                    <span class="text-sm text-ink/60">by <%= story.author.username %></span>
+                  <% else %>
+                    <span></span>
+                  <% end %>
+                  <span class="text-sm text-ink/60"><%= pluralize(story.blanks.count, "blank") %></span>
+                </div>
               </div>
             </label>
           <% end %>

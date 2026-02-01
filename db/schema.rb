@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_31_211055) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -19,11 +19,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.integer "game_prompt_id", null: false
     t.integer "game_id", null: false
     t.boolean "won"
-    t.index ["game_id"], name: "index_answers_on_game_id"
-    t.index ["game_prompt_id", "game_id", "user_id"], name: "index_answers_on_game_prompt_id_and_game_id_and_user_id", unique: true
-    t.index ["game_prompt_id", "user_id"], name: "index_game_prompts_on_game_prompt_id_and_room_id_and_user_id", unique: true
-    t.index ["game_prompt_id"], name: "index_answers_on_game_prompt_id"
-    t.index ["user_id"], name: "index_answers_on_user_id"
+    t.index [ "game_id" ], name: "index_answers_on_game_id"
+    t.index [ "game_prompt_id", "game_id", "user_id" ], name: "index_answers_on_game_prompt_id_and_game_id_and_user_id", unique: true
+    t.index [ "game_prompt_id", "user_id" ], name: "index_game_prompts_on_game_prompt_id_and_room_id_and_user_id", unique: true
+    t.index [ "game_prompt_id" ], name: "index_answers_on_game_prompt_id"
+    t.index [ "user_id" ], name: "index_answers_on_user_id"
   end
 
   create_table "blanks", force: :cascade do |t|
@@ -31,7 +31,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.integer "story_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["story_id"], name: "index_blanks_on_story_id"
+    t.index [ "story_id" ], name: "index_blanks_on_story_id"
   end
 
   create_table "editor_invitations", force: :cascade do |t|
@@ -42,9 +42,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.integer "editor_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["editor_id"], name: "index_editor_invitations_on_editor_id"
-    t.index ["email"], name: "index_editor_invitations_on_email"
-    t.index ["token_digest"], name: "index_editor_invitations_on_token_digest", unique: true
+    t.index [ "editor_id" ], name: "index_editor_invitations_on_editor_id"
+    t.index [ "email" ], name: "index_editor_invitations_on_email"
+    t.index [ "token_digest" ], name: "index_editor_invitations_on_token_digest", unique: true
   end
 
   create_table "editor_password_resets", force: :cascade do |t|
@@ -54,8 +54,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.datetime "used_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["editor_id"], name: "index_editor_password_resets_on_editor_id"
-    t.index ["token_digest"], name: "index_editor_password_resets_on_token_digest", unique: true
+    t.index [ "editor_id" ], name: "index_editor_password_resets_on_editor_id"
+    t.index [ "token_digest" ], name: "index_editor_password_resets_on_token_digest", unique: true
   end
 
   create_table "editor_sessions", force: :cascade do |t|
@@ -64,7 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["editor_id"], name: "index_editor_sessions_on_editor_id"
+    t.index [ "editor_id" ], name: "index_editor_sessions_on_editor_id"
   end
 
   create_table "editors", force: :cascade do |t|
@@ -73,8 +73,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email"
-    t.index ["email"], name: "index_editors_on_email", unique: true
-    t.index ["username"], name: "index_editors_on_username", unique: true
+    t.index [ "email" ], name: "index_editors_on_email", unique: true
+    t.index [ "username" ], name: "index_editors_on_username", unique: true
   end
 
   create_table "game_prompts", force: :cascade do |t|
@@ -84,10 +84,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.integer "prompt_id", null: false
     t.integer "blank_id", null: false
     t.integer "order", null: false
-    t.index ["blank_id"], name: "index_game_prompts_on_blank_id"
-    t.index ["game_id", "prompt_id", "blank_id", "order"], name: "index_game_prompts_on_game_prompt_blank_order", unique: true
-    t.index ["game_id"], name: "index_game_prompts_on_game_id"
-    t.index ["prompt_id"], name: "index_game_prompts_on_prompt_id"
+    t.index [ "blank_id" ], name: "index_game_prompts_on_blank_id"
+    t.index [ "game_id", "prompt_id", "blank_id", "order" ], name: "index_game_prompts_on_game_prompt_blank_order", unique: true
+    t.index [ "game_id" ], name: "index_game_prompts_on_game_id"
+    t.index [ "prompt_id" ], name: "index_game_prompts_on_prompt_id"
   end
 
   create_table "games", force: :cascade do |t|
@@ -97,9 +97,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.datetime "updated_at", null: false
     t.integer "current_game_prompt_id"
     t.datetime "next_game_phase_time"
-    t.index ["current_game_prompt_id"], name: "index_games_on_current_game_prompt_id"
-    t.index ["room_id"], name: "index_games_on_room_id"
-    t.index ["story_id"], name: "index_games_on_story_id"
+    t.index [ "current_game_prompt_id" ], name: "index_games_on_current_game_prompt_id"
+    t.index [ "room_id" ], name: "index_games_on_room_id"
+    t.index [ "story_id" ], name: "index_games_on_story_id"
+  end
+
+  create_table "genres", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "name" ], name: "index_genres_on_name", unique: true
   end
 
   create_table "prompts", force: :cascade do |t|
@@ -107,6 +114,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "tags"
+    t.integer "creator_id"
+    t.index [ "creator_id" ], name: "index_prompts_on_creator_id"
   end
 
   create_table "rooms", force: :cascade do |t|
@@ -118,8 +127,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.integer "time_to_answer_seconds", default: 180, null: false
     t.integer "time_to_vote_seconds", default: 120, null: false
     t.string "voting_style", default: "vote_once", null: false
-    t.index ["code"], name: "index_rooms_on_code", unique: true
-    t.index ["current_game_id"], name: "index_rooms_on_current_game_id"
+    t.index [ "code" ], name: "index_rooms_on_code", unique: true
+    t.index [ "current_game_id" ], name: "index_rooms_on_current_game_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -128,7 +137,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_sessions_on_user_id"
+    t.index [ "user_id" ], name: "index_sessions_on_user_id"
   end
 
   create_table "stories", force: :cascade do |t|
@@ -138,7 +147,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.datetime "updated_at", null: false
     t.text "title", null: false
     t.boolean "published", default: false, null: false
-    t.index ["title"], name: "index_stories_on_title", unique: true
+    t.integer "author_id"
+    t.index [ "author_id" ], name: "index_stories_on_author_id"
+    t.index [ "title" ], name: "index_stories_on_title", unique: true
+  end
+
+  create_table "story_genres", force: :cascade do |t|
+    t.integer "story_id", null: false
+    t.integer "genre_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "genre_id" ], name: "index_story_genres_on_genre_id"
+    t.index [ "story_id", "genre_id" ], name: "index_story_genres_on_story_id_and_genre_id", unique: true
+    t.index [ "story_id" ], name: "index_story_genres_on_story_id"
   end
 
   create_table "story_prompts", force: :cascade do |t|
@@ -147,10 +168,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.integer "prompt_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["blank_id"], name: "index_story_prompts_on_blank_id"
-    t.index ["prompt_id"], name: "index_story_prompts_on_prompt_id"
-    t.index ["story_id", "blank_id", "prompt_id"], name: "index_story_prompts_stories_blanks_prompts_unique", unique: true
-    t.index ["story_id"], name: "index_story_prompts_on_story_id"
+    t.index [ "blank_id" ], name: "index_story_prompts_on_blank_id"
+    t.index [ "prompt_id" ], name: "index_story_prompts_on_prompt_id"
+    t.index [ "story_id", "blank_id", "prompt_id" ], name: "index_story_prompts_stories_blanks_prompts_unique", unique: true
+    t.index [ "story_id" ], name: "index_story_prompts_on_story_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -162,9 +183,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.boolean "is_active", default: true, null: false
     t.string "status", default: "Answering"
     t.string "avatar", null: false
-    t.index ["room_id", "avatar"], name: "index_users_on_room_id_and_avatar", unique: true
-    t.index ["room_id", "name"], name: "index_users_on_room_id_and_name", unique: true
-    t.index ["room_id"], name: "index_users_on_room_id"
+    t.index [ "room_id", "avatar" ], name: "index_users_on_room_id_and_avatar", unique: true
+    t.index [ "room_id", "name" ], name: "index_users_on_room_id_and_name", unique: true
+    t.index [ "room_id" ], name: "index_users_on_room_id"
   end
 
   create_table "votes", force: :cascade do |t|
@@ -175,13 +196,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
     t.integer "game_id", null: false
     t.integer "game_prompt_id", null: false
     t.integer "rank"
-    t.index ["answer_id"], name: "index_votes_on_answer_id"
-    t.index ["game_id"], name: "index_votes_on_game_id"
-    t.index ["game_prompt_id", "rank"], name: "index_votes_on_game_prompt_id_and_rank"
-    t.index ["game_prompt_id", "user_id", "answer_id"], name: "idx_votes_prompt_user_answer_unique", unique: true
-    t.index ["game_prompt_id", "user_id", "rank"], name: "idx_votes_prompt_user_rank_unique", unique: true, where: "rank IS NOT NULL"
-    t.index ["game_prompt_id"], name: "index_votes_on_game_prompt_id"
-    t.index ["user_id"], name: "index_votes_on_user_id"
+    t.index [ "answer_id" ], name: "index_votes_on_answer_id"
+    t.index [ "game_id" ], name: "index_votes_on_game_id"
+    t.index [ "game_prompt_id", "rank" ], name: "index_votes_on_game_prompt_id_and_rank"
+    t.index [ "game_prompt_id", "user_id", "answer_id" ], name: "idx_votes_prompt_user_answer_unique", unique: true
+    t.index [ "game_prompt_id", "user_id", "rank" ], name: "idx_votes_prompt_user_rank_unique", unique: true, where: "rank IS NOT NULL"
+    t.index [ "game_prompt_id" ], name: "index_votes_on_game_prompt_id"
+    t.index [ "user_id" ], name: "index_votes_on_user_id"
   end
 
   add_foreign_key "answers", "game_prompts"
@@ -197,8 +218,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_28_231141) do
   add_foreign_key "games", "game_prompts", column: "current_game_prompt_id"
   add_foreign_key "games", "rooms"
   add_foreign_key "games", "stories"
+  add_foreign_key "prompts", "editors", column: "creator_id"
   add_foreign_key "rooms", "games", column: "current_game_id"
   add_foreign_key "sessions", "users"
+  add_foreign_key "stories", "editors", column: "author_id"
+  add_foreign_key "story_genres", "genres"
+  add_foreign_key "story_genres", "stories"
   add_foreign_key "story_prompts", "blanks"
   add_foreign_key "story_prompts", "prompts"
   add_foreign_key "story_prompts", "stories"
