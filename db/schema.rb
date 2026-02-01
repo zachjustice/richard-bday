@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_31_211055) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_01_184129) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -149,6 +149,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_31_211055) do
     t.boolean "published", default: false, null: false
     t.integer "author_id"
     t.index [ "author_id" ], name: "index_stories_on_author_id"
+    t.index [ "published" ], name: "index_stories_on_published"
     t.index [ "title" ], name: "index_stories_on_title", unique: true
   end
 

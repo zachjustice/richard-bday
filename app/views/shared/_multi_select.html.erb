@@ -7,10 +7,18 @@
     - placeholder: input placeholder text
     Optional:
     - label: label text (omit to hide label)
+    - empty_message: message shown when no options match (default: "No options available")
+%>
+<%
+  # Build the full field name from the form object name and field
+  full_field_name = "#{form.object_name}[#{field_name}][]"
+  empty_msg = defined?(empty_message) && empty_message ? empty_message : "No options available"
 %>
 <div class="multi-select"
      data-controller="multi-select"
-     data-multi-select-options-value="<%= options.map { |o| { id: o.id, name: o.name } }.to_json %>">
+     data-multi-select-options-value="<%= options.map { |o| { id: o.id, name: o.name } }.to_json %>"
+     data-multi-select-field-name-value="<%= full_field_name %>"
+     data-multi-select-empty-message-value="<%= empty_msg %>">
 
   <% if defined?(label) && label %>
     <label class="form-label mb-2"><%= label %></label>

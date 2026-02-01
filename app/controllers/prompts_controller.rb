@@ -127,6 +127,8 @@ class PromptsController < ApplicationController
   end
 
   def update_prompt
+    return if performed?
+
     if @prompt.update(prompt_params)
       respond_to do |format|
         format.turbo_stream do
@@ -153,6 +155,8 @@ class PromptsController < ApplicationController
   end
 
   def destroy_prompt
+    return if performed?
+
     @prompt.destroy
 
     respond_to do |format|
@@ -170,11 +174,11 @@ class PromptsController < ApplicationController
   end
 
   def authorize_prompt_owner!
-    unless @prompt.owned_by?(current_editor)
-      respond_to do |format|
-        format.turbo_stream { head :forbidden }
-        format.html { redirect_to prompts_index_path, alert: "You are not authorized to edit this prompt" }
-      end
+    return if @prompt.owned_by?(current_editor)
+
+    respond_to do |format|
+      format.turbo_stream { head :forbidden }
+      format.html { redirect_to prompts_index_path, alert: "You are not authorized to edit this prompt" }
     end
   end
 

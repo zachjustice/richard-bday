@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["container", "pills", "input", "dropdown", "options"]
-  static values = { options: Array }
+  static values = { options: Array, fieldName: String, emptyMessage: String }
 
   connect() {
     this.selectedIds = new Set(
@@ -78,8 +78,9 @@ export default class extends Controller {
 
   renderOptions(options) {
     if (options.length === 0) {
+      const emptyMessage = this.hasEmptyMessageValue ? this.emptyMessageValue : "No options available"
       this.optionsTarget.innerHTML = `
-        <div class="multi-select-empty">No genres available</div>
+        <div class="multi-select-empty">${this.escapeHtml(emptyMessage)}</div>
       `
       return
     }
@@ -123,7 +124,7 @@ export default class extends Controller {
           <path d="M9.5 3.2L8.8 2.5 6 5.3 3.2 2.5 2.5 3.2 5.3 6 2.5 8.8l.7.7L6 6.7l2.8 2.8.7-.7L6.7 6z"/>
         </svg>
       </button>
-      <input type="hidden" name="story[genre_ids][]" value="${id}">
+      <input type="hidden" name="${this.fieldNameValue}" value="${id}">
     `
     this.pillsTarget.appendChild(pill)
   }

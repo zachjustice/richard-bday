@@ -10,6 +10,8 @@ class StoriesController < ApplicationController
   end
 
   def show
+    return if performed?
+
     @blanks = @story.blanks.index_by(&:id)
     @validation = @story.validate_blanks
   end
@@ -32,11 +34,15 @@ class StoriesController < ApplicationController
   end
 
   def edit
+    return if performed?
+
     @blanks = @story.blanks.order(:id)
     @genres = Genre.all.order(:name)
   end
 
   def update
+    return if performed?
+
     @genres = Genre.all.order(:name)
 
     if @story.update(story_params)
@@ -71,6 +77,8 @@ class StoriesController < ApplicationController
   end
 
   def destroy
+    return if performed?
+
     @story.destroy
     redirect_to stories_path, notice: "Story deleted successfully"
   end
@@ -92,13 +100,15 @@ class StoriesController < ApplicationController
 
   def set_story
     @story = Story.visible_to(current_editor).find_by(id: params[:id])
-    redirect_to stories_path, alert: "Story not found" unless @story
+    return if @story
+
+    redirect_to stories_path, alert: "Story not found"
   end
 
   def authorize_story_owner!
-    unless @story.owned_by?(current_editor)
-      redirect_to stories_path, alert: "You are not authorized to edit this story"
-    end
+    return if @story.owned_by?(current_editor)
+
+    redirect_to stories_path, alert: "You are not authorized to edit this story"
   end
 
   def trim_params(permitted_params)
