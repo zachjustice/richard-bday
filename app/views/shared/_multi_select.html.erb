@@ -1,0 +1,54 @@
+<%# Reusable multi-select component
+    Required locals:
+    - form: the form builder
+    - field_name: symbol for the field (e.g., :genre_ids)
+    - options: array of objects with :id and :name
+    - selected: array of currently selected objects
+    - placeholder: input placeholder text
+    Optional:
+    - label: label text (omit to hide label)
+%>
+<div class="multi-select"
+     data-controller="multi-select"
+     data-multi-select-options-value="<%= options.map { |o| { id: o.id, name: o.name } }.to_json %>">
+
+  <% if defined?(label) && label %>
+    <label class="form-label mb-2"><%= label %></label>
+  <% end %>
+
+  <div class="multi-select-container" data-multi-select-target="container">
+    <%# Selected pills %>
+    <div class="multi-select-pills" data-multi-select-target="pills">
+      <% selected.each do |item| %>
+        <span class="multi-select-pill" data-id="<%= item.id %>">
+          <%= item.name %>
+          <button type="button"
+                  class="multi-select-pill-remove"
+                  data-action="click->multi-select#removePill"
+                  data-id="<%= item.id %>"
+                  aria-label="Remove <%= item.name %>">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+              <path d="M9.5 3.2L8.8 2.5 6 5.3 3.2 2.5 2.5 3.2 5.3 6 2.5 8.8l.7.7L6 6.7l2.8 2.8.7-.7L6.7 6z"/>
+            </svg>
+          </button>
+          <%= form.hidden_field field_name, value: item.id, multiple: true, id: nil %>
+        </span>
+      <% end %>
+    </div>
+
+    <%# Search input %>
+    <input type="text"
+           class="multi-select-input"
+           placeholder="<%= placeholder || 'Search...' %>"
+           autocomplete="off"
+           data-multi-select-target="input"
+           data-action="input->multi-select#onInput focus->multi-select#onFocus keydown->multi-select#onKeydown">
+  </div>
+
+  <%# Dropdown %>
+  <div class="multi-select-dropdown hidden" data-multi-select-target="dropdown">
+    <div class="multi-select-options" data-multi-select-target="options">
+      <%# Options rendered by JS %>
+    </div>
+  </div>
+</div>

@@ -1,10 +1,33 @@
 <%# app/views/stories/show.html.erb %>
 <div class="max-w-[1400px] flex flex-col flex-1 p-8 md:p-4 mx-auto w-full">
-  <div class="flex justify-between items-center mb-8 pb-6 border-b-3 border-ink flex-wrap gap-4">
-    <h1 class="text-3xl font-bold text-ink m-0"><%= @story.title %></h1>
+  <div class="flex justify-between items-start mb-8 pb-6 border-b-3 border-ink flex-wrap gap-4">
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center gap-3 flex-wrap">
+        <h1 class="text-3xl font-bold text-ink m-0"><%= @story.title %></h1>
+        <% unless @story.published %>
+          <span class="px-3 py-1 rounded-lg text-sm font-bold bg-ink/10 text-ink/60">Draft</span>
+        <% end %>
+      </div>
+      <% if @story.author.present? || @story.genres.any? %>
+        <div class="flex items-center gap-3 flex-wrap">
+          <% if @story.author.present? %>
+            <span class="text-ink/60 text-sm">by <%= @story.author.username %></span>
+          <% end %>
+          <% if @story.genres.any? %>
+            <div class="flex flex-wrap gap-1.5">
+              <% @story.genres.each do |genre| %>
+                <span class="tag text-xs"><%= genre.name %></span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
     <div class="flex gap-4">
-      <%= link_to "Edit Story", edit_story_path(@story), class: "btn-primary" %>
-      <%= link_to "← Back to Stories", stories_path, class: "btn-secondary" %>
+      <% if @story.owned_by?(current_editor) %>
+        <%= link_to "Edit Story", edit_story_path(@story), class: "btn-primary" %>
+      <% end %>
+      <%= link_to "Back to Stories", stories_path, class: "btn-secondary" %>
     </div>
   </div>
 

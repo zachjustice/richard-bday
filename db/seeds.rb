@@ -372,6 +372,24 @@ stories =  [
 # Lore about a spooky monster
 
 # seed_example_data
+
+# Seed default genres
+puts("Creating genres")
+[
+  "Science Fiction",
+  "Romance",
+  "Horror",
+  "History",
+  "Non-fiction",
+  "Fantasy",
+  "Mystery",
+  "Comedy",
+  "Adventure",
+  "Action"
+].each do |genre_name|
+  Genre.find_or_create_by!(name: genre_name)
+end
+
 puts("Creating stories")
 stories.each { |s| create_story(s) }
 

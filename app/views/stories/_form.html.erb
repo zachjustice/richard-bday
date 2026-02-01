@@ -28,10 +28,22 @@
           class: "story-form-textarea" %>
     </div>
 
+    <% if defined?(@genres) && @genres.present? %>
+      <div class="flex flex-col gap-2">
+        <%= render "shared/multi_select",
+            form: form,
+            field_name: :genre_ids,
+            options: @genres,
+            selected: story.genres,
+            placeholder: "Add genres...",
+            label: "Genres" %>
+      </div>
+    <% end %>
+
     <div class="flex flex-row items-center gap-3">
       <%= form.checkbox :published,
           class: "w-5 h-5 cursor-pointer accent-accent-primary" %>
-      <%= form.label :published, "Publish?", class: "font-semibold text-ink" %>
+      <%= form.label :published, "Publish (visible to all players)", class: "font-semibold text-ink" %>
     </div>
   <% end %>
 

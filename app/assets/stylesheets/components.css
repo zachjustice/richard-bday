@@ -1287,3 +1287,122 @@
     animation: none;
   }
 }
+
+/* ============================================
+   MULTI-SELECT COMPONENT
+   Mantine-inspired with Blanksies playful styling
+   ============================================ */
+
+.multi-select {
+  @apply relative w-full;
+}
+
+.multi-select-container {
+  @apply flex flex-wrap items-center gap-2 p-3 min-h-[52px];
+  @apply bg-white rounded-xl cursor-text;
+  border: 2px solid rgba(26, 26, 46, 0.2);
+  transition: all 0.2s ease;
+}
+
+.multi-select-container:hover {
+  border-color: var(--color-ink);
+}
+
+.multi-select-container:focus-within {
+  border-color: var(--color-accent-secondary);
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.1);
+}
+
+.multi-select-pills {
+  @apply flex flex-wrap gap-2;
+}
+
+.multi-select-pill {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full;
+  @apply text-sm font-bold;
+  background: var(--color-accent-tertiary);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 2px 2px 0px var(--color-ink);
+}
+
+.multi-select-pill-remove {
+  @apply flex items-center justify-center w-5 h-5 -mr-1 rounded-full;
+  @apply bg-transparent border-none cursor-pointer transition-all;
+  color: var(--color-ink);
+  opacity: 0.6;
+}
+
+.multi-select-pill-remove:hover {
+  opacity: 1;
+  background: rgba(26, 26, 46, 0.1);
+}
+
+.multi-select-input {
+  @apply flex-1 min-w-[120px] bg-transparent border-none outline-none;
+  @apply text-base font-medium;
+  color: var(--color-ink);
+}
+
+.multi-select-input::placeholder {
+  color: rgba(26, 26, 46, 0.4);
+}
+
+.multi-select-dropdown {
+  @apply absolute z-50 left-0 right-0 mt-2;
+  @apply bg-white rounded-xl overflow-hidden;
+  border: 2px solid var(--color-ink);
+  box-shadow: 4px 4px 0px var(--color-ink);
+  animation: dropdown-appear 0.15s ease-out;
+}
+
+@keyframes dropdown-appear {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.multi-select-dropdown.hidden {
+  @apply hidden;
+}
+
+.multi-select-options {
+  @apply max-h-[200px] overflow-y-auto p-1;
+}
+
+.multi-select-option {
+  @apply w-full text-left px-4 py-3 rounded-lg;
+  @apply text-base font-medium cursor-pointer transition-all;
+  @apply bg-transparent border-none;
+  color: var(--color-ink);
+}
+
+.multi-select-option:hover,
+.multi-select-option.highlighted {
+  background: var(--color-accent-tertiary-light);
+}
+
+.multi-select-option:active {
+  background: var(--color-accent-tertiary);
+}
+
+.multi-select-empty {
+  @apply px-4 py-3 text-center italic;
+  color: rgba(26, 26, 46, 0.5);
+}
+
+/* Pill animations */
+@keyframes pill-shrink {
+  to { transform: scale(0); opacity: 0; }
+}
+
+.multi-select-pill.animate-shrink {
+  animation: pill-shrink 0.15s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .multi-select-dropdown,
+  .multi-select-pill.animate-pop,
+  .multi-select-pill.animate-shrink {
+    animation: none;
+  }
+}
