@@ -1,0 +1,18 @@
+<%# app/views/prompts/new.html.erb %>
+<div class="max-w-[1400px] w-full flex flex-col flex-1 p-8 md:p-4 m-auto">
+  <div class="mb-8 flex flex-row justify-between flex-wrap gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-ink m-0">New Prompt</h1>
+      <p class="text-ink/60 mt-2 mb-0">Create a new question for story blanks</p>
+    </div>
+    <div>
+      <%= link_to "Back to Prompts", prompts_index_path, class: "btn-secondary" %>
+    </div>
+  </div>
+
+  <div class="bg-page p-6 rounded-xl border-3 border-ink shadow-strong max-w-2xl">
+    <div id="new_prompt_form">
+      <%= render "prompts/form", prompt: @prompt %>
+    </div>
+  </div>
+</div>

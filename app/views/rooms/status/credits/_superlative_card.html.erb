@@ -1,0 +1,90 @@
+<%# Superlative award card %>
+<%# Expects:
+    title - string, the award name
+    icon_svg - raw SVG markup for the icon
+    winner - hash with :user key, or nil
+    stat_label - string describing the stat
+    stat_value - the numeric/string value, or nil
+    color - string: red, blue, green, orange, indigo, violet
+    delay_index - integer for stagger animation
+%>
+
+<%
+  color_classes = {
+    "red" => {
+      bg: "bg-accent-red/10",
+      border: "border-accent-red/40",
+      accent: "bg-accent-red",
+      text: "text-accent-red"
+    },
+    "blue" => {
+      bg: "bg-accent-blue/10",
+      border: "border-accent-blue/40",
+      accent: "bg-accent-blue",
+      text: "text-accent-blue"
+    },
+    "green" => {
+      bg: "bg-accent-green/10",
+      border: "border-accent-green/40",
+      accent: "bg-accent-green",
+      text: "text-accent-green"
+    },
+    "orange" => {
+      bg: "bg-accent-orange/10",
+      border: "border-accent-orange/40",
+      accent: "bg-accent-orange",
+      text: "text-accent-orange"
+    },
+    "indigo" => {
+      bg: "bg-accent-indigo/10",
+      border: "border-accent-indigo/40",
+      accent: "bg-accent-indigo",
+      text: "text-accent-indigo"
+    },
+    "violet" => {
+      bg: "bg-accent-violet/10",
+      border: "border-accent-violet/40",
+      accent: "bg-accent-violet",
+      text: "text-accent-violet"
+    }
+  }
+  colors = color_classes[color] || color_classes["blue"]
+  delay_ms = (delay_index || 0) * 100 + 300
+%>
+
+<div class="rounded-2xl border-2 <%= colors[:border] %> <%= colors[:bg] %> p-4 transition-all hover:-translate-y-1 animate-slide-up"
+     style="animation-delay: <%= delay_ms %>ms; box-shadow: 4px 4px 0px var(--color-ink);">
+  <%# Header with icon and title %>
+  <div class="flex items-center gap-3 mb-3">
+    <div class="w-12 h-12 rounded-xl <%= colors[:accent] %> flex items-center justify-center text-white border-2 border-ink"
+         style="box-shadow: 2px 2px 0px var(--color-ink);">
+      <%= raw(icon_svg) %>
+    </div>
+    <h3 class="text-lg font-bold text-ink leading-tight"><%= title %></h3>
+  </div>
+
+  <% if winner.present? && winner[:user].present? %>
+    <%# Winner display %>
+    <div class="flex items-center gap-3">
+      <span class="text-4xl"><%= winner[:user].avatar %></span>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-ink text-base truncate"><%= winner[:user].name %></p>
+        <% if stat_value.present? %>
+          <p class="text-sm <%= colors[:text] %> font-semibold">
+            <span class="text-lg font-black"><%= stat_value %></span>
+            <%= stat_label %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <%# No winner state %>
+    <div class="flex items-center gap-3 opacity-50">
+      <span class="text-4xl">🤷</span>
+      <div class="flex-1">
+        <p class="font-medium text-ink/60 italic">No data</p>
+        <p class="text-sm text-ink/40">Everyone was too good!</p>
+      </div>
+    </div>
+  <% end %>
+</div>
