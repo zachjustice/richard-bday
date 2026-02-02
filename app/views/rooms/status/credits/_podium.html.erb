@@ -9,19 +9,15 @@
       <% second = podium[1] %>
       <% if second %>
         <div class="text-5xl mb-2 animate-bouncy" style="animation-delay: 0.6s;"><%= second[:user].avatar %></div>
-        <div class="relative">
-          <div class="w-24 md:w-28 h-20 rounded-t-xl flex flex-col items-center justify-center border-3 border-ink bg-accent-blue/30"
-               style="box-shadow: 4px 4px 0px var(--color-ink);">
-            <span class="text-3xl">🥈</span>
-          </div>
-          <div class="absolute -bottom-10 left-0 right-0 text-center bg-page py-1 rounded">
-            <p class="font-bold text-ink text-sm truncate max-w-24 md:max-w-28 mx-auto"><%= second[:user].name %></p>
-            <p class="text-xs text-ink/60 font-semibold"><%= second[:points] %> pts</p>
-          </div>
+        <div class="w-24 md:w-28 h-24 rounded-t-xl flex flex-col items-center justify-center border-3 border-ink bg-accent-blue/30 px-1"
+             style="box-shadow: 4px 4px 0px var(--color-ink);">
+          <span class="text-2xl">🥈</span>
+          <p class="font-bold text-ink text-sm truncate max-w-20 md:max-w-24 text-center"><%= second[:user].name %></p>
+          <p class="text-xs text-ink/70 font-semibold"><%= second[:points] %> pts</p>
         </div>
       <% else %>
         <div class="text-4xl mb-2 opacity-30">?</div>
-        <div class="w-24 md:w-28 h-20 rounded-t-xl flex items-center justify-center border-3 border-ink/30 border-dashed bg-ink/5">
+        <div class="w-24 md:w-28 h-24 rounded-t-xl flex items-center justify-center border-3 border-ink/30 border-dashed bg-ink/5">
           <span class="text-2xl opacity-30">🥈</span>
         </div>
       <% end %>
@@ -32,20 +28,16 @@
       <% first = podium[0] %>
       <% if first %>
         <div class="text-6xl mb-2 animate-bouncy" style="animation-delay: 0.5s;"><%= first[:user].avatar %></div>
-        <div class="relative">
-          <div class="w-28 md:w-32 h-28 rounded-t-xl flex flex-col items-center justify-center border-3 border-ink bg-accent-tertiary/50"
-               style="box-shadow: 6px 6px 0px var(--color-ink);">
-            <span class="text-4xl">🥇</span>
-            <span class="text-xs font-black text-ink uppercase tracking-wide mt-1">Champion</span>
-          </div>
-          <div class="absolute -bottom-10 left-0 right-0 text-center bg-page py-1 rounded">
-            <p class="font-bold text-ink text-base truncate max-w-28 md:max-w-32 mx-auto"><%= first[:user].name %></p>
-            <p class="text-sm text-ink/60 font-semibold"><%= first[:points] %> pts</p>
-          </div>
+        <div class="w-28 md:w-32 h-32 rounded-t-xl flex flex-col items-center justify-center border-3 border-ink bg-accent-tertiary/50 px-1"
+             style="box-shadow: 6px 6px 0px var(--color-ink);">
+          <span class="text-3xl">🥇</span>
+          <span class="text-[10px] font-black text-ink uppercase tracking-wide">Champion</span>
+          <p class="font-bold text-ink text-base truncate max-w-24 md:max-w-28 text-center"><%= first[:user].name %></p>
+          <p class="text-sm text-ink/70 font-semibold"><%= first[:points] %> pts</p>
         </div>
       <% else %>
         <div class="text-5xl mb-2 opacity-30">?</div>
-        <div class="w-28 md:w-32 h-28 rounded-t-xl flex items-center justify-center border-3 border-ink/30 border-dashed bg-ink/5">
+        <div class="w-28 md:w-32 h-32 rounded-t-xl flex items-center justify-center border-3 border-ink/30 border-dashed bg-ink/5">
           <span class="text-3xl opacity-30">🥇</span>
         </div>
       <% end %>
@@ -56,19 +48,15 @@
       <% third = podium[2] %>
       <% if third %>
         <div class="text-5xl mb-2 animate-bouncy" style="animation-delay: 0.7s;"><%= third[:user].avatar %></div>
-        <div class="relative">
-          <div class="w-24 md:w-28 h-16 rounded-t-xl flex flex-col items-center justify-center border-3 border-ink bg-accent-orange/30"
-               style="box-shadow: 4px 4px 0px var(--color-ink);">
-            <span class="text-3xl">🥉</span>
-          </div>
-          <div class="absolute -bottom-10 left-0 right-0 text-center bg-page py-1 rounded">
-            <p class="font-bold text-ink text-sm truncate max-w-24 md:max-w-28 mx-auto"><%= third[:user].name %></p>
-            <p class="text-xs text-ink/60 font-semibold"><%= third[:points] %> pts</p>
-          </div>
+        <div class="w-24 md:w-28 h-20 rounded-t-xl flex flex-col items-center justify-center border-3 border-ink bg-accent-orange/30 px-1"
+             style="box-shadow: 4px 4px 0px var(--color-ink);">
+          <span class="text-2xl">🥉</span>
+          <p class="font-bold text-ink text-sm truncate max-w-20 md:max-w-24 text-center"><%= third[:user].name %></p>
+          <p class="text-xs text-ink/70 font-semibold"><%= third[:points] %> pts</p>
         </div>
       <% else %>
         <div class="text-4xl mb-2 opacity-30">?</div>
-        <div class="w-24 md:w-28 h-16 rounded-t-xl flex items-center justify-center border-3 border-ink/30 border-dashed bg-ink/5">
+        <div class="w-24 md:w-28 h-20 rounded-t-xl flex items-center justify-center border-3 border-ink/30 border-dashed bg-ink/5">
           <span class="text-2xl opacity-30">🥉</span>
         </div>
       <% end %>
@@ -81,7 +69,4 @@
     <div class="w-28 md:w-32 h-3 bg-ink rounded-b-lg"></div>
     <div class="w-24 md:w-28 h-3 bg-ink rounded-b-lg"></div>
   </div>
-
-  <%# Spacing for name labels %>
-  <div class="h-14"></div>
 </div>
