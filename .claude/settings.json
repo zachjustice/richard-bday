@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(wc:*)",
-      "Bash(rails test:*)"
+      "Bash(rails test:*)",
+      "Bash(node --check:*)"
     ]
   },
   "enabledPlugins": {

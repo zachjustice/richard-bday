@@ -64,6 +64,6 @@
   <div class="flex gap-4 pt-4">
     <%= form.submit edit_mode ? "Update Blank" : "Create Blank",
         class: "btn-primary btn-sm",
-        data: { blank_form_target: "submitButton" } %>
+        data: { controller: "loading-button", blank_form_target: "submitButton" } %>
   </div>
 <% end %>

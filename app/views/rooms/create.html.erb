@@ -21,7 +21,7 @@
         <div class="card-primary mb-8">
           <!-- CTA -->
           <%= form_with url: "/rooms/create", method: :post, class: "mb-6" do |form| %>
-            <%= form.submit "Start a Game", class: "btn-primary w-full text-xl" %>
+            <%= form.submit "Start a Game", class: "btn-primary w-full text-xl", data: { controller: "loading-button" } %>
           <% end %>
 
           <p class="body">
