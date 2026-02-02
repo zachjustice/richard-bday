@@ -72,7 +72,7 @@ class VotesControllerTest < ActionDispatch::IntegrationTest
       game_prompt_id: @game_prompt.id
     }
 
-    assert_redirected_to controller: "prompts", action: "results", id: @game_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "results", id: @game_prompt.id
   end
 
   # Tests for VotesController#create - duplicate vote prevention
@@ -110,7 +110,7 @@ class VotesControllerTest < ActionDispatch::IntegrationTest
       game_prompt_id: @game_prompt.id
     }
 
-    assert_redirected_to controller: "prompts", action: "results", id: @game_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "results", id: @game_prompt.id
   end
 
   # Tests for VotesController#create - redirect to results when all users voted
@@ -134,7 +134,7 @@ class VotesControllerTest < ActionDispatch::IntegrationTest
     )
 
     # Verify redirect happens
-    assert_redirected_to controller: "prompts", action: "results", id: @game_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "results", id: @game_prompt.id
   end
 
   test "create should redirect to results when vote count equals user count" do
@@ -158,7 +158,7 @@ class VotesControllerTest < ActionDispatch::IntegrationTest
     votes_count = Vote.where(game_prompt: @game_prompt).count
     assert votes_count >= users_count
 
-    assert_redirected_to controller: "prompts", action: "results", id: @game_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "results", id: @game_prompt.id
   end
 
   # Tests for VotesController#create - failed vote scenarios
@@ -170,7 +170,7 @@ class VotesControllerTest < ActionDispatch::IntegrationTest
         game_prompt_id: @game_prompt.id
       }
 
-      assert_redirected_to controller: "prompts", action: "show", id: @game_prompt.id
+      assert_redirected_to controller: "game_prompts", action: "show", id: @game_prompt.id
     end
   end
 

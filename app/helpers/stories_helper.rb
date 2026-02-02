@@ -68,10 +68,10 @@ module StoriesHelper
         answer_text,
         class: "game-prompt-answer",
         data: {
-          controller: "prompt-tooltip",
-          action: "mouseenter->prompt-tooltip#show mouseleave->prompt-tooltip#hide",
-          prompt_tooltip_game_prompt_id_value: game_prompt_id,
-          prompt_tooltip_url_value: prompt_tooltip_path(game_prompt_id)
+          controller: "game-prompt-tooltip",
+          action: "mouseenter->game-prompt-tooltip#show mouseleave->game-prompt-tooltip#hide",
+          game_prompt_tooltip_game_prompt_id_value: game_prompt_id,
+          game_prompt_tooltip_url_value: game_prompt_tooltip_path(game_prompt_id)
         }
       )
     end

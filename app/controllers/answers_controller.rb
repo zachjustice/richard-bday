@@ -9,7 +9,7 @@ class AnswersController < ApplicationController
 
     if !answer.save
       flash[:alert] = answer.errors.full_messages.join(", ")
-      return redirect_to controller: "prompts", action: "show", id: params[:prompt_id]
+      return redirect_to controller: "game_prompts", action: "show", id: params[:prompt_id]
     end
 
     users_in_room = User.players.where(room_id: @current_room.id).count
@@ -18,9 +18,9 @@ class AnswersController < ApplicationController
 
     # All answers have been collected, time to vote
     if redirect_to_voting
-      return redirect_to controller: "prompts", action: "voting", id: params[:prompt_id]
+      return redirect_to controller: "game_prompts", action: "voting", id: params[:prompt_id]
     end
 
-    redirect_to controller: "prompts", action: "waiting", id: params[:prompt_id]
+    redirect_to controller: "game_prompts", action: "waiting", id: params[:prompt_id]
   end
 end

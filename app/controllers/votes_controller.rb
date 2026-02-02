@@ -35,10 +35,10 @@ class VotesController < ApplicationController
     redirect_to_results = submitted_votes_count >= users_in_room
 
     if successful || exists || redirect_to_results
-      redirect_to controller: "prompts", action: "results", id: params[:game_prompt_id]
+      redirect_to controller: "game_prompts", action: "results", id: params[:game_prompt_id]
     else
       flash[:alert] = error.full_messages.join(" ")
-      redirect_to controller: "prompts", action: "show", id: params[:game_prompt_id]
+      redirect_to controller: "game_prompts", action: "show", id: params[:game_prompt_id]
     end
   end
 
@@ -55,7 +55,7 @@ class VotesController < ApplicationController
         )
 
         if existing_votes.exists?
-          redirect_to controller: "prompts", action: "results", id: game_prompt_id
+          redirect_to controller: "game_prompts", action: "results", id: game_prompt_id
           return
         end
 
@@ -72,10 +72,10 @@ class VotesController < ApplicationController
         end
       end
 
-      redirect_to controller: "prompts", action: "results", id: game_prompt_id
+      redirect_to controller: "game_prompts", action: "results", id: game_prompt_id
     rescue ActiveRecord::RecordInvalid => e
       flash[:alert] = e.message
-      redirect_to controller: "prompts", action: "voting", id: game_prompt_id
+      redirect_to controller: "game_prompts", action: "voting", id: game_prompt_id
     end
   end
 end

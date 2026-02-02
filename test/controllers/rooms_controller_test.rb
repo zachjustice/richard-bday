@@ -225,7 +225,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     post next_room_path(@room)
 
     next_prompt = GamePrompt.find_by(game_id: @room.current_game_id, order: 1)
-    assert_redirected_to controller: "prompts", action: "show", id: next_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "show", id: next_prompt.id
   end
 
   test "next should advance to next prompt and update room state" do
@@ -270,7 +270,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     get show_room_path
 
     current_prompt = @room.current_game.current_game_prompt
-    assert_redirected_to controller: "prompts", action: "show", id: current_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "show", id: current_prompt.id
   end
 
   test "show should not redirect when room status is not Answering" do

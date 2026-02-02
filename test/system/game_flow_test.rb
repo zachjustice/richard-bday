@@ -50,8 +50,9 @@ class GameFlowTest < ApplicationSystemTestCase
       # Step 4: Host selects a story and starts the game
       # This broadcasts navigate action to all players subscribed to nav-updates
       using_session(:host) do
-        # Select story radio via JS (scroll container overlaps elements in headless browser)
-        page.execute_script("document.querySelector('input[name=\"story\"][value=\"#{@story.id}\"]').checked = true")
+        # Select story radio via JS click (using .click() instead of .checked=true ensures
+        # browser events fire and form validation is triggered)
+        page.execute_script("document.querySelector('input[name=\"story\"][value=\"#{@story.id}\"]').click()")
         page.execute_script("document.querySelector('button[type=\"submit\"]').click()")
         assert_text "Answer the prompt on your device"
       end

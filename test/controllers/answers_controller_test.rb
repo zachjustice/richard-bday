@@ -51,7 +51,7 @@ class AnswersControllerTest < ActionDispatch::IntegrationTest
     }
 
     # Should redirect to waiting since not all users have answered yet
-    assert_redirected_to controller: "prompts", action: "waiting", id: @game_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "waiting", id: @game_prompt.id
   end
 
   # Critical Path 2: Preventing duplicate answers
@@ -77,7 +77,7 @@ class AnswersControllerTest < ActionDispatch::IntegrationTest
     end
 
     # Should redirect to waiting since answer exists and not all users answered
-    assert_redirected_to controller: "prompts", action: "waiting", id: @game_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "waiting", id: @game_prompt.id
   end
 
   # Critical Path 3: Redirect to voting when all users have answered
@@ -101,7 +101,7 @@ class AnswersControllerTest < ActionDispatch::IntegrationTest
     }
 
     # Should redirect to voting since all users have answered
-    assert_redirected_to controller: "prompts", action: "voting", id: @game_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "voting", id: @game_prompt.id
   end
 
   # Critical Path 4: Authentication

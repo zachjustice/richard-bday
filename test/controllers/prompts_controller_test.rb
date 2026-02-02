@@ -2,292 +2,193 @@ require "test_helper"
 
 class PromptsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @room = rooms(:one)
-    @user = users(:one)
-    @game = games(:one)
-    @game_prompt = game_prompts(:one)
-
-    # Clean up any existing answers and votes for this user to avoid unique constraint issues
-    Answer.where(user_id: @user.id).delete_all
-    Vote.where(user_id: @user.id).delete_all
-
-    # Set up the room with the current game
-    @room.update!(current_game_id: @game.id, status: RoomStatus::Answering)
-    @game.update!(current_game_prompt_id: @game_prompt.id, next_game_phase_time: 30.seconds.from_now)
-    @user.update!(room_id: @room.id)
-    resume_session_as(@room.code, @user.name)
+    @editor = editors(:one)
+    @prompt = prompts(:one)
+    sign_in_as_editor(@editor)
   end
 
-  # Tests for PromptsController#show
+  # Tests for PromptsController#index
 
-  test "show should display the prompt when no answer exists" do
-    # Ensure no answer exists
-    Answer.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
-
-    get "/prompts/#{@game_prompt.id}"
+  test "index should display prompts list" do
+    get "/prompts"
 
     assert_response :success
-    assert_select "body" # Just verify page renders
+    assert_select "body"
   end
 
-  test "show should pre-fill answer when answer already exists" do
-    # Create an answer for this user and prompt
-    Answer.create!(
-      user_id: @user.id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "Test answer"
-    )
+  test "index should require editor authentication" do
+    sign_out_editor
 
-    get "/prompts/#{@game_prompt.id}"
-
-    # The page renders with the existing answer pre-filled
-    assert_response :success
-    assert_select "textarea", text: /Test answer/
-  end
-
-  test "show should check answer existence for current user only" do
-    # Create answer for different user
-    other_user = users(:two)
-    Answer.create!(
-      user_id: other_user.id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "Other user answer"
-    )
-
-    # Ensure current user has no answer
-    Answer.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
-
-    get "/prompts/#{@game_prompt.id}"
-
-    # Should show the prompt, not redirect
-    assert_response :success
-  end
-
-  test "show should require authentication" do
-    # Create a new session without authentication
-    end_session
-
-    get "/prompts/#{@game_prompt.id}"
-
-    # Will redirect to login or waiting (if fixtures have answer)
-    assert_response :redirect
-  end
-
-  # Tests for PromptsController#waiting
-
-  test "waiting should display waiting page when room status is Answering" do
-    @room.update!(status: RoomStatus::Answering)
-
-    get "/prompts/#{@game_prompt.id}/waiting"
-
-    assert_response :success
-  end
-
-  test "waiting should redirect to voting when room status is Voting" do
-    @room.update!(status: RoomStatus::Voting)
-
-    get "/prompts/#{@game_prompt.id}/waiting"
-
-    assert_redirected_to controller: "prompts", action: "voting", id: @game_prompt.id
-  end
-
-  test "waiting should load the correct game prompt" do
-    @room.update!(status: RoomStatus::Answering)
-
-    get "/prompts/#{@game_prompt.id}/waiting"
-
-    assert_response :success
-    # The page should render without error, implying game_prompt was loaded
-  end
-
-  test "waiting should require authentication" do
-    end_session
-
-    get "/prompts/#{@game_prompt.id}/waiting"
+    get "/prompts"
 
     assert_response :redirect
   end
 
-  # Tests for PromptsController#voting
+  # Tests for PromptsController#new
 
-  test "voting should display voting page when no vote exists" do
-    # Room must be in Voting status to access voting page
-    @room.update!(status: RoomStatus::Voting)
-
-    # Ensure no vote exists
-    Vote.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
-
-    # Create some answers to vote on
-    Answer.where(user_id: users(:two).id, game_prompt_id: @game_prompt.id).delete_all
-    Answer.create!(
-      user_id: users(:two).id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "Answer 1"
-    )
-
-    get "/prompts/#{@game_prompt.id}/voting"
+  test "new should display new prompt form" do
+    get "/prompts/new"
 
     assert_response :success
   end
 
-  test "voting page renders even when vote already exists" do
-    # Room must be in Voting status to access voting page
-    @room.update!(status: RoomStatus::Voting)
+  test "new should require editor authentication" do
+    sign_out_editor
 
-    # Create a vote for this user
-    answer = Answer.create!(
-      user_id: users(:two).id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "Answer to vote for"
-    )
-    Vote.create!(
-      user_id: @user.id,
-      answer_id: answer.id,
-      game_id: @game.id,
-      game_prompt_id: @game_prompt.id
-    )
+    get "/prompts/new"
 
-    get "/prompts/#{@game_prompt.id}/voting"
-
-    # Page renders successfully (user can see voting page even if voted)
-    assert_response :success
+    assert_response :redirect
   end
 
-  test "voting should exclude current user's answer from voting options" do
-    # Room must be in Voting status to access voting page
-    @room.update!(status: RoomStatus::Voting)
+  # Tests for PromptsController#create_prompt
 
-    # Ensure no vote exists
-    Vote.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
-
-    # Create answer from current user
-    Answer.create!(
-      user_id: @user.id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "Current user answer"
-    )
-
-    # Create answer from other user
-    Answer.where(user_id: users(:two).id, game_prompt_id: @game_prompt.id).delete_all
-    Answer.create!(
-      user_id: users(:two).id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "Other user answer"
-    )
-
-    get "/prompts/#{@game_prompt.id}/voting"
-
-    assert_response :success
-    # Verify that current user's answer is not shown as a voting option
-    assert_select "body" do
-      assert_select "*", text: /Current user answer/, count: 0
-      assert_select "*", text: /Other user answer/
+  test "create_prompt should create a new prompt" do
+    assert_difference("Prompt.count", 1) do
+      post "/prompts", params: {
+        prompt: {
+          description: "New test prompt description",
+          tags: "tag1, tag2"
+        }
+      }
     end
   end
 
-  test "voting should load answers for current game and prompt" do
-    # Room must be in Voting status to access voting page
-    @room.update!(status: RoomStatus::Voting)
+  test "create_prompt should assign current editor as creator" do
+    post "/prompts", params: {
+      prompt: {
+        description: "Prompt with creator",
+        tags: "test"
+      }
+    }
 
-    # Ensure no vote exists
-    Vote.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
+    new_prompt = Prompt.last
+    assert_equal @editor.id, new_prompt.creator_id
+  end
 
-    # Create answer for current game prompt
-    Answer.where(user_id: users(:two).id, game_prompt_id: @game_prompt.id).delete_all
-    Answer.create!(
-      user_id: users(:two).id,
-      game_prompt_id: @game_prompt.id,
-      game_id: @game.id,
-      text: "Answer for current prompt"
-    )
+  test "create_prompt should require editor authentication" do
+    sign_out_editor
 
-    # Create answer for different game prompt (shouldn't appear)
-    other_prompt = game_prompts(:two)
-    Answer.where(user_id: users(:two).id, game_prompt_id: other_prompt.id).delete_all
-    Answer.create!(
-      user_id: users(:two).id,
-      game_prompt_id: other_prompt.id,
-      game_id: @game.id,
-      text: "Answer for different prompt"
-    )
+    assert_no_difference("Prompt.count") do
+      post "/prompts", params: {
+        prompt: {
+          description: "Should not be created",
+          tags: "test"
+        }
+      }
+    end
 
-    get "/prompts/#{@game_prompt.id}/voting"
+    assert_response :redirect
+  end
 
-    assert_response :success
-    # Verify only answers for current game prompt are shown
-    assert_select "body" do
-      assert_select "*", text: /Answer for current prompt/
-      assert_select "*", text: /Answer for different prompt/, count: 0
+  test "create_prompt should not create prompt with invalid params" do
+    assert_no_difference("Prompt.count") do
+      post "/prompts", params: {
+        prompt: {
+          description: "",
+          tags: ""
+        }
+      }
     end
   end
 
-  test "voting should require authentication" do
-    end_session
+  # Tests for PromptsController#edit_prompt
 
-    get "/prompts/#{@game_prompt.id}/voting"
+  test "edit_prompt should display edit form for owned prompt" do
+    @prompt.update!(creator: @editor)
 
-    assert_response :redirect
-  end
-
-  # Tests for PromptsController#results
-
-  test "results should display results page when room status is not Answering" do
-    @room.update!(status: RoomStatus::Results)
-
-    get "/prompts/#{@game_prompt.id}/results"
+    get "/prompts/#{@prompt.id}/edit"
 
     assert_response :success
   end
 
-  test "results should redirect to show when room status is Answering" do
-    @room.update!(status: RoomStatus::Answering)
+  test "edit_prompt should not allow editing prompt owned by another editor" do
+    other_editor = editors(:two)
+    @prompt.update!(creator: other_editor)
 
-    get "/prompts/#{@game_prompt.id}/results"
+    get "/prompts/#{@prompt.id}/edit"
 
-    assert_redirected_to controller: "prompts", action: "show", id: @game_prompt.id
-  end
-
-  test "results should use current game prompt id for redirect when status is Answering" do
-    @room.update!(status: RoomStatus::Answering)
-    current_prompt = @game.current_game_prompt
-
-    get "/prompts/#{@game_prompt.id}/results"
-
-    assert_redirected_to controller: "prompts", action: "show", id: current_prompt.id
-  end
-
-  test "results should handle missing current game prompt gracefully" do
-    @room.update!(status: RoomStatus::Results)
-
-    get "/prompts/#{@game_prompt.id}/results"
-
-    # Should render successfully when status is not Answering
-    assert_response :success
-  end
-
-  test "results should require authentication" do
-    end_session
-    @room.update!(status: RoomStatus::Results)
-
-    get "/prompts/#{@game_prompt.id}/results"
-
-    # Results page should still render or redirect
     assert_response :redirect
   end
 
-  # Tests for room status transitions
+  test "edit_prompt should require editor authentication" do
+    sign_out_editor
 
-  test "waiting should redirect to voting when room status transitions" do
-    @room.update!(status: RoomStatus::Voting)
+    get "/prompts/#{@prompt.id}/edit"
 
-    get "/prompts/#{@game_prompt.id}/waiting"
+    assert_response :redirect
+  end
 
-    assert_redirected_to controller: "prompts", action: "voting", id: @game_prompt.id
+  # Tests for PromptsController#update_prompt
+
+  test "update_prompt should update owned prompt" do
+    @prompt.update!(creator: @editor)
+
+    patch "/prompts/#{@prompt.id}", params: {
+      prompt: {
+        description: "Updated description",
+        tags: "updated, tags"
+      }
+    }
+
+    @prompt.reload
+    assert_equal "Updated description", @prompt.description
+    assert_equal "updated, tags", @prompt.tags
+  end
+
+  test "update_prompt should not update prompt owned by another editor" do
+    other_editor = editors(:two)
+    @prompt.update!(creator: other_editor)
+    original_description = @prompt.description
+
+    patch "/prompts/#{@prompt.id}", params: {
+      prompt: {
+        description: "Should not update"
+      }
+    }
+
+    @prompt.reload
+    assert_equal original_description, @prompt.description
+  end
+
+  test "update_prompt should require editor authentication" do
+    sign_out_editor
+
+    patch "/prompts/#{@prompt.id}", params: {
+      prompt: {
+        description: "Should not update"
+      }
+    }
+
+    assert_response :redirect
+  end
+
+  # Tests for PromptsController#destroy_prompt
+
+  test "destroy_prompt should delete owned prompt" do
+    # Create a fresh prompt without foreign key dependencies
+    prompt = Prompt.create!(description: "Deletable prompt", tags: "test", creator: @editor)
+
+    assert_difference("Prompt.count", -1) do
+      delete "/prompts/#{prompt.id}"
+    end
+  end
+
+  test "destroy_prompt should not delete prompt owned by another editor" do
+    other_editor = editors(:two)
+    @prompt.update!(creator: other_editor)
+
+    assert_no_difference("Prompt.count") do
+      delete "/prompts/#{@prompt.id}"
+    end
+  end
+
+  test "destroy_prompt should require editor authentication" do
+    sign_out_editor
+
+    assert_no_difference("Prompt.count") do
+      delete "/prompts/#{@prompt.id}"
+    end
+
+    assert_response :redirect
   end
 end

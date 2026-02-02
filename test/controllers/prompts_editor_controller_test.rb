@@ -50,13 +50,13 @@ class PromptsEditorControllerTest < ActionDispatch::IntegrationTest
   # so we only test authorization behavior here
 
   test "edit_prompt requires editor authentication" do
-    get edit_path(@prompt_one)
+    get edit_prompt_path(@prompt_one)
     assert_redirected_to editor_login_path
   end
 
   test "edit_prompt forbidden for non-creator" do
     sign_in_as_editor(@editor_session_two)
-    get edit_path(@prompt_one)
+    get edit_prompt_path(@prompt_one)
 
     assert_redirected_to prompts_index_path
     assert_equal "You are not authorized to edit this prompt", flash[:alert]

@@ -23,7 +23,7 @@ class GamePhasesService
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{@room.id}:nav-updates",
       action: :navigate,
-      target: "/prompts/#{@room.current_game.current_game_prompt.id}/voting",
+      target: "/game_prompts/#{@room.current_game.current_game_prompt.id}/voting",
     )
 
     # Start timer for answers
@@ -39,7 +39,7 @@ class GamePhasesService
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{@room.id}:nav-updates",
       action: :navigate,
-      target: "/prompts/#{@room.current_game.current_game_prompt.id}/results",
+      target: "/game_prompts/#{@room.current_game.current_game_prompt.id}/results",
     )
   end
 

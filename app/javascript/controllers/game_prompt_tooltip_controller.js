@@ -24,13 +24,13 @@ export default class extends Controller {
       // Fetch content via Turbo
       try {
         const response = await fetch(this.urlValue)
-        
+
         if (response.ok) {
           const html = await response.text()
           const parser = new DOMParser()
           const doc = parser.parseFromString(html, "text/html")
           const content = doc.querySelector(".tooltip-content")
-          
+
           if (content) {
             this.tooltipFrame.innerHTML = ""
             this.tooltipFrame.appendChild(content)

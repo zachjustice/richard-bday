@@ -47,7 +47,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     # Step 3: Player 1 submits answer to first prompt
     resume_session_as(@room.code, @player1.name)
     post answer_path, params: { text: "unicorn", prompt_id: first_prompt.id }
-    assert_redirected_to "/prompts/#{first_prompt.id}/waiting"
+    assert_redirected_to "/game_prompts/#{first_prompt.id}/waiting"
 
     answer1 = Answer.find_by(user: @player1, game_prompt: first_prompt)
     assert_equal "unicorn", answer1.text
@@ -58,7 +58,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
 
     post answer_path, params: { text: "dragon", prompt_id: first_prompt.id }
     # Redirects to voting (all answers in), but room status hasn't changed yet
-    assert_redirected_to "/prompts/#{first_prompt.id}/voting"
+    assert_redirected_to "/game_prompts/#{first_prompt.id}/voting"
 
     answer2 = Answer.find_by(user: @player2, game_prompt: first_prompt)
     assert_equal "dragon", answer2.text
@@ -67,7 +67,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     @room.update!(status: RoomStatus::Voting)
 
     # Now voting page displays answers
-    get "/prompts/#{first_prompt.id}/voting"
+    get "/game_prompts/#{first_prompt.id}/voting"
     assert_response :success
     # Player 2 should see Player 1's answer but not their own
     assert_select "body", text: /unicorn/
@@ -75,7 +75,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
 
     # Step 6: Player 2 votes for Player 1's answer
     post votes_path, params: { answer_id: answer1.id, game_prompt_id: first_prompt.id }
-    assert_redirected_to "/prompts/#{first_prompt.id}/results"
+    assert_redirected_to "/game_prompts/#{first_prompt.id}/results"
 
     vote2 = Vote.find_by(user: @player2, answer: answer1)
     assert_not_nil vote2
@@ -85,7 +85,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     resume_session_as(@room.code, @player1.name)
 
     post votes_path, params: { answer_id: answer2.id, game_prompt_id: first_prompt.id }
-    assert_redirected_to "/prompts/#{first_prompt.id}/results"
+    assert_redirected_to "/game_prompts/#{first_prompt.id}/results"
 
     vote1 = Vote.find_by(user: @player1, answer: answer2)
     assert_not_nil vote1
@@ -108,7 +108,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     post next_room_path(@room)
     # next redirects to the next prompt's show page
     second_prompt = GamePrompt.find_by(game_id: @room.current_game_id, order: 1)
-    assert_redirected_to controller: "prompts", action: "show", id: second_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "show", id: second_prompt.id
 
     @room.reload
     game.reload
@@ -144,7 +144,7 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     resume_session_as(@room.code, @creator.name)
     post next_room_path(@room)
     # When there are no more prompts, redirects to results page for previous prompt
-    assert_redirected_to controller: "prompts", action: "results", id: second_prompt.id
+    assert_redirected_to controller: "game_prompts", action: "results", id: second_prompt.id
 
     @room.reload
     assert_equal RoomStatus::FinalResults, @room.status
