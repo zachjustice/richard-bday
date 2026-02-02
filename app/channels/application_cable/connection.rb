@@ -56,7 +56,9 @@ module ApplicationCable
 
     private
       def set_current_user
-        if session = Session.find_by(id: cookies.signed[:session_id])
+        # Check new cookie name first, fall back to old name for migration
+        session_id = cookies.signed[:player_session_id]
+        if session = Session.find_by(id: session_id)
           self.current_user = session.user
         end
       end

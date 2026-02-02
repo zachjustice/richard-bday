@@ -18,11 +18,6 @@ class AnswerSubmittedJob < ApplicationJob
       locals: { user: answer.user, completed: true, color: "blue" }
     )
 
-    ActionCable.server.broadcast(
-      "rooms:#{room.id.to_i}",
-      Events.create_answer_submitted_event(answer.user.name)
-    )
-
     users_in_room = User.players.where(room: room).count
     answered_users = User.players.where(room: room, status: UserStatus::Answered).count
 

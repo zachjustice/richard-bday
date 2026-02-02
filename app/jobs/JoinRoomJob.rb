@@ -21,11 +21,5 @@ class JoinRoomJob < ApplicationJob
       "rooms:#{room.id}:users",
       target: "no-users-yet"
     )
-
-    # Keep existing ActionCable broadcast for backward compatibility
-    ActionCable.server.broadcast(
-      "rooms:#{room.id.to_i}",
-      Events.create_user_joined_room_event(user.name)
-    )
   end
 end

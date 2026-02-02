@@ -20,10 +20,10 @@ class GamePhasesService
     status_data = RoomStatusService.new(@room).call
     update_room_status_view("rooms/status/voting", status_data)
 
-    # Keep ActionCable broadcast for backward compatibility
-    ActionCable.server.broadcast(
-      "rooms:#{@room.id.to_i}",
-      Events.create_start_voting_event(@room.current_game.current_game_prompt.id)
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{@room.id}:nav-updates",
+      action: :navigate,
+      target: "/prompts/#{@room.current_game.current_game_prompt.id}/voting",
     )
 
     # Start timer for answers
@@ -36,10 +36,10 @@ class GamePhasesService
     status_data = RoomStatusService.new(@room).call
     update_room_status_view("rooms/status/results", status_data)
 
-    # Keep ActionCable broadcast for backward compatibility
-    ActionCable.server.broadcast(
-      "rooms:#{@room.id.to_i}",
-      Events.create_voting_done_event(@room.current_game.current_game_prompt_id)
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{@room.id}:nav-updates",
+      action: :navigate,
+      target: "/prompts/#{@room.current_game.current_game_prompt.id}/results",
     )
   end
 

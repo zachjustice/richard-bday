@@ -2,6 +2,7 @@ class RoomsController < ApplicationController
   include ActionController::Live
   allow_unauthenticated_access only: %i[ _create create ]
   before_action :in_room?, except: %i[ _create create ]
+  before_action :redirect_to_active_game, only: %i[ show waiting_for_new_game ]
 
   def initialize_room
     room = Room.find(params[:id])
@@ -101,9 +102,10 @@ class RoomsController < ApplicationController
       status_data = RoomStatusService.new(room).call
       GamePhasesService.new(room).update_room_status_view("rooms/status/final_results", status_data)
 
-      ActionCable.server.broadcast(
-        "rooms:#{params[:id].to_i}",
-        Events.create_final_results_event(prev_game_prompt_id)
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{room.id}:nav-updates",
+        action: :navigate,
+        target: "/prompts/#{prev_game_prompt_id}/results",
       )
       redirect_to controller: "prompts", action: "results", id: prev_game_prompt_id
     else
@@ -144,10 +146,6 @@ class RoomsController < ApplicationController
 
   def show
     @users = User.players.where(room_id: @current_room.id)
-    # Redirect to the current prompt if the game for this room has advanced beyond the first prompt (index 0)
-    if @current_room.status == RoomStatus::Answering
-      redirect_to controller: "prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
-    end
   end
 
   # GET /rooms/create -> rooms#create
@@ -194,9 +192,10 @@ class RoomsController < ApplicationController
       current_game: nil
     )
 
-    ActionCable.server.broadcast(
-      "rooms:#{current_room.id}",
-      Events.create_new_game_event(current_room.id)
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{current_room.id}:nav-updates",
+      action: :navigate,
+      target: "/rooms/#{current_room.id}/waiting_for_new_game",
     )
     status_data = RoomStatusService.new(current_room).call
     GamePhasesService.new(current_room).update_room_status_view("rooms/status/waiting_room", status_data, true)
@@ -236,9 +235,10 @@ class RoomsController < ApplicationController
   def move_to_next_game_prompt(room, next_game_prompt_id)
     User.players.where(room: room).update_all(status: UserStatus::Answering)
 
-    ActionCable.server.broadcast(
-      "rooms:#{room.id}",
-      Events.create_next_prompt_event(next_game_prompt_id)
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{room.id}:nav-updates",
+      action: :navigate,
+      target: "/prompts/#{next_game_prompt_id}",
     )
     room.update!(status: RoomStatus::Answering)
     next_game_phase_time = Time.now + room.time_to_answer_seconds + GameConstants::COUNTDOWN_FORGIVENESS_SECONDS
@@ -279,6 +279,22 @@ class RoomsController < ApplicationController
 
   def settings_params
     params.require(:room).permit(:time_to_answer_seconds, :time_to_vote_seconds, :voting_style)
+  end
+
+  # Redirects player to the appropriate game page based on room status.
+  def redirect_to_active_game
+    return unless @current_room.current_game&.current_game_prompt
+
+    prompt_id = @current_room.current_game.current_game_prompt.id
+
+    case @current_room.status
+    when RoomStatus::Answering
+      redirect_to controller: "prompts", action: "show", id: prompt_id
+    when RoomStatus::Voting
+      redirect_to controller: "prompts", action: "voting", id: prompt_id
+    when RoomStatus::Results, RoomStatus::FinalResults
+      redirect_to controller: "prompts", action: "results", id: prompt_id
+    end
   end
 
   def valid_navigation_paths(room)
