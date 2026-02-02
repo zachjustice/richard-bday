@@ -282,10 +282,14 @@ class RoomsController < ApplicationController
     )
     room.update!(status: RoomStatus::Answering)
     next_game_phase_time = Time.now + room.time_to_answer_seconds + GameConstants::COUNTDOWN_FORGIVENESS_SECONDS
-    room.current_game.update!(current_game_prompt_id: next_game_prompt_id, next_game_phase_time: next_game_phase_time)
 
     # Start timer for answers
-    AnsweringTimesUpJob.set(wait_until: next_game_phase_time).perform_later(room, next_game_prompt_id)
+    job = AnsweringTimesUpJob.set(wait_until: next_game_phase_time).perform_later(room, next_game_prompt_id)
+    room.current_game.update!(
+      current_game_prompt_id: next_game_prompt_id,
+      next_game_phase_time: next_game_phase_time,
+      answering_timer_job_id: job.job_id
+    )
   end
 
   def current_user

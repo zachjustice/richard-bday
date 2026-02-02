@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_01_184129) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_02_031453) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -97,6 +97,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_01_184129) do
     t.datetime "updated_at", null: false
     t.integer "current_game_prompt_id"
     t.datetime "next_game_phase_time"
+    t.string "answering_timer_job_id"
+    t.string "voting_timer_job_id"
     t.index [ "current_game_prompt_id" ], name: "index_games_on_current_game_prompt_id"
     t.index [ "room_id" ], name: "index_games_on_room_id"
     t.index [ "story_id" ], name: "index_games_on_story_id"
