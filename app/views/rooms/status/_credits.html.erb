@@ -1,0 +1,108 @@
+<%= turbo_stream_from "rooms:#{room.id}:users" %>
+
+<%# Celebratory doodle decorations %>
+<%= render "shared/credits_doodles" %>
+
+<div class="flex-1 flex flex-col justify-start min-h-0 relative z-10">
+  <%# Header with dramatic entrance %>
+  <div class="text-center mb-6 animate-slide-up">
+    <h1 class="text-5xl md:text-6xl font-black mb-2 tracking-tight" style="text-shadow: 4px 4px 0px var(--color-accent-tertiary);">
+      GAME OVER!
+    </h1>
+    <p class="text-lg text-ink/70 font-medium">Thank you for participating...</p>
+  </div>
+
+  <%# Main content area - scrollable %>
+  <div class="flex-1 min-h-0 overflow-y-auto scroll-fade-indicators pb-4">
+    <%# Podium Section - The dramatic centerpiece %>
+    <% if podium.present? && podium.any? %>
+      <%= render "rooms/status/credits/podium", podium: podium %>
+    <% end %>
+
+    <%# Superlatives Grid %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-1 gap-4 mt-6 stagger-animation">
+      <%= render "rooms/status/credits/superlative_card",
+          title: "Most Naughty Words",
+          icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M7 8.5L9 7M15 7l2 1.5" stroke-linecap="round"/></svg>',
+          winner: most_swear_words,
+          stat_label: "spicy words",
+          stat_value: most_swear_words&.dig(:count),
+          color: "red",
+          delay_index: 0 %>
+
+      <%= render "rooms/status/credits/superlative_card",
+          title: "Most Prolific Writer",
+          icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>',
+          winner: most_characters,
+          stat_label: "characters",
+          stat_value: most_characters&.dig(:count),
+          color: "blue",
+          delay_index: 1 %>
+
+      <%= render "rooms/status/credits/superlative_card",
+          title: "Most Points with Shortest Answers",
+          icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+          winner: best_efficiency,
+          stat_label: "pts/char",
+          stat_value: best_efficiency&.dig(:ratio),
+          color: "green",
+          delay_index: 2 %>
+
+      <%= render "rooms/status/credits/superlative_card",
+          title: "Most Spelling Errors",
+          icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h8M8 15h4"/></svg>',
+          winner: most_spelling_mistakes,
+          stat_label: "creative spellings",
+          stat_value: most_spelling_mistakes&.dig(:count),
+          color: "orange",
+          delay_index: 3 %>
+
+      <%= render "rooms/status/credits/superlative_card",
+          title: "Slowest Turns",
+          icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
+          winner: slowest_player,
+          stat_label: "of time used",
+          stat_value: slowest_player.present? ? "#{slowest_player[:avg_percentile]}%" : nil,
+          color: "indigo",
+          delay_index: 4 %>
+    </div>
+
+    <%# Player List Section %>
+    <div class="mt-8">
+      <h3 class="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Players in Room
+        <span class="badge-primary text-sm py-1 px-3"><%= users&.size || 0 %></span>
+      </h3>
+      <ul id="waiting-room" class="rainbow-cycle playful-tilt list-none p-0 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
+        <% if users.present? %>
+          <% users.each do |user| %>
+            <%= render "rooms/partials/user_list_item", user: user %>
+          <% end %>
+        <% else %>
+          <li class="col-span-full text-ink/50 italic text-center py-4">No players in room</li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <%# Action Buttons - Fixed at bottom %>
+  <div class="flex justify-center gap-4 mt-6 pt-4 border-t-2 border-ink/10 flex-wrap">
+    <button type="button"
+            class="btn-primary bg-accent-blue text-base px-6 py-3"
+            onclick="history.back()">
+      <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      View Story
+    </button>
+    <%= form_with url: start_new_room_game_path(current_room), method: :post, class: "inline" do |form| %>
+      <%= form.submit "Start New Game", class: "btn-primary bg-accent-green text-base px-6 py-3" %>
+    <% end %>
+  </div>
+</div>
