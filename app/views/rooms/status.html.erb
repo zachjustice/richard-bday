@@ -38,7 +38,7 @@
       arrow_direction: "left" %>
 
   <div id="status-content-inner" class="flex-1 flex items-center justify-center p-6">
-    <div class="card-primary p-0 m-0 max-w-[1400px] w-full max-h-[950px] flex flex-row min-h-0">
+    <div class="card-primary p-0 m-0 max-w-[1400px] w-full max-h-[970px] flex flex-row min-h-0">
       <div id="turbo-target-sidebar" class="flex">
         <% if @room.current_game&.story.present? && @status != RoomStatus::Credits %>
           <%= render partial: "rooms/status/sidebar", locals: @status_data %>

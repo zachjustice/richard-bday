@@ -9,7 +9,7 @@
     <h1 class="text-5xl md:text-6xl font-black mb-2 tracking-tight" style="text-shadow: 4px 4px 0px var(--color-accent-tertiary);">
       GAME OVER!
     </h1>
-    <p class="text-lg text-ink/70 font-medium">Here's who made their mark...</p>
+    <p class="text-lg text-ink/70 font-medium">Thank you for participating...</p>
   </div>
 
   <%# Main content area - scrollable %>
@@ -20,7 +20,7 @@
     <% end %>
 
     <%# Superlatives Grid %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 stagger-animation">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-1 gap-4 mt-6 stagger-animation">
       <%= render "rooms/status/credits/superlative_card",
           title: "Most Naughty Words",
           icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M7 8.5L9 7M15 7l2 1.5" stroke-linecap="round"/></svg>',

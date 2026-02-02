@@ -36,15 +36,21 @@ Rails.application.routes.draw do
     get "prompts", to: "stories#prompts"
   end
 
-  # Add to prompts routes
-  # TODO: separate prompts and game_prompts
+  # Prompt library routes (editor interface)
   get "/prompts", to: "prompts#index", as: :prompts_index
   get "/prompts/new", to: "prompts#new", as: :new_prompt
   post "/prompts", to: "prompts#create_prompt", as: :create_prompt
-  get "/prompts/:id/edit", to: "prompts#edit_prompt", as: :edit
+  get "/prompts/:id/edit", to: "prompts#edit_prompt", as: :edit_prompt
   patch "/prompts/:id", to: "prompts#update_prompt", as: :update_prompt
   delete "/prompts/:id", to: "prompts#destroy_prompt", as: :destroy_prompt
-  get "/prompts/:id/tooltip", to: "prompts#tooltip", as: :prompt_tooltip
+
+  # GamePrompt gameplay routes (player interface)
+  get "/game_prompts/:id", to: "game_prompts#show", as: :game_prompt
+  get "/game_prompts/:id/waiting", to: "game_prompts#waiting", as: :game_prompt_waiting
+  post "/game_prompts/:id/change_answer", to: "game_prompts#change_answer", as: :change_answer
+  get "/game_prompts/:id/voting", to: "game_prompts#voting", as: :game_prompt_voting
+  get "/game_prompts/:id/results", to: "game_prompts#results", as: :game_prompt_results
+  get "/game_prompts/:id/tooltip", to: "game_prompts#tooltip", as: :game_prompt_tooltip
 
   # avatar
   patch "/avatar", to: "avatars#update", as: :update_avatar
@@ -58,15 +64,12 @@ Rails.application.routes.draw do
   post "/rooms/:id/start", to: "rooms#start", as: :start_room
   post "/rooms/:id/next", to: "rooms#next", as: :next_room
   post "/rooms/:id/end_game", to: "rooms#end_game", as: :end_room_game
+  post "/rooms/:id/credits", to: "rooms#show_credits", as: :room_credits
+  post "/rooms/:id/start_new_game", to: "rooms#start_new_game", as: :start_new_room_game
   patch "/rooms/:id/settings", to: "rooms#update_settings", as: :update_room_settings
   get "/rooms/:id/waiting_for_new_game", to: "rooms#waiting_for_new_game", as: :waiting_for_new_game
   get "/rooms/:id/check_navigation", to: "rooms#check_navigation", as: :check_room_navigation
 
-  get "/prompts/:id", to: "prompts#show"
-  get "/prompts/:id/waiting", to: "prompts#waiting"
-  post "/prompts/:id/change_answer", to: "prompts#change_answer", as: :change_answer
-  get "/prompts/:id/voting", to: "prompts#voting"
-  get "/prompts/:id/results", to: "prompts#results"
 
   post "/answer", to: "answers#create"
 

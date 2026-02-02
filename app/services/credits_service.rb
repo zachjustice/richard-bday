@@ -5,12 +5,14 @@ class CreditsService
     bastard bastards bitch bitches bitchy
     bollocks bugger bullshit
     cock cocks crap crappy cunt cunts
+    cum cums cummies cumming cummed
     damn damned dammit dick dicks dickhead douche douchebag
-    fag fags faggot fuck fucked fucker fuckers fucking fucks
+    fuck fucked fucker fuckers fucking fucks
     goddamn goddam
-    hell hells
+    hell hells hellish
     jackass jerk jerkoff
     piss pissed pissing prick pricks
+    pussy pussies poo poos poopoo poopoos poop poops
     shit shits shitty shithead
     slut sluts slutty
     twat whore whorish

@@ -38,6 +38,8 @@ class RoomStatusService
       answering_voting_results_data
     when RoomStatus::FinalResults
       final_results_data
+    when RoomStatus::Credits
+      credits_data
     else
       {}
     end
@@ -144,5 +146,11 @@ class RoomStatusService
         "story_text: `#{story_text}`, complete_story: `#{complete_story}`"
       )
     end
+  end
+
+  def credits_data
+    return {} unless @room.current_game
+
+    CreditsService.new(@room.current_game).call
   end
 end

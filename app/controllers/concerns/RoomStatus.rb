@@ -5,4 +5,5 @@
     Voting = "Voting"
     Results = "Results"
     FinalResults = "FinalResults"
+    Credits = "Credits"
   end

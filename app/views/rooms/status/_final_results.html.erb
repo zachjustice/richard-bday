@@ -30,8 +30,8 @@
         🔊 Read Aloud
       </button>
 
-      <%= form_with url: end_room_game_path(current_room), method: :post, class: "inline" do |form| %>
-        <%= form.submit "Start New Game", class: "btn-primary bg-accent-green text-sm" %>
+      <%= form_with url: room_credits_path(current_room), method: :post, class: "inline" do |form| %>
+        <%= form.submit "View Credits", class: "btn-primary bg-accent-orange text-sm" %>
       <% end %>
     </div>
   </div>

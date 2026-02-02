@@ -105,14 +105,14 @@ class RoomsController < ApplicationController
       Turbo::StreamsChannel.broadcast_action_to(
         "rooms:#{room.id}:nav-updates",
         action: :navigate,
-        target: "/prompts/#{prev_game_prompt_id}/results",
+        target: "/game_prompts/#{prev_game_prompt_id}/results",
       )
-      redirect_to controller: "prompts", action: "results", id: prev_game_prompt_id
+      redirect_to controller: "game_prompts", action: "results", id: prev_game_prompt_id
     else
       move_to_next_game_prompt(room, next_game_prompt_id)
       status_data = RoomStatusService.new(room).call
       GamePhasesService.new(room).update_room_status_view("rooms/status/answering", status_data)
-      redirect_to controller: "prompts", action: "show", id: next_game_prompt_id
+      redirect_to controller: "game_prompts", action: "show", id: next_game_prompt_id
     end
   end
 
@@ -209,6 +209,46 @@ class RoomsController < ApplicationController
   def waiting_for_new_game
   end
 
+  # Transition from FinalResults to Credits phase
+  def show_credits
+    room = Room.find(params[:id])
+    room.update!(status: RoomStatus::Credits)
+
+    status_data = RoomStatusService.new(room).call
+    GamePhasesService.new(room).update_room_status_view("rooms/status/credits", status_data, true)
+
+    # Players stay on results page - no navigation broadcast needed
+    # The status page updates via Turbo Stream
+
+    redirect_to room_status_path(room)
+  end
+
+  # Start a new game from Credits - goes directly to StorySelection
+  def start_new_game
+    room = Room.find(params[:id])
+    room.current_game&.update!(current_game_prompt: nil)
+    room.update!(
+      status: RoomStatus::StorySelection,
+      current_game: nil
+    )
+
+    status_data = RoomStatusService.new(room).call
+    GamePhasesService.new(room).update_room_status_view("rooms/status/story_selection", status_data)
+
+    # Navigate players to waiting screen while creator selects story
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{room.id}:nav-updates",
+      action: :navigate,
+      target: "/rooms/#{room.id}/waiting_for_new_game",
+    )
+
+    if @current_user&.role == User::CREATOR
+      redirect_to room_status_path(room)
+    else
+      redirect_to controller: "rooms", action: "waiting_for_new_game", id: room.id
+    end
+  end
+
   def check_navigation
     room = Room.find(params[:id])
     current_path = params[:current_path]
@@ -238,7 +278,7 @@ class RoomsController < ApplicationController
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{room.id}:nav-updates",
       action: :navigate,
-      target: "/prompts/#{next_game_prompt_id}",
+      target: "/game_prompts/#{next_game_prompt_id}",
     )
     room.update!(status: RoomStatus::Answering)
     next_game_phase_time = Time.now + room.time_to_answer_seconds + GameConstants::COUNTDOWN_FORGIVENESS_SECONDS
@@ -289,11 +329,11 @@ class RoomsController < ApplicationController
 
     case @current_room.status
     when RoomStatus::Answering
-      redirect_to controller: "prompts", action: "show", id: prompt_id
+      redirect_to controller: "game_prompts", action: "show", id: prompt_id
     when RoomStatus::Voting
-      redirect_to controller: "prompts", action: "voting", id: prompt_id
+      redirect_to controller: "game_prompts", action: "voting", id: prompt_id
     when RoomStatus::Results, RoomStatus::FinalResults
-      redirect_to controller: "prompts", action: "results", id: prompt_id
+      redirect_to controller: "game_prompts", action: "results", id: prompt_id
     end
   end
 
@@ -307,19 +347,19 @@ class RoomsController < ApplicationController
     when RoomStatus::Answering
       has_answered = @current_user.answered?
       if has_answered
-        [ "/prompts/#{current_game_prompt_id}", "/prompts/#{current_game_prompt_id}/waiting" ]
+        [ "/game_prompts/#{current_game_prompt_id}", "/game_prompts/#{current_game_prompt_id}/waiting" ]
       else
-        [ "/prompts/#{current_game_prompt_id}" ]
+        [ "/game_prompts/#{current_game_prompt_id}" ]
       end
     when RoomStatus::Voting
       has_voted = @current_user.voted?
       if has_voted
-        [ "/prompts/#{current_game_prompt_id}/voting", "/prompts/#{current_game_prompt_id}/results" ]
+        [ "/game_prompts/#{current_game_prompt_id}/voting", "/game_prompts/#{current_game_prompt_id}/results" ]
       else
-        [ "/prompts/#{current_game_prompt_id}/voting" ]
+        [ "/game_prompts/#{current_game_prompt_id}/voting" ]
       end
-    when RoomStatus::Results, RoomStatus::FinalResults
-      [ "/prompts/#{current_game_prompt_id}/results" ]
+    when RoomStatus::Results, RoomStatus::FinalResults, RoomStatus::Credits
+      [ "/game_prompts/#{current_game_prompt_id}/results" ]
     else
       []
     end
