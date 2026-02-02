@@ -39,7 +39,6 @@ module Authentication
     end
 
     def find_player_session_by_cookie
-      # Check new cookie name first, fall back to old name for migration
       session_id = cookies.signed[:player_session_id]
 
       if session_id
