@@ -27,6 +27,11 @@ class CreditsService
     @answers = Answer.where(game_id: game.id).includes(:user, :votes)
     @votes = Vote.where(game_id: game.id).includes(:user, :answer)
     @game_prompts = GamePrompt.where(game_id: game.id).order(:order)
+
+    # Build user lookup from preloaded associations to avoid N+1 queries
+    @users_by_id = {}
+    @answers.each { |a| @users_by_id[a.user_id] = a.user }
+    @votes.each { |v| @users_by_id[v.user_id] = v.user }
   end
 
   def call
@@ -55,8 +60,7 @@ class CreditsService
     top_users = user_points.sort_by { |_, points| -points }.first(3)
 
     top_users.map do |user_id, points|
-      user = User.find(user_id)
-      { user: user, points: points }
+      { user: @users_by_id[user_id], points: points }
     end
   end
 
@@ -71,7 +75,7 @@ class CreditsService
     return nil if user_swear_counts.empty? || user_swear_counts.values.max == 0
 
     winner_id, count = user_swear_counts.max_by { |_, c| c }
-    { user: User.find(winner_id), count: count }
+    { user: @users_by_id[winner_id], count: count }
   end
 
   def most_characters_written
@@ -84,7 +88,7 @@ class CreditsService
     return nil if user_char_counts.empty?
 
     winner_id, count = user_char_counts.max_by { |_, c| c }
-    { user: User.find(winner_id), count: count }
+    { user: @users_by_id[winner_id], count: count }
   end
 
   def best_efficiency
@@ -110,7 +114,7 @@ class CreditsService
 
     winner = efficiencies.max_by { |_, ratio, _, _| ratio }
     {
-      user: User.find(winner[0]),
+      user: @users_by_id[winner[0]],
       ratio: winner[1].round(2),
       points: winner[2],
       characters: winner[3]
@@ -128,48 +132,18 @@ class CreditsService
     return nil if user_mistake_counts.empty? || user_mistake_counts.values.max == 0
 
     winner_id, count = user_mistake_counts.max_by { |_, c| c }
-    { user: User.find(winner_id), count: count }
+    { user: @users_by_id[winner_id], count: count }
   end
 
   def slowest_player
-    # Track how late each user submits answers and votes
-    # "Late" = closer to the deadline (higher time used)
-    user_times = Hash.new { |h, k| h[k] = { total_seconds_remaining: 0, count: 0 } }
-
-    # For each game prompt, calculate how much time remained when user submitted
-    @game_prompts.each do |game_prompt|
-      prompt_answers = @answers.select { |a| a.game_prompt_id == game_prompt.id }
-      prompt_votes = @votes.select { |v| v.game_prompt_id == game_prompt.id }
-
-      # Get the deadline times (we need to infer phase start from room settings)
-      answer_time_limit = @room.time_to_answer_seconds
-      vote_time_limit = @room.time_to_vote_seconds
-
-      # For answers: calculate seconds remaining when submitted
-      # Lower remaining = submitted later = slower
-      prompt_answers.each do |answer|
-        # We don't have exact phase start time, so estimate based on created_at
-        # Use relative comparison: earlier created_at among peers = faster
-        user_times[answer.user_id][:count] += 1
-      end
-
-      # For votes: similar calculation
-      prompt_votes.each do |vote|
-        user_times[vote.user_id][:count] += 1
-      end
-    end
-
-    # Alternative approach: rank users by average submission time within each round
-    # and sum their "lateness rank"
     user_lateness_scores = calculate_lateness_scores
 
     return nil if user_lateness_scores.empty?
 
     winner_id, score = user_lateness_scores.max_by { |_, s| s[:avg_percentile] }
     {
-      user: User.find(winner_id),
-      avg_percentile: (score[:avg_percentile] * 100).round(0),
-      description: "#{(score[:avg_percentile] * 100).round(0)}% of time used"
+      user: @users_by_id[winner_id],
+      avg_percentile: (score[:avg_percentile] * 100).round(0)
     }
   end
 
@@ -228,14 +202,17 @@ class CreditsService
   end
 
   def common_words
+    self.class.common_words
+  end
+
+  def self.common_words
     @common_words ||= load_common_words
   end
 
-  def load_common_words
+  def self.load_common_words
     if File.exist?(COMMON_WORDS_FILE)
       Set.new(File.readlines(COMMON_WORDS_FILE).map(&:strip).map(&:downcase))
     else
-      # Fallback: basic word list if file doesn't exist
       Rails.logger.warn("[CreditsService] Common words file not found at #{COMMON_WORDS_FILE}")
       Set.new
     end
