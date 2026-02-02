@@ -84,7 +84,7 @@ class GamePhasesService
 
     SolidQueue::ScheduledExecution.joins(:job)
       .where(solid_queue_jobs: { active_job_id: job_id })
-      .destroy_all
+      .delete_all
   rescue ActiveRecord::StatementInvalid
     # SolidQueue tables may not exist in test environment
   end
