@@ -92,4 +92,18 @@ class UserTest < ActiveSupport::TestCase
     creator = User.new(name: "RoomCreator", room: room, role: User::CREATOR)
     assert creator.valid?, "Creator should be able to join a full room"
   end
+
+  # Slur filtering
+  test "name cannot contain slurs" do
+    SlurDetectorService.stub_any_instance(:contains_slur?, true) do
+      user = User.new(name: "BadName", room: @room, role: User::PLAYER)
+      assert_not user.valid?
+      assert_includes user.errors[:name], "contains inappropriate language"
+    end
+  end
+
+  test "name allows normal text" do
+    user = User.new(name: "GoodName", room: @room, role: User::PLAYER)
+    assert user.valid?, "User with normal name should be valid: #{user.errors.full_messages}"
+  end
 end

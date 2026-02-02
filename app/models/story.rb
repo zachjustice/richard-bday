@@ -1,7 +1,10 @@
 class Story < ApplicationRecord
+  include SlurFilterable
+
   validates :title, presence: true, uniqueness: true
   validates :original_text, presence: true
   validates :text, presence: true
+  validates_slur_free :title, :original_text, :text
 
   belongs_to :author, class_name: "Editor", optional: true
   has_many :story_prompts, dependent: :destroy

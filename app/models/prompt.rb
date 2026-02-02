@@ -1,11 +1,14 @@
 # app/models/prompt.rb
 class Prompt < ApplicationRecord
+  include SlurFilterable
+
   belongs_to :creator, class_name: "Editor", optional: true
   has_many :game_prompts, dependent: :destroy
   has_many :story_prompts, dependent: :destroy
 
   validates :description, presence: true, uniqueness: true
   validates :tags, presence: true
+  validates_slur_free :description, :tags
 
   def owned_by?(editor)
     creator_id == editor&.id

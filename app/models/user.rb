@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include SlurFilterable
+
   PLAYER = "Player"
   NAVIGATOR = "Navigator"
   EDITOR = "Editor"
@@ -22,6 +24,7 @@ class User < ApplicationRecord
   validates :room_id, presence: true
   validates :name, uniqueness: { scope: [ :room_id ] }
   validates :name, length: { maximum: 15 }
+  validates_slur_free :name
   validates :avatar, presence: true
   validates :avatar, inclusion: { in: AVATARS + [ CREATOR_AVATAR ] }
   validates :avatar, uniqueness: { scope: :room_id }
