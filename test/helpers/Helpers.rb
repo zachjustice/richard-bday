@@ -100,21 +100,22 @@ class Helpers
     next_game_prompt_id = GamePrompt.find_by(game_id: room.current_game_id, order: current_game_prompt_order + 1)&.id
 
     if next_game_prompt_id
-      ActionCable.server.broadcast(
-        "rooms:#{room.id}",
-        Events.create_next_prompt_event(next_game_prompt_id)
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{room.id}:nav-updates",
+        action: :navigate,
+        target: "/prompts/#{next_game_prompt_id}",
       )
       room.update!(status: RoomStatus::Answering)
       next_game_phase_time = Time.now + room.time_to_answer_seconds + GameConstants::COUNTDOWN_FORGIVENESS_SECONDS
       room.current_game.update!(current_game_prompt_id: next_game_prompt_id, next_game_phase_time: next_game_phase_time)
     else
       room.update!(status: RoomStatus::FinalResults)
-      ActionCable.server.broadcast(
-        "rooms:#{room.id}",
-        Events.create_final_results_event(room.current_game.current_game_prompt_id)
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{room.id}:nav-updates",
+        action: :navigate,
+        target: "/prompts/#{room.current_game.current_game_prompt_id}/results",
       )
     end
-
 
     # Start timer for answers
     if use_times_up_job

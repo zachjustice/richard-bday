@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
   rate_limit to: 10, within: 3.minutes, only: [ :create, :new ], with: -> { redirect_to new_session_url, alert: "Try again later." }
 
   def new
-    session_id = cookies.signed[:session_id]
+    session_id = cookies.signed[:player_session_id]
     if session_id && curr_session = Session.find_by(id: session_id)
       @room = curr_session&.user&.room
     end
@@ -35,7 +35,7 @@ class SessionsController < ApplicationController
 
   def create
     # Get room
-    session_id = cookies.signed[:session_id]
+    session_id = cookies.signed[:player_session_id]
     code = params[:code]&.downcase
     if session_id && curr_session = Session.find_by(id: session_id)
       room = curr_session.user.room

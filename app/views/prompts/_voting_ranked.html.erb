@@ -4,7 +4,7 @@
   config = @current_room.voting_config
 %>
 
-<div data-controller="prompt ranked-voting"
+<div data-controller="ranked-voting"
      data-ranked-voting-max-slots-value="<%= max_slots %>"
      data-ranked-voting-medals-value="<%= medals.to_json %>"
      class="min-h-screen flex items-center max-sm:items-start justify-center bg-page">

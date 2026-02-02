@@ -39,20 +39,13 @@ module Authentication
     end
 
     def find_player_session_by_cookie
-      # Check new cookie name first, fall back to old name for migration
-      session_id = cookies.signed[:player_session_id] || cookies.signed[:session_id]
+      session_id = cookies.signed[:player_session_id]
 
       if session_id
         session = Session.find_by(id: session_id)
         if session
           @current_user = User.find_by(id: session.user_id)
           @current_room = Room.find_by(id: @current_user.room_id) if @current_user
-
-          # Migrate to new cookie name if using old one
-          if cookies.signed[:session_id] && !cookies.signed[:player_session_id]
-            cookies.signed.permanent[:player_session_id] = { value: session.id, httponly: true, same_site: :lax }
-            cookies.delete(:session_id)
-          end
         end
         return session
       end

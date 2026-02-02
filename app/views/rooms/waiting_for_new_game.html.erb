@@ -1,6 +1,6 @@
 <%# app/views/rooms/waiting_for_new_game.html.erb %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<div id="results" data-controller="prompt" class="min-h-screen flex items-center justify-center bg-page">
+<div id="results" class="min-h-screen flex items-center justify-center bg-page">
   <div class="card-primary p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-[600px] w-full animate-fade-in">
     <div class="text-center">
       <div class="text-6xl mb-6 animate-swing">⏳</div>

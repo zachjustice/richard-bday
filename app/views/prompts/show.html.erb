@@ -1,7 +1,7 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 <%= render "shared/leave_game_button" %>
 
-<div class="min-h-screen flex items-center max-sm:items-start justify-center bg-page overflow-auto" data-controller="prompt">
+<div class="min-h-screen flex items-center max-sm:items-start justify-center bg-page overflow-auto">
   <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-2xl w-full flex flex-col flex-1 min-h-0">
 
     <div class="text-center p-8 max-sm:p-6 mb-8 bg-accent-blue/10 rounded-2xl border-2 border-ink/10">

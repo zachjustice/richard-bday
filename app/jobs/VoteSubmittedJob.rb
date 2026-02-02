@@ -34,11 +34,6 @@ class VoteSubmittedJob < ApplicationJob
       locals: { user: user, completed: true, color: "indigo" }
     )
 
-    ActionCable.server.broadcast(
-      "rooms:#{room.id.to_i}",
-      Events.create_vote_submitted_event(vote)
-    )
-
     users_in_room = User.players.where(room_id: room.id).count
     voted_users = User.players.where(room_id: room.id, status: UserStatus::Voted).count
 

@@ -10,15 +10,20 @@ import $ from 'jquery';
 window.$ = $;
 window.jQuery = $;
 
+Turbo.StreamActions.navigate = function () {
+  const url = this.target
+  Turbo.visit(url)
+}
+
 // Register custom Turbo Stream actions for modal
-Turbo.StreamActions.close_modal = function() {
+Turbo.StreamActions.close_modal = function () {
   const modalElement = document.querySelector(`#${this.target}`)
   if (modalElement) {
     modalElement.classList.add("hidden")
   }
 }
 
-Turbo.StreamActions.open_modal = function() {
+Turbo.StreamActions.open_modal = function () {
   const modalElement = document.querySelector(`#${this.target}`)
   if (modalElement) {
     modalElement.classList.remove("hidden")
