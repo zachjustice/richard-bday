@@ -30,6 +30,8 @@ class Room < ApplicationRecord
   # which is the case- so use belongs_to instead of has_one
   belongs_to :current_game, class_name: "Game", optional: true
 
+  has_many :room_events, dependent: :destroy
+
   def ranked_voting?
     voting_style == "ranked_top_3"
   end

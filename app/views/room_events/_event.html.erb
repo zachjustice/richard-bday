@@ -1,0 +1,38 @@
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white/50 border-2 border-ink/10 hover:border-ink/20 transition-colors">
+  <!-- Sequence & Time -->
+  <div class="flex flex-col items-center gap-1 min-w-[60px] text-center">
+    <span class="text-xs font-mono text-ink/40">#<%= event.sequence %></span>
+    <span class="text-xs text-ink/60"><%= relative_time_with_tooltip(event.created_at) %></span>
+  </div>
+
+  <!-- Event Type Badge -->
+  <div class="min-w-[140px]">
+    <span class="inline-block px-2 py-1 rounded-lg text-xs font-bold <%= event_type_badge_class(event.event_type) %>">
+      <%= event.event_type.humanize %>
+    </span>
+    <% if event.game_id %>
+      <span class="block text-xs text-ink/40 mt-1">Game #<%= event.game_id %></span>
+    <% else %>
+      <span class="block text-xs text-ink/40 mt-1">Room-level</span>
+    <% end %>
+  </div>
+
+  <!-- Actor & Description -->
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center gap-2 flex-wrap">
+      <% if event.system_event? %>
+        <span class="text-sm font-medium text-ink/60">System</span>
+      <% else %>
+        <span class="text-sm font-bold text-ink"><%= event.actor_display_name %></span>
+      <% end %>
+    </div>
+    <p class="text-sm text-ink/70 mt-1"><%= render_event_description(event) %></p>
+
+    <% if event.metadata.present? && event.metadata.keys.any? %>
+      <details class="mt-2">
+        <summary class="text-xs text-ink/40 cursor-pointer hover:text-ink/60">Metadata</summary>
+        <pre class="text-xs text-ink/50 mt-1 p-2 bg-ink/5 rounded-lg overflow-x-auto"><%= JSON.pretty_generate(event.metadata) %></pre>
+      </details>
+    <% end %>
+  </div>
+</div>

@@ -5,6 +5,8 @@ class VotingTimesUpJob < ApplicationJob
     # The room status should be "Voting"
     # and the game_prompt_id arg should match the current_game_prompt_id on the current_game
     if room.status == RoomStatus::Voting && room.current_game.current_game_prompt_id == game_prompt_id
+      game_prompt = GamePrompt.find(game_prompt_id)
+      RoomEventLogger.voting_timer_expired(room: room, game: room.current_game, game_prompt: game_prompt)
       GamePhasesService.new(room).move_to_results
     end
   end

@@ -13,6 +13,7 @@ class RoomsController < ApplicationController
     end
 
     room.update!(status: RoomStatus::StorySelection)
+    RoomEventLogger.room_initialized(room: room, actor: @current_user)
 
     status_data = RoomStatusService.new(room).call
     GamePhasesService.new(room).update_room_status_view("rooms/status/story_selection", status_data)
@@ -44,6 +45,7 @@ class RoomsController < ApplicationController
     first_game_prompt_id = create_game_prompts(story, game).first.id
 
     room.update!(current_game_id: game.id)
+    RoomEventLogger.game_started(room: room, game: game, actor: @current_user, story: story)
 
     move_to_next_game_prompt(room, first_game_prompt_id)
     redirect_to controller: "rooms", action: "status", id: room_id
@@ -98,6 +100,7 @@ class RoomsController < ApplicationController
 
     if next_game_prompt_id.nil?
       room.update!(status: RoomStatus::FinalResults)
+      RoomEventLogger.status_changed(room: room, game: room.current_game, from: RoomStatus::Results, to: RoomStatus::FinalResults)
 
       status_data = RoomStatusService.new(room).call
       GamePhasesService.new(room).update_room_status_view("rooms/status/final_results", status_data)
@@ -109,6 +112,7 @@ class RoomsController < ApplicationController
       )
       redirect_to controller: "game_prompts", action: "results", id: prev_game_prompt_id
     else
+      RoomEventLogger.next_prompt(room: room, game: room.current_game, actor: @current_user, next_game_prompt_id: next_game_prompt_id)
       move_to_next_game_prompt(room, next_game_prompt_id)
       status_data = RoomStatusService.new(room).call
       GamePhasesService.new(room).update_room_status_view("rooms/status/answering", status_data)
@@ -168,6 +172,7 @@ class RoomsController < ApplicationController
 
       if creator_user.save
         start_new_session_for creator_user
+        RoomEventLogger.room_created(room: room, actor: creator_user)
         redirect_to controller: "rooms", action: "status", id: room.id
       else
         logger.error "Failed to create creator user: #{creator_user.errors.messages.to_json}"
@@ -184,9 +189,9 @@ class RoomsController < ApplicationController
   # called by the user with the navigator role (first user to join room) to end the game.
   def end_game
     current_room = Room.find(params[:id])
-    current_room.current_game&.update!(
-      current_game_prompt: nil
-    )
+    game = current_room.current_game
+    RoomEventLogger.game_ended(room: current_room, game: game, actor: @current_user)
+    game&.update!(current_game_prompt: nil)
     current_room.update!(
       status: RoomStatus::WaitingRoom,
       current_game: nil
@@ -213,6 +218,7 @@ class RoomsController < ApplicationController
   def show_credits
     room = Room.find(params[:id])
     room.update!(status: RoomStatus::Credits)
+    RoomEventLogger.show_credits(room: room, game: room.current_game, actor: @current_user)
 
     status_data = RoomStatusService.new(room).call
     GamePhasesService.new(room).update_room_status_view("rooms/status/credits", status_data, true)
@@ -226,6 +232,7 @@ class RoomsController < ApplicationController
   # Start a new game from Credits - goes directly to StorySelection
   def start_new_game
     room = Room.find(params[:id])
+    RoomEventLogger.start_new_game(room: room, actor: @current_user)
     room.current_game&.update!(current_game_prompt: nil)
     room.update!(
       status: RoomStatus::StorySelection,

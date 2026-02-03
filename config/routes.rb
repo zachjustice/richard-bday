@@ -69,6 +69,7 @@ Rails.application.routes.draw do
   patch "/rooms/:id/settings", to: "rooms#update_settings", as: :update_room_settings
   get "/rooms/:id/waiting_for_new_game", to: "rooms#waiting_for_new_game", as: :waiting_for_new_game
   get "/rooms/:id/check_navigation", to: "rooms#check_navigation", as: :check_room_navigation
+  get "/rooms/:room_id/events", to: "room_events#index", as: :room_events
 
 
   post "/answer", to: "answers#create"

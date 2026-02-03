@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_02_033904) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_02_035817) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -121,6 +121,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_033904) do
     t.index [ "creator_id" ], name: "index_prompts_on_creator_id"
   end
 
+  create_table "room_events", force: :cascade do |t|
+    t.integer "room_id", null: false
+    t.integer "game_id"
+    t.string "event_type", null: false
+    t.string "actor_type"
+    t.integer "actor_id"
+    t.json "metadata", default: {}
+    t.integer "sequence", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "game_id" ], name: "index_room_events_on_game_id"
+    t.index [ "room_id", "created_at" ], name: "index_room_events_on_room_id_and_created_at"
+    t.index [ "room_id", "sequence" ], name: "index_room_events_on_room_id_and_sequence"
+    t.index [ "room_id" ], name: "index_room_events_on_room_id"
+  end
+
   create_table "rooms", force: :cascade do |t|
     t.string "code"
     t.datetime "created_at", null: false
@@ -224,6 +240,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_033904) do
   add_foreign_key "games", "rooms"
   add_foreign_key "games", "stories"
   add_foreign_key "prompts", "editors", column: "creator_id"
+  add_foreign_key "room_events", "games"
+  add_foreign_key "room_events", "rooms"
   add_foreign_key "rooms", "games", column: "current_game_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "stories", "editors", column: "author_id"

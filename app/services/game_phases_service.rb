@@ -17,7 +17,9 @@ class GamePhasesService
 
     # Schedule deadline for voting
     next_game_phase_time = Time.now + @room.time_to_vote_seconds + GameConstants::COUNTDOWN_FORGIVENESS_SECONDS
+    prev_status = @room.status
     @room.update!(status: RoomStatus::Voting)
+    RoomEventLogger.status_changed(room: @room, game: @room.current_game, from: prev_status, to: RoomStatus::Voting)
 
     status_data = RoomStatusService.new(@room).call
     update_room_status_view("rooms/status/voting", status_data)
@@ -37,7 +39,9 @@ class GamePhasesService
     # Cancel voting timer if everyone voted early
     cancel_scheduled_job(@room.current_game.voting_timer_job_id)
 
+    prev_status = @room.status
     @room.update!(status: RoomStatus::Results)
+    RoomEventLogger.status_changed(room: @room, game: @room.current_game, from: prev_status, to: RoomStatus::Results)
 
     status_data = RoomStatusService.new(@room).call
     update_room_status_view("rooms/status/results", status_data)

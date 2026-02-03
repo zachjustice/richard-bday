@@ -12,6 +12,13 @@ class AnswersController < ApplicationController
       return redirect_to controller: "game_prompts", action: "show", id: params[:prompt_id]
     end
 
+    RoomEventLogger.answer_submitted(
+      room: @current_room,
+      game: @current_room.current_game,
+      actor: @current_user,
+      answer: answer
+    )
+
     users_in_room = User.players.where(room_id: @current_room.id).count
     submitted_answers = Answer.where(game_prompt_id: params[:prompt_id], game_id: @current_room.current_game_id).count
     redirect_to_voting = submitted_answers >= users_in_room

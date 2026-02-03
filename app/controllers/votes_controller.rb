@@ -28,6 +28,15 @@ class VotesController < ApplicationController
       )
       successful = vote.save
       error = vote.errors
+
+      if successful
+        RoomEventLogger.vote_submitted(
+          room: @current_room,
+          game: @current_room.current_game,
+          actor: @current_user,
+          vote_info: { answer_id: vote.answer_id, game_prompt_id: vote.game_prompt_id }
+        )
+      end
     end
 
     users_in_room = User.players.where(room_id: @current_room.id).count
@@ -70,6 +79,13 @@ class VotesController < ApplicationController
             rank: rank.to_i
           )
         end
+
+        RoomEventLogger.vote_submitted(
+          room: @current_room,
+          game: @current_room.current_game,
+          actor: @current_user,
+          vote_info: { rankings: rankings.to_h, game_prompt_id: game_prompt_id }
+        )
       end
 
       redirect_to controller: "game_prompts", action: "results", id: game_prompt_id

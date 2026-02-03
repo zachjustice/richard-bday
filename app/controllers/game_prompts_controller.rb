@@ -22,6 +22,13 @@ class GamePromptsController < ApplicationController
 
   def change_answer
     @current_user.update!(status: UserStatus::Answering)
+    game_prompt = GamePrompt.find(params[:id])
+    RoomEventLogger.answer_changed(
+      room: @current_room,
+      game: @current_room.current_game,
+      actor: @current_user,
+      game_prompt: game_prompt
+    )
 
     Turbo::StreamsChannel.broadcast_replace_to(
       "rooms:#{@current_room.id}:answers",

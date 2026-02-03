@@ -1,6 +1,7 @@
 class JoinRoomJob < ApplicationJob
   def perform(user)
     room = user.room
+    RoomEventLogger.player_joined(room: room, user: user)
 
     # Broadcast Turbo Stream to append user to the waiting room list
     Turbo::StreamsChannel.broadcast_append_to(

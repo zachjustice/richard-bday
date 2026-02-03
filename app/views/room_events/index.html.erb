@@ -1,0 +1,70 @@
+<% content_for(:title) { "Room Events - #{@room.code.upcase}" } %>
+
+<div class="min-h-screen bg-page py-8 px-4">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="card-primary mb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <h1 class="text-2xl font-bold text-ink">Events Log</h1>
+          <span class="badge-primary bg-accent-tertiary">
+            Room: <%= @room.code.upcase %>
+          </span>
+        </div>
+        <span class="text-sm text-ink/60 font-medium">
+          <%= @events.size %> events
+        </span>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card-subdued mb-6">
+      <%= form_with url: room_events_path(@room), method: :get, local: true, class: "flex flex-wrap gap-4" do %>
+        <div class="flex-1 min-w-[200px]">
+          <label class="form-label mb-2">Event Type</label>
+          <%= select_tag :event_type,
+            options_for_select(
+              [["All Events", ""]] + @event_types.map { |t| [t.humanize, t] },
+              params[:event_type]
+            ),
+            class: "form-input"
+          %>
+        </div>
+
+        <div class="flex-1 min-w-[200px]">
+          <label class="form-label mb-2">Game</label>
+          <%= select_tag :game_id,
+            options_for_select(
+              [
+                ["All Games", "all"],
+                ["Current Game", "current"]
+              ] + @games.map { |g| ["Game ##{g.id} - #{g.story&.title || 'Unknown'}", g.id] },
+              params[:game_id] || "all"
+            ),
+            class: "form-input"
+          %>
+        </div>
+
+        <div class="flex items-end">
+          <%= submit_tag "Filter", class: "btn-secondary" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Events List -->
+    <div class="card-primary">
+      <% if @events.empty? %>
+        <div class="text-center py-12 text-ink/50">
+          <p class="text-lg font-medium">No events found</p>
+          <p class="text-sm mt-2">Events will appear here as actions occur in the room</p>
+        </div>
+      <% else %>
+        <div class="space-y-3">
+          <% @events.each do |event| %>
+            <%= render partial: "room_events/event", locals: { event: event } %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
