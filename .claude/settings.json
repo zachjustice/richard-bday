@@ -3,7 +3,10 @@
     "allow": [
       "Bash(wc:*)",
       "Bash(rails test:*)",
-      "Bash(node --check:*)"
+      "Bash(node --check:*)",
+      "Bash(rails runner:*)",
+      "Bash(xargs:*)",
+      "Bash(gem specification:*)"
     ]
   },
   "enabledPlugins": {

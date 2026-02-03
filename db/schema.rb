@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_02_031453) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_02_033904) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -19,6 +19,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_031453) do
     t.integer "game_prompt_id", null: false
     t.integer "game_id", null: false
     t.boolean "won"
+    t.string "smoothed_text"
     t.index [ "game_id" ], name: "index_answers_on_game_id"
     t.index [ "game_prompt_id", "game_id", "user_id" ], name: "index_answers_on_game_prompt_id_and_game_id_and_user_id", unique: true
     t.index [ "game_prompt_id", "user_id" ], name: "index_game_prompts_on_game_prompt_id_and_room_id_and_user_id", unique: true
@@ -129,6 +130,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_031453) do
     t.integer "time_to_answer_seconds", default: 180, null: false
     t.integer "time_to_vote_seconds", default: 120, null: false
     t.string "voting_style", default: "vote_once", null: false
+    t.boolean "smooth_answers", default: false, null: false
     t.index [ "code" ], name: "index_rooms_on_code", unique: true
     t.index [ "current_game_id" ], name: "index_rooms_on_current_game_id"
   end

@@ -81,3 +81,5 @@ gem "tailwindcss-rails", "~> 4.4"
 gem "watchman-rails", "~> 0.2.0"
 
 gem "faker", "~> 3.6"
+
+gem "anthropic", "~> 1.16"

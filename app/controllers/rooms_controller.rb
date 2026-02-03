@@ -322,7 +322,7 @@ class RoomsController < ApplicationController
   end
 
   def settings_params
-    params.require(:room).permit(:time_to_answer_seconds, :time_to_vote_seconds, :voting_style)
+    params.require(:room).permit(:time_to_answer_seconds, :time_to_vote_seconds, :voting_style, :smooth_answers)
   end
 
   # Redirects player to the appropriate game page based on room status.

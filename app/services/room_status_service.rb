@@ -91,6 +91,7 @@ class RoomStatusService
     if winner.nil? && winners.any?
       winner = winners.sample
       winner.update!(won: true)
+      AnswerSmoothingJob.perform_later(winner) if @room.smooth_answers?
     elsif winner.nil?
       # No one voted. Create a default answer
       winner = Answer.create!(
@@ -118,7 +119,7 @@ class RoomStatusService
     story_text = @room.current_game.story.text
     winning_answers = Answer.where(game_id: @room.current_game, won: true)
     blank_id_to_answer_text = winning_answers.reduce({}) do |result, ans|
-      result["{#{ans.game_prompt.blank.id}}"] = [ ans.text, ans.game_prompt.id ]
+      result["{#{ans.game_prompt.blank.id}}"] = [ ans.display_text, ans.game_prompt.id ]
       result
     end
 

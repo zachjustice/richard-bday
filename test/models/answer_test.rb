@@ -36,4 +36,23 @@ class AnswerTest < ActiveSupport::TestCase
     )
     assert answer.valid?, "Answer with normal text should be valid: #{answer.errors.full_messages}"
   end
+
+  # display_text helper
+  test "display_text returns smoothed_text when present" do
+    answer = answers(:one)
+    answer.smoothed_text = "smoothed version"
+    assert_equal "smoothed version", answer.display_text
+  end
+
+  test "display_text returns text when smoothed_text is nil" do
+    answer = answers(:one)
+    answer.smoothed_text = nil
+    assert_equal answer.text, answer.display_text
+  end
+
+  test "display_text returns text when smoothed_text is blank" do
+    answer = answers(:one)
+    answer.smoothed_text = ""
+    assert_equal answer.text, answer.display_text
+  end
 end
