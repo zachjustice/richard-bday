@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "../stylesheets/components.css";
 
+/* Safelist for dynamically generated classes in Ruby helpers */
+@source inline("bg-accent-{secondary,green,red,tertiary,indigo,violet,orange} bg-accent-red/80 bg-gray-500 text-white text-ink");
+
 /* Tailwind v4 CSS-first configuration */
 @theme {
   /* ============================================
@@ -13,12 +16,18 @@
   --color-light: #FFFFFF;
 
   /* Primary Design Tokens */
-  --color-accent-primary: #E63946;    /* Red - CTAs, alerts */
-  --color-accent-secondary: #2196F3;  /* Blue - links, secondary actions */
-  --color-accent-tertiary: #FFD60A;   /* Yellow - highlights, accents */
-  --color-bg-page: #FFF8E7;           /* Cream - page backgrounds */
-  --color-ink: var(--color-dark);               /* Dark - text, borders, shadows */
-  --color-ink-inverted: var(--color-light);     /* Light - text/borders on dark backgrounds */
+  --color-accent-primary: #E63946;
+  /* Red - CTAs, alerts */
+  --color-accent-secondary: #2196F3;
+  /* Blue - links, secondary actions */
+  --color-accent-tertiary: #FFD60A;
+  /* Yellow - highlights, accents */
+  --color-bg-page: #FFF8E7;
+  /* Cream - page backgrounds */
+  --color-ink: var(--color-dark);
+  /* Dark - text, borders, shadows */
+  --color-ink-inverted: var(--color-light);
+  /* Light - text/borders on dark backgrounds */
 
   /* Light background variants for player items */
   --color-accent-primary-light: rgba(230, 57, 70, 0.1);
@@ -72,84 +81,176 @@
 
   /* Animations */
   --animate-gradient-shift: gradient-shift 15s ease infinite;
+
   @keyframes gradient-shift {
-    0% { 
+    0% {
       background-size: 400% 400%;
-      background-position: 0% 50%; 
+      background-position: 0% 50%;
     }
-    50% { 
+
+    50% {
       background-size: 400% 400%;
-      background-position: 100% 50%; 
+      background-position: 100% 50%;
     }
-    100% { 
+
+    100% {
       background-size: 400% 400%;
-      background-position: 0% 50%; 
+      background-position: 0% 50%;
     }
   }
 
   --animate-float: float 3s ease-in-out infinite;
+
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
   }
 
   --animate-bounce-custom: bounce-custom 1s ease-in-out;
+
   @keyframes bounce-custom {
-    0%, 100% { transform: translateY(0); }
-    25% { transform: translateY(-20px); }
-    50% { transform: translateY(0); }
-    75% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    25% {
+      transform: translateY(-20px);
+    }
+
+    50% {
+      transform: translateY(0);
+    }
+
+    75% {
+      transform: translateY(-10px);
+    }
   }
 
   --animate-slide-in: slideIn 0.4s ease-out;
 
   @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   --animate-slide-up: slide-up 0.6s ease-out;
 
   @keyframes slide-up {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   --animate-swing: swing 2s ease-in-out infinite;
+
   @keyframes swing {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(20deg); }
-    75% { transform: rotate(-20deg); }
+
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+
+    25% {
+      transform: rotate(20deg);
+    }
+
+    75% {
+      transform: rotate(-20deg);
+    }
   }
 
   --animate-fade-in: fade-in 0.6s ease-out;
+
   @keyframes fade-in {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   --animate-pulse-dot: pulse-dot 1.5s ease-in-out infinite;
+
   @keyframes pulse-dot {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.5); opacity: 0.5; }
+
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: scale(1.5);
+      opacity: 0.5;
+    }
   }
 
   --animate-slide-in-right: slide-in-right 0.4s ease-out;
+
   @keyframes slide-in-right {
-    from { opacity: 0; transform: translateX(100%); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   --animate-flash-red: flash-red 1s ease-in-out infinite;
+
   @keyframes flash-red {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
   }
 
   --animate-tooltip-fade-in: tooltip-fade-in 0.2s ease-out;
+
   @keyframes tooltip-fade-in {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* ============================================
@@ -159,66 +260,147 @@
 
   /* Bouncy entrance - for buttons and interactive elements */
   --animate-bouncy: bouncy 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
   @keyframes bouncy {
-    0% { transform: scale(0.3); opacity: 0; }
-    50% { transform: scale(1.05); }
-    70% { transform: scale(0.9); }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+
+    70% {
+      transform: scale(0.9);
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
   /* Wiggle - for hover states and attention */
   --animate-wiggle: wiggle 0.5s ease-in-out;
+
   @keyframes wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-3deg); }
-    75% { transform: rotate(3deg); }
+
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+
+    25% {
+      transform: rotate(-3deg);
+    }
+
+    75% {
+      transform: rotate(3deg);
+    }
   }
 
   /* Pop - quick attention grabber */
   --animate-pop: pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
   @keyframes pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.1);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
   /* Squish - playful button press */
   --animate-squish: squish 0.2s ease-out;
+
   @keyframes squish {
-    0% { transform: scale(1, 1); }
-    50% { transform: scale(1.1, 0.9); }
-    100% { transform: scale(1, 1); }
+    0% {
+      transform: scale(1, 1);
+    }
+
+    50% {
+      transform: scale(1.1, 0.9);
+    }
+
+    100% {
+      transform: scale(1, 1);
+    }
   }
 
   /* Jello - wobbly attention effect */
   --animate-jello: jello 0.9s ease-in-out;
+
   @keyframes jello {
-    0%, 100% { transform: scale3d(1, 1, 1); }
-    30% { transform: scale3d(1.25, 0.75, 1); }
-    40% { transform: scale3d(0.75, 1.25, 1); }
-    50% { transform: scale3d(1.15, 0.85, 1); }
-    65% { transform: scale3d(0.95, 1.05, 1); }
-    75% { transform: scale3d(1.05, 0.95, 1); }
+
+    0%,
+    100% {
+      transform: scale3d(1, 1, 1);
+    }
+
+    30% {
+      transform: scale3d(1.25, 0.75, 1);
+    }
+
+    40% {
+      transform: scale3d(0.75, 1.25, 1);
+    }
+
+    50% {
+      transform: scale3d(1.15, 0.85, 1);
+    }
+
+    65% {
+      transform: scale3d(0.95, 1.05, 1);
+    }
+
+    75% {
+      transform: scale3d(1.05, 0.95, 1);
+    }
   }
 
   /* Draw - for underline animations */
   --animate-draw: draw 0.4s ease-out forwards;
+
   @keyframes draw {
-    from { width: 0; }
-    to { width: 100%; }
+    from {
+      width: 0;
+    }
+
+    to {
+      width: 100%;
+    }
   }
 
   /* Scribble - subtle hand-drawn effect */
   --animate-scribble: scribble 0.3s ease-in-out infinite;
+
   @keyframes scribble {
-    0%, 100% { transform: translateX(0) rotate(0deg); }
-    25% { transform: translateX(-1px) rotate(-0.5deg); }
-    75% { transform: translateX(1px) rotate(0.5deg); }
+
+    0%,
+    100% {
+      transform: translateX(0) rotate(0deg);
+    }
+
+    25% {
+      transform: translateX(-1px) rotate(-0.5deg);
+    }
+
+    75% {
+      transform: translateX(1px) rotate(0.5deg);
+    }
   }
 }
 
 /* Disable animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
+
   .animate-float,
   .animate-bounce-custom,
   .animate-slide-in,

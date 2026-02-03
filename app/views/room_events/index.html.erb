@@ -51,19 +51,32 @@
       <% end %>
     </div>
 
-    <!-- Events List -->
-    <div class="card-primary">
+    <!-- Events Table -->
+    <div class="card-primary overflow-x-auto">
       <% if @events.empty? %>
         <div class="text-center py-12 text-ink/50">
           <p class="text-lg font-medium">No events found</p>
           <p class="text-sm mt-2">Events will appear here as actions occur in the room</p>
         </div>
       <% else %>
-        <div class="space-y-3">
-          <% @events.each do |event| %>
-            <%= render partial: "room_events/event", locals: { event: event } %>
-          <% end %>
-        </div>
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b-2 border-ink/10 text-left">
+              <th class="py-3 px-2 text-xs font-bold text-ink/50 uppercase tracking-wide">#</th>
+              <th class="py-3 px-2 text-xs font-bold text-ink/50 uppercase tracking-wide">Time</th>
+              <th class="py-3 px-2 text-xs font-bold text-ink/50 uppercase tracking-wide">Game</th>
+              <th class="py-3 px-2 text-xs font-bold text-ink/50 uppercase tracking-wide">Type</th>
+              <th class="py-3 px-2 text-xs font-bold text-ink/50 uppercase tracking-wide">Actor</th>
+              <th class="py-3 px-2 text-xs font-bold text-ink/50 uppercase tracking-wide">Description</th>
+              <th class="py-3 px-2 text-xs font-bold text-ink/50 uppercase tracking-wide">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @events.each do |event| %>
+              <%= render partial: "room_events/event", locals: { event: event } %>
+            <% end %>
+          </tbody>
+        </table>
       <% end %>
     </div>
   </div>
