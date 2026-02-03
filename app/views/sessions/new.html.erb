@@ -8,7 +8,7 @@
       <div class="text-base max-sm:text-sm text-accent-secondary mb-2">
         <% if @room&.current_game&.current_game_prompt && (Time.now - @room.created_at) < 1.day %>
           <span>It looks like you're already in a game.</span>
-          <p class="font-bold"><%= link_to "Rejoin?", controller: "prompts", action: "show", id: @room.current_game.current_game_prompt %></p>
+          <p class="font-bold"><%= link_to "Rejoin?", controller: "game_prompts", action: "show", id: @room.current_game.current_game_prompt %></p>
         <% elsif @room.present? && (Time.now - @room.created_at) < 1.day %>
           <span>It looks like you're already in a game.</span>
           <p class="font-bold"><%= link_to "Rejoin?", controller: "rooms", action: "show" %></p>

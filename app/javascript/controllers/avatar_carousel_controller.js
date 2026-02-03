@@ -127,8 +127,11 @@ export default class extends Controller {
         submitBtn.disabled = true
         submitBtn.textContent = 'Taken'
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed')
+      } else if (isCurrent) {
+        submitBtn.disabled = true
+        submitBtn.textContent = 'Selected'
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed')
       } else {
-        // Always enable for available avatars (including current on first load)
         submitBtn.disabled = false
         submitBtn.textContent = 'Submit'
         submitBtn.classList.remove('opacity-50', 'cursor-not-allowed')

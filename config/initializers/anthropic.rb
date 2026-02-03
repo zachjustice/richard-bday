@@ -1,0 +1,3 @@
+# Anthropic API client configuration
+# API key is read from Rails credentials: rails credentials:edit
+# Add: anthropic: api_key: sk-ant-...
