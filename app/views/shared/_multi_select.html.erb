@@ -18,7 +18,10 @@
      data-controller="multi-select"
      data-multi-select-options-value="<%= options.map { |o| { id: o.id, name: o.name } }.to_json %>"
      data-multi-select-field-name-value="<%= full_field_name %>"
-     data-multi-select-empty-message-value="<%= empty_msg %>">
+     data-multi-select-empty-message-value="<%= empty_msg %>"
+     role="combobox"
+     aria-haspopup="listbox"
+     aria-expanded="false">
 
   <% if defined?(label) && label %>
     <label class="form-label mb-2"><%= label %></label>
@@ -50,11 +53,17 @@
            placeholder="<%= placeholder || 'Search...' %>"
            autocomplete="off"
            data-multi-select-target="input"
-           data-action="input->multi-select#onInput focus->multi-select#onFocus keydown->multi-select#onKeydown">
+           data-action="input->multi-select#onInput focus->multi-select#onFocus keydown->multi-select#onKeydown"
+           aria-autocomplete="list"
+           aria-controls="multi-select-dropdown-<%= field_name %>"
+           aria-label="<%= defined?(label) && label ? label : 'Search and select options' %>">
   </div>
 
   <%# Dropdown %>
-  <div class="multi-select-dropdown hidden" data-multi-select-target="dropdown">
+  <div class="multi-select-dropdown hidden"
+       data-multi-select-target="dropdown"
+       id="multi-select-dropdown-<%= field_name %>"
+       role="listbox">
     <div class="multi-select-options" data-multi-select-target="options">
       <%# Options rendered by JS %>
     </div>

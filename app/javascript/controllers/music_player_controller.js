@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { FocusTrap } from "./concerns/focus_trap"
 
 export default class extends Controller {
   static targets = [
@@ -6,6 +7,7 @@ export default class extends Controller {
     "audio",
     "playIcon",
     "pauseIcon",
+    "playPauseButton",
     "currentTime",
     "totalTime",
     "progress",
@@ -21,6 +23,11 @@ export default class extends Controller {
     this.songs = []
     this.currentSongIndex = 0
     this.audioTarget.volume = 0.25
+    this.boundHandleEscape = this.handleEscape.bind(this)
+
+    // Set up focus trap
+    Object.assign(this, FocusTrap)
+    this.setupFocusTrap(this.modalTarget)
 
     // Load songs
     this.loadSongs()
@@ -29,6 +36,17 @@ export default class extends Controller {
     this.audioTarget.addEventListener('timeupdate', () => this.updateProgress())
     this.audioTarget.addEventListener('ended', () => this.handleSongEnd())
     this.audioTarget.addEventListener('loadedmetadata', () => this.updateDuration())
+  }
+
+  disconnect() {
+    document.removeEventListener("keydown", this.boundHandleEscape)
+    this.deactivateFocusTrap()
+  }
+
+  handleEscape(event) {
+    if (event.key === "Escape") {
+      this.closeModal()
+    }
   }
 
   async loadSongs() {
@@ -43,12 +61,18 @@ export default class extends Controller {
 
   openModal() {
     this.modalTarget.classList.remove('hidden')
+    this.modalTarget.setAttribute("aria-hidden", "false")
     document.body.style.overflow = 'hidden'
+    document.addEventListener("keydown", this.boundHandleEscape)
+    this.activateFocusTrap()
   }
 
   closeModal() {
     this.modalTarget.classList.add('hidden')
+    this.modalTarget.setAttribute("aria-hidden", "true")
     document.body.style.overflow = ''
+    document.removeEventListener("keydown", this.boundHandleEscape)
+    this.deactivateFocusTrap()
   }
 
   togglePlay() {
@@ -60,10 +84,16 @@ export default class extends Controller {
       this.audioTarget.play()
       this.playIconTarget.classList.add('hidden')
       this.pauseIconTarget.classList.remove('hidden')
+      if (this.hasPlayPauseButtonTarget) {
+        this.playPauseButtonTarget.setAttribute("aria-label", "Pause")
+      }
     } else {
       this.audioTarget.pause()
       this.playIconTarget.classList.remove('hidden')
       this.pauseIconTarget.classList.add('hidden')
+      if (this.hasPlayPauseButtonTarget) {
+        this.playPauseButtonTarget.setAttribute("aria-label", "Play")
+      }
     }
   }
 
@@ -89,6 +119,29 @@ export default class extends Controller {
     const rect = this.progressBarTarget.getBoundingClientRect()
     const percent = (event.clientX - rect.left) / rect.width
     this.audioTarget.currentTime = percent * this.audioTarget.duration
+  }
+
+  seekKeyboard(event) {
+    if (!this.audioTarget.duration) return
+
+    const step = this.audioTarget.duration * 0.05 // 5% jumps
+
+    switch (event.key) {
+      case "ArrowRight":
+        event.preventDefault()
+        this.audioTarget.currentTime = Math.min(
+          this.audioTarget.currentTime + step,
+          this.audioTarget.duration
+        )
+        break
+      case "ArrowLeft":
+        event.preventDefault()
+        this.audioTarget.currentTime = Math.max(
+          this.audioTarget.currentTime - step,
+          0
+        )
+        break
+    }
   }
 
   search() {
@@ -126,6 +179,11 @@ export default class extends Controller {
       this.currentTimeTarget.textContent = this.formatTime(current)
       const percent = (current / duration) * 100
       this.progressTarget.style.width = `${percent}%`
+
+      // Update ARIA attributes for accessibility
+      this.progressBarTarget.setAttribute("aria-valuenow", Math.round(percent))
+      this.progressBarTarget.setAttribute("aria-valuetext",
+        `${this.formatTime(current)} of ${this.formatTime(duration)}`)
     }
   }
 

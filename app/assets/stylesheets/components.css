@@ -71,6 +71,11 @@
     transform: translate(2px, 2px);
   }
 
+  .btn-primary:focus-visible {
+    outline: 3px solid var(--color-accent-secondary);
+    outline-offset: 3px;
+  }
+
   /* Loading state for buttons */
   .btn-primary.btn-loading,
   .btn-secondary.btn-loading {
@@ -413,6 +418,22 @@
   @apply cursor-grabbing;
 }
 
+.ranking-answer:focus-visible {
+  outline: 3px solid var(--color-accent-secondary);
+  outline-offset: 2px;
+}
+
+.ranking-answer.keyboard-selected {
+  outline: 3px solid var(--color-accent-tertiary);
+  outline-offset: 2px;
+  background-color: var(--color-accent-tertiary-light, rgba(255, 214, 10, 0.15));
+}
+
+.ranking-slot:focus-visible {
+  outline: 3px solid var(--color-accent-tertiary);
+  outline-offset: 2px;
+}
+
 .ranking-handle {
   @apply text-ink/40 select-none flex-none;
 }
@@ -605,6 +626,11 @@
   box-shadow: 3px 3px 0px var(--color-ink);
 }
 
+.btn-secondary:focus-visible {
+  outline: 3px solid var(--color-accent-secondary);
+  outline-offset: 3px;
+}
+
 .btn-sm {
   @apply px-4 py-2 text-sm;
 }
@@ -617,6 +643,11 @@
 .btn-icon:hover {
   @apply border-ink/20 scale-110;
   background: rgba(255, 214, 10, 0.2);
+}
+
+.btn-icon:focus-visible {
+  outline: 3px solid var(--color-accent-secondary);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -640,6 +671,11 @@
 .modal-close-btn:hover {
   box-shadow: 3px 3px 0px var(--color-ink);
   transform: translate(-1px, -1px);
+}
+
+.modal-close-btn:focus-visible {
+  outline: 3px solid var(--color-accent-secondary);
+  outline-offset: 2px;
 }
 
 .modal-close-btn:active {
@@ -796,6 +832,11 @@
 .control-btn:active {
   box-shadow: 1px 1px 0px var(--color-ink);
   transform: translate(1px, 1px);
+}
+
+.control-btn:focus-visible {
+  outline: 3px solid var(--color-accent-secondary);
+  outline-offset: 2px;
 }
 
 .control-btn.play-pause {
@@ -1078,6 +1119,11 @@
 .carousel-arrow:active {
   box-shadow: 1px 1px 0px var(--color-ink);
   transform: translate(1px, 1px);
+}
+
+.carousel-arrow:focus-visible {
+  outline: 3px solid var(--color-accent-secondary);
+  outline-offset: 2px;
 }
 
 .avatar-carousel-container {

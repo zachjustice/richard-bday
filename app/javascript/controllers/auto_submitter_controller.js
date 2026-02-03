@@ -11,8 +11,19 @@ export default class extends Controller {
     this.timeRemaining = Math.round(Math.max(this.durationValue, 0))
     this.startTime = null
     this.displayAtDate = Date.parse(this.displayAtValue)
-    
+    this.lastAnnouncedTime = null
+
+    this.createAnnouncer()
     this.start()
+  }
+
+  createAnnouncer() {
+    this.announcer = document.createElement("div")
+    this.announcer.setAttribute("role", "status")
+    this.announcer.setAttribute("aria-live", "assertive")
+    this.announcer.setAttribute("aria-atomic", "true")
+    this.announcer.className = "sr-only"
+    this.element.appendChild(this.announcer)
   }
 
   disconnect() {
@@ -57,6 +68,22 @@ export default class extends Controller {
     const minutes = Math.round(this.timeRemaining / 60)
     const timeRemainingSeconds = Math.round(this.timeRemaining % 60) + (minutes * 60)
     this.displayTarget.textContent = `in ${timeRemainingSeconds.toString().padStart(1, '0')}`
+
+    // Announce at key intervals for screen reader users
+    const seconds = Math.round(this.timeRemaining)
+    if ([10, 5, 3, 2, 1].includes(seconds) && this.lastAnnouncedTime !== seconds) {
+      this.lastAnnouncedTime = seconds
+      this.announce(`Auto-submit in ${seconds} second${seconds !== 1 ? "s" : ""}`)
+    }
+  }
+
+  announce(message) {
+    if (this.announcer) {
+      this.announcer.textContent = ""
+      setTimeout(() => {
+        this.announcer.textContent = message
+      }, 50)
+    }
   }
 
   updateColor() {

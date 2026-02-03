@@ -32,7 +32,7 @@
           <div class="accordion-content" data-story-selection-target="storySectionContent">
             <div class="p-4">
               <%# Search Input %>
-              <div class="search-input-container mb-4">
+              <div class="search-input-container mb-2 px-2">
                 <svg class="search-input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
@@ -44,7 +44,8 @@
               </div>
 
               <%# Story List %>
-              <div class="flex-1 min-h-0 overflow-y-auto gap-2 flex flex-col max-h-[400px] scroll-fade-indicators">
+              <fieldset class="flex-1 min-h-0 overflow-y-auto p-3 pb-4 gap-2 flex flex-col max-h-[400px] scroll-fade-indicators border-0">
+                <legend class="sr-only">Select a story</legend>
                 <% stories.each do |story| %>
                   <label class="cursor-pointer block"
                          data-story-selection-target="storyItem"
@@ -54,7 +55,7 @@
                     <input type="radio" name="story" value="<%= story.id %>"
                       class="peer sr-only" required
                       data-action="change->story-selection#selectStory">
-                    <div class="flex flex-col gap-1 w-full p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                    <div class="flex flex-col gap-1 w-full p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:bg-accent-tertiary shadow-[2px_2px_0_0_var(--color-ink)]">
                       <div class="flex justify-between items-center">
                         <span class="font-bold"><%= story.title %></span>
                         <% if story.genres.any? %>
@@ -81,7 +82,7 @@
                 <div class="hidden text-center py-8 text-ink/50 italic" data-story-selection-target="noResults">
                   No stories match your search
                 </div>
-              </div>
+              </fieldset>
             </div>
           </div>
         </div>
@@ -101,12 +102,13 @@
           </div>
 
           <div class="accordion-content accordion-content-collapsed" data-story-selection-target="votingSectionContent">
-            <div class="p-4 flex flex-col gap-3">
+            <fieldset class="p-4 flex flex-col gap-3 border-0">
+              <legend class="sr-only">Select voting style</legend>
               <label class="cursor-pointer block" data-voting-style-name="Vote Once">
                 <input type="radio" name="room[voting_style]" value="vote_once"
                        <%= "checked" if room.vote_once? %> class="peer sr-only"
                        data-action="change->story-selection#selectVotingStyle">
-                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:bg-accent-tertiary shadow-[2px_2px_0_0_var(--color-ink)]">
                   <span class="font-bold text-ink">Vote Once</span>
                   <span class="text-sm text-ink/60">Pick your favorite answer</span>
                 </div>
@@ -115,12 +117,12 @@
                 <input type="radio" name="room[voting_style]" value="ranked_top_3"
                        <%= "checked" if room.ranked_voting? %> class="peer sr-only"
                        data-action="change->story-selection#selectVotingStyle">
-                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]">
+                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:bg-accent-tertiary shadow-[2px_2px_0_0_var(--color-ink)]">
                   <span class="font-bold text-ink">Ranked Top 3</span>
                   <span class="text-sm text-ink/60">Drag to rank (30/20/10 pts)</span>
                 </div>
               </label>
-            </div>
+            </fieldset>
           </div>
         </div>
 

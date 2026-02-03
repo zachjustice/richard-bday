@@ -16,6 +16,9 @@
         <%= @game_prompt.prompt.description %>
       </h2>
       <p class="text-ink/60 mt-2 text-sm">Drag answers to rank your top <%= max_slots %></p>
+      <p class="sr-only">
+        Keyboard users: Press Enter or Space to select an answer, then use arrow keys to navigate to a rank slot and press Enter to place it. Press Escape to cancel selection. Press Delete or Backspace on a filled slot to remove an answer.
+      </p>
     </div>
 
     <%= form_with url: "/vote", method: :post,
@@ -24,7 +27,10 @@
       <%= form.hidden_field :game_prompt_id, value: @game_prompt.id %>
 
       <%# Ranking slots %>
-      <div class="flex flex-col gap-3" data-ranked-voting-target="slots">
+      <div class="flex flex-col gap-3"
+           data-ranked-voting-target="slots"
+           role="group"
+           aria-label="Ranking slots - place your top <%= max_slots %> answers here">
         <% max_slots.times do |i| %>
           <div class="ranking-slot"
                data-rank="<%= i + 1 %>"
@@ -42,7 +48,9 @@
       <%# Available answers %>
       <div class="flex flex-col gap-3 p-1 ranking-answers-scrollable scroll-fade-indicators overflow-y-auto shrink-0"
            style="max-height: 250px;"
-           data-ranked-voting-target="answersContainer">
+           data-ranked-voting-target="answersContainer"
+           role="listbox"
+           aria-label="Available answers to rank">
         <% @answers.each do |answer| %>
           <div class="ranking-answer"
                draggable="false"

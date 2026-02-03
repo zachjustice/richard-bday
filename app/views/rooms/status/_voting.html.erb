@@ -4,6 +4,9 @@
   <div class="card-status-header-indigo">
     <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
     <h1 class="text-4xl font-bold text-ink mb-3 leading-tight">Vote for the best answer on your device!</h1>
+    <div class="sr-only" aria-live="polite" aria-atomic="true" id="votes-status">
+      <%= users.count(&:voted?) %> of <%= users.count %> players have voted
+    </div>
   </div>
 
   <div class="card-status-content-indigo">

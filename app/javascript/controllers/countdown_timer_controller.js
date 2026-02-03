@@ -10,12 +10,23 @@ export default class extends Controller {
   connect() {
     this.timeRemaining = Math.round(this.durationValue)
     this.startTime = null
+    this.currentPhase = null
     this.updateDisplay()
     this.setupCircle()
-    
+    this.createAnnouncer()
+
     if (this.autoStartValue) {
       this.start()
     }
+  }
+
+  createAnnouncer() {
+    this.announcer = document.createElement("span")
+    this.announcer.setAttribute("role", "status")
+    this.announcer.setAttribute("aria-live", "polite")
+    this.announcer.setAttribute("aria-atomic", "true")
+    this.announcer.className = "sr-only"
+    this.element.appendChild(this.announcer)
   }
 
   disconnect() {
@@ -72,19 +83,38 @@ export default class extends Controller {
 
   updateColor() {
     const progress = this.timeRemaining / this.durationValue
-    
+    let newPhase
+
     if (this.timeRemaining <= 0) {
-      // Flash red when time is up
-      this.element.setAttribute('data-phase', 'zero')
+      newPhase = "zero"
     } else if (progress > 0.5) {
-      // Green phase (100% - 50%)
-      this.element.setAttribute('data-phase', 'green')
+      newPhase = "green"
     } else if (progress > 0.25) {
-      // Orange phase (50% - 25%)
-      this.element.setAttribute('data-phase', 'orange')
+      newPhase = "orange"
     } else {
-      // Red phase (25% - 0%)
-      this.element.setAttribute('data-phase', 'red')
+      newPhase = "red"
+    }
+
+    this.element.setAttribute("data-phase", newPhase)
+
+    // Announce phase changes to screen readers
+    if (this.currentPhase !== newPhase) {
+      this.announcePhaseChange(newPhase)
+      this.currentPhase = newPhase
+    }
+  }
+
+  announcePhaseChange(phase) {
+    const messages = {
+      orange: "Warning: Half time remaining",
+      red: "Urgent: Less than 25% time remaining",
+      zero: "Time is up!"
+    }
+    if (messages[phase] && this.announcer) {
+      this.announcer.textContent = ""
+      setTimeout(() => {
+        this.announcer.textContent = messages[phase]
+      }, 50)
     }
   }
 }

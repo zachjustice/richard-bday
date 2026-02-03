@@ -5,6 +5,9 @@
     <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
     <h1 class="text-4xl font-bold text-ink mb-3 leading-tight">Answer the prompt on your device</h1>
     <p class="text-ink/60 italic m-0">Everyone answers the same prompt</p>
+    <div class="sr-only" aria-live="polite" aria-atomic="true" id="answers-status">
+      <%= users.count(&:answered?) %> of <%= users.count %> players have answered
+    </div>
   </div>
 
   <div class="card-status-content-blue">

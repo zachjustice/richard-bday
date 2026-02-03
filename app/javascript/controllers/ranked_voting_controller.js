@@ -13,11 +13,13 @@ export default class extends Controller {
     this.originalParent = null
     this.touchClone = null // Visual clone for touch dragging
     this.hasMoved = false // Track if user actually moved during touch
+    this.selectedAnswer = null // Keyboard selection state
 
     // Store initial order of answers for restoring positions
     this.initialAnswerOrder = this.answerTargets.map(a => a.dataset.answerId)
 
     this.setupDragHandlers()
+    this.setupKeyboardHandlers()
     this.updateSubmitState()
   }
 
@@ -92,6 +94,207 @@ export default class extends Controller {
     // Allow dropping back to answers container
     this.answersContainerTarget.addEventListener("dragover", (e) => this.onDragOver(e, null))
     this.answersContainerTarget.addEventListener("drop", (e) => this.onDropToContainer(e))
+  }
+
+  setupKeyboardHandlers() {
+    // Make answers focusable and add ARIA attributes
+    this.answerTargets.forEach(answer => {
+      answer.setAttribute("tabindex", "0")
+      answer.setAttribute("role", "option")
+      answer.setAttribute("aria-selected", "false")
+
+      answer.addEventListener("keydown", (e) => this.handleAnswerKeydown(e, answer))
+    })
+
+    // Make slots focusable for keyboard navigation
+    this.slotTargets.forEach(slot => {
+      slot.setAttribute("tabindex", "0")
+      slot.setAttribute("role", "listbox")
+      slot.setAttribute("aria-label", `Rank ${slot.dataset.rank} slot`)
+
+      slot.addEventListener("keydown", (e) => this.handleSlotKeydown(e, slot))
+    })
+  }
+
+  handleAnswerKeydown(event, answer) {
+    switch (event.key) {
+      case "Enter":
+      case " ":
+        event.preventDefault()
+        this.toggleAnswerSelection(answer)
+        break
+      case "ArrowUp":
+        event.preventDefault()
+        this.moveFocusToPreviousAnswer(answer)
+        break
+      case "ArrowDown":
+        event.preventDefault()
+        this.moveFocusToNextAnswer(answer)
+        break
+      case "Escape":
+        event.preventDefault()
+        this.clearKeyboardSelection()
+        break
+    }
+  }
+
+  handleSlotKeydown(event, slot) {
+    switch (event.key) {
+      case "Enter":
+      case " ":
+        event.preventDefault()
+        if (this.selectedAnswer) {
+          this.placeSelectedAnswerInSlot(slot)
+        } else {
+          // If slot has an answer, select it for moving
+          const existingAnswer = slot.querySelector(".ranking-answer")
+          if (existingAnswer) {
+            this.toggleAnswerSelection(existingAnswer)
+          }
+        }
+        break
+      case "ArrowUp":
+        event.preventDefault()
+        this.moveFocusToPreviousSlot(slot)
+        break
+      case "ArrowDown":
+        event.preventDefault()
+        this.moveFocusToNextSlot(slot)
+        break
+      case "Escape":
+        event.preventDefault()
+        this.clearKeyboardSelection()
+        break
+      case "Backspace":
+      case "Delete":
+        event.preventDefault()
+        this.removeAnswerFromSlot(slot)
+        break
+    }
+  }
+
+  toggleAnswerSelection(answer) {
+    if (this.selectedAnswer === answer) {
+      this.clearKeyboardSelection()
+      this.announceToScreenReader("Selection cleared")
+    } else {
+      this.clearKeyboardSelection()
+      this.selectedAnswer = answer
+      answer.setAttribute("aria-selected", "true")
+      answer.classList.add("keyboard-selected")
+
+      const answerText = answer.querySelector(".answer-text")?.textContent || "Answer"
+      const isInSlot = answer.closest(".ranking-slot")
+      const instruction = isInSlot
+        ? "Press arrow keys to navigate to a different slot, or Escape to cancel"
+        : "Press arrow keys to navigate to a rank slot, then Enter to place"
+      this.announceToScreenReader(`${answerText} selected. ${instruction}`)
+    }
+  }
+
+  clearKeyboardSelection() {
+    if (this.selectedAnswer) {
+      this.selectedAnswer.setAttribute("aria-selected", "false")
+      this.selectedAnswer.classList.remove("keyboard-selected")
+      this.selectedAnswer = null
+    }
+  }
+
+  placeSelectedAnswerInSlot(slot) {
+    if (!this.selectedAnswer) return
+
+    const answer = this.selectedAnswer
+    const existingAnswer = slot.querySelector(".ranking-answer")
+
+    if (existingAnswer && existingAnswer !== answer) {
+      this.swapAnswers(answer, existingAnswer, slot)
+    } else if (existingAnswer !== answer) {
+      this.performDrop(answer, slot)
+    }
+
+    const rank = slot.dataset.rank
+    this.announceToScreenReader(`Answer placed in rank ${rank}`)
+
+    this.clearKeyboardSelection()
+    this.updateSubmitState()
+
+    // Keep focus on slot for continued navigation
+    slot.focus()
+  }
+
+  removeAnswerFromSlot(slot) {
+    const answer = slot.querySelector(".ranking-answer")
+    if (!answer) return
+
+    this.removeFromCurrentSlot(answer)
+    this.restoreToInitialOrder(answer)
+    this.removeAnswerMedal(answer)
+    this.updateSubmitState()
+
+    this.announceToScreenReader(`Answer removed from rank ${slot.dataset.rank}`)
+  }
+
+  moveFocusToPreviousAnswer(currentAnswer) {
+    const answers = this.getAllFocusableAnswers()
+    const currentIndex = answers.indexOf(currentAnswer)
+    const prevIndex = currentIndex > 0 ? currentIndex - 1 : answers.length - 1
+    answers[prevIndex]?.focus()
+  }
+
+  moveFocusToNextAnswer(currentAnswer) {
+    const answers = this.getAllFocusableAnswers()
+    const currentIndex = answers.indexOf(currentAnswer)
+    const nextIndex = currentIndex < answers.length - 1 ? currentIndex + 1 : 0
+    answers[nextIndex]?.focus()
+  }
+
+  moveFocusToPreviousSlot(currentSlot) {
+    const currentIndex = this.slotTargets.indexOf(currentSlot)
+    if (currentIndex > 0) {
+      this.slotTargets[currentIndex - 1].focus()
+    } else {
+      // Wrap to answers container
+      const answers = this.getAllFocusableAnswers()
+      if (answers.length > 0) {
+        answers[answers.length - 1].focus()
+      }
+    }
+  }
+
+  moveFocusToNextSlot(currentSlot) {
+    const currentIndex = this.slotTargets.indexOf(currentSlot)
+    if (currentIndex < this.slotTargets.length - 1) {
+      this.slotTargets[currentIndex + 1].focus()
+    } else {
+      // Wrap to first answer
+      const answers = this.getAllFocusableAnswers()
+      if (answers.length > 0) {
+        answers[0].focus()
+      }
+    }
+  }
+
+  getAllFocusableAnswers() {
+    // Get answers in both the container and slots
+    return Array.from(this.element.querySelectorAll(".ranking-answer"))
+  }
+
+  announceToScreenReader(message) {
+    let announcer = document.getElementById("sr-announcer")
+    if (!announcer) {
+      announcer = document.createElement("div")
+      announcer.id = "sr-announcer"
+      announcer.setAttribute("role", "status")
+      announcer.setAttribute("aria-live", "polite")
+      announcer.setAttribute("aria-atomic", "true")
+      announcer.className = "sr-only"
+      document.body.appendChild(announcer)
+    }
+    // Clear and set to trigger announcement
+    announcer.textContent = ""
+    setTimeout(() => {
+      announcer.textContent = message
+    }, 50)
   }
 
   startTouch(event, answer) {

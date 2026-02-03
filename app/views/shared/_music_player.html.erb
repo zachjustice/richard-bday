@@ -5,7 +5,7 @@
   <button
     class="music-player-button"
     data-action="click->music-player#openModal"
-    title="Open Music Player">
+    aria-label="Open Music Player">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 18V5l12-2v13"/>
       <circle cx="6" cy="18" r="3"/>
@@ -16,7 +16,11 @@
   <!-- Music Player Modal -->
   <div
     class="music-player-modal hidden"
-    data-music-player-target="modal">
+    data-music-player-target="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Music Player"
+    aria-hidden="true">
     <div class="music-player-backdrop" data-action="click->music-player#closeModal"></div>
     <div class="music-player-content">
       <!-- Header -->
@@ -54,8 +58,8 @@
           <button
             class="control-btn"
             data-action="click->music-player#previousSong"
-            title="Previous song">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            aria-label="Previous song">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
             </svg>
           </button>
@@ -63,13 +67,14 @@
           <button
             class="control-btn play-pause"
             data-action="click->music-player#togglePlay"
-            title="Play/Pause">
-            <span data-music-player-target="playIcon">
+            data-music-player-target="playPauseButton"
+            aria-label="Play">
+            <span data-music-player-target="playIcon" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z"/>
               </svg>
             </span>
-            <span data-music-player-target="pauseIcon" class="hidden">
+            <span data-music-player-target="pauseIcon" class="hidden" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
               </svg>
@@ -79,8 +84,8 @@
           <button
             class="control-btn"
             data-action="click->music-player#nextSong"
-            title="Next song">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            aria-label="Next song">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
             </svg>
           </button>
@@ -92,7 +97,14 @@
         <div
           class="progress-bar-container"
           data-music-player-target="progressBar"
-          data-action="click->music-player#seek">
+          data-action="click->music-player#seek keydown->music-player#seekKeyboard"
+          role="slider"
+          aria-label="Song progress"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          aria-valuetext="0:00 of 0:00"
+          tabindex="0">
           <div
             class="progress-bar-fill"
             data-music-player-target="progress">
@@ -108,7 +120,8 @@
             class="form-input"
             placeholder="Search songs or artists..."
             data-music-player-target="searchInput"
-            data-action="input->music-player#search">
+            data-action="input->music-player#search"
+            aria-label="Search songs or artists">
         </div>
 
         <!-- Song List -->

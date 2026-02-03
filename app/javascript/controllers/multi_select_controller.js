@@ -147,11 +147,13 @@ export default class extends Controller {
 
   showDropdown() {
     this.dropdownTarget.classList.remove('hidden')
+    this.element.setAttribute('aria-expanded', 'true')
     document.addEventListener('click', this.clickOutsideHandler)
   }
 
   hideDropdown() {
     this.dropdownTarget.classList.add('hidden')
+    this.element.setAttribute('aria-expanded', 'false')
     document.removeEventListener('click', this.clickOutsideHandler)
     this.highlightedIndex = -1
   }
