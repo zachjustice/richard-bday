@@ -75,7 +75,7 @@ class AnswerSmoothingService
   end
 
   def generate_smoothed_text(context)
-    client = Anthropic::Client.new(api_key: api_key)
+    client = anthropic_client
 
     system_prompt = <<~PROMPT
       You are a grammar assistant for a fill-in-the-blank party game. Your job is to adapt
@@ -134,6 +134,10 @@ class AnswerSmoothingService
     return nil unless match
 
     match[1].strip.presence
+  end
+
+  def anthropic_client
+    Anthropic::Client.new(api_key: api_key)
   end
 
   def api_key

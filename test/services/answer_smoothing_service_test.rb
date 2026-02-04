@@ -106,12 +106,10 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     @story.update!(text: "The {#{@blank.id}} went to the store.")
 
     # Stub the client to raise an error
-    mock_client = Minitest::Mock.new
-    def mock_client.messages
-      raise StandardError, "API Error"
-    end
+    mock_client = Object.new
+    mock_client.define_singleton_method(:messages) { raise StandardError, "API Error" }
 
-    Anthropic::Client.stub(:new, ->(**_args) { mock_client }) do
+    AnswerSmoothingService.stub_any_instance(:anthropic_client, mock_client) do
       service = AnswerSmoothingService.new(@answer)
       result = service.call
 
@@ -130,7 +128,7 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { mock_messages }
 
-    Anthropic::Client.stub(:new, ->(**_args) { mock_client }) do
+    AnswerSmoothingService.stub_any_instance(:anthropic_client, mock_client) do
       service = AnswerSmoothingService.new(@answer)
       result = service.call
 
@@ -148,7 +146,7 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { mock_messages }
 
-    Anthropic::Client.stub(:new, ->(**_args) { mock_client }) do
+    AnswerSmoothingService.stub_any_instance(:anthropic_client, mock_client) do
       service = AnswerSmoothingService.new(@answer)
       result = service.call
 
@@ -166,7 +164,7 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { mock_messages }
 
-    Anthropic::Client.stub(:new, ->(**_args) { mock_client }) do
+    AnswerSmoothingService.stub_any_instance(:anthropic_client, mock_client) do
       service = AnswerSmoothingService.new(@answer)
       result = service.call
 
@@ -184,7 +182,7 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { mock_messages }
 
-    Anthropic::Client.stub(:new, ->(**_args) { mock_client }) do
+    AnswerSmoothingService.stub_any_instance(:anthropic_client, mock_client) do
       service = AnswerSmoothingService.new(@answer)
       result = service.call
 
@@ -202,7 +200,7 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { mock_messages }
 
-    Anthropic::Client.stub(:new, ->(**_args) { mock_client }) do
+    AnswerSmoothingService.stub_any_instance(:anthropic_client, mock_client) do
       service = AnswerSmoothingService.new(@answer)
       result = service.call
 
@@ -223,7 +221,7 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { mock_messages }
 
-    Anthropic::Client.stub(:new, ->(**_args) { mock_client }) do
+    AnswerSmoothingService.stub_any_instance(:anthropic_client, mock_client) do
       service = AnswerSmoothingService.new(@answer)
       result = service.call
 
@@ -244,7 +242,7 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { mock_messages }
 
-    Anthropic::Client.stub(:new, ->(**_args) { mock_client }) do
+    AnswerSmoothingService.stub_any_instance(:anthropic_client, mock_client) do
       service = AnswerSmoothingService.new(@answer)
       result = service.call
 
