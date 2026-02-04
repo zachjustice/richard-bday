@@ -66,9 +66,22 @@ export default class extends Controller {
   }
 
   selectStory(event) {
-    const label = event.target.closest('label')
+    const input = event.target
+    const label = input.closest('label')
     const title = label.dataset.storyTitle || ''
     const author = label.dataset.storyAuthor || ''
+
+    // If clicking an already-selected option, just collapse
+    if (input.dataset.wasChecked === 'true') {
+      this.collapseStorySection()
+      return
+    }
+
+    // Mark all story inputs as not checked, then mark this one
+    this.element.querySelectorAll('input[name="story"]').forEach(el => {
+      el.dataset.wasChecked = 'false'
+    })
+    input.dataset.wasChecked = 'true'
 
     const summaryText = author ? `${title} by ${author}` : title
     this.selectedStoryNameTarget.textContent = summaryText
@@ -78,8 +91,21 @@ export default class extends Controller {
   }
 
   selectVotingStyle(event) {
-    const label = event.target.closest('label')
+    const input = event.target
+    const label = input.closest('label')
     const styleName = label.dataset.votingStyleName || ''
+
+    // If clicking an already-selected option, just collapse
+    if (input.dataset.wasChecked === 'true') {
+      this.collapseVotingSection()
+      return
+    }
+
+    // Mark all voting inputs as not checked, then mark this one
+    this.element.querySelectorAll('input[name="room[voting_style]"]').forEach(el => {
+      el.dataset.wasChecked = 'false'
+    })
+    input.dataset.wasChecked = 'true'
 
     this.selectedVotingStyleTarget.textContent = styleName
     this.collapseVotingSection()

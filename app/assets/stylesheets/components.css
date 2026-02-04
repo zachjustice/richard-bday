@@ -1432,7 +1432,7 @@
    ============================================ */
 
 .accordion-section {
-  @apply bg-white rounded-xl overflow-hidden;
+  @apply bg-white rounded-xl overflow-clip;
   border: 3px solid var(--color-ink);
   box-shadow: 4px 4px 0px var(--color-ink);
 }

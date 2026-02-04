@@ -55,7 +55,9 @@
                     <input type="radio" name="story" value="<%= story.id %>"
                       class="peer sr-only" required
                       data-action="change->story-selection#selectStory">
-                    <div class="flex flex-col gap-1 w-full p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:bg-accent-tertiary shadow-[2px_2px_0_0_var(--color-ink)]">
+
+                    <div class="flex flex-col gap-1 w-full p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary shadow-[2px_2px_0_0_var(--color-ink)]"
+                         data-action="click->story-selection#selectStory">
                       <div class="flex justify-between items-center">
                         <span class="font-bold"><%= story.title %></span>
                         <% if story.genres.any? %>
@@ -108,7 +110,9 @@
                 <input type="radio" name="room[voting_style]" value="vote_once"
                        <%= "checked" if room.vote_once? %> class="peer sr-only"
                        data-action="change->story-selection#selectVotingStyle">
-                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:bg-accent-tertiary shadow-[2px_2px_0_0_var(--color-ink)]">
+                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]"
+                  data-was-checked="<%= room.vote_once? %>"
+                  data-action="click->story-selection#selectVotingStyle">
                   <span class="font-bold text-ink">Vote Once</span>
                   <span class="text-sm text-ink/60">Pick your favorite answer</span>
                 </div>
@@ -117,7 +121,9 @@
                 <input type="radio" name="room[voting_style]" value="ranked_top_3"
                        <%= "checked" if room.ranked_voting? %> class="peer sr-only"
                        data-action="change->story-selection#selectVotingStyle">
-                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:bg-accent-tertiary shadow-[2px_2px_0_0_var(--color-ink)]">
+                <div class="flex flex-col p-4 rounded-xl border-2 border-ink bg-white transition-all peer-checked:ring-4 peer-checked:ring-accent-tertiary peer-checked:scale-101 shadow-[2px_2px_0_0_var(--color-ink)]"
+                  data-was-checked="<%= room.ranked_voting? %>"
+                  data-action="click->story-selection#selectVotingStyle">
                   <span class="font-bold text-ink">Ranked Top 3</span>
                   <span class="text-sm text-ink/60">Drag to rank (30/20/10 pts)</span>
                 </div>
