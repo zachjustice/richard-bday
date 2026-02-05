@@ -17,20 +17,17 @@ export default class extends Controller {
   }
 
   handleSubmitStart(event) {
-    console.log('handleSubmitStart')
     if (event.target === this.form) {
       this.showLoading()
     }
   }
 
   showLoading() {
-    console.log('showLoading')
     const button = this.hasButtonTarget ? this.buttonTarget : this.element
     button.disabled = true
     button.classList.add("btn-loading")
 
     if (!button.querySelector(".btn-spinner")) {
-      console.log('adding spinner')
       const spinner = document.createElement("span")
       spinner.className = "btn-spinner"
       spinner.innerHTML = this.spinnerSVG()

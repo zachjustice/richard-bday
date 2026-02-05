@@ -31,6 +31,7 @@ export default class extends Controller {
 
   disconnect() {
     this.stop()
+    this.announcer?.remove()
   }
 
   start() {

@@ -20,7 +20,7 @@ export default class extends Controller {
   createAnnouncer() {
     this.announcer = document.createElement("div")
     this.announcer.setAttribute("role", "status")
-    this.announcer.setAttribute("aria-live", "assertive")
+    this.announcer.setAttribute("aria-live", "polite")
     this.announcer.setAttribute("aria-atomic", "true")
     this.announcer.className = "sr-only"
     this.element.appendChild(this.announcer)
@@ -28,6 +28,7 @@ export default class extends Controller {
 
   disconnect() {
     this.stop()
+    this.announcer?.remove()
   }
 
   start() {
@@ -104,16 +105,13 @@ export default class extends Controller {
   submitForm() {
     // Find the answer form - it's a sibling of the auto-submitter element
     const form = this.element.closest('.answer-form-section')?.querySelector('.answer-form')
-    console.log('form', form)
-    
+
     if (form) {
       // Check if there's text in the answer field before submitting
       const textArea = form.querySelector('textarea[name="text"]')
-      console.log('textarea', textArea)
-      
+
       // Only submit if there's some text (even whitespace counts as something)
       if (textArea && textArea.value.trim().length > 0) {
-        console.log('submitting')
         form.requestSubmit()
       }
     }
