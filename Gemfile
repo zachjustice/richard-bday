@@ -83,3 +83,5 @@ gem "watchman-rails", "~> 0.2.0"
 gem "faker", "~> 3.6"
 
 gem "anthropic", "~> 1.16"
+
+gem "postmark-rails"

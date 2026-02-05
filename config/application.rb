@@ -27,5 +27,11 @@ module RichardBday
 
     # Before authentication look-ups or controllers, check if this request is fishy
     config.middleware.insert_before ActionDispatch::Executor, BotBlockerMiddleware
+
+    # Postmark email delivery
+    config.action_mailer.delivery_method = :postmark
+    config.action_mailer.postmark_settings = {
+      api_token: Rails.application.credentials.dig(:postmark, :api_key)
+    }
   end
 end

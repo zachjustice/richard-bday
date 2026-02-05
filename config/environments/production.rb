@@ -54,23 +54,10 @@ Rails.application.configure do
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
+  # Email delivery configured in config/application.rb via Postmark
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.delivery_method = :smtp
-  # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "https://blanksies.zachjustice.dev" }
-  config.action_mailer.smtp_settings = {
-    user_name: Rails.application.credentials.dig(:smtp, :user_name),
-    password: Rails.application.credentials.dig(:smtp, :password),
-    address: "smtp.fastmail.com",
-    port: 465,
-    authentication: :plain,
-    ssl: true,
-    tls: true,
-    open_timeout: 10,
-    read_timeout: 10
-  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
