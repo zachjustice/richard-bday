@@ -107,6 +107,9 @@ class GameFlowTest < ApplicationSystemTestCase
         assert_text "unicorn", wait: 10
         find("label.answer-option", text: "unicorn").click
         click_button "Submit Vote"
+        # Wait for auto-navigation to results page and cable connection
+        assert_text "Round Complete!", wait: 10
+        wait_for_turbo_cable_connection
       end
 
       # Step 10: Navigator (Player1) auto-navigated to results, advances to next prompt
