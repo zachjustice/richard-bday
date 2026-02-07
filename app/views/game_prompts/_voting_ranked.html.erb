@@ -8,14 +8,13 @@
      data-ranked-voting-max-slots-value="<%= max_slots %>"
      data-ranked-voting-medals-value="<%= medals.to_json %>"
      class="min-h-screen flex items-center max-sm:items-start justify-center bg-page">
-  <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-4 max-sm:m-1 max-w-2xl w-full flex flex-col min-h-[600px]">
+  <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-4 max-sm:mx-2 max-sm:my-4 max-w-2xl w-full flex flex-col min-h-[600px]">
 
     <div class="text-center mb-6">
-      <div class="text-6xl max-sm:text-5xl mb-4 animate-float">🏆</div>
       <h2 class="text-2xl max-sm:text-xl font-bold text-gray-900 leading-snug">
         <%= @game_prompt.prompt.description %>
       </h2>
-      <p class="text-ink/60 mt-2 text-sm">Drag answers to rank your top <%= max_slots %></p>
+      <p class="text-ink/60 mt-2 text-sm" data-ranked-voting-target="hintText">Tap and drag the <b>⋮⋮</b> to rank your top <%= max_slots %></p>
       <p class="sr-only">
         Keyboard users: Press Enter or Space to select an answer, then use arrow keys to navigate to a rank slot and press Enter to place it. Press Escape to cancel selection. Press Delete or Backspace on a filled slot to remove an answer.
       </p>

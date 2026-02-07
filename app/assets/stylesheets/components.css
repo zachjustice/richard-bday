@@ -438,6 +438,19 @@
   @apply text-ink/40 select-none flex-none;
 }
 
+@media (max-width: 640px) {
+  .ranking-answer {
+    touch-action: auto;
+  }
+
+  .ranking-handle {
+    touch-action: none;
+    padding: 12px 8px;
+    margin: -12px -4px -12px -8px;
+    font-size: 1.25rem;
+  }
+}
+
 .answer-medal {
   @apply text-2xl mr-2 flex-none;
 }

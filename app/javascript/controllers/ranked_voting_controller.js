@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["slot", "answer", "answersContainer", "input", "submit", "form", "placeholder"]
+  static targets = ["slot", "answer", "answersContainer", "input", "submit", "form", "placeholder", "hintText"]
   static values = { maxSlots: Number, medals: Array }
 
   connect() {
@@ -17,6 +17,10 @@ export default class extends Controller {
 
     // Store initial order of answers for restoring positions
     this.initialAnswerOrder = this.answerTargets.map(a => a.dataset.answerId)
+
+    // Angry-tap detection for hint shake
+    this.tapTimestamps = []
+    this.hintShown = false
 
     this.setupDragHandlers()
     this.setupKeyboardHandlers()
@@ -94,6 +98,12 @@ export default class extends Controller {
     // Allow dropping back to answers container
     this.answersContainerTarget.addEventListener("dragover", (e) => this.onDragOver(e, null))
     this.answersContainerTarget.addEventListener("drop", (e) => this.onDropToContainer(e))
+
+    // Track frustrated taps on answers and slots for hint shake
+    this.answersContainerTarget.addEventListener("click", () => this.trackTap())
+    this.slotTargets.forEach(slot => {
+      slot.addEventListener("click", () => this.trackTap())
+    })
   }
 
   setupKeyboardHandlers() {
@@ -297,7 +307,34 @@ export default class extends Controller {
     }, 50)
   }
 
+  trackTap() {
+    if (this.hintShown) return
+    if (this.inputTargets.some(i => i.value !== "")) return
+
+    const now = Date.now()
+    this.tapTimestamps.push(now)
+    // Keep only taps within the last 2 seconds
+    this.tapTimestamps = this.tapTimestamps.filter(t => now - t < 2000)
+
+    if (this.tapTimestamps.length >= 5) {
+      this.hintShown = true
+      this.tapTimestamps = []
+      if (this.hasHintTextTarget) {
+        this.hintTextTarget.classList.add("animate-hint-shake")
+        this.hintTextTarget.addEventListener("animationend", () => {
+          this.hintTextTarget.classList.remove("animate-hint-shake")
+        }, { once: true })
+      }
+    }
+  }
+
   startTouch(event, answer) {
+    // Only initiate drag if touch started on the drag handle
+    if (!event.target.closest(".ranking-handle")) {
+      this.isDragging = false
+      return
+    }
+
     event.preventDefault()
     this.currentDraggingAnswer = answer
     this.isDragging = true
@@ -539,7 +576,7 @@ export default class extends Controller {
 
     const touch = event.touches[0]
 
-    // Check if user has moved enough to consider it a drag
+    // Track if user has moved enough to distinguish tap vs drag
     if (!this.hasMoved && this.touchStartPos) {
       const dx = touch.clientX - this.touchStartPos.x
       const dy = touch.clientY - this.touchStartPos.y

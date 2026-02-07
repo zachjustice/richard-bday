@@ -216,6 +216,20 @@
     25% { transform: translateX(-1px) rotate(-0.5deg); }
     75% { transform: translateX(1px) rotate(0.5deg); }
   }
+
+  /* Hint shake - enlarge, shake, shrink back */
+  --animate-hint-shake: hint-shake 0.8s ease-in-out;
+  @keyframes hint-shake {
+    0% { transform: scale(1); }
+    15% { transform: scale(1.15); }
+    25% { transform: scale(1.15) translateX(-4px); }
+    35% { transform: scale(1.15) translateX(4px); }
+    45% { transform: scale(1.15) translateX(-4px); }
+    55% { transform: scale(1.15) translateX(3px); }
+    65% { transform: scale(1.15) translateX(-2px); }
+    75% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
 }
 
 /* Disable animations for users who prefer reduced motion */
@@ -237,7 +251,8 @@
   .animate-squish,
   .animate-jello,
   .animate-draw,
-  .animate-scribble {
+  .animate-scribble,
+  .animate-hint-shake {
     animation: none;
   }
 }
