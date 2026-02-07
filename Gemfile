@@ -62,8 +62,6 @@ group :test do
   gem "selenium-webdriver"
   gem "cuprite"  # Headless Chrome driver using Chrome DevTools Protocol
 end
-gem "coffee-rails", "~> 4.2"
-gem "jquery-rails"
 gem "turbolinks", "~> 5"
 
 gem "requestjs-rails"
