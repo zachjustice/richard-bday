@@ -1,7 +1,8 @@
 <%# app/views/prompts/_form.html.erb %>
 <%= form_with model: prompt,
     url: create_prompt_path,
-    class: "bg-white border-2 border-dashed border-ink/30 rounded-lg p-6" do |form| %>
+    class: "bg-white border-2 border-dashed border-ink/30 rounded-lg p-6",
+    data: { action: "turbo:submit-end->prompt-modal#closeOnSuccess" } do |form| %>
 
   <h3 class="m-0 mb-4 text-lg font-bold text-ink">Add New Prompt</h3>
 

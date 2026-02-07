@@ -1,0 +1,24 @@
+<div class="leave-game-modal hidden" data-logout-modal-target="modal">
+  <div class="leave-game-backdrop" data-action="click->logout-modal#close"></div>
+  <div class="leave-game-content">
+    <div class="p-6 text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-accent-primary/10 flex items-center justify-center">
+        <svg class="w-8 h-8 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-ink mb-2">Sign out?</h3>
+      <p class="text-ink/60 mb-6">You'll need to sign back in to edit your stories.</p>
+
+      <div class="flex gap-3 justify-center">
+        <button class="btn-secondary" data-action="logout-modal#close">
+          Cancel
+        </button>
+        <%= button_to "Sign Out", editor_logout_path,
+            method: :delete,
+            class: "btn-primary bg-accent-primary" %>
+      </div>
+    </div>
+  </div>
+</div>

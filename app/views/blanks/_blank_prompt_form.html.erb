@@ -1,0 +1,24 @@
+<%# app/views/blanks/_blank_prompt_form.html.erb %>
+<%= form_with model: prompt,
+    url: update_prompt_path(prompt),
+    method: :patch,
+    class: "flex flex-col gap-2 animate-slide-in" do |form| %>
+
+  <input type="hidden" name="prompt[context]" value="story_edit">
+
+  <div class="flex flex-col gap-1">
+    <%= form.text_area :description,
+        rows: 2,
+        placeholder: "Enter prompt text...",
+        class: "story-form-textarea text-sm" %>
+  </div>
+
+  <div class="flex gap-2">
+    <%= form.submit "Save", class: "btn-primary btn-sm" %>
+    <button type="button"
+            data-action="click->prompt-editor#cancelEdit"
+            class="btn-secondary btn-sm">
+      Cancel
+    </button>
+  </div>
+<% end %>

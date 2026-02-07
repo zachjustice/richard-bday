@@ -1,0 +1,77 @@
+<h2 class="text-xl font-bold text-ink mb-6 flex items-center gap-2">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+  </svg>
+  Fun Stats
+</h2>
+
+<% if statistics.empty? %>
+  <div class="text-center py-8">
+    <p class="text-ink/50 italic">No stories yet! Create your first story to see stats.</p>
+    <%= link_to "Create a Story", new_story_path, class: "btn-primary mt-4" %>
+  </div>
+<% else %>
+  <%# Summary Stats %>
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="bg-accent-tertiary/20 rounded-xl p-4 text-center border-2 border-ink/20">
+      <p class="text-3xl font-bold text-ink"><%= statistics.size %></p>
+      <p class="text-sm text-ink/60 font-semibold">Stories</p>
+    </div>
+    <div class="bg-accent-secondary/10 rounded-xl p-4 text-center border-2 border-ink/20">
+      <p class="text-3xl font-bold text-ink"><%= statistics.sum { |s| s[:times_played] } %></p>
+      <p class="text-sm text-ink/60 font-semibold">Games Have Used Your Stories</p>
+    </div>
+    <div class="bg-accent-primary/10 rounded-xl p-4 text-center border-2 border-ink/20">
+      <p class="text-3xl font-bold text-ink"><%= statistics.sum { |s| s[:unique_players] } %></p>
+      <p class="text-sm text-ink/60 font-semibold">Players Reached</p>
+    </div>
+  </div>
+
+  <%# Search %>
+  <div class="mb-4" data-controller="search" data-search-url-value="<%= editor_settings_path %>" data-search-frame-id-value="story_stats_list">
+    <div class="search-input-container">
+      <svg class="search-input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input type="text"
+             class="search-input pr-10"
+             placeholder="Search stories..."
+             data-search-target="input"
+             data-action="input->search#search">
+      <button type="button"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-ink/40 hover:text-ink transition-colors hidden"
+              data-search-target="clearButton"
+              data-action="click->search#clear"
+              aria-label="Clear search">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <%# Per-story breakdown %>
+  <turbo-frame id="story_stats_list" class="block">
+    <div class="space-y-3">
+      <% statistics.each do |stat| %>
+        <div class="flex items-center justify-between p-4 rounded-xl border-2 border-ink"
+             style="box-shadow: 2px 2px 0 var(--color-ink);">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-ink truncate"><%= stat[:story].title %></p>
+            <p class="text-sm text-ink/80">
+              <%= pluralize(stat[:times_played], "game") %> · <%= pluralize(stat[:unique_players], "total player") %>
+            </p>
+          </div>
+          <%= link_to edit_story_path(stat[:story]), class: "btn-icon shrink-0", data: { turbo_frame: "_top" } do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </turbo-frame>
+<% end %>

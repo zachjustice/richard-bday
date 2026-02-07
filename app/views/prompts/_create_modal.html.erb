@@ -1,0 +1,30 @@
+<%# app/views/prompts/_create_modal.html.erb %>
+<div id="create-prompt-modal"
+     class="blank-modal hidden"
+     data-prompt-modal-target="modal"
+     role="dialog"
+     aria-labelledby="create-prompt-modal-title"
+     aria-modal="true"
+     aria-hidden="true">
+  <div class="blank-backdrop" data-action="click->prompt-modal#close"></div>
+  <div class="blank-content max-w-[500px]">
+    <div class="p-6 border-b-3 border-ink bg-accent-tertiary/20">
+      <div class="flex items-center justify-between">
+        <h2 id="create-prompt-modal-title" class="text-xl font-bold text-ink m-0">Create New Prompt</h2>
+        <button type="button"
+                class="modal-close-btn"
+                data-action="click->prompt-modal#close"
+                aria-label="Close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="p-6">
+      <div id="new_prompt_form">
+        <%= render "prompts/form", prompt: Prompt.new %>
+      </div>
+    </div>
+  </div>
+</div>

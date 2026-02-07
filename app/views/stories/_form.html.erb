@@ -4,7 +4,11 @@
     <%= form.label :title, "Story Title", class: "font-semibold text-ink" %>
     <%= form.text_field :title,
         placeholder: "...",
-        class: "story-form-input" %>
+        class: "story-form-input",
+        data: {
+          story_editor_target: "title",
+          action: "input->story-editor#saveDraft"
+        } %>
   </div>
 
   <% if story.persisted? %>
@@ -16,8 +20,13 @@
           class: "story-form-textarea",
           data: {
             story_editor_target: "text",
-            action: "input->story-editor#highlightBlanks"
+            action: "input->story-editor#highlightBlanks input->story-editor#saveDraft"
           } %>
+
+      <div data-story-editor-target="status"
+           class="flex items-center gap-2 text-sm h-6 transition-opacity duration-300 opacity-0"
+           aria-live="polite">
+      </div>
     </div>
 
     <div class="flex flex-col gap-2">
@@ -25,7 +34,11 @@
       <%= form.text_area :original_text,
           rows: 6,
           placeholder: "Original unmodified version (optional)",
-          class: "story-form-textarea" %>
+          class: "story-form-textarea",
+          data: {
+            story_editor_target: "originalText",
+            action: "input->story-editor#saveDraft"
+          } %>
     </div>
 
     <% if defined?(@genres) && @genres.present? %>

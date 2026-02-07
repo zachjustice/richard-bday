@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background-color: #FFF8E7;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="100%" style="max-width: 520px; background-color: #FFFFFF; border: 3px solid #1A1A2E; border-radius: 16px; box-shadow: 6px 6px 0px #1A1A2E;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px 32px 24px; text-align: center;">
+              <h1 style="margin: 0; font-size: 32px; font-weight: 800; color: #1A1A2E; text-shadow: 2px 2px 0px #FFD60A;">
+                Blanksies
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 0 32px 24px;">
+              <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #1A1A2E;">
+                An email change was requested for your Blanksies editor account. A confirmation link was sent to <strong><%= @new_email %></strong>.
+              </p>
+
+              <p style="margin: 0; font-size: 14px; color: #666; padding: 12px; background-color: #FFF8E7; border-radius: 8px;">
+                If you didn't request this change, your account may be compromised. Please reset your password immediately.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 32px; border-top: 2px solid #eee;">
+              <p style="margin: 0; font-size: 13px; color: #888; text-align: center;">
+                You received this email because an email change was requested for your Blanksies editor account.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

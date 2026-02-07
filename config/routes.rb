@@ -11,9 +11,11 @@ Rails.application.routes.draw do
   post "/editor/login", to: "editor_sessions#create"
   delete "/editor/logout", to: "editor_sessions#destroy", as: :editor_logout
 
-  # Editor settings
-  get "/editor/settings", to: "editor_settings#edit", as: :edit_editor_settings
-  patch "/editor/settings", to: "editor_settings#update", as: :editor_settings
+  # Editor account
+  get "/editor/settings", to: "editor_settings#show", as: :editor_settings
+  patch "/editor/password", to: "editor_passwords#update", as: :editor_password
+  post "/editor/email", to: "editor_emails#create", as: :editor_email
+  get "/editor/confirm_email/:token", to: "editor_emails#confirm", as: :editor_confirm_email
 
   # Editor signup via invitation
   get "/editor/signup/:token", to: "editor_invitations#show", as: :editor_signup

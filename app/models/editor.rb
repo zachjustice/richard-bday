@@ -2,6 +2,7 @@ class Editor < ApplicationRecord
   has_secure_password
   has_many :editor_sessions, dependent: :destroy
   has_many :editor_password_resets, dependent: :destroy
+  has_many :editor_email_changes, dependent: :destroy
   has_one :editor_invitation, dependent: :nullify
   has_many :stories, foreign_key: :author_id, dependent: :nullify, inverse_of: :author
   has_many :prompts, foreign_key: :creator_id, dependent: :nullify, inverse_of: :creator

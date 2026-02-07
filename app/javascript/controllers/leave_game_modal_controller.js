@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { FocusTrap } from "./concerns/focus_trap"
+import { FocusTrap } from "concerns/focus_trap"
 
 export default class extends Controller {
   static targets = ["modal"]

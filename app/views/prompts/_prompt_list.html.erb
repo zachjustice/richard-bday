@@ -1,0 +1,13 @@
+<%# app/views/prompts/_prompt_list.html.erb %>
+<% if prompts.any? %>
+  <div class="flex flex-col gap-4 stagger-animation scroll-fade-indicators">
+    <% prompts.each do |prompt| %>
+      <%= render "prompts/prompt", prompt: prompt %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="flex flex-col items-center justify-center py-12 text-center">
+    <p class="text-ink/50 text-lg italic m-0">No prompts found</p>
+    <p class="text-ink/40 text-sm mt-2 m-0">Try a different search term</p>
+  </div>
+<% end %>

@@ -1,0 +1,41 @@
+<%# app/views/stories/_story_list.html.erb %>
+<% if stories.any? %>
+  <div class="flex flex-col gap-4 stagger-animation">
+    <% stories.each do |story| %>
+      <div class="prompt-item">
+        <div class="flex items-start gap-4 mb-3">
+          <div class="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+            <h3 class="m-0 text-base font-medium text-ink leading-snug"><%= story.title %></h3>
+            <% unless story.published %>
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-ink/10 text-ink/60">Draft</span>
+            <% end %>
+            <% story.genres.each do |genre| %>
+              <span class="tag"><%= genre.name %></span>
+            <% end %>
+          </div>
+          <div class="flex gap-2 shrink-0">
+            <%= link_to story_path(story), class: "btn-icon", title: "View", data: { turbo_frame: "_top" } do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            <% end %>
+            <% if story.owned_by?(current_editor) %>
+              <%= link_to edit_story_path(story), class: "btn-icon", title: "Edit", data: { turbo_frame: "_top" } do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+        <p class="text-xs text-ink/60 m-0">
+          <%= pluralize(story.blanks.count, "blank") %>
+          <% if story.author.present? %>
+            <span class="text-ink/40">&middot; by <%= story.author.username %></span>
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="flex flex-col items-center justify-center py-12 text-center">
+    <p class="text-ink/50 text-lg italic m-0">No stories found</p>
+    <p class="text-ink/40 text-sm mt-2 m-0">Try a different search term</p>
+  </div>
+<% end %>

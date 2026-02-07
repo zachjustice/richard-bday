@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_02_033904) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_07_154342) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -33,6 +33,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_033904) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index [ "story_id" ], name: "index_blanks_on_story_id"
+  end
+
+  create_table "editor_email_changes", force: :cascade do |t|
+    t.integer "editor_id", null: false
+    t.string "new_email", null: false
+    t.string "token_digest", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "editor_id" ], name: "index_editor_email_changes_on_editor_id"
+    t.index [ "token_digest" ], name: "index_editor_email_changes_on_token_digest", unique: true
   end
 
   create_table "editor_invitations", force: :cascade do |t|
@@ -214,6 +226,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_033904) do
   add_foreign_key "answers", "games"
   add_foreign_key "answers", "users"
   add_foreign_key "blanks", "stories"
+  add_foreign_key "editor_email_changes", "editors"
   add_foreign_key "editor_invitations", "editors"
   add_foreign_key "editor_password_resets", "editors"
   add_foreign_key "editor_sessions", "editors"

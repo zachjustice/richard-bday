@@ -1,29 +1,26 @@
 class EditorSettingsController < ApplicationController
   skip_before_action :require_authentication
   before_action :require_editor_auth
+  before_action -> { @show_editor_navbar = true }
 
-  def edit
+  def show
     @editor = current_editor
-  end
+    stories = @editor.stories.includes(:game)
 
-  def update
-    @editor = current_editor
-
-    if !@editor.authenticate(params[:current_password])
-      flash.now[:alert] = "Current password is incorrect"
-      return render :edit, status: :unprocessable_entity
+    if params[:query].present?
+      stories = stories.where("stories.title LIKE ?", "%#{ActiveRecord::Base.sanitize_sql_like(params[:query])}%")
     end
 
-    if params[:password].blank?
-      flash.now[:alert] = "New password cannot be blank"
-      return render :edit, status: :unprocessable_entity
-    end
-
-    if @editor.update(password: params[:password], password_confirmation: params[:password_confirmation])
-      redirect_to edit_editor_settings_path, notice: "Password updated successfully"
-    else
-      flash.now[:alert] = @editor.errors.full_messages.join(", ")
-      render :edit, status: :unprocessable_entity
+    @statistics = stories.map do |story|
+      if story.game.present?
+        {
+          story: story,
+          times_played: 1,
+          unique_players: User.where(room_id: story.game.room_id).players.count
+        }
+      else
+        { story: story, times_played: 0, unique_players: 0 }
+      end
     end
   end
 end

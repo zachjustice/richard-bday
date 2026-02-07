@@ -24,6 +24,21 @@ class PromptsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  # Search tests
+
+  test "index filters prompts by description query" do
+    get "/prompts", params: { query: @prompt.description }
+
+    assert_response :success
+  end
+
+  test "index returns no prompts for non-matching query" do
+    get "/prompts", params: { query: "zzz_nonexistent_zzz" }
+
+    assert_response :success
+    assert_select ".prompt-item", count: 0
+  end
+
   # Tests for PromptsController#new
 
   test "new should display new prompt form" do

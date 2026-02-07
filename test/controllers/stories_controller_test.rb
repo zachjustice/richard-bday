@@ -25,6 +25,23 @@ class StoriesControllerTest < ActionDispatch::IntegrationTest
     # Editor one should not see editor two's unpublished story
   end
 
+  # Search tests
+  test "index filters stories by title query" do
+    sign_in_as_editor(@editor_session_one)
+    get stories_path, params: { query: @published_story.title }
+
+    assert_response :success
+    assert_select "h3", text: @published_story.title
+  end
+
+  test "index returns no stories for non-matching query" do
+    sign_in_as_editor(@editor_session_one)
+    get stories_path, params: { query: "zzz_nonexistent_zzz" }
+
+    assert_response :success
+    assert_select ".prompt-item", count: 0
+  end
+
   # Show tests
   test "show requires editor authentication" do
     get story_path(@published_story)
@@ -197,5 +214,28 @@ class StoriesControllerTest < ActionDispatch::IntegrationTest
 
     @published_story.reload
     assert_includes @published_story.genres, horror
+  end
+
+  # Prompts JSON endpoint tests
+  test "prompts requires editor authentication" do
+    get story_prompts_path(@published_story)
+    assert_redirected_to editor_login_path
+  end
+
+  test "prompts returns JSON with expected format" do
+    sign_in_as_editor(@editor_session_one)
+    get story_prompts_path(@published_story)
+
+    assert_response :success
+
+    data = JSON.parse(response.body)
+    assert_instance_of Array, data
+    assert data.any?, "Expected at least one prompt"
+
+    first = data.first
+    assert first.key?("id")
+    assert first.key?("description")
+    assert first.key?("tags")
+    assert first.key?("usage_count")
   end
 end

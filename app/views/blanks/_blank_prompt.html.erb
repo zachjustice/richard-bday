@@ -1,0 +1,24 @@
+<%# app/views/blanks/_blank_prompt.html.erb %>
+<div id="prompt_<%= prompt.id %>" data-controller="prompt-editor"
+     <%= "data-flash-success=true" if local_assigns[:flash_success] %>>
+  <div class="flex items-start gap-2 pl-3 py-1.5 border-l-2 border-ink/15 hover:border-accent-secondary rounded-r-sm transition-all"
+       data-prompt-editor-target="display">
+    <p class="text-sm text-ink/70 m-0 flex-1 leading-snug"
+       data-prompt-editor-target="description"><%= prompt.description %></p>
+    <% if prompt.owned_by?(current_editor) %>
+      <button type="button"
+              class="btn-icon p-1! shrink-0"
+              data-action="click->prompt-editor#edit"
+              title="Edit prompt">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+        </svg>
+      </button>
+    <% end %>
+  </div>
+
+  <div class="hidden" data-prompt-editor-target="form">
+    <%= render "blanks/blank_prompt_form", prompt: prompt %>
+  </div>
+</div>

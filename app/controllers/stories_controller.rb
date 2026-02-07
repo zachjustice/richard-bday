@@ -2,17 +2,26 @@
 class StoriesController < ApplicationController
   skip_before_action :require_authentication
   before_action :require_editor_auth
+  before_action -> { @show_editor_navbar = true }
   before_action :set_story, only: [ :show, :edit, :update, :destroy ]
   before_action :authorize_story_owner!, only: [ :edit, :update, :destroy ]
 
   def index
     @stories = Story.visible_to(current_editor).includes(:author, :genres).order(created_at: :desc)
+
+    if params[:query].present?
+      query = "%#{ActiveRecord::Base.sanitize_sql_like(params[:query])}%"
+      @stories = @stories.left_joins(:author, :genres)
+                         .where("stories.title LIKE :q OR editors.username LIKE :q OR genres.name LIKE :q", q: query)
+                         .distinct
+    end
   end
 
   def show
     return if performed?
 
-    @blanks = @story.blanks.index_by(&:id)
+    @blanks = @story.blanks.includes(:prompts).index_by(&:id)
+    @ordered_blanks = @story.blanks.includes(:prompts).order(:id)
     @validation = @story.validate_blanks
   end
 
@@ -36,7 +45,7 @@ class StoriesController < ApplicationController
   def edit
     return if performed?
 
-    @blanks = @story.blanks.order(:id)
+    @blanks = @story.blanks.includes(prompts: :creator).order(:id)
     @genres = Genre.all.order(:name)
   end
 
@@ -46,12 +55,12 @@ class StoriesController < ApplicationController
     @genres = Genre.all.order(:name)
 
     if @story.update(story_params)
-      flash[:notice] = "Story updated successfully"
       respond_to do |format|
         format.html {
           redirect_to edit_story_path(@story), notice: "Story updated successfully"
         }
         format.turbo_stream do
+          flash[:notice] = "Story updated successfully"
           render turbo_stream: [
             turbo_stream.replace(
               "story_form",

@@ -20,4 +20,34 @@ class EditorMailer < ApplicationMailer
       subject: "Reset your Blanksies password"
     )
   end
+
+  def password_changed(editor)
+    @editor = editor
+
+    mail(
+      to: editor.email,
+      subject: "Your Blanksies password was changed"
+    )
+  end
+
+  def email_change_confirmation(email_change, token)
+    @email_change = email_change
+    @confirmation_url = editor_confirm_email_url(token: token)
+    @expiry_hours = EditorEmailChange::EXPIRY_DURATION.in_hours.to_i
+
+    mail(
+      to: email_change.new_email,
+      subject: "Confirm your new Blanksies email"
+    )
+  end
+
+  def email_change_requested(editor, new_email)
+    @editor = editor
+    @new_email = new_email
+
+    mail(
+      to: editor.email,
+      subject: "Email change requested for your Blanksies account"
+    )
+  end
 end

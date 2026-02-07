@@ -1,0 +1,67 @@
+<%# Editor navigation bar - rendered when editor is authenticated %>
+<nav class="fixed top-0 left-0 right-0 z-50 bg-page border-b-3 border-ink"
+     style="box-shadow: 0 4px 0 var(--color-ink);"
+     data-controller="mobile-nav">
+  <div class="max-w-[1400px] mx-auto px-4 md:px-8">
+    <div class="flex items-center justify-between h-navbar">
+      <%# Logo / Brand %>
+      <%= link_to stories_path, class: "text-2xl font-bold text-ink text-shadow-brand" do %>
+        Blanksies
+      <% end %>
+
+      <%# Desktop Navigation %>
+      <div class="hidden md:flex items-center gap-6">
+        <%= link_to "Stories", stories_path,
+            class: "font-semibold text-ink hover:text-accent-secondary transition-colors" %>
+        <%= link_to "Prompts", prompts_index_path,
+            class: "font-semibold text-ink hover:text-accent-secondary transition-colors" %>
+
+        <div class="w-px h-6 bg-ink/20"></div>
+
+        <%= link_to "Create a Story", new_story_path, class: "btn-primary py-2 px-4 text-sm" %>
+
+        <%# User Account Icon %>
+        <%= link_to editor_settings_path,
+            class: "p-2 rounded-lg border-2 border-ink/20 hover:border-ink hover:bg-accent-tertiary/20 transition-all",
+            title: "Account" do %>
+          <svg class="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        <% end %>
+      </div>
+
+      <%# Mobile Menu Button %>
+      <button class="md:hidden p-2 rounded-lg border-2 border-ink/20 hover:border-ink transition-all"
+              data-action="mobile-nav#toggle"
+              data-mobile-nav-target="button"
+              aria-label="Toggle menu">
+        <svg class="w-6 h-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <%# Mobile Slide-out Menu %>
+  <div class="hidden md:hidden fixed inset-0 z-40"
+       data-mobile-nav-target="overlay">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-action="click->mobile-nav#close"></div>
+    <div class="absolute right-0 top-0 h-full w-72 bg-page border-l-3 border-ink transform translate-x-full transition-transform"
+         data-mobile-nav-target="drawer"
+         style="box-shadow: -4px 0 0 var(--color-ink);">
+      <div class="p-6 flex flex-col gap-4">
+        <button class="self-end p-2" data-action="mobile-nav#close" aria-label="Close menu">
+          <svg class="w-6 h-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        <%= link_to "Stories", stories_path, class: "py-3 px-4 font-semibold text-ink rounded-lg hover:bg-accent-tertiary/20" %>
+        <%= link_to "Prompts", prompts_index_path, class: "py-3 px-4 font-semibold text-ink rounded-lg hover:bg-accent-tertiary/20" %>
+        <div class="border-t border-ink/20 my-2"></div>
+        <%= link_to "Create a Story", new_story_path, class: "btn-primary text-center" %>
+        <%= link_to "Account", editor_settings_path, class: "btn-secondary text-center" %>
+      </div>
+    </div>
+  </div>
+</nav>

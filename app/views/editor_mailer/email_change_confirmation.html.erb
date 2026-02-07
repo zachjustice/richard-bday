@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background-color: #FFF8E7;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="100%" style="max-width: 520px; background-color: #FFFFFF; border: 3px solid #1A1A2E; border-radius: 16px; box-shadow: 6px 6px 0px #1A1A2E;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px 32px 24px; text-align: center;">
+              <h1 style="margin: 0; font-size: 32px; font-weight: 800; color: #1A1A2E; text-shadow: 2px 2px 0px #FFD60A;">
+                Blanksies
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 0 32px 24px;">
+              <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #1A1A2E;">
+                Click the button below to confirm your new email address for your Blanksies account.
+              </p>
+
+              <!-- CTA Button -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding: 16px 0;">
+                    <a href="<%= @confirmation_url %>"
+                       style="display: inline-block; padding: 16px 32px; background-color: #E63946; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 12px; border: 3px solid #1A1A2E; box-shadow: 4px 4px 0px #1A1A2E;">
+                      Confirm Email
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Fallback link -->
+              <p style="margin: 20px 0 0; font-size: 14px; color: #666; word-break: break-all;">
+                If the button doesn't work, copy and paste this link into your browser:<br>
+                <a href="<%= @confirmation_url %>" style="color: #2196F3;"><%= @confirmation_url %></a>
+              </p>
+
+              <!-- Expiry notice -->
+              <p style="margin: 20px 0 0; font-size: 14px; color: #666; padding: 12px; background-color: #FFF8E7; border-radius: 8px;">
+                This link expires in <%= @expiry_hours %> hour<%= @expiry_hours > 1 ? 's' : '' %>. If you didn't request this, you can safely ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 32px; border-top: 2px solid #eee;">
+              <p style="margin: 0; font-size: 13px; color: #888; text-align: center;">
+                You received this email because an email change was requested for a Blanksies editor account.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

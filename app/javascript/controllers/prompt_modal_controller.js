@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import { FocusTrap } from "concerns/focus_trap"
 
 export default class extends Controller {
-  static targets = ["modal", "submitButton"]
+  static targets = ["modal"]
 
   connect() {
     this.boundHandleEscape = this.handleEscape.bind(this)
@@ -15,52 +15,31 @@ export default class extends Controller {
     this.deactivateFocusTrap()
   }
 
-  toggle(event) {
-    event.preventDefault()
-    if (this.modalTarget.classList.contains("hidden")) {
-      this.open()
-    } else {
-      this.close()
-    }
-  }
-
-  open() {
+  open(event) {
+    if (event) event.preventDefault()
     this.modalTarget.classList.remove("hidden")
     this.modalTarget.setAttribute("aria-hidden", "false")
     document.addEventListener("keydown", this.boundHandleEscape)
-
-    // Dispatch event for other controllers to sync state
-    this.dispatch("opened")
-
     this.activateFocusTrap()
   }
 
-  close() {
+  close(event) {
+    if (event) event.preventDefault()
     this.modalTarget.classList.add("hidden")
     this.modalTarget.setAttribute("aria-hidden", "true")
     document.removeEventListener("keydown", this.boundHandleEscape)
     this.deactivateFocusTrap()
   }
 
-  handleEscape(event) {
-    if (event.key === "Escape") {
+  closeOnSuccess(event) {
+    if (event.detail.success) {
       this.close()
     }
   }
 
-  submitting(event) {
-    if (this.hasSubmitButtonTarget) {
-      this.submitButtonTarget.disabled = true
-      this.submitButtonTarget.classList.add("submitting")
-      this.submitButtonTarget.textContent = "Saving..."
-    }
-  }
-
-  submitted(event) {
-    if (this.hasSubmitButtonTarget) {
-      this.submitButtonTarget.disabled = false
-      this.submitButtonTarget.classList.remove("submitting")
-      this.submitButtonTarget.textContent = "Save Settings"
+  handleEscape(event) {
+    if (event.key === "Escape") {
+      this.close()
     }
   }
 }

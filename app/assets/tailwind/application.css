@@ -45,8 +45,9 @@
   --color-success: #4CAF50;
   --color-success-light: #E8F5E9;
 
-  /* Custom Spacing (space-32 = 8rem) */
+  /* Custom Spacing */
   --spacing-32: 8rem;
+  --spacing-navbar: 4rem;
 
   /* Custom Border Radius */
   --radius-3xl: 24px;
