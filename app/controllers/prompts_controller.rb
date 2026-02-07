@@ -5,7 +5,19 @@ class PromptsController < ApplicationController
   before_action :authorize_prompt_owner!, only: [ :edit_prompt, :update_prompt, :destroy_prompt ]
 
   def index
-    @prompts = Prompt.all.order(created_at: :desc)
+    @prompts = Prompt.includes(:creator).order(created_at: :desc)
+
+    if params[:query].present?
+      query = "%#{params[:query]}%"
+      @prompts = @prompts.left_joins(:creator)
+                         .where("prompts.description LIKE :q OR editors.username LIKE :q", q: query)
+                         .distinct
+    end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream { render partial: "prompts/prompts_list", locals: { prompts: @prompts } }
+    end
   end
 
   def new

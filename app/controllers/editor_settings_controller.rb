@@ -2,8 +2,29 @@ class EditorSettingsController < ApplicationController
   skip_before_action :require_authentication
   before_action :require_editor_auth
 
+  def show
+    @editor = current_editor
+    @statistics = calculate_statistics
+  end
+
   def edit
     @editor = current_editor
+  end
+
+  private
+
+  def calculate_statistics
+    current_editor.stories.includes(:blanks).map do |story|
+      games = Game.where(story_id: story.id)
+      game_ids = games.pluck(:id)
+      unique_players = Answer.where(game_id: game_ids).distinct.count(:user_id)
+
+      {
+        story: story,
+        times_played: games.count,
+        unique_players: unique_players
+      }
+    end
   end
 
   def update

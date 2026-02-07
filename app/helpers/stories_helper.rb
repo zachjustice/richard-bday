@@ -84,4 +84,34 @@ module StoriesHelper
       tag.strong(tag.u(answer_text), style: "font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 2px;")
     end
   end
+
+  # Highlight blanks in story text with popovers showing prompt info
+  def highlight_blanks_with_popovers(story)
+    blanks_by_id = story.blanks.includes(:prompts).index_by(&:id)
+
+    story.text.gsub(/\{(\d+)\}/) do |match|
+      blank_id = $1.to_i
+      blank = blanks_by_id[blank_id]
+      bg_color = blank_id_to_bg_color(blank_id)
+
+      if blank
+        prompts_text = blank.prompts.map(&:description).join("; ")
+        prompts_text = "No prompts assigned" if prompts_text.blank?
+
+        tag.span(match,
+          class: "blank-placeholder cursor-help #{bg_color}",
+          data: {
+            blank_id: blank_id,
+            controller: "blank-popover",
+            action: "mouseenter->blank-popover#show mouseleave->blank-popover#hide",
+            blank_popover_prompts_value: prompts_text,
+            blank_popover_tags_value: blank.tags
+          },
+          title: prompts_text
+        )
+      else
+        tag.span(match, class: "blank-placeholder #{bg_color}", data: { blank_id: blank_id })
+      end
+    end
+  end
 end

@@ -205,6 +205,26 @@
    END LANDING PAGE COMPONENTS
    ============================================ */
 
+/* Blank Popover Component - shows prompt info on hover in story view */
+.blank-popover {
+  @apply fixed z-[1100] max-w-[300px] pointer-events-none animate-tooltip-fade-in;
+}
+
+.blank-popover-content {
+  @apply p-4 rounded-xl;
+  background: var(--color-accent-tertiary);
+  border: 2px solid var(--color-ink);
+  box-shadow: 4px 4px 0px var(--color-ink);
+}
+
+.blank-popover-prompts {
+  @apply text-sm font-medium text-ink m-0 mb-2;
+}
+
+.blank-popover-tags {
+  @apply text-xs text-ink/60 m-0 italic;
+}
+
 /* Prompt Tooltip Component */
 .prompt-tooltip {
   @apply fixed z-[1100] max-w-[400px] pointer-events-none animate-tooltip-fade-in;

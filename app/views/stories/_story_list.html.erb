@@ -1,0 +1,42 @@
+<%# app/views/stories/_story_list.html.erb %>
+<div class="flex flex-col flex-1 overflow-y-auto min-h-0 gap-6 border-2 border-ink/20 p-2 z-1 rounded-lg scroll-fade-indicators">
+  <% if stories.any? %>
+    <% stories.each do |story| %>
+      <div class="story-card">
+        <div class="flex flex-1 flex-col gap-2">
+          <div class="flex items-center gap-3 flex-wrap">
+            <h3 class="m-0 text-ink font-semibold"><%= story.title %></h3>
+            <% unless story.published %>
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-ink/10 text-ink/60">Draft</span>
+            <% end %>
+            <% story.genres.each do |genre| %>
+              <span class="tag text-xs"><%= genre.name %></span>
+            <% end %>
+          </div>
+          <p class="text-ink/60 text-sm m-0">
+            <%= pluralize(story.blanks.count, "blank") %>
+            <% if story.author.present? %>
+              <span class="text-ink/40">· by <%= story.author.username %></span>
+            <% end %>
+          </p>
+        </div>
+
+        <div class="flex gap-4 shrink items-start">
+          <%= link_to "View", story_path(story), class: "btn-secondary" %>
+          <% if story.owned_by?(current_editor) %>
+            <%= link_to "Edit", edit_story_path(story), class: "btn-secondary" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="flex flex-col items-center justify-center py-12 text-center">
+      <svg class="w-16 h-16 text-ink/20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <p class="text-ink/60 text-lg font-medium">No stories found</p>
+      <p class="text-ink/40 text-sm">Try adjusting your search or create a new story</p>
+    </div>
+  <% end %>
+</div>

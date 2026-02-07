@@ -1,5 +1,5 @@
 <%# app/views/stories/_form.html.erb %>
-<%= form_with model: story, class: "flex flex-col gap-6" do |form| %>
+<%= form_with model: story, class: "flex flex-col gap-6", data: { autosave_target: "form" } do |form| %>
   <div class="flex flex-col gap-2">
     <%= form.label :title, "Story Title", class: "font-semibold text-ink" %>
     <%= form.text_field :title,
@@ -16,6 +16,7 @@
           class: "story-form-textarea",
           data: {
             story_editor_target: "text",
+            autosave_target: "textarea",
             action: "input->story-editor#highlightBlanks"
           } %>
     </div>

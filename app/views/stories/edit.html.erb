@@ -1,5 +1,7 @@
 <%# app/views/stories/edit.html.erb %>
-<div class="max-w-[1400px] w-full flex flex-col flex-1 p-8 md:p-4 m-auto" data-controller="story-editor blank-modal">
+<div class="max-w-[1400px] w-full flex flex-col flex-1 p-8 md:p-4 m-auto"
+     data-controller="story-editor blank-modal autosave"
+     data-autosave-story-id-value="<%= @story.id %>">
   <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
     <h1 class="text-3xl font-bold text-ink m-0">Edit Story: <%= @story.title %></h1>
     <%= link_to "← Back to Story", story_path(@story), class: "btn-secondary" %>
@@ -10,6 +12,11 @@
     <div class="bg-white p-8 rounded-xl border-3 border-ink shadow-strong">
       <div id="story_form">
         <%= render "form", story: @story %>
+      </div>
+
+      <%# Autosave status indicator %>
+      <div class="flex items-center gap-2 mt-3 h-6" data-autosave-target="status">
+        <%# States injected by JavaScript %>
       </div>
     </div>
 

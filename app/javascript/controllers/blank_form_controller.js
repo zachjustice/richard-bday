@@ -147,7 +147,7 @@ export default class extends Controller {
     template.dataset.blankFormTarget = 'newPromptField'
     template.innerHTML = `
       <textarea name="blank[new_prompts][][description]"
-                class="form-textarea"
+                class="story-form-textarea w-full border-2 border-ink"
                 rows="2"
                 placeholder="What is a funny animal?"
                 data-blank-form-target="newPromptInput"

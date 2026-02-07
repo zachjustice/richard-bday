@@ -7,6 +7,18 @@ class StoriesController < ApplicationController
 
   def index
     @stories = Story.visible_to(current_editor).includes(:author, :genres).order(created_at: :desc)
+
+    if params[:query].present?
+      query = "%#{params[:query]}%"
+      @stories = @stories.left_joins(:author, :genres)
+                         .where("stories.title LIKE :q OR editors.username LIKE :q OR genres.name LIKE :q", q: query)
+                         .distinct
+    end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream { render partial: "stories/story_list", locals: { stories: @stories } }
+    end
   end
 
   def show
@@ -61,6 +73,7 @@ class StoriesController < ApplicationController
             turbo_stream.prepend("flash-messages", partial: "shared/flash_messages")
           ]
         end
+        format.json { render json: { success: true, story: @story.as_json(only: [ :id, :title, :text, :updated_at ]) } }
       end
     else
       respond_to do |format|
@@ -72,6 +85,7 @@ class StoriesController < ApplicationController
             locals: { story: @story }
           )
         end
+        format.json { render json: { success: false, errors: @story.errors.full_messages }, status: :unprocessable_entity }
       end
     end
   end

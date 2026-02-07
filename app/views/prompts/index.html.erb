@@ -1,29 +1,46 @@
 <%# app/views/prompts/index.html.erb %>
-<div class="max-w-[1400px] w-full flex flex-col flex-1 p-8 md:p-4 m-auto">
+<div class="max-w-[1400px] w-full flex flex-col flex-1 p-8 md:p-4 m-auto" data-controller="prompt-modal">
   <div class="mb-8 flex flex-row justify-between flex-wrap gap-4">
     <div>
-      <h1 class="text-3xl font-bold text-ink m-0">Prompts Library</h1>
+      <h1 class="text-3xl font-bold text-ink m-0 text-shadow-heading">Prompts Library</h1>
       <p class="text-ink/60 mt-2 mb-0">Manage questions used to fill story blanks</p>
     </div>
-    <div>
+    <div class="flex gap-3">
+      <button type="button" class="btn-primary" data-action="prompt-modal#open">Create Prompt</button>
       <%= link_to "Stories", stories_path, class: "btn-secondary" %>
     </div>
   </div>
 
-  <div class="grid grid-cols-[2fr_1fr] gap-8 lg:grid-cols-1">
-    <div class="bg-page p-6 rounded-xl border-3 border-ink sticky top-8 lg:static shadow-strong">
-      <div id="new_prompt_form">
-        <%= render "prompts/form", prompt: Prompt.new %>
+  <div class="bg-white p-8 rounded-xl border-3 border-ink shadow-strong">
+    <h2 class="text-xl font-bold text-ink m-0 mb-4">All Prompts (<%= @prompts.count %>)</h2>
+
+    <%# Search %>
+    <div class="relative mb-4" data-controller="search" data-search-url-value="<%= prompts_index_path %>">
+      <div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+        <svg class="w-5 h-5 text-ink/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
       </div>
+      <input type="text"
+             placeholder="Search prompts..."
+             class="w-full pl-12 pr-10 py-3 text-base font-medium rounded-xl border-2 border-ink/20 bg-white outline-none transition-all hover:border-ink focus:border-accent-secondary focus:ring-4 focus:ring-accent-secondary/10"
+             data-search-target="input"
+             data-action="input->search#search">
+      <button class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-ink/10 transition-colors hidden"
+              data-search-target="clear"
+              data-action="search#clear">
+        <svg class="w-4 h-4 text-ink/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
     </div>
 
-    <div class="bg-white p-8 rounded-xl border-3 border-ink shadow-strong">
-      <h2 class="text-xl font-bold text-ink m-0 mb-4">All Prompts (<%= @prompts.count %>)</h2>
-      <div id="prompts_list" class="flex flex-col gap-4 max-h-screen overflow-y-auto">
-        <% @prompts.each do |prompt| %>
-          <%= render "prompts/prompt", prompt: prompt %>
-        <% end %>
-      </div>
-    </div>
+    <%# Results (Turbo Frame) %>
+    <turbo-frame id="results_list">
+      <%= render "prompts/prompts_list", prompts: @prompts %>
+    </turbo-frame>
   </div>
+
+  <%= render "prompts/create_modal" %>
 </div>

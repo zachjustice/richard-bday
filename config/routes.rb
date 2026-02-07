@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   delete "/editor/logout", to: "editor_sessions#destroy", as: :editor_logout
 
   # Editor settings
+  get "/editor/account", to: "editor_settings#show", as: :editor_account
   get "/editor/settings", to: "editor_settings#edit", as: :edit_editor_settings
   patch "/editor/settings", to: "editor_settings#update", as: :editor_settings
 

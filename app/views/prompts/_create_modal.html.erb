@@ -1,0 +1,40 @@
+<div class="blank-modal hidden" data-prompt-modal-target="modal">
+  <div class="blank-backdrop" data-action="click->prompt-modal#close"></div>
+  <div class="blank-content max-w-[500px]">
+    <div class="p-6 border-b-3 border-ink bg-accent-tertiary/20">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-ink">Create New Prompt</h2>
+        <button class="modal-close-btn" data-action="prompt-modal#close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="p-6">
+      <%= form_with model: Prompt.new, url: create_prompt_path,
+          data: { action: "turbo:submit-end->prompt-modal#close" } do |f| %>
+        <div class="mb-4">
+          <label class="form-label mb-2">Prompt Description</label>
+          <%= f.text_area :description,
+              class: "story-form-textarea w-full min-h-[100px]",
+              placeholder: "e.g., A type of vegetable, An embarrassing nickname..." %>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label mb-2">Tags (comma-separated)</label>
+          <%= f.text_field :tags,
+              class: "story-form-input w-full",
+              placeholder: "noun,animal,funny" %>
+          <p class="text-sm text-ink/60 italic m-0 mt-2">Tags match prompts to story blanks</p>
+        </div>
+
+        <div class="flex gap-3 justify-end">
+          <button type="button" class="btn-secondary" data-action="prompt-modal#close">Cancel</button>
+          <%= f.submit "Create Prompt", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
