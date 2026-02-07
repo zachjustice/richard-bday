@@ -13,3 +13,20 @@
 - **CI/CD:** GitHub Actions
 - **Container Registry:** GitHub Container Registry (ghcr.io)
 - Also using: Turbo, Stimulus, ActiveJob, Tailwind v4, ActionCable
+
+## Developer Guidelines
+- Before adding new components in components.css check, first check if it already exists in components.css 
+- Strongly prefer using tailwind utility classes whenever possible 
+- However, create component classes when:
+  - The pattern is reused multiple times, OR
+  - Utility-based implementation is not possible
+- Create partials when any of the following is true:
+  - Required for Turbo Streams
+  - Component is frequently reused
+  - Component is highly complex
+- Use @layer base, @layer components, @layer utilities as appropriate
+- Place css animations in applications.css
+
+## Testing
+- Ensure tests pass after adding new features
+- Add tests intentionally- tests have 2 costs: 1) maintenance and 2) running them. Ensure critical code paths are covered.
