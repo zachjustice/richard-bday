@@ -444,6 +444,7 @@
 
 /* Wider scrollbar for ranked voting answers - always visible */
 .ranking-answers-scrollable {
+  overflow-y: scroll;
   scrollbar-width: auto;
   scrollbar-color: var(--color-accent-secondary) rgba(0, 0, 0, 0.15);
   scrollbar-gutter: stable;
@@ -456,7 +457,7 @@
 
 @media (max-width: 640px) {
   .ranking-answers-scrollable::-webkit-scrollbar {
-    width: 20px;
+    width: 24px;
   }
 }
 

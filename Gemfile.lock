@@ -363,9 +363,6 @@ GEM
     turbo-rails (2.0.20)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
-    turbolinks (5.2.1)
-      turbolinks-source (~> 5.2)
-    turbolinks-source (5.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.2.0)
@@ -427,7 +424,6 @@ DEPENDENCIES
   tailwindcss-rails (~> 4.4)
   thruster
   turbo-rails
-  turbolinks (~> 5)
   tzinfo-data
   wahwah (~> 1.6)
   watchman-rails (~> 0.2.0)

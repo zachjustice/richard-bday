@@ -5,18 +5,12 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include ActiveJob::TestHelper
 
   driven_by :cuprite, screen_size: [ 1400, 1400 ], options: {
-    headless: true
+    headless: true,
+    browser_options: ENV["CI"].present? ? {
+      "no-sandbox" => nil,
+      "disable-dev-shm-usage" => nil
+    } : {}
   }
-
-  setup do
-    # Clean cable messages before each system test to prevent interference
-    SolidCable::Message.delete_all if defined?(SolidCable::Message)
-  end
-
-  teardown do
-    # Clean up after each test as well
-    SolidCable::Message.delete_all if defined?(SolidCable::Message)
-  end
 
   # Wait for Turbo Stream cable connection to be established
   # This prevents race conditions where broadcasts are sent before the client connects
