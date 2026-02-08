@@ -30,6 +30,14 @@ class Room < ApplicationRecord
   # which is the case- so use belongs_to instead of has_one
   belongs_to :current_game, class_name: "Game", optional: true
 
+  def self.generate_unique_code(length: 4, max_retries: 10)
+    max_retries.times do
+      code = Array.new(length) { ("a".."z").to_a.sample }.join
+      return code unless exists?(code: code)
+    end
+    raise "Failed to generate unique room code after #{max_retries} attempts"
+  end
+
   def ranked_voting?
     voting_style == "ranked_top_3"
   end

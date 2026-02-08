@@ -62,8 +62,9 @@ class GamePhasesService
     if remove_sidebar
       Turbo::StreamsChannel.broadcast_action_to(
         "rooms:#{@room.id}:status",
-        action: :remove,
-        target: "turbo-target-sidebar"
+        action: :update,
+        target: "turbo-target-sidebar",
+        html: ""
       )
     else
       Turbo::StreamsChannel.broadcast_action_to(

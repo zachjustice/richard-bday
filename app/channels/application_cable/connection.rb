@@ -69,6 +69,16 @@ module ApplicationCable
 
     private
       def set_current_user
+        # Try Discord cable token first (passed as query param)
+        if (cable_token = request.params[:cable_token])
+          user_id = Rails.cache.read("cable_token:#{cable_token}")
+          if user_id
+            self.current_user = User.find_by(id: user_id)
+            return self.current_user
+          end
+        end
+
+        # Fall back to cookie-based auth
         session_id = cookies.signed[:player_session_id]
         if session = Session.find_by(id: session_id)
           self.current_user = session.user

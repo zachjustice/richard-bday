@@ -35,7 +35,21 @@ module Authentication
     end
 
     def resume_session
-      Current.session ||= find_player_session_by_cookie
+      find_session_by_discord_token || (Current.session ||= find_player_session_by_cookie)
+    end
+
+    def find_session_by_discord_token
+      auth_header = request.headers["Authorization"]
+      return nil unless auth_header&.start_with?("Bearer ")
+
+      token = auth_header.sub("Bearer ", "")
+      activity_token = DiscordActivityToken.find_by_token(token)
+
+      if activity_token&.valid_token?
+        @current_user = activity_token.user
+        @current_room = @current_user.room
+        activity_token
+      end
     end
 
     def find_player_session_by_cookie

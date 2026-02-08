@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Blanksies</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <% if @client_id %>
+      <meta name="discord-client-id" content="<%= @client_id %>">
+    <% end %>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <% if @client_id %>
+      <%= javascript_import_module_tag "discord/activity" %>
+    <% end %>
+  </head>
+  <body class="bg-page min-h-screen">
+    <% if @client_id %>
+      <div id="discord-loading" class="min-h-screen flex items-center justify-center">
+        <div class="card-primary p-8 text-center">
+          <h1 class="text-2xl font-bold text-ink mb-4">Loading Blanksies...</h1>
+          <div class="animate-spin rounded-full h-12 w-12 border-4 border-accent-blue border-t-transparent mx-auto"></div>
+        </div>
+      </div>
+
+      <div id="discord-error" class="hidden min-h-screen flex items-center justify-center">
+        <div class="card-primary p-8 text-center">
+          <h1 class="text-2xl font-bold text-ink mb-4">Oops!</h1>
+          <p id="discord-error-message" class="text-ink/70 mb-4"></p>
+          <button onclick="location.reload()" class="btn-primary">Try Again</button>
+        </div>
+      </div>
+    <% end %>
+
+    <main id="main-content">
+      <%= yield %>
+    </main>
+  </body>
+</html>

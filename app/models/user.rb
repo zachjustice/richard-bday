@@ -19,16 +19,16 @@ class User < ApplicationRecord
 
   belongs_to :room
   has_many :sessions, dependent: :destroy
+  has_many :discord_activity_tokens, dependent: :destroy
 
   validates :name, presence: true
   validates :room_id, presence: true
   validates :name, uniqueness: { scope: [ :room_id ] }
-  validates :name, length: { maximum: 15 }
+  validates :name, length: { maximum: 32 }
   validates_slur_free :name
   validates :avatar, presence: true
   validates :avatar, inclusion: { in: AVATARS + [ CREATOR_AVATAR ] }
   validates :avatar, uniqueness: { scope: :room_id }
-
   validate :room_has_capacity, on: :create
 
   before_validation :assign_avatar, on: :create

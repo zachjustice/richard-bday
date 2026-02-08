@@ -12,3 +12,7 @@ pin_all_from "app/javascript/concerns", under: "concerns"
 pin_all_from "app/javascript/channels", under: "channels"
 pin "@nuintun/qrcode", to: "@nuintun--qrcode.js" # @5.0.2
 pin "html2canvas", to: "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.esm.min.js"
+
+# Discord Activities SDK
+pin "@discord/embedded-app-sdk", to: "@discord--embedded-app-sdk.js" # @1.9.0
+pin_all_from "app/javascript/discord", under: "discord"
