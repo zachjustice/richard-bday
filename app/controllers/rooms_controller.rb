@@ -107,12 +107,20 @@ class RoomsController < ApplicationController
         action: :navigate,
         target: "/game_prompts/#{prev_game_prompt_id}/results",
       )
-      redirect_to controller: "game_prompts", action: "results", id: prev_game_prompt_id
+      if @current_user&.role == User::CREATOR
+        redirect_to room_status_path(room)
+      else
+        redirect_to controller: "game_prompts", action: "results", id: prev_game_prompt_id
+      end
     else
       move_to_next_game_prompt(room, next_game_prompt_id)
       status_data = RoomStatusService.new(room).call
       GamePhasesService.new(room).update_room_status_view("rooms/status/answering", status_data)
-      redirect_to controller: "game_prompts", action: "show", id: next_game_prompt_id
+      if @current_user&.role == User::CREATOR
+        redirect_to room_status_path(room)
+      else
+        redirect_to controller: "game_prompts", action: "show", id: next_game_prompt_id
+      end
     end
   end
 

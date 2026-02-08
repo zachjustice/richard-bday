@@ -106,9 +106,9 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
 
     # Step 8: Advance to next prompt
     post next_room_path(@room)
-    # next redirects to the next prompt's show page
+    # Creator is redirected back to status page
     second_prompt = GamePrompt.find_by(game_id: @room.current_game_id, order: 1)
-    assert_redirected_to controller: "game_prompts", action: "show", id: second_prompt.id
+    assert_redirected_to room_status_path(@room)
 
     @room.reload
     game.reload
@@ -143,8 +143,8 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     # Step 9: Advance to final results (no more prompts)
     resume_session_as(@room.code, @creator.name)
     post next_room_path(@room)
-    # When there are no more prompts, redirects to results page for previous prompt
-    assert_redirected_to controller: "game_prompts", action: "results", id: second_prompt.id
+    # Creator is redirected back to status page
+    assert_redirected_to room_status_path(@room)
 
     @room.reload
     assert_equal RoomStatus::FinalResults, @room.status

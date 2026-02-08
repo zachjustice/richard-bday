@@ -218,14 +218,13 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_equal RoomStatus::FinalResults, @room.status
   end
 
-  test "next should redirect to next prompt page" do
+  test "next should redirect creator to room status page" do
     post start_room_path(@room), params: { story: @story.id }
     @room.reload
 
     post next_room_path(@room)
 
-    next_prompt = GamePrompt.find_by(game_id: @room.current_game_id, order: 1)
-    assert_redirected_to controller: "game_prompts", action: "show", id: next_prompt.id
+    assert_redirected_to room_status_path(@room)
   end
 
   test "next should advance to next prompt and update room state" do

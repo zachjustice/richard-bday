@@ -1012,6 +1012,20 @@
   }
 }
 
+/* Small countdown timer variant (results auto-advance) */
+.countdown-timer-sm {
+  @apply w-[48px] h-[48px];
+}
+
+.countdown-timer-sm .countdown-timer-display {
+  @apply text-sm;
+}
+
+.countdown-timer-sm .countdown-timer-circle-bg,
+.countdown-timer-sm .countdown-timer-circle {
+  stroke-width: 4;
+}
+
 /* Flash Messages */
 .flash-message {
   @apply flex items-center justify-between gap-3 px-5 py-4 rounded-xl shadow-xl;

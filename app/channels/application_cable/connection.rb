@@ -11,6 +11,18 @@ module ApplicationCable
 
       self.current_user.update(is_active: true)
       room = self.current_user.room
+
+      # On reconnect: if this user has a smaller id than current navigator, reclaim navigator role
+      if self.current_user.player?
+        current_navigator = User.where(room: room, role: User::NAVIGATOR).first
+        if current_navigator && self.current_user.id < current_navigator.id
+          current_navigator.update(role: User::PLAYER)
+          self.current_user.update(role: User::NAVIGATOR)
+        elsif current_navigator.nil?
+          self.current_user.update(role: User::NAVIGATOR)
+        end
+      end
+
       Turbo::StreamsChannel.broadcast_append_to(
         "rooms:#{room.id}:users",
         target: "waiting-room",
@@ -26,21 +38,22 @@ module ApplicationCable
     end
 
     def disconnect
-      if !self.current_user
-        return
-      end
+      return if !self.current_user
+      return if self.current_user.role == User::CREATOR
 
-      # If the game has begun, don't set player as inactive since their phone could be asleep.
-      if self.current_user.room.status != RoomStatus::WaitingRoom
-        return
-      end
-
-      self.current_user.update(is_active: false)
       room = self.current_user.room
+
+      # Navigator reassignment runs in all game phases
       if self.current_user.role == User::NAVIGATOR
         self.current_user.update(role: User::PLAYER)
-        User.players.where(room: room).first&.update(role: User::NAVIGATOR)
+        User.players.where(room: room).where.not(id: self.current_user.id).order(:id).first&.update(role: User::NAVIGATOR)
       end
+
+      # Only mark inactive and update waiting room UI during WaitingRoom phase
+      # (phones may be asleep during active game)
+      return if room.status != RoomStatus::WaitingRoom
+
+      self.current_user.update(is_active: false)
 
       Turbo::StreamsChannel.broadcast_remove_to(
         "rooms:#{room.id}:users",
