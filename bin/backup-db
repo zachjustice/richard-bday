@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Backup the production SQLite3 database from the Kamal-deployed server.
+# Uses sqlite3's .backup command for a consistent, non-corrupting snapshot.
+#
+# Usage: bin/backup-db
+
+SERVER="174.138.60.116"
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+BACKUP_FILENAME="production_backup_${TIMESTAMP}.sqlite3"
+LOCAL_BACKUP_DIR="backups"
+
+echo "==> Creating backup on remote server..."
+
+ssh root@${SERVER} bash -s "${BACKUP_FILENAME}" <<'REMOTE_SCRIPT'
+  set -euo pipefail
+  BACKUP_FILENAME="$1"
+
+  CONTAINER_ID=$(docker ps --filter "name=richard_bday-web" --format "{{.ID}}" | head -1)
+  if [ -z "${CONTAINER_ID}" ]; then
+    echo "ERROR: No running richard_bday-web container found." >&2
+    exit 1
+  fi
+  echo "    Found container: ${CONTAINER_ID}"
+
+  docker exec "${CONTAINER_ID}" sqlite3 /rails/storage/production.sqlite3 ".backup /tmp/${BACKUP_FILENAME}"
+  echo "    Backup created inside container"
+
+  docker cp "${CONTAINER_ID}:/tmp/${BACKUP_FILENAME}" "/tmp/${BACKUP_FILENAME}"
+  echo "    Copied to host /tmp/${BACKUP_FILENAME}"
+
+  docker exec "${CONTAINER_ID}" rm "/tmp/${BACKUP_FILENAME}"
+REMOTE_SCRIPT
+
+echo "==> Downloading backup to local machine..."
+mkdir -p "${LOCAL_BACKUP_DIR}"
+scp "root@${SERVER}:/tmp/${BACKUP_FILENAME}" "${LOCAL_BACKUP_DIR}/${BACKUP_FILENAME}"
+
+echo "==> Cleaning up remote temp file..."
+ssh root@${SERVER} "rm /tmp/${BACKUP_FILENAME}"
+
+FILESIZE=$(ls -lh "${LOCAL_BACKUP_DIR}/${BACKUP_FILENAME}" | awk '{print $5}')
+echo ""
+echo "==> Backup complete!"
+echo "    File: ${LOCAL_BACKUP_DIR}/${BACKUP_FILENAME}"
+echo "    Size: ${FILESIZE}"
