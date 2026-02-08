@@ -194,6 +194,8 @@ export default class extends Controller {
 
   handleTouchStart(e) {
     this.touchStartX = e.changedTouches[0].screenX
+    this.touchEndX = this.touchStartX
+    this.touchStartedOnButton = e.target.closest('.carousel-arrow') !== null
   }
 
   handleTouchMove(e) {
@@ -201,6 +203,8 @@ export default class extends Controller {
   }
 
   handleTouchEnd() {
+    if (this.touchStartedOnButton) return
+
     const diff = this.touchStartX - this.touchEndX
 
     if (Math.abs(diff) > this.minSwipeDistance) {

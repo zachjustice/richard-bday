@@ -1114,9 +1114,11 @@
   box-shadow: 2px 2px 0px var(--color-ink);
 }
 
-.carousel-arrow:hover {
-  box-shadow: 4px 4px 0px var(--color-ink);
-  transform: translate(-2px, -2px);
+@media (hover: hover) {
+  .carousel-arrow:hover {
+    box-shadow: 4px 4px 0px var(--color-ink);
+    transform: translate(-2px, -2px);
+  }
 }
 
 .carousel-arrow:active {
@@ -1152,9 +1154,11 @@
   background: var(--color-accent-secondary-light);
 }
 
-.avatar-carousel-container.avatar-available:hover {
-  box-shadow: 6px 6px 0px var(--color-ink);
-  transform: translate(-2px, -2px);
+@media (hover: hover) {
+  .avatar-carousel-container.avatar-available:hover {
+    box-shadow: 6px 6px 0px var(--color-ink);
+    transform: translate(-2px, -2px);
+  }
 }
 
 .avatar-main-display {
