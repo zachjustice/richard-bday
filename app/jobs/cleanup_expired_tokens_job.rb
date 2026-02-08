@@ -4,6 +4,7 @@ class CleanupExpiredTokensJob < ApplicationJob
   def perform
     cleanup_invitations
     cleanup_password_resets
+    cleanup_discord_tokens
   end
 
   private
@@ -24,5 +25,13 @@ class CleanupExpiredTokensJob < ApplicationJob
       .delete_all
 
     Rails.logger.info "Cleaned up #{deleted_count} expired password resets" if deleted_count > 0
+  end
+
+  def cleanup_discord_tokens
+    deleted_count = DiscordActivityToken
+      .where("expires_at < ?", Time.current)
+      .delete_all
+
+    Rails.logger.info "Cleaned up #{deleted_count} expired discord activity tokens" if deleted_count > 0
   end
 end

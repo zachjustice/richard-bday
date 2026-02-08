@@ -7,7 +7,7 @@ class RoomsController < ApplicationController
   def initialize_room
     room = Room.find(params[:id])
 
-    unless @current_user&.role == User::CREATOR && @current_user.room_id == room.id
+    unless can_control_room?(room)
       flash[:alert] = "Only the room creator can initialize the game"
       return redirect_to room_status_path(room)
     end
@@ -52,7 +52,7 @@ class RoomsController < ApplicationController
   def update_settings
     room = Room.find(params[:id])
 
-    if @current_user&.role != User::CREATOR || @current_user.room_id != room.id
+    unless can_control_room?(room)
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
@@ -118,7 +118,7 @@ class RoomsController < ApplicationController
 
   def status
     room = Room.find(params[:id])
-    unless @current_user&.role == User::CREATOR && @current_user.room_id == room.id
+    unless can_view_status?(room)
       flash[:alert] = "Only the room creator can view this page"
       return redirect_to root_path
     end
@@ -154,12 +154,11 @@ class RoomsController < ApplicationController
 
   # POST /rooms/create -> rooms#_create
   def _create
-    code = (0...4).map { ("a".."z").to_a[rand(26)] }.join
-    room = Room.new(code: code)
+    room = Room.new(code: Room.generate_unique_code)
 
     if room.save
       # Create a temporary Creator user for the room creator
-      creator_name = "Creator-#{code}"
+      creator_name = "Creator-#{room.code}"
       creator_user = User.new(
         name: creator_name,
         room_id: room.id,
@@ -199,7 +198,7 @@ class RoomsController < ApplicationController
     )
     status_data = RoomStatusService.new(current_room).call
     GamePhasesService.new(current_room).update_room_status_view("rooms/status/waiting_room", status_data, true)
-    if @current_user&.role == User::CREATOR
+    if can_control_room?(current_room)
       redirect_to controller: "rooms", action: "status", id: params[:id]
     else
       redirect_to controller: "rooms", action: "waiting_for_new_game", id: params[:id]
@@ -242,7 +241,7 @@ class RoomsController < ApplicationController
       target: "/rooms/#{room.id}/waiting_for_new_game",
     )
 
-    if @current_user&.role == User::CREATOR
+    if can_control_room?(room)
       redirect_to room_status_path(room)
     else
       redirect_to controller: "rooms", action: "waiting_for_new_game", id: room.id
@@ -263,6 +262,16 @@ class RoomsController < ApplicationController
   end
 
   private
+
+  def can_view_status?(room)
+    return false unless @current_user&.room_id == room.id
+    @current_user.creator?
+  end
+
+  def can_control_room?(room)
+    return false unless @current_user&.room_id == room.id
+    @current_user.creator?
+  end
 
   def in_room?
     # Check if the user is in the room if a room specific page is being accessed.

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_07_154342) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_08_000003) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -33,6 +33,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_07_154342) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index [ "story_id" ], name: "index_blanks_on_story_id"
+  end
+
+  create_table "discord_activity_tokens", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "token_digest", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "token_digest" ], name: "index_discord_activity_tokens_on_token_digest", unique: true
+    t.index [ "user_id" ], name: "index_discord_activity_tokens_on_user_id"
   end
 
   create_table "editor_email_changes", force: :cascade do |t|
@@ -143,8 +153,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_07_154342) do
     t.integer "time_to_vote_seconds", default: 120, null: false
     t.string "voting_style", default: "vote_once", null: false
     t.boolean "smooth_answers", default: false, null: false
+    t.string "discord_instance_id"
+    t.string "discord_channel_id"
+    t.boolean "is_discord_activity", default: false
     t.index [ "code" ], name: "index_rooms_on_code", unique: true
     t.index [ "current_game_id" ], name: "index_rooms_on_current_game_id"
+    t.index [ "discord_instance_id" ], name: "index_rooms_on_discord_instance_id", unique: true, where: "discord_instance_id IS NOT NULL"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -187,7 +201,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_07_154342) do
     t.datetime "updated_at", null: false
     t.index [ "blank_id" ], name: "index_story_prompts_on_blank_id"
     t.index [ "prompt_id" ], name: "index_story_prompts_on_prompt_id"
-    t.index [ "story_id", "blank_id", "prompt_id" ], name: "index_story_prompts_stories_blanks_prompts_unique", unique: true
     t.index [ "story_id" ], name: "index_story_prompts_on_story_id"
   end
 
@@ -200,7 +213,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_07_154342) do
     t.boolean "is_active", default: true, null: false
     t.string "status", default: "Answering"
     t.string "avatar", null: false
+    t.string "discord_id"
+    t.string "discord_username"
     t.index [ "room_id", "avatar" ], name: "index_users_on_room_id_and_avatar", unique: true
+    t.index [ "room_id", "discord_id" ], name: "index_users_on_room_id_and_discord_id", unique: true, where: "discord_id IS NOT NULL"
     t.index [ "room_id", "name" ], name: "index_users_on_room_id_and_name", unique: true
     t.index [ "room_id" ], name: "index_users_on_room_id"
   end
@@ -226,6 +242,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_07_154342) do
   add_foreign_key "answers", "games"
   add_foreign_key "answers", "users"
   add_foreign_key "blanks", "stories"
+  add_foreign_key "discord_activity_tokens", "users"
   add_foreign_key "editor_email_changes", "editors"
   add_foreign_key "editor_invitations", "editors"
   add_foreign_key "editor_password_resets", "editors"

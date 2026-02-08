@@ -31,6 +31,16 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  # Discord Activities
+  namespace :discord do
+    get "/", to: "activities#launch", as: :activity_launch
+    post "/auth/callback", to: "activities#auth_callback", as: :activity_auth_callback
+  end
+  post "/cable/auth", to: "cable_auth#create", as: :cable_auth
+
+  # Redirect Discord Activity iframe loads to /discord (they always include frame_id)
+  get "/", to: redirect { |_, req| "/discord?#{req.query_string}" },
+      constraints: ->(req) { req.params[:frame_id].present? }
   root to: "rooms#create"
 
   resources :stories do
