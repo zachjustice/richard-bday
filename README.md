@@ -45,6 +45,17 @@ rake editors:list
 rake editors:delete[username]
 ```
 
+### Database Backup & Restore
+```bash
+# Backup
+bin/backup-db development
+bin/backup-db production
+
+# Restore
+bin/restore-db development backups/development_backup_20260207_143000.sqlite3
+bin/restore-db production backups/production_backup_20260207_143000.sqlite3
+```
+
 ### Useful Commands
 ```bash
 # View logs

@@ -1,16 +1,56 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Backup the production SQLite3 database from the Kamal-deployed server.
+# Backup a SQLite3 database for the given environment.
 # Uses sqlite3's .backup command for a consistent, non-corrupting snapshot.
 #
-# Usage: bin/backup-db
+# Usage: bin/backup-db <environment>
+#   environment: development | production
 
 SERVER="174.138.60.116"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_FILENAME="production_backup_${TIMESTAMP}.sqlite3"
 LOCAL_BACKUP_DIR="backups"
 
+usage() {
+  echo "Usage: bin/backup-db <environment>"
+  echo "  environment: development | production"
+  exit 1
+}
+
+if [ $# -ne 1 ]; then
+  usage
+fi
+
+ENVIRONMENT="$1"
+
+if [[ "${ENVIRONMENT}" != "development" && "${ENVIRONMENT}" != "production" ]]; then
+  echo "ERROR: environment must be 'development' or 'production'"
+  usage
+fi
+
+BACKUP_FILENAME="${ENVIRONMENT}_backup_${TIMESTAMP}.sqlite3"
+mkdir -p "${LOCAL_BACKUP_DIR}"
+
+if [ "${ENVIRONMENT}" = "development" ]; then
+  DB_PATH="storage/development.sqlite3"
+
+  if [ ! -f "${DB_PATH}" ]; then
+    echo "ERROR: development database not found: ${DB_PATH}"
+    exit 1
+  fi
+
+  echo "==> Backing up development database..."
+  sqlite3 "${DB_PATH}" ".backup ${LOCAL_BACKUP_DIR}/${BACKUP_FILENAME}"
+
+  FILESIZE=$(ls -lh "${LOCAL_BACKUP_DIR}/${BACKUP_FILENAME}" | awk '{print $5}')
+  echo ""
+  echo "==> Backup complete!"
+  echo "    File: ${LOCAL_BACKUP_DIR}/${BACKUP_FILENAME}"
+  echo "    Size: ${FILESIZE}"
+  exit 0
+fi
+
+# Production backup
 echo "==> Creating backup on remote server..."
 
 ssh root@${SERVER} bash -s "${BACKUP_FILENAME}" <<'REMOTE_SCRIPT'
@@ -34,7 +74,6 @@ ssh root@${SERVER} bash -s "${BACKUP_FILENAME}" <<'REMOTE_SCRIPT'
 REMOTE_SCRIPT
 
 echo "==> Downloading backup to local machine..."
-mkdir -p "${LOCAL_BACKUP_DIR}"
 scp "root@${SERVER}:/tmp/${BACKUP_FILENAME}" "${LOCAL_BACKUP_DIR}/${BACKUP_FILENAME}"
 
 echo "==> Cleaning up remote temp file..."
