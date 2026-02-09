@@ -3,7 +3,7 @@ module Tokenable
 
   class_methods do
     def digest(token)
-      Digest::SHA256.hexdigest(token)
+      OpenSSL::HMAC.hexdigest("SHA256", Rails.application.secret_key_base, token)
     end
 
     def generate_token

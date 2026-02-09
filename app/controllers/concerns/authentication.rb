@@ -35,6 +35,8 @@ module Authentication
     end
 
     def resume_session
+      # Discord auth sets @current_user directly without setting Current.session.
+      # This is intentional — Discord users don't have a Session record.
       find_session_by_discord_token || (Current.session ||= find_player_session_by_cookie)
     end
 
@@ -46,10 +48,15 @@ module Authentication
       activity_token = DiscordActivityToken.find_by_token(token)
 
       if activity_token&.valid_token?
+        @discord_authenticated = true
         @current_user = activity_token.user
         @current_room = @current_user.room
         activity_token
       end
+    end
+
+    def discord_authenticated?
+      !!@discord_authenticated
     end
 
     def find_player_session_by_cookie

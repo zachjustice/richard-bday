@@ -86,7 +86,6 @@ Rails.application.routes.draw do
   post "/answer", to: "answers#create"
 
   post "/vote", to: "votes#create", as: :votes
-  post "/vote", to: "vote#update"
 
   # Music Player
   get "/music_player", to: "music_player#index"

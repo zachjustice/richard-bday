@@ -25,6 +25,7 @@ module Discord
 
       room = find_or_create_activity_room(instance_id, channel_id)
       creator = find_or_create_room_creator(room)
+      creator.discord_activity_tokens.where("expires_at > ?", Time.current).destroy_all
       activity_token = DiscordActivityToken.create_for_user(creator)
 
       render json: {
@@ -40,12 +41,15 @@ module Discord
 
     def allow_discord_iframe
       response.headers.delete("X-Frame-Options")
+      response.headers["Content-Security-Policy"] = "frame-ancestors https://discord.com https://*.discordsays.com"
     end
 
     def exchange_discord_code(code)
       uri = URI("https://discord.com/api/oauth2/token")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
+      http.open_timeout = 5
+      http.read_timeout = 10
 
       request = Net::HTTP::Post.new(uri)
       request.set_form_data(
@@ -59,7 +63,7 @@ module Discord
       return nil unless response.is_a?(Net::HTTPSuccess)
 
       JSON.parse(response.body)
-    rescue StandardError => e
+    rescue Net::OpenTimeout, Net::ReadTimeout, SocketError, Errno::ECONNREFUSED, JSON::ParserError => e
       Rails.logger.error("Discord token exchange failed: #{e.message}")
       nil
     end
