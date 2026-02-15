@@ -1,24 +1,33 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Handles loading state for submit buttons during Turbo form submissions.
-// Loading state persists until page navigates (controller disconnects).
+// Re-enables on turbo:submit-end so the button recovers after validation errors.
 export default class extends Controller {
   static targets = ["button"]
 
   connect() {
     this.form = this.element.closest("form") || this.element
     this.boundHandleSubmitStart = this.handleSubmitStart.bind(this)
+    this.boundHandleSubmitEnd = this.handleSubmitEnd.bind(this)
 
     document.addEventListener("turbo:submit-start", this.boundHandleSubmitStart)
+    document.addEventListener("turbo:submit-end", this.boundHandleSubmitEnd)
   }
 
   disconnect() {
     document.removeEventListener("turbo:submit-start", this.boundHandleSubmitStart)
+    document.removeEventListener("turbo:submit-end", this.boundHandleSubmitEnd)
   }
 
   handleSubmitStart(event) {
     if (event.target === this.form) {
       this.showLoading()
+    }
+  }
+
+  handleSubmitEnd(event) {
+    if (event.target === this.form) {
+      this.resetLoading()
     }
   }
 
@@ -33,6 +42,14 @@ export default class extends Controller {
       spinner.innerHTML = this.spinnerSVG()
       button.insertBefore(spinner, button.firstChild)
     }
+  }
+
+  resetLoading() {
+    const button = this.hasButtonTarget ? this.buttonTarget : this.element
+    button.disabled = false
+    button.classList.remove("btn-loading")
+    const spinner = button.querySelector(".btn-spinner")
+    if (spinner) spinner.remove()
   }
 
   spinnerSVG() {

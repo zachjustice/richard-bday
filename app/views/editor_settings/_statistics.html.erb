@@ -1,4 +1,4 @@
-<h2 class="text-xl font-bold text-ink mb-6 flex items-center gap-2">
+<h2 class="text-xl font-bold text-ink mb-6 flex items-center gap-2 shrink-0">
   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
@@ -13,7 +13,7 @@
   </div>
 <% else %>
   <%# Summary Stats %>
-  <div class="grid grid-cols-3 gap-4 mb-6">
+  <div class="grid grid-cols-3 gap-4 mb-6 shrink-0">
     <div class="bg-accent-tertiary/20 rounded-xl p-4 text-center border-2 border-ink/20">
       <p class="text-3xl font-bold text-ink"><%= statistics.size %></p>
       <p class="text-sm text-ink/60 font-semibold">Stories</p>
@@ -29,7 +29,7 @@
   </div>
 
   <%# Search %>
-  <div class="mb-4" data-controller="search" data-search-url-value="<%= editor_settings_path %>" data-search-frame-id-value="story_stats_list">
+  <div class="mb-4 shrink-0" data-controller="search" data-search-url-value="<%= editor_settings_path %>" data-search-frame-id-value="story_stats_list">
     <div class="search-input-container">
       <svg class="search-input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -53,7 +53,8 @@
   </div>
 
   <%# Per-story breakdown %>
-  <turbo-frame id="story_stats_list" class="block">
+  <turbo-frame id="story_stats_list" class="block flex-1 min-h-0 overflow-y-auto scroll-fade-overlay"
+               data-controller="scroll-fade">
     <div class="space-y-3">
       <% statistics.each do |stat| %>
         <div class="flex items-center justify-between p-4 rounded-xl border-2 border-ink"

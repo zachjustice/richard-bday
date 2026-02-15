@@ -7,7 +7,8 @@ class RankedVotingKeyboardTest < ApplicationSystemTestCase
     @room = Room.create!(code: "rv#{suffix}", status: RoomStatus::WaitingRoom, voting_style: "ranked_top_3")
     @story = Story.create!(title: "RV Story", text: "A {1} walked into a bar.", original_text: "A {1} walked into a bar.", published: true)
     @blank = Blank.create!(tags: "noun", story: @story)
-    @prompt = Prompt.create!(description: "Name something funny", tags: "noun")
+    @editor = Editor.create!(username: "rv#{suffix}", email: "rv#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    @prompt = Prompt.create!(description: "Name something funny", tags: "noun", creator: @editor)
   end
 
   test "keyboard users can rank answers using Enter and arrow keys" do

@@ -27,6 +27,15 @@ export default class extends Controller {
     if (this.editModeValue && this.tagsInputTarget.value.trim().length > 0) {
       this.filterPrompts()
     }
+
+    this.hasAttemptedSubmit = false
+  }
+
+  submitForm(event) {
+    this.hasAttemptedSubmit = true
+    if (!this.validateSelection()) {
+      event.preventDefault()
+    }
   }
 
   filterPrompts(event) {
@@ -147,7 +156,7 @@ export default class extends Controller {
     template.dataset.blankFormTarget = 'newPromptField'
     template.innerHTML = `
       <textarea name="blank[new_prompts][][description]"
-                class="form-textarea"
+                class="story-form-textarea"
                 rows="2"
                 placeholder="What is a funny animal?"
                 data-blank-form-target="newPromptInput"
@@ -175,16 +184,12 @@ export default class extends Controller {
     const hasExistingSelected = this.element.querySelectorAll(
       'input[name="blank[existing_prompt_ids][]"]:checked'
     ).length > 0
-    const hasNewPrompts = Array.from(this.element.querySelectorAll('.form-textarea')).some(input => input.value.trim().length > 0)
+    const hasNewPrompts = Array.from(this.element.querySelectorAll('.story-form-textarea')).some(input => input.value.trim().length > 0)
 
     const isValid = hasExistingSelected || hasNewPrompts
 
-    this.submitButtonTarget.disabled = !isValid
-
-    if (isValid) {
-      this.validationHintTarget.style.display = 'none'
-    } else {
-      this.validationHintTarget.style.display = 'block'
+    if (this.hasAttemptedSubmit) {
+      this.validationHintTarget.style.display = isValid ? 'none' : 'block'
     }
 
     return isValid

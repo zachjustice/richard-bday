@@ -8,6 +8,7 @@
     <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-ink" %>
     <%= form.text_field :tags,
         placeholder: "noun,animal,funny",
+        required: true,
         class: "story-form-input" %>
     <p class="text-sm text-ink/60 italic m-0">Examples: noun,animal,funny or adjective,colorful</p>
   </div>

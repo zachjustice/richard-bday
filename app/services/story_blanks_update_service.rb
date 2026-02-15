@@ -5,9 +5,10 @@ require "ostruct"
 class StoryBlanksUpdateService
   attr_reader :story, :blank, :tags, :existing_prompt_ids, :new_prompts, :errors
 
-  def initialize(story:, blank:, params:)
+  def initialize(story:, blank:, params:, creator:)
     @story = story
     @blank = blank
+    @creator = creator
     @tags = params[:tags].split(",").map(&:strip).join(",")
     @existing_prompt_ids = Array(params[:existing_prompt_ids]).reject(&:blank?).map(&:to_i)
     @new_prompts = Array(params[:new_prompts]).each { |p| p[:description].strip! }.reject { |p| p[:description].blank? }
@@ -58,7 +59,8 @@ class StoryBlanksUpdateService
     @new_prompts.map do |prompt_data|
       prompt = Prompt.new(
         description: prompt_data[:description],
-        tags: @tags
+        tags: @tags,
+        creator: @creator
       )
       prompt.save!
       prompt

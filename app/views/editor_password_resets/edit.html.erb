@@ -1,3 +1,5 @@
+<% content_for(:skip_flash_banner, true) %>
+
 <div class="min-h-screen bg-page flex items-center justify-center p-6 max-sm:p-4 max-sm:pt-16">
   <%= render "shared/login_doodles" %>
 
@@ -7,9 +9,11 @@
       <p class="form-subheader max-sm:text-sm">Choose a new password for your account</p>
     </div>
 
+    <% if flash[:notice] %>
+      <div class="notice-message mb-4" role="status"><%= flash[:notice] %></div>
+    <% end %>
     <% if flash[:alert] %>
       <div class="alert-message mb-4" role="alert"><%= flash[:alert] %></div>
-      <% flash.delete(:alert) %>
     <% end %>
 
     <%= form_with url: editor_reset_password_path(token: params[:token]), method: :patch, class: "flex flex-col gap-6" do |form| %>

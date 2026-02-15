@@ -1,13 +1,13 @@
-<div class="bg-page min-h-screen" data-controller="logout-modal change-password-modal change-email-modal">
-  <div class="max-w-[800px] w-full flex flex-col p-8 md:p-4 m-auto">
+<div class="bg-page editor-page-viewport min-h-[1200px] md:min-h-[900px] lg:min-h-[1000px]">
+  <div class="max-w-[800px] w-full flex flex-col flex-1 min-h-0 p-8 md:p-4 m-auto">
     <%# Header %>
-    <div class="mb-8">
+    <div class="mb-8 shrink-0">
       <h1 class="text-3xl font-bold text-ink text-shadow-heading">Your Account</h1>
       <p class="text-ink/60 mt-2">Manage your profile and view your creative stats</p>
     </div>
 
     <%# Profile Card %>
-    <div class="bg-white rounded-2xl p-4 md:p-6 mb-6 border-3 border-ink"
+    <div class="bg-white rounded-2xl p-4 md:p-6 mb-6 border-3 border-ink shrink-0"
          style="box-shadow: 6px 6px 0 var(--color-ink);">
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-bold text-ink flex items-center gap-2">
@@ -17,14 +17,17 @@
           </svg>
           Profile
         </h2>
-        <button class="btn-secondary text-ink/60 hover:text-accent-primary hover:border-accent-primary"
-                data-action="logout-modal#open">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-          </svg>
-          Sign Out
-        </button>
+        <div data-controller="modal">
+          <button class="btn-secondary text-ink/60 hover:text-accent-primary hover:border-accent-primary"
+                  data-action="modal#open">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+            Sign Out
+          </button>
+          <%= render "editor_settings/logout_modal" %>
+        </div>
       </div>
 
       <div class="space-y-4">
@@ -33,44 +36,46 @@
           <p class="text-lg font-semibold text-ink"><%= current_editor.username %></p>
         </div>
 
-        <div class="flex items-center justify-between">
-          <div>
-            <label class="text-sm font-semibold text-ink/60 uppercase tracking-wide">Email</label>
-            <p class="text-lg text-ink"><%= current_editor.email %></p>
+        <div data-controller="modal">
+          <div class="flex items-center justify-between">
+            <div>
+              <label class="text-sm font-semibold text-ink/60 uppercase tracking-wide">Email</label>
+              <p class="text-lg text-ink"><%= current_editor.email %></p>
+            </div>
+            <button class="btn-icon shrink-0" title="Edit email"
+                    data-action="modal#open">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </button>
           </div>
-          <button class="btn-icon shrink-0" title="Edit email"
-                  data-action="change-email-modal#open">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-          </button>
+          <%= render "editor_settings/change_email_modal" %>
         </div>
 
-        <div class="flex items-center justify-between">
-          <div>
-            <label class="text-sm font-semibold text-ink/60 uppercase tracking-wide">Password</label>
-            <p class="text-lg text-ink tracking-wider">••••••••</p>
+        <div data-controller="modal">
+          <div class="flex items-center justify-between">
+            <div>
+              <label class="text-sm font-semibold text-ink/60 uppercase tracking-wide">Password</label>
+              <p class="text-lg text-ink tracking-wider">••••••••</p>
+            </div>
+            <button class="btn-icon shrink-0" title="Change password"
+                    data-action="modal#open">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </button>
           </div>
-          <button class="btn-icon shrink-0" title="Change password"
-                  data-action="change-password-modal#open">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-          </button>
+          <%= render "editor_settings/change_password_modal" %>
         </div>
       </div>
     </div>
 
     <%# Statistics Card %>
-    <div class="bg-white rounded-2xl p-4 md:p-6 mb-6 border-3 border-ink"
+    <div class="bg-white rounded-2xl p-4 md:p-6 mb-6 border-3 border-ink flex-1 min-h-0 flex flex-col"
          style="box-shadow: 6px 6px 0 var(--color-ink);">
       <%= render "editor_settings/statistics", statistics: @statistics %>
     </div>
-
-    <%= render "editor_settings/logout_modal" %>
-    <%= render "editor_settings/change_password_modal" %>
-    <%= render "editor_settings/change_email_modal" %>
   </div>
 </div>

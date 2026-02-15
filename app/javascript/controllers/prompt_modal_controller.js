@@ -6,6 +6,7 @@ export default class extends Controller {
 
   connect() {
     this.boundHandleEscape = this.handleEscape.bind(this)
+    this.initialFormHTML = document.getElementById("new_prompt_form")?.innerHTML
     Object.assign(this, FocusTrap)
     this.setupFocusTrap(this.modalTarget)
   }
@@ -29,6 +30,14 @@ export default class extends Controller {
     this.modalTarget.setAttribute("aria-hidden", "true")
     document.removeEventListener("keydown", this.boundHandleEscape)
     this.deactivateFocusTrap()
+    this.resetForm()
+  }
+
+  resetForm() {
+    const container = document.getElementById("new_prompt_form")
+    if (container && this.initialFormHTML) {
+      container.innerHTML = this.initialFormHTML
+    }
   }
 
   closeOnSuccess(event) {

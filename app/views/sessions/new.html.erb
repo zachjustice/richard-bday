@@ -1,3 +1,5 @@
+<% content_for(:skip_flash_banner, true) %>
+
 <div class="min-h-screen bg-page flex items-center justify-center p-6 max-sm:p-4 flex-col">
   <%= render "shared/login_doodles" %>
   <%= render "shared/login_branding" %>
@@ -19,9 +21,11 @@
       <% end %>
     </div>
 
+    <% if flash[:notice] %>
+      <div class="notice-message mb-4" role="status"><%= flash[:notice] %></div>
+    <% end %>
     <% if flash[:alert] %>
-      <div class="alert-message" role="alert"><%= flash[:alert] %></div>
-      <% flash.delete(:alert) %>
+      <div class="alert-message mb-4" role="alert"><%= flash[:alert] %></div>
     <% end %>
 
     <%= form_with url: session_path, class: "flex flex-col gap-6" do |form| %>

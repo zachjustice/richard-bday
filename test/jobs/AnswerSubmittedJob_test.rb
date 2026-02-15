@@ -14,7 +14,8 @@ class AnswerSubmittedJobTest < ActiveSupport::TestCase
     @story = Story.create!(title: "ASJ #{suffix}", text: "test", original_text: "test", published: true)
     @game = Game.create!(story: @story, room: @room)
     @blank = Blank.create!(story: @story, tags: "noun")
-    @prompt = Prompt.create!(description: "ASJ prompt #{suffix}", tags: "noun")
+    @editor = Editor.create!(username: "as#{suffix}", email: "as#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    @prompt = Prompt.create!(description: "ASJ prompt #{suffix}", tags: "noun", creator: @editor)
     @game_prompt = GamePrompt.create!(game: @game, prompt: @prompt, blank: @blank, order: 0)
     @room.update!(current_game: @game)
     @game.update!(current_game_prompt: @game_prompt)
@@ -36,7 +37,7 @@ class AnswerSubmittedJobTest < ActiveSupport::TestCase
 
   test "returns early when game_prompt has changed" do
     blank2 = Blank.create!(story: @story, tags: "adj")
-    prompt2 = Prompt.create!(description: "ASJ prompt2 #{SecureRandom.hex(4)}", tags: "adj")
+    prompt2 = Prompt.create!(description: "ASJ prompt2 #{SecureRandom.hex(4)}", tags: "adj", creator: @editor)
     gp2 = GamePrompt.create!(game: @game, prompt: prompt2, blank: blank2, order: 1)
     @game.update!(current_game_prompt: gp2)
 

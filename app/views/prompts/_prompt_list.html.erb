@@ -1,6 +1,6 @@
 <%# app/views/prompts/_prompt_list.html.erb %>
 <% if prompts.any? %>
-  <div class="flex flex-col gap-4 stagger-animation scroll-fade-indicators">
+  <div class="flex flex-col gap-4 stagger-animation">
     <% prompts.each do |prompt| %>
       <%= render "prompts/prompt", prompt: prompt %>
     <% end %>

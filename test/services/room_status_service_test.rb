@@ -15,7 +15,8 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     @story = Story.create!(title: "RSS #{suffix}", text: "A {0} story", original_text: "A {0} story", published: true)
     @game = Game.create!(story: @story, room: @room)
     @blank = Blank.create!(story: @story, tags: "noun")
-    @prompt = Prompt.create!(description: "RSS prompt #{suffix}", tags: "noun")
+    @editor = Editor.create!(username: "rs#{suffix}", email: "rs#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    @prompt = Prompt.create!(description: "RSS prompt #{suffix}", tags: "noun", creator: @editor)
     @game_prompt = GamePrompt.create!(game: @game, prompt: @prompt, blank: @blank, order: 0)
     @room.update!(current_game: @game)
     @game.update!(current_game_prompt: @game_prompt)
@@ -135,8 +136,9 @@ class RoomStatusServiceFinalResultsTest < ActiveSupport::TestCase
     @blank1 = Blank.create!(story: @story, tags: "noun")
     @blank2 = Blank.create!(story: @story, tags: "adj")
 
-    @prompt1 = Prompt.create!(description: "FR prompt1 #{suffix}", tags: "noun")
-    @prompt2 = Prompt.create!(description: "FR prompt2 #{suffix}", tags: "adj")
+    @editor = Editor.create!(username: "fr#{suffix}", email: "fr#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    @prompt1 = Prompt.create!(description: "FR prompt1 #{suffix}", tags: "noun", creator: @editor)
+    @prompt2 = Prompt.create!(description: "FR prompt2 #{suffix}", tags: "adj", creator: @editor)
     @gp1 = GamePrompt.create!(game: @game, prompt: @prompt1, blank: @blank1, order: 0)
     @gp2 = GamePrompt.create!(game: @game, prompt: @prompt2, blank: @blank2, order: 1)
 

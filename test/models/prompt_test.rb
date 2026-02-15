@@ -5,7 +5,7 @@ class PromptTest < ActiveSupport::TestCase
     @editor_one = editors(:one)
     @editor_two = editors(:two)
     @prompt_one = prompts(:one)   # owned by editor_one
-    @prompt_three = prompts(:three) # no creator
+    @prompt_three = prompts(:three) # owned by editor_one
   end
 
   # owned_by? tests
@@ -21,26 +21,29 @@ class PromptTest < ActiveSupport::TestCase
     assert_not @prompt_one.owned_by?(nil)
   end
 
-  test "owned_by? returns false for prompt with no creator" do
-    assert_not @prompt_three.owned_by?(@editor_one)
+  test "owned_by? returns false for nil creator_id" do
+    # Simulate a nil creator_id without going through validation
+    prompt = Prompt.new(description: "test", tags: "test", creator: @editor_one)
+    prompt.creator_id = nil
+    assert_not prompt.owned_by?(@editor_one)
   end
 
   # Validation tests
   test "prompt requires description" do
-    prompt = Prompt.new(tags: "test")
+    prompt = Prompt.new(tags: "test", creator: @editor_one)
     assert_not prompt.valid?
     assert_includes prompt.errors[:description], "can't be blank"
   end
 
   test "prompt requires tags" do
-    prompt = Prompt.new(description: "Test description")
+    prompt = Prompt.new(description: "Test description", creator: @editor_one)
     assert_not prompt.valid?
     assert_includes prompt.errors[:tags], "can't be blank"
   end
 
   test "prompt description must be unique" do
     existing = prompts(:one)
-    duplicate = Prompt.new(description: existing.description, tags: "test")
+    duplicate = Prompt.new(description: existing.description, tags: "test", creator: @editor_one)
 
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:description], "has already been taken"

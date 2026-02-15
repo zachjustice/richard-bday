@@ -2,7 +2,7 @@
 class Prompt < ApplicationRecord
   include SlurFilterable
 
-  belongs_to :creator, class_name: "Editor", optional: true
+  belongs_to :creator, class_name: "Editor"
   has_many :game_prompts, dependent: :destroy
   has_many :story_prompts, dependent: :destroy
 

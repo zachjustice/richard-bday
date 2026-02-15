@@ -21,9 +21,11 @@
       </p>
     </div>
 
+    <% if flash[:notice] %>
+      <div class="notice-message mb-4" role="status"><%= flash[:notice] %></div>
+    <% end %>
     <% if flash[:alert] %>
-      <div class="alert-message" role="alert"><%= flash[:alert] %></div>
-      <% flash.delete(:alert) %>
+      <div class="alert-message mb-4" role="alert"><%= flash[:alert] %></div>
     <% end %>
 
     <%= form_with url: "/vote", method: :post,

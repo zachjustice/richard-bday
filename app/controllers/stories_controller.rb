@@ -62,7 +62,7 @@ class StoriesController < ApplicationController
         format.turbo_stream do
           flash[:notice] = "Story updated successfully"
           render turbo_stream: [
-            turbo_stream.replace(
+            turbo_stream.update(
               "story_form",
               partial: "stories/form",
               locals: { story: @story, success: true }
@@ -75,7 +75,7 @@ class StoriesController < ApplicationController
       respond_to do |format|
         format.html { render :edit, status: :unprocessable_entity }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
+          render turbo_stream: turbo_stream.update(
             "story_form",
             partial: "stories/form",
             locals: { story: @story }
