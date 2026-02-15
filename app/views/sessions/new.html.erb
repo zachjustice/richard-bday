@@ -19,6 +19,10 @@
       <% end %>
     </div>
 
+    <% if flash[:alert] %>
+      <div class="alert-message" role="alert"><%= flash[:alert] %></div>
+    <% end %>
+
     <%= form_with url: session_path, class: "flex flex-col gap-6" do |form| %>
       <div class="flex flex-col gap-2">
         <label for="name" class="form-label">

@@ -30,7 +30,7 @@ class EditorEmailsControllerTest < ActionDispatch::IntegrationTest
 
     post editor_email_path, params: { new_email: "" }
 
-    assert_redirected_to editor_settings_path
+    assert_response :unprocessable_entity
     assert_equal "Email can't be blank.", flash[:alert]
   end
 
@@ -39,7 +39,7 @@ class EditorEmailsControllerTest < ActionDispatch::IntegrationTest
 
     post editor_email_path, params: { new_email: @editor.email }
 
-    assert_redirected_to editor_settings_path
+    assert_response :unprocessable_entity
     assert_equal "That's already your email address.", flash[:alert]
   end
 
@@ -48,7 +48,7 @@ class EditorEmailsControllerTest < ActionDispatch::IntegrationTest
 
     post editor_email_path, params: { new_email: @editor_two.email }
 
-    assert_redirected_to editor_settings_path
+    assert_response :unprocessable_entity
     assert_equal "That email is already registered.", flash[:alert]
   end
 
