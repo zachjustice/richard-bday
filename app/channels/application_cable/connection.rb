@@ -5,17 +5,16 @@ module ApplicationCable
     def connect
       set_current_user || reject_unauthorized_connection
 
-      if self.current_user.role == User::CREATOR
-        return
-      end
-
-      # Audience members connect for updates but don't affect player state
-      if self.current_user.audience?
-        self.current_user.update(is_active: true)
+      if self.current_user.creator?
         return
       end
 
       self.current_user.update(is_active: true)
+
+      # Audience members connect for updates but don't affect player state
+      if self.current_user.audience?
+        return
+      end
       room = self.current_user.room
 
       # On reconnect: if this user has a smaller id than current navigator, reclaim navigator role

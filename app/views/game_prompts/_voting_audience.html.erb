@@ -16,7 +16,7 @@
       </p>
     </div>
 
-    <%= form_with url: "/vote", method: :post,
+    <%= form_with url: votes_path, method: :post,
                   data: { audience_voting_target: "form", action: "submit->audience-voting#submit" },
                   class: "flex flex-col gap-4 flex-1" do |form| %>
       <%= form.hidden_field :game_prompt_id, value: game_prompt.id %>

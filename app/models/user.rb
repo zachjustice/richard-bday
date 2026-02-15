@@ -15,6 +15,7 @@ class User < ApplicationRecord
   ].freeze
 
   MAX_PLAYERS = AVATARS.size
+  MAX_AUDIENCE = 20
 
   CREATOR_AVATAR = "🍆"
   AUDIENCE_AVATAR = "👁️"
@@ -25,7 +26,7 @@ class User < ApplicationRecord
 
   validates :name, presence: true
   validates :room_id, presence: true
-  validates :name, uniqueness: { scope: [ :room_id ] }
+  validates :name, uniqueness: { scope: [ :room_id ] }, unless: :audience?
   validates :name, length: { maximum: 32 }
   validates_slur_free :name
   validates :avatar, presence: true
@@ -83,11 +84,16 @@ class User < ApplicationRecord
   private
 
   def room_has_capacity
-    return unless player? && room_id.present?
+    return unless room_id.present?
 
-    current_count = User.where(room_id: room_id, role: [ PLAYER, NAVIGATOR ]).count
-    if current_count >= MAX_PLAYERS
-      errors.add(:base, "Room is full (max #{MAX_PLAYERS} players)")
+    if audience?
+      if User.audience.where(room_id: room_id).count >= MAX_AUDIENCE
+        errors.add(:base, "Audience is full (max #{MAX_AUDIENCE})")
+      end
+    elsif player?
+      if User.where(room_id: room_id, role: [ PLAYER, NAVIGATOR ]).count >= MAX_PLAYERS
+        errors.add(:base, "Room is full (max #{MAX_PLAYERS} players)")
+      end
     end
   end
 

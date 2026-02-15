@@ -124,7 +124,7 @@ class CreditsService
 
     @answers.each do |answer|
       user_stats[answer.user_id][:characters] += answer.text.length
-      user_stats[answer.user_id][:points] += answer.votes.sum(&:points)
+      user_stats[answer.user_id][:points] += answer.votes.reject { |v| audience_user_ids.include?(v.user_id) }.sum(&:points)
     end
 
     return nil if user_stats.empty?
@@ -191,9 +191,9 @@ class CreditsService
         user_percentiles[answer.user_id] << percentile
       end
 
-      # Same for votes
-      prompt_votes = @votes.select { |v| v.game_prompt_id == game_prompt.id }
-                           .sort_by(&:created_at)
+      # Same for votes (players only — audience has unlimited voting time)
+      prompt_votes = player_votes.select { |v| v.game_prompt_id == game_prompt.id }
+                                 .sort_by(&:created_at)
 
       next if prompt_votes.empty?
 

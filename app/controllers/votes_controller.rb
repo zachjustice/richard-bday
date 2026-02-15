@@ -26,7 +26,7 @@ class VotesController < ApplicationController
 
     Vote.transaction do
       # Prevent duplicate audience submissions
-      if Vote.where(user_id: @current_user.id, game_prompt_id: game_prompt_id).exists?
+      if Vote.lock.where(user_id: @current_user.id, game_prompt_id: game_prompt_id).exists?
         turbo_nav_or_redirect_to audience_destination
         return
       end

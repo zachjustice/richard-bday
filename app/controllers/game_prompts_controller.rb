@@ -128,7 +128,10 @@ class GamePromptsController < ApplicationController
     id = params[:id].to_i
     current_game_prompt_id = @current_room.current_game&.current_game_prompt&.id
 
-    # Audience members may linger on a previous voting page — allow it
+    # Audience members have unlimited time to vote, so they may still be on a
+    # previous round's voting page when the game advances. We exempt them here:
+    # once they submit, the votes controller navigates them to the correct phase.
+    # Audience stars are non-critical, so missing a round is acceptable.
     return if @current_user.audience? && controller == "game_prompts" && action == "voting"
 
     case @current_room.status
