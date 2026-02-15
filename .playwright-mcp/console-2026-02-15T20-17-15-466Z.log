@@ -1,0 +1,3 @@
+[    6343ms] [ERROR] Failed to load resource: the server responded with a status of 422 (Unprocessable Content) @ http://localhost:3001/editor/login:0
+[   19795ms] [ERROR] Failed to load resource: the server responded with a status of 422 (Unprocessable Content) @ http://localhost:3001/editor/login:0
+[   75996ms] [ERROR] Failed to load resource: the server responded with a status of 422 (Unprocessable Content) @ http://localhost:3001/editor/password:0
