@@ -4,8 +4,13 @@ require "rails/test_help"
 
 module ActiveSupport
   class TestCase
-    # Run tests in parallel with specified workers
-    parallelize(workers: :number_of_processors)
+    # Windows lacks fork() so can't use process-based parallelism,
+    # and threaded parallelism causes SQLite locking issues. Run serially on Windows.
+    if ENV["CI"] || !Gem.win_platform?
+      parallelize(workers: :number_of_processors, with: :processes)
+    else
+      parallelize(workers: 1)
+    end
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
