@@ -57,7 +57,8 @@
   <%# Header with icon and title %>
   <div class="flex items-center gap-3 mb-3">
     <div class="w-12 h-12 rounded-xl <%= colors[:accent] %> flex items-center justify-center text-white border-2 border-ink"
-         style="box-shadow: 2px 2px 0px var(--color-ink);">
+         style="box-shadow: 2px 2px 0px var(--color-ink);"
+         aria-hidden="true">
       <%= raw(icon_svg) %>
     </div>
     <h3 class="text-lg font-bold text-ink leading-tight"><%= title %></h3>

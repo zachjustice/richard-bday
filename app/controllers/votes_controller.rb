@@ -1,6 +1,8 @@
 class VotesController < ApplicationController
   def create
-    if @current_room.ranked_voting?
+    if @current_user.audience?
+      create_audience_votes
+    elsif @current_room.ranked_voting?
       create_ranked_votes
     else
       create_single_vote
@@ -8,6 +10,62 @@ class VotesController < ApplicationController
   end
 
   private
+
+  MAX_AUDIENCE_STARS = 5
+
+  def create_audience_votes
+    game_prompt_id = params[:game_prompt_id]
+    stars = params[:stars] || {}
+
+    # Sum only positive counts so crafted negative values can't bypass the total cap
+    total_stars = stars.values.sum { |v| [ v.to_i, 0 ].max }
+    if total_stars > MAX_AUDIENCE_STARS || total_stars <= 0
+      turbo_nav_or_redirect_to game_prompt_voting_path(game_prompt_id)
+      return
+    end
+
+    Vote.transaction do
+      # Prevent duplicate audience submissions
+      if Vote.where(user_id: @current_user.id, game_prompt_id: game_prompt_id).exists?
+        turbo_nav_or_redirect_to audience_destination
+        return
+      end
+
+      stars.each do |answer_id, count|
+        next if count.to_i <= 0
+        count.to_i.times do
+          Vote.create!(
+            answer_id: answer_id,
+            user_id: @current_user.id,
+            game_id: @current_room.current_game_id,
+            game_prompt_id: game_prompt_id,
+            rank: nil
+          )
+        end
+      end
+    end
+
+    turbo_nav_or_redirect_to audience_destination
+  rescue ActiveRecord::RecordInvalid => e
+    flash[:alert] = e.message
+    turbo_nav_or_redirect_to game_prompt_voting_path(game_prompt_id)
+  end
+
+  def audience_destination
+    current_prompt = @current_room.current_game&.current_game_prompt
+    case @current_room.status
+    when RoomStatus::Voting
+      game_prompt_voting_path(current_prompt)
+    when RoomStatus::Results, RoomStatus::FinalResults
+      game_prompt_results_path(current_prompt)
+    when RoomStatus::Credits
+      show_room_path
+    when RoomStatus::Answering
+      game_prompt_waiting_path(current_prompt)
+    else
+      show_room_path
+    end
+  end
 
   def create_single_vote
     exists = Vote.exists?(

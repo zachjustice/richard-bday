@@ -1,0 +1,2 @@
+[  216844ms] [ERROR] WebSocket connection to 'ws://localhost:3000/cable' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/assets/turbo.min-ad2c7b86.js:27
+[  224104ms] [ERROR] WebSocket connection to 'ws://localhost:3000/cable' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/assets/turbo.min-ad2c7b86.js:27

@@ -70,12 +70,16 @@ class RoomStatusService
   end
 
   def results_specific_data(answers, votes)
-    # Unified points-based calculation that works for all voting modes
+    # Separate audience votes (rank IS NULL from audience users) from player votes
+    audience_user_ids = User.audience.where(room: @room).pluck(:id).to_set
+    player_votes = votes.reject { |v| audience_user_ids.include?(v.user_id) }
+    audience_votes = votes.select { |v| audience_user_ids.include?(v.user_id) }
+
+    # Unified points-based calculation for player votes only
     points_by_answer = Hash.new(0)
     votes_by_answer = Hash.new { |h, k| h[k] = [] }
-    answers_by_id = answers.index_by(&:id)
 
-    votes.each do |vote|
+    player_votes.each do |vote|
       points_by_answer[vote.answer_id] += vote.points
       votes_by_answer[vote.answer_id] << vote
     end
@@ -109,7 +113,7 @@ class RoomStatusService
       answers_sorted_by_points.unshift(winner)
     end
 
-    {
+    result = {
       votes_by_answer: votes_by_answer,
       points_by_answer: points_by_answer,
       winners: winners,
@@ -117,6 +121,18 @@ class RoomStatusService
       answers_sorted_by_votes: answers_sorted_by_points,
       ranked_voting: @room.ranked_voting?
     }
+
+    # Audience favorite calculation (only when audience voted)
+    if audience_votes.any?
+      audience_star_counts = Hash.new(0)
+      audience_votes.each { |v| audience_star_counts[v.answer_id] += 1 }
+      max_audience_stars = audience_star_counts.values.max
+      audience_favorite = answers.detect { |a| audience_star_counts[a.id] == max_audience_stars }
+      result[:audience_star_counts] = audience_star_counts
+      result[:audience_favorite] = audience_favorite
+    end
+
+    result
   end
 
   def final_results_data

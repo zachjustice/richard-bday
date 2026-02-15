@@ -3,6 +3,11 @@ class GamePromptsController < ApplicationController
   before_action :redirect_to_current_game_phase, except: [ :tooltip, :change_answer ]
 
   def show
+    if @current_user.audience?
+      turbo_nav_or_redirect_to game_prompt_waiting_path(params[:id])
+      return
+    end
+
     @game_prompt = GamePrompt.find_by(params.permit(:id))
     @existing_answer = Answer.find_by(
       game_prompt_id: @game_prompt.id,
@@ -55,6 +60,15 @@ class GamePromptsController < ApplicationController
   end
 
   def voting
+    @game_prompt = GamePrompt.find_by(params.permit(:id))
+    @answers = Answer.where(game_id: @current_room.current_game_id, game_prompt_id: params[:id])
+
+    if @current_user.audience?
+      # Audience sees all answers and skips player status tracking
+      @answers = @answers.to_a
+      return
+    end
+
     exists = Vote.exists?(
       user_id: @current_user.id,
       game_prompt_id: params[:id]
@@ -71,10 +85,7 @@ class GamePromptsController < ApplicationController
     end
 
     @current_user.update!(status: UserStatus::Voting)
-    @game_prompt = GamePrompt.find_by(params.permit(:id))
-    @answers = Answer.where(game_id: @current_room.current_game_id, game_prompt_id: params[:id]).reject do |ans|
-      ans.user_id == @current_user.id
-    end
+    @answers = @answers.reject { |ans| ans.user_id == @current_user.id }
   end
 
   def results
@@ -88,6 +99,8 @@ class GamePromptsController < ApplicationController
       @votes_by_answer = service_data[:votes_by_answer]
       @points_by_answer = service_data[:points_by_answer]
       @ranked_voting = service_data[:ranked_voting]
+      @audience_favorite = service_data[:audience_favorite]
+      @audience_star_counts = service_data[:audience_star_counts]
     end
   end
 
@@ -114,6 +127,10 @@ class GamePromptsController < ApplicationController
     action = params[:action]
     id = params[:id].to_i
     current_game_prompt_id = @current_room.current_game&.current_game_prompt&.id
+
+    # Audience members may linger on a previous voting page — allow it
+    return if @current_user.audience? && controller == "game_prompts" && action == "voting"
+
     case @current_room.status
     when RoomStatus::WaitingRoom
       if controller != "rooms" || id != @current_room.id || [ "show", "waiting_for_new_game" ].include?(action)
@@ -122,7 +139,9 @@ class GamePromptsController < ApplicationController
     when RoomStatus::StorySelection, RoomStatus::Credits
       turbo_nav_or_redirect_to show_room_path
     when RoomStatus::Answering
-      if controller != "game_prompts" || id != current_game_prompt_id || ![ "show", "waiting" ].include?(action)
+      if @current_user.audience?
+        turbo_nav_or_redirect_to game_prompt_waiting_path(@current_room.current_game.current_game_prompt)
+      elsif controller != "game_prompts" || id != current_game_prompt_id || ![ "show", "waiting" ].include?(action)
         turbo_nav_or_redirect_to game_prompt_path(@current_room.current_game.current_game_prompt)
       end
     when RoomStatus::Voting

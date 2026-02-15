@@ -138,6 +138,14 @@ class RoomsController < ApplicationController
       move_to_next_game_prompt(room, next_game_prompt_id)
       status_data = RoomStatusService.new(room).call
       GamePhasesService.new(room).update_room_status_view("rooms/status/answering", status_data)
+
+      # Nudge audience members who may still be on a previous voting page
+      Turbo::StreamsChannel.broadcast_update_to(
+        "rooms:#{room.id}:audience-nudge",
+        target: "audience-nudge-notice",
+        html: ApplicationController.render(partial: "shared/audience_nudge")
+      )
+
       if @current_user&.role == User::CREATOR
         redirect_to room_status_path(room)
       else

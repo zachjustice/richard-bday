@@ -5,6 +5,7 @@ class User < ApplicationRecord
   NAVIGATOR = "Navigator"
   EDITOR = "Editor"
   CREATOR = "Creator"
+  AUDIENCE = "Audience"
 
   AVATARS = %w[
     🦊 🐸 🦄 🐙 🦖 🐝 🦋 🐧 🦀 🐳
@@ -16,6 +17,7 @@ class User < ApplicationRecord
   MAX_PLAYERS = AVATARS.size
 
   CREATOR_AVATAR = "🍆"
+  AUDIENCE_AVATAR = "👁️"
 
   belongs_to :room
   has_many :sessions, dependent: :destroy
@@ -27,8 +29,8 @@ class User < ApplicationRecord
   validates :name, length: { maximum: 32 }
   validates_slur_free :name
   validates :avatar, presence: true
-  validates :avatar, inclusion: { in: AVATARS + [ CREATOR_AVATAR ] }
-  validates :avatar, uniqueness: { scope: :room_id }
+  validates :avatar, inclusion: { in: AVATARS + [ CREATOR_AVATAR, AUDIENCE_AVATAR ] }
+  validates :avatar, uniqueness: { scope: :room_id }, unless: :audience?
   validate :room_has_capacity, on: :create
 
   before_validation :assign_avatar, on: :create
@@ -37,6 +39,7 @@ class User < ApplicationRecord
   scope :players, -> { where(role: [ PLAYER, NAVIGATOR ], is_active: true) }
   # when the room is created, the dashboard front-end gets is own "user" to auth requests with a role of Creator.
   scope :creator, -> { where(role: CREATOR) }
+  scope :audience, -> { where(role: AUDIENCE) }
 
   after_commit(on: :create) { JoinRoomJob.perform_later(self) }
 
@@ -59,6 +62,10 @@ class User < ApplicationRecord
 
   def creator?
     role == CREATOR
+  end
+
+  def audience?
+    role == AUDIENCE
   end
 
   def answered?
@@ -89,6 +96,8 @@ class User < ApplicationRecord
 
     if creator?
       self.avatar = CREATOR_AVATAR
+    elsif audience?
+      self.avatar = AUDIENCE_AVATAR
     else
       available = User.available_avatars(room_id)
       self.avatar = available.sample

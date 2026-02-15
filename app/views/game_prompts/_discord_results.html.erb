@@ -22,6 +22,9 @@
                   <%= is_winner ? 'bg-accent-violet/25 border-accent-violet/60' : 'bg-ink/5 border-ink/10' %>">
         <span class="text-base font-bold text-ink leading-snug">
           <%= medal %> <%= answer.text %>
+          <% if @audience_star_counts && @audience_star_counts[answer.id]&.positive? %>
+            <%= render "shared/audience_stars", count: @audience_star_counts[answer.id] %>
+          <% end %>
         </span>
 
         <div class="flex items-center justify-between gap-2">

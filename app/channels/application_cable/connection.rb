@@ -9,6 +9,12 @@ module ApplicationCable
         return
       end
 
+      # Audience members connect for updates but don't affect player state
+      if self.current_user.audience?
+        self.current_user.update(is_active: true)
+        return
+      end
+
       self.current_user.update(is_active: true)
       room = self.current_user.room
 
@@ -40,6 +46,7 @@ module ApplicationCable
     def disconnect
       return if !self.current_user
       return if self.current_user.role == User::CREATOR
+      return if self.current_user.audience?
 
       room = self.current_user.room
 

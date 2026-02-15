@@ -7,18 +7,24 @@
       <%= render "shared/round_badge" %>
 
       <div class="text-center mb-6">
-        <p class="text-sm text-ink/60 italic m-0">Waiting for everyone to answer...</p>
+        <% if @current_user.audience? %>
+          <p class="text-sm text-ink/60 italic m-0">Waiting for players to answer...</p>
+        <% else %>
+          <p class="text-sm text-ink/60 italic m-0">Waiting for everyone to answer...</p>
+        <% end %>
       </div>
 
       <div class="mb-4">
         <%= render "shared/fun_facts" %>
       </div>
 
-      <div>
-        <%= form_with url: change_answer_path(@game_prompt.id), method: :post do %>
-          <%= submit_tag "Change Answer", class: "btn-secondary w-full" %>
-        <% end %>
-      </div>
+      <% unless @current_user.audience? %>
+        <div>
+          <%= form_with url: change_answer_path(@game_prompt.id), method: :post do %>
+            <%= submit_tag "Change Answer", class: "btn-secondary w-full" %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
 
     <% answered = User.players.where(room: @current_room, status: UserStatus::Answered).count %>
@@ -34,8 +40,13 @@
     <div class="card-primary p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-[600px] w-full animate-fade-in">
       <div class="text-center">
         <div class="text-6xl mb-6 animate-swing">⏳</div>
-        <h2 class="text-3xl md:text-2xl font-bold text-gray-900 m-0 mb-3 leading-tight">Answer submitted</h2>
-        <p class="text-base md:text-sm text-gray-500 m-0 mb-8 italic">Waiting for everyone to submit answers...</p>
+        <% if @current_user.audience? %>
+          <h2 class="text-3xl md:text-2xl font-bold text-gray-900 m-0 mb-3 leading-tight">Watching</h2>
+          <p class="text-base md:text-sm text-gray-500 m-0 mb-8 italic">Waiting for players to answer...</p>
+        <% else %>
+          <h2 class="text-3xl md:text-2xl font-bold text-gray-900 m-0 mb-3 leading-tight">Answer submitted</h2>
+          <p class="text-base md:text-sm text-gray-500 m-0 mb-8 italic">Waiting for everyone to submit answers...</p>
+        <% end %>
         <div class="progress-dots mb-6">
           <div class="progress-dot"></div>
           <div class="progress-dot"></div>
@@ -43,11 +54,13 @@
         </div>
         <%= render "shared/fun_facts" %>
 
-        <div class="mt-6">
-          <%= form_with url: change_answer_path(@game_prompt.id), method: :post do %>
-            <%= submit_tag "Change Answer", class: "btn-secondary btn-sm" %>
-          <% end %>
-        </div>
+        <% unless @current_user.audience? %>
+          <div class="mt-6">
+            <%= form_with url: change_answer_path(@game_prompt.id), method: :post do %>
+              <%= submit_tag "Change Answer", class: "btn-secondary btn-sm" %>
+            <% end %>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

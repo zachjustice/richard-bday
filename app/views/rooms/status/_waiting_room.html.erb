@@ -26,6 +26,11 @@
       <span id="waiting-room-players-count" class="badge-primary">
         <%= users&.size || 0 %> joined
       </span>
+      <%# Audience count badge (hidden when 0) %>
+      <% audience_count = User.audience.where(room: room).count %>
+      <span id="waiting-room-audience-count" class="badge-primary <%= 'hidden' if audience_count == 0 %>">
+        <%= audience_count %> watching
+      </span>
     </div>
   </div>
 

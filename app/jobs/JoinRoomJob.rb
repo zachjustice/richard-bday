@@ -2,6 +2,17 @@ class JoinRoomJob < ApplicationJob
   def perform(user)
     room = user.room
 
+    if user.audience?
+      audience_count = User.audience.where(room: room).count
+      Turbo::StreamsChannel.broadcast_action_to(
+        "rooms:#{room.id}:users",
+        action: :update,
+        target: "waiting-room-audience-count",
+        html: "#{audience_count} watching"
+      )
+      return
+    end
+
     # Broadcast Turbo Stream to append user to the waiting room list
     Turbo::StreamsChannel.broadcast_append_to(
       "rooms:#{room.id}:users",
