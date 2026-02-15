@@ -12,6 +12,7 @@
 
       <% if flash[:alert] %>
         <div class="alert-message" role="alert"><%= flash[:alert] %></div>
+        <% flash.delete(:alert) %>
       <% end %>
 
       <%= form_with url: "/vote", method: :post, class: "flex flex-1 flex-col gap-6 min-h-0" do |form| %>

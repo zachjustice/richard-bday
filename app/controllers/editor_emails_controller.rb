@@ -5,7 +5,7 @@ class EditorEmailsController < ApplicationController
 
   rate_limit to: 5, within: 10.minutes, only: [ :create ],
     with: -> {
-      flash.now[:alert] = "Too many requests. Please try again later."
+      @email_error = "Too many requests. Please try again later."
       render "editor_settings/show", status: :too_many_requests
     }
 
@@ -13,19 +13,19 @@ class EditorEmailsController < ApplicationController
     new_email = params[:new_email]&.downcase&.strip
 
     if new_email.blank?
-      flash.now[:alert] = "Email can't be blank."
+      @email_error = "Email can't be blank."
       render "editor_settings/show", status: :unprocessable_entity
       return
     end
 
     if new_email == current_editor.email
-      flash.now[:alert] = "That's already your email address."
+      @email_error = "That's already your email address."
       render "editor_settings/show", status: :unprocessable_entity
       return
     end
 
     if Editor.where.not(id: current_editor.id).exists?(email: new_email)
-      flash.now[:alert] = "That email is already registered."
+      @email_error = "That email is already registered."
       render "editor_settings/show", status: :unprocessable_entity
       return
     end
@@ -43,7 +43,7 @@ class EditorEmailsController < ApplicationController
 
       redirect_to editor_settings_path, notice: "A confirmation link has been sent to #{new_email}."
     else
-      flash.now[:alert] = email_change.errors.full_messages.join(", ")
+      @email_error = email_change.errors.full_messages.join(", ")
       render "editor_settings/show", status: :unprocessable_entity
     end
   end

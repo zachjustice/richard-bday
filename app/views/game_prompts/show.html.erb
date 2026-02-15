@@ -13,6 +13,7 @@
 
     <% if flash[:alert] %>
       <div class="alert-message" role="alert"><%= flash[:alert] %></div>
+      <% flash.delete(:alert) %>
     <% end %>
 
     <% if discord_authenticated? %>
