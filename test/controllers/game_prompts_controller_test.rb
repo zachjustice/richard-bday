@@ -319,3 +319,47 @@ class GamePromptsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to controller: "game_prompts", action: "voting", id: @game_prompt.id
   end
 end
+
+class AudienceGamePromptsControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @room = rooms(:one)
+    @game = games(:one)
+    @game_prompt = game_prompts(:one)
+
+    @room.update!(current_game_id: @game.id)
+    @game.update!(current_game_prompt_id: @game_prompt.id, next_game_phase_time: 30.seconds.from_now)
+
+    # Create answers for the voting page
+    Answer.where(game_prompt_id: @game_prompt.id, game_id: @game.id).delete_all
+    player = users(:one)
+    player.update!(room_id: @room.id)
+    Answer.create!(user: player, game: @game, game_prompt: @game_prompt, text: "Player answer")
+
+    @audience_user = User.create!(name: "AudienceGP", room: @room, role: User::AUDIENCE)
+    resume_session_as(@room.code, @audience_user.name)
+  end
+
+  test "audience user redirected to waiting during answering phase" do
+    @room.update!(status: RoomStatus::Answering)
+
+    get "/game_prompts/#{@game_prompt.id}"
+
+    assert_response :redirect
+  end
+
+  test "audience user can access voting page" do
+    @room.update!(status: RoomStatus::Voting)
+
+    get "/game_prompts/#{@game_prompt.id}/voting"
+
+    assert_response :success
+  end
+
+  test "audience user can access results page" do
+    @room.update!(status: RoomStatus::Results)
+
+    get "/game_prompts/#{@game_prompt.id}/results"
+
+    assert_response :success
+  end
+end

@@ -104,4 +104,28 @@ class VoteSubmittedJobTest < ActiveSupport::TestCase
     @user1.reload
     assert_equal UserStatus::Voted, @user1.status
   end
+
+  test "audience vote does not update user status" do
+    audience_user = User.create!(name: "AUD#{SecureRandom.hex(4)}", room: @room, role: User::AUDIENCE, status: UserStatus::Voting)
+    vote = Vote.create!(user: audience_user, answer: @answer1, game: @game, game_prompt: @game_prompt, vote_type: "audience")
+
+    VoteSubmittedJob.perform_now(vote)
+
+    audience_user.reload
+    assert_equal UserStatus::Voting, audience_user.status
+  end
+
+  test "audience vote does not trigger move_to_results even when all players voted" do
+    @user1.update!(status: UserStatus::Voted)
+    @user2.update!(status: UserStatus::Voted)
+
+    audience_user = User.create!(name: "AUD#{SecureRandom.hex(4)}", room: @room, role: User::AUDIENCE)
+    vote = Vote.create!(user: audience_user, answer: @answer1, game: @game, game_prompt: @game_prompt, vote_type: "audience")
+
+    move_called = false
+    GamePhasesService.stub_any_instance(:move_to_results, proc { move_called = true }) do
+      VoteSubmittedJob.perform_now(vote)
+    end
+    assert_not move_called
+  end
 end

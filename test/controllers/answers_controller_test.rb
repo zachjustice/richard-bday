@@ -127,4 +127,19 @@ class AnswersControllerTest < ActionDispatch::IntegrationTest
       }
     end
   end
+
+  # Audience guard
+
+  test "audience user cannot submit answers" do
+    audience_user = User.create!(name: "AudienceAnswerer", room: @room, role: User::AUDIENCE)
+    resume_session_as(@room.code, audience_user.name)
+
+    assert_no_difference("Answer.count") do
+      post "/answer", params: {
+        text: "Audience answer",
+        prompt_id: @game_prompt.id
+      }
+    end
+    assert_response :redirect
+  end
 end

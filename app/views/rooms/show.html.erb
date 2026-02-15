@@ -1,5 +1,6 @@
 <% if discord_authenticated? %>
   <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+  <%= turbo_stream_from "rooms:#{@current_room.id}:users" %>
 
   <div class="min-h-screen relative flex flex-col items-center p-6 max-sm:p-4 bg-page overflow-hidden">
     <%# Header %>
@@ -7,20 +8,32 @@
       <h1 class="text-4xl max-sm:text-3xl font-bold text-shadow-heading">Blanksies</h1>
     </div>
 
-    <%# Avatar picker card %>
-    <div class="card-primary animate-fade-in p-8 max-sm:p-6 max-w-xl w-full mb-8 relative z-content">
-      <div class="text-center mb-4">
-        <h2 class="text-2xl max-sm:text-xl font-bold text-ink">Welcome, <%= @current_user.name %>!</h2>
+    <% if @current_user.audience? %>
+      <%# Audience: simplified waiting view %>
+      <div class="card-primary animate-fade-in p-8 max-sm:p-6 max-w-xl w-full mb-8 relative z-content">
+        <div class="text-center">
+          <div class="text-5xl mb-4" aria-hidden="true"><%= User::AUDIENCE_AVATAR %></div>
+          <h2 class="text-2xl max-sm:text-xl font-bold text-ink mb-2">Welcome, <%= @current_user.name %>!</h2>
+          <p class="text-ink/60 text-sm">You're watching as an audience member. You'll vote when it's time.</p>
+        </div>
       </div>
-      <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
-      <%= render "avatars/picker", user: @current_user, room: @current_room %>
-    </div>
+    <% else %>
+      <%# Avatar picker card %>
+      <div class="card-primary animate-fade-in p-8 max-sm:p-6 max-w-xl w-full mb-8 relative z-content">
+        <div class="text-center mb-4">
+          <h2 class="text-2xl max-sm:text-xl font-bold text-ink">Welcome, <%= @current_user.name %>!</h2>
+        </div>
+        <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
+        <%= render "avatars/picker", user: @current_user, room: @current_room %>
+      </div>
+    <% end %>
 
     <%# Player count %>
     <div class="flex items-center justify-center gap-3 mb-4 relative z-content">
       <span id="waiting-room-players-count" class="badge-primary">
         <%= @users.size %> joined
       </span>
+      <%= render "rooms/partials/audience_count_badge", audience_count: @current_room.active_audience_count %>
     </div>
 
     <% if @current_user.navigator? %>
@@ -33,6 +46,7 @@
   </div>
 <% else %>
   <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+  <%= turbo_stream_from "rooms:#{@current_room.id}:users" %>
   <%= render "shared/leave_game_button" %>
   <div class="min-h-screen flex items-center justify-center p-6 max-sm:p-4 max-[480px]:items-start max-[480px]:pt-16 bg-page">
     <div class="card-primary animate-fade-in p-12 max-sm:p-8 max-w-xl w-full">
@@ -40,12 +54,23 @@
         <h1 class="text-3xl max-sm:text-2xl font-bold text-ink mb-3 leading-tight">Welcome, <%= @current_user.name %>!</h1>
       </div>
 
-      <div class="card-secondary flex flex-col items-center gap-6 py-8 px-6 max-sm:py-6 max-sm:px-4 bg-accent-orange/10 mb-6">
-        <p class="text-lg max-sm:text-base font-medium text-ink text-center m-0">Waiting for other players to join...</p>
-      </div>
+      <% if @current_user.audience? %>
+        <div class="card-secondary flex flex-col items-center gap-6 py-8 px-6 max-sm:py-6 max-sm:px-4 bg-accent-orange/10 mb-6">
+          <div class="text-4xl" aria-hidden="true"><%= User::AUDIENCE_AVATAR %></div>
+          <p class="text-lg max-sm:text-base font-medium text-ink text-center m-0">You're watching as an audience member. You'll vote when it's time.</p>
+        </div>
+      <% else %>
+        <div class="card-secondary flex flex-col items-center gap-6 py-8 px-6 max-sm:py-6 max-sm:px-4 bg-accent-orange/10 mb-6">
+          <p class="text-lg max-sm:text-base font-medium text-ink text-center m-0">Waiting for other players to join...</p>
+        </div>
 
-      <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
-      <%= render "avatars/picker", user: @current_user, room: @current_room %>
+        <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
+        <%= render "avatars/picker", user: @current_user, room: @current_room %>
+      <% end %>
+
+      <div class="mt-4">
+        <%= render "rooms/partials/audience_count_badge", audience_count: @current_room.active_audience_count %>
+      </div>
     </div>
   </div>
 <% end %>

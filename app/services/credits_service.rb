@@ -35,7 +35,7 @@ class CreditsService
   end
 
   def call
-    {
+    result = {
       podium: calculate_podium,
       most_swear_words: most_swear_words,
       most_characters: most_characters_written,
@@ -43,15 +43,19 @@ class CreditsService
       most_spelling_mistakes: most_spelling_mistakes,
       slowest_player: slowest_player
     }
+
+    fav = audience_favorite
+    result[:audience_favorite] = fav if fav
+    result
   end
 
   private
 
   def calculate_podium
-    # Sum points from votes received on each user's answers
+    # Sum points from player votes only (exclude audience votes)
     user_points = Hash.new(0)
 
-    @votes.each do |vote|
+    player_votes.each do |vote|
       answer_author_id = vote.answer.user_id
       user_points[answer_author_id] += vote.points
     end
@@ -62,6 +66,25 @@ class CreditsService
     top_users.map do |user_id, points|
       { user: @users_by_id[user_id], points: points }
     end
+  end
+
+  def audience_favorite
+    audience_votes = @votes.select { |v| v.audience? }
+    return nil if audience_votes.empty?
+
+    # Count total stars per answer author across the whole game
+    stars_by_user = Hash.new(0)
+    audience_votes.each do |vote|
+      author_id = vote.answer.user_id
+      stars_by_user[author_id] += 1
+    end
+
+    winner_id, count = stars_by_user.max_by { |_, c| c }
+    { user: @users_by_id[winner_id], count: count }
+  end
+
+  def player_votes
+    @player_votes ||= @votes.select(&:player?)
   end
 
   def most_swear_words
@@ -94,10 +117,11 @@ class CreditsService
   def best_efficiency
     # Points per character - who got the most points with the least writing
     user_stats = Hash.new { |h, k| h[k] = { points: 0, characters: 0 } }
+    votes_by_answer = player_votes.group_by(&:answer_id)
 
     @answers.each do |answer|
       user_stats[answer.user_id][:characters] += answer.text.length
-      user_stats[answer.user_id][:points] += answer.votes.sum(&:points)
+      user_stats[answer.user_id][:points] += (votes_by_answer[answer.id] || []).sum(&:points)
     end
 
     return nil if user_stats.empty?
@@ -164,9 +188,9 @@ class CreditsService
         user_percentiles[answer.user_id] << percentile
       end
 
-      # Same for votes
-      prompt_votes = @votes.select { |v| v.game_prompt_id == game_prompt.id }
-                           .sort_by(&:created_at)
+      # Same for votes (players only — audience has unlimited voting time)
+      prompt_votes = player_votes.select { |v| v.game_prompt_id == game_prompt.id }
+                                 .sort_by(&:created_at)
 
       next if prompt_votes.empty?
 

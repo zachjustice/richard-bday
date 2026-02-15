@@ -1,0 +1,14 @@
+<% count = local_assigns[:count].to_i %>
+<% if count > 0 %>
+  <% display_count = [count, 5].min %>
+  <span class="inline-flex items-center" role="img" aria-label="<%= count %> audience <%= count == 1 ? 'star' : 'stars' %>">
+    <% if count > 5 %>
+      <span class="text-sm font-bold text-accent-yellow mr-0.5"><%= count %></span>
+    <% end %>
+    <% display_count.times do |i| %>
+      <svg class="<%= 'w-5 h-5' %><%= ' -ml-2' if i > 0 %> drop-shadow-sm" viewBox="0 0 32 32" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M16 4l3 9h9l-7 5 3 9-8-6-8 6 3-9-7-5h9z" class="text-accent-yellow"/>
+      </svg>
+    <% end %>
+  </span>
+<% end %>

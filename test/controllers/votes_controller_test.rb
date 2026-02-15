@@ -183,3 +183,111 @@ class VotesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 end
+
+class AudienceVotesControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @room = rooms(:one)
+    @game = games(:one)
+    @game_prompt = game_prompts(:one)
+
+    @room.update!(current_game_id: @game.id, status: RoomStatus::Voting)
+    @game.update!(current_game_prompt_id: @game_prompt.id, next_game_phase_time: 30.seconds.from_now)
+
+    # Create two answers from different players for voting
+    @player1 = users(:one)
+    @player1.update!(room_id: @room.id)
+    @player2 = users(:two)
+    @player2.update!(room_id: @room.id)
+
+    Answer.where(game_prompt_id: @game_prompt.id, game_id: @game.id).delete_all
+    @answer1 = Answer.create!(user: @player1, game: @game, game_prompt: @game_prompt, text: "Answer A")
+    @answer2 = Answer.create!(user: @player2, game: @game, game_prompt: @game_prompt, text: "Answer B")
+
+    # Create audience user and authenticate
+    @audience_user = User.create!(name: "AudienceVoter", room: @room, role: User::AUDIENCE)
+    resume_session_as(@room.code, @audience_user.name)
+  end
+
+  test "audience create submits stars and redirects" do
+    assert_difference("Vote.count", 5) do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        stars: { @answer1.id.to_s => "3", @answer2.id.to_s => "2" }
+      }
+    end
+    assert_response :redirect
+  end
+
+  test "audience star values are clamped to max" do
+    post "/vote", params: {
+      game_prompt_id: @game_prompt.id,
+      stars: { @answer1.id.to_s => "999" }
+    }
+
+    votes = Vote.where(user: @audience_user, game_prompt: @game_prompt)
+    assert votes.count <= Vote::MAX_AUDIENCE_STARS
+  end
+
+  test "audience votes rejected when total stars exceed max" do
+    assert_no_difference("Vote.count") do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        stars: { @answer1.id.to_s => Vote::MAX_AUDIENCE_STARS.to_s, @answer2.id.to_s => "1" }
+      }
+    end
+  end
+
+  test "audience votes rejected when total stars is zero" do
+    assert_no_difference("Vote.count") do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        stars: { @answer1.id.to_s => "0", @answer2.id.to_s => "0" }
+      }
+    end
+  end
+
+  test "audience duplicate submission prevented" do
+    Vote.create!(answer: @answer1, user: @audience_user, game: @game, game_prompt: @game_prompt, vote_type: "audience")
+
+    assert_no_difference("Vote.count") do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        stars: { @answer1.id.to_s => "3" }
+      }
+    end
+  end
+
+  test "audience votes rejected for invalid answer_id" do
+    assert_no_difference("Vote.count") do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        stars: { "999999" => "3" }
+      }
+    end
+  end
+
+  test "audience votes rejected with non-hash stars param" do
+    assert_no_difference("Vote.count") do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        stars: "not_a_hash"
+      }
+    end
+    assert_response :redirect
+  end
+
+  test "audience votes rejected when game_prompt not in current game" do
+    other_game_prompt = game_prompts(:two)
+    # Ensure the other game_prompt belongs to a different game
+    other_game = games(:two)
+    other_game_prompt.update!(game_id: other_game.id)
+
+    assert_no_difference("Vote.count") do
+      post "/vote", params: {
+        game_prompt_id: other_game_prompt.id,
+        stars: { @answer1.id.to_s => "3" }
+      }
+    end
+    assert_response :redirect
+  end
+end

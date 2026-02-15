@@ -26,6 +26,8 @@
       <span id="waiting-room-players-count" class="badge-primary">
         <%= users&.size || 0 %> joined
       </span>
+      <%# Audience count badge (hidden when 0) %>
+      <%= render "rooms/partials/audience_count_badge", audience_count: room.active_audience_count %>
     </div>
   </div>
 

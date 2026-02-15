@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_16_015142) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_16_025910) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -215,9 +215,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_015142) do
     t.string "avatar", null: false
     t.string "discord_id"
     t.string "discord_username"
-    t.index [ "room_id", "avatar" ], name: "index_users_on_room_id_and_avatar", unique: true
+    t.index [ "room_id", "avatar" ], name: "index_users_on_room_id_and_avatar", unique: true, where: "role != 'Audience'"
     t.index [ "room_id", "discord_id" ], name: "index_users_on_room_id_and_discord_id", unique: true, where: "discord_id IS NOT NULL"
-    t.index [ "room_id", "name" ], name: "index_users_on_room_id_and_name", unique: true
+    t.index [ "room_id", "name" ], name: "index_users_on_room_id_and_name", unique: true, where: "role != 'Audience'"
     t.index [ "room_id" ], name: "index_users_on_room_id"
   end
 
@@ -229,10 +229,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_015142) do
     t.integer "game_id", null: false
     t.integer "game_prompt_id", null: false
     t.integer "rank"
+    t.string "vote_type", default: "player", null: false
     t.index [ "answer_id" ], name: "index_votes_on_answer_id"
     t.index [ "game_id" ], name: "index_votes_on_game_id"
     t.index [ "game_prompt_id", "rank" ], name: "index_votes_on_game_prompt_id_and_rank"
-    t.index [ "game_prompt_id", "user_id", "answer_id" ], name: "idx_votes_prompt_user_answer_unique", unique: true
+    t.index [ "game_prompt_id", "user_id", "answer_id" ], name: "idx_votes_prompt_user_answer_unique", unique: true, where: "vote_type = 'player'"
     t.index [ "game_prompt_id", "user_id", "rank" ], name: "idx_votes_prompt_user_rank_unique", unique: true, where: "rank IS NOT NULL"
     t.index [ "game_prompt_id" ], name: "index_votes_on_game_prompt_id"
     t.index [ "user_id" ], name: "index_votes_on_user_id"

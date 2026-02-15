@@ -1,5 +1,10 @@
 class AnswersController < ApplicationController
   def create
+    if @current_user.audience?
+      turbo_nav_or_redirect_to game_prompt_waiting_path(params[:prompt_id])
+      return
+    end
+
     answer = Answer.find_or_initialize_by(
       game_prompt_id: params[:prompt_id],
       user_id: @current_user.id,

@@ -49,6 +49,44 @@ class ApplicationCable::ConnectionTest < ActionCable::Connection::TestCase
     end
   end
 
+  # Audience connection tests
+
+  test "audience user connect sets is_active to true" do
+    audience_user = User.create!(name: "AudienceConn", room: @room, role: User::AUDIENCE, is_active: false)
+    audience_session = Session.create!(user: audience_user, user_agent: "test", ip_address: "127.0.0.1")
+
+    cookies.signed[:player_session_id] = audience_session.id
+    connect
+
+    audience_user.reload
+    assert audience_user.is_active
+  end
+
+  test "audience user disconnect sets is_active to false" do
+    audience_user = User.create!(name: "AudienceDisc", room: @room, role: User::AUDIENCE, is_active: true)
+    audience_session = Session.create!(user: audience_user, user_agent: "test", ip_address: "127.0.0.1")
+
+    cookies.signed[:player_session_id] = audience_session.id
+    connect
+    disconnect
+
+    audience_user.reload
+    refute audience_user.is_active
+  end
+
+  test "audience user connect does not broadcast player list append" do
+    audience_user = User.create!(name: "AudienceNoBc", room: @room, role: User::AUDIENCE, is_active: false)
+    audience_session = Session.create!(user: audience_user, user_agent: "test", ip_address: "127.0.0.1")
+
+    appended = false
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_append_to) { |*| appended = true }
+
+    cookies.signed[:player_session_id] = audience_session.id
+    connect
+
+    refute appended, "broadcast_append_to should not be called for audience users"
+  end
+
   private
 
   def with_memory_cache

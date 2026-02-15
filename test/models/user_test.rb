@@ -106,4 +106,62 @@ class UserTest < ActiveSupport::TestCase
     user = User.new(name: "GoodName", room: @room, role: User::PLAYER)
     assert user.valid?, "User with normal name should be valid: #{user.errors.full_messages}"
   end
+
+  # --- Audience tests ---
+
+  test "audience scope returns only audience users" do
+    room = Room.create!(code: "audscope", status: "WaitingRoom")
+    player = User.create!(name: "Player1", room: room, role: User::PLAYER)
+    audience_user = User.create!(name: "Audience1", room: room, role: User::AUDIENCE)
+
+    audience_users = User.audience.where(room: room)
+    assert_includes audience_users, audience_user
+    assert_not_includes audience_users, player
+  end
+
+  test "audience? returns true for audience role" do
+    room = Room.create!(code: "audpred", status: "WaitingRoom")
+    user = User.create!(name: "AudUser", room: room, role: User::AUDIENCE)
+    assert user.audience?
+  end
+
+  test "audience? returns false for player role" do
+    room = Room.create!(code: "audpred2", status: "WaitingRoom")
+    user = User.create!(name: "PlayerUser", room: room, role: User::PLAYER)
+    assert_not user.audience?
+  end
+
+  test "audience users get audience avatar assigned" do
+    room = Room.create!(code: "audavt", status: "WaitingRoom")
+    user = User.create!(name: "AudAvatar", room: room, role: User::AUDIENCE)
+    assert_equal User::AUDIENCE_AVATAR, user.avatar
+  end
+
+  test "audience users bypass name uniqueness validation" do
+    room = Room.create!(code: "audname", status: "WaitingRoom")
+    user1 = User.create!(name: "SameName", room: room, role: User::AUDIENCE)
+    user2 = User.new(name: "SameName", room: room, role: User::AUDIENCE)
+    assert user2.valid?, "Audience users should allow duplicate names: #{user2.errors.full_messages}"
+  end
+
+  test "audience users bypass avatar uniqueness validation" do
+    room = Room.create!(code: "audavtu", status: "WaitingRoom")
+    user1 = User.create!(name: "Aud1", room: room, role: User::AUDIENCE)
+    user2 = User.new(name: "Aud2", room: room, role: User::AUDIENCE)
+    assert user2.valid?, "Audience users should allow duplicate avatars: #{user2.errors.full_messages}"
+    assert_equal User::AUDIENCE_AVATAR, user1.avatar
+    assert_equal User::AUDIENCE_AVATAR, user2.avatar
+  end
+
+  test "audience capacity is enforced" do
+    room = Room.create!(code: "audcap", status: "WaitingRoom")
+
+    User::MAX_AUDIENCE.times do |i|
+      User.create!(name: "Aud#{i}", room: room, role: User::AUDIENCE)
+    end
+
+    overflow = User.new(name: "AudOverflow", room: room, role: User::AUDIENCE)
+    assert_not overflow.valid?
+    assert_includes overflow.errors[:base], "Audience is full (max #{User::MAX_AUDIENCE})"
+  end
 end

@@ -131,4 +131,24 @@ class RoomTest < ActiveSupport::TestCase
     assert_not room.valid?
     assert room.errors[:code].any?
   end
+
+  # --- Audience tests ---
+
+  test "active_audience_count returns count of active audience users" do
+    room = Room.create!(code: "audcnt", status: "WaitingRoom")
+    User.create!(name: "ActiveAud1", room: room, role: User::AUDIENCE, is_active: true)
+    User.create!(name: "ActiveAud2", room: room, role: User::AUDIENCE, is_active: true)
+    User.create!(name: "InactiveAud", room: room, role: User::AUDIENCE, is_active: false)
+
+    assert_equal 2, room.active_audience_count
+  end
+
+  test "active_audience_count excludes players and inactive audience" do
+    room = Room.create!(code: "audex", status: "WaitingRoom")
+    User.create!(name: "Player1", room: room, role: User::PLAYER, is_active: true)
+    User.create!(name: "ActiveAud", room: room, role: User::AUDIENCE, is_active: true)
+    User.create!(name: "InactiveAud", room: room, role: User::AUDIENCE, is_active: false)
+
+    assert_equal 1, room.active_audience_count
+  end
 end

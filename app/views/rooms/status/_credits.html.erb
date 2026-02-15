@@ -65,6 +65,17 @@
           stat_value: slowest_player.present? ? "#{slowest_player[:avg_percentile]}%" : nil,
           color: "indigo",
           delay_index: 4 %>
+
+      <% if local_assigns[:audience_favorite] %>
+        <%= render "rooms/status/credits/superlative_card",
+            title: "Audience Favorite",
+            icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+            winner: audience_favorite,
+            stat_label: "stars received",
+            stat_value: audience_favorite&.dig(:count),
+            color: "orange",
+            delay_index: 5 %>
+      <% end %>
     </div>
 
     <%# Player List Section %>

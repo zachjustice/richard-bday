@@ -2,6 +2,11 @@ class JoinRoomJob < ApplicationJob
   def perform(user)
     room = user.room
 
+    if user.audience?
+      room.broadcast_audience_count
+      return
+    end
+
     # Broadcast Turbo Stream to append user to the waiting room list
     Turbo::StreamsChannel.broadcast_append_to(
       "rooms:#{room.id}:users",

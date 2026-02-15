@@ -185,4 +185,63 @@ class CreditsServiceTest < ActiveSupport::TestCase
     result = CreditsService.new(@game).call
     assert_nil result[:slowest_player]
   end
+
+  # --- Audience favorite ---
+
+  test "audience_favorite returns player with most audience stars across game" do
+    audience_user = User.create!(name: "AUD#{SecureRandom.hex(4)}", room: @room, role: User::AUDIENCE)
+    a1 = Answer.create!(game_prompt: @gp1, game: @game, user: @user_a, text: "x")
+    a2 = Answer.create!(game_prompt: @gp1, game: @game, user: @user_b, text: "y")
+    a3 = Answer.create!(game_prompt: @gp2, game: @game, user: @user_a, text: "x2")
+
+    # 2 audience stars for user_a (via a1 and a3), 1 for user_b (via a2)
+    Vote.create!(user: audience_user, answer: a1, game: @game, game_prompt: @gp1, vote_type: "audience")
+    Vote.create!(user: audience_user, answer: a3, game: @game, game_prompt: @gp2, vote_type: "audience")
+    Vote.create!(user: audience_user, answer: a2, game: @game, game_prompt: @gp1, vote_type: "audience")
+
+    result = CreditsService.new(@game).call
+    assert_equal @user_a, result[:audience_favorite][:user]
+    assert_equal 2, result[:audience_favorite][:count]
+  end
+
+  test "audience_favorite returns nil when no audience votes" do
+    Answer.create!(game_prompt: @gp1, game: @game, user: @user_a, text: "x")
+
+    result = CreditsService.new(@game).call
+    assert_nil result[:audience_favorite]
+  end
+
+  test "podium excludes audience votes from point calculations" do
+    audience_user = User.create!(name: "AUD#{SecureRandom.hex(4)}", room: @room, role: User::AUDIENCE)
+    a1 = Answer.create!(game_prompt: @gp1, game: @game, user: @user_a, text: "x")
+    a2 = Answer.create!(game_prompt: @gp1, game: @game, user: @user_b, text: "y")
+
+    # 1 player vote for user_b's answer
+    Vote.create!(user: @user_a, answer: a2, game: @game, game_prompt: @gp1, vote_type: "player")
+    # 3 audience votes for user_a's answer (should not count)
+    Vote.create!(user: audience_user, answer: a1, game: @game, game_prompt: @gp1, vote_type: "audience")
+    Vote.create!(user: audience_user, answer: a1, game: @game, game_prompt: @gp1, vote_type: "audience")
+    Vote.create!(user: audience_user, answer: a1, game: @game, game_prompt: @gp1, vote_type: "audience")
+
+    result = CreditsService.new(@game).call
+    podium = result[:podium]
+
+    assert_equal 1, podium.length
+    assert_equal @user_b, podium[0][:user]
+  end
+
+  test "slowest_player excludes audience votes from percentile calculation" do
+    audience_user = User.create!(name: "AUD#{SecureRandom.hex(4)}", room: @room, role: User::AUDIENCE)
+    # user_a submits first, user_b second
+    a1 = Answer.create!(game_prompt: @gp1, game: @game, user: @user_a, text: "fast", created_at: 2.minutes.ago)
+    Answer.create!(game_prompt: @gp1, game: @game, user: @user_b, text: "slow", created_at: 1.minute.ago)
+
+    # Audience vote submitted much later - should not affect slowest_player
+    Vote.create!(user: audience_user, answer: a1, game: @game, game_prompt: @gp1, vote_type: "audience", created_at: Time.current)
+
+    result = CreditsService.new(@game).call
+    # user_b should still be slowest (100th percentile)
+    assert_equal @user_b, result[:slowest_player][:user]
+    assert_equal 100, result[:slowest_player][:avg_percentile]
+  end
 end

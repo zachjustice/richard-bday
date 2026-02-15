@@ -66,4 +66,67 @@ class VoteTest < ActiveSupport::TestCase
     vote_pos = Vote.new(**base, rank: 1)
     assert vote_pos.valid?
   end
+
+  # --- Audience vote tests ---
+
+  test "by_players scope returns only player votes" do
+    suffix = SecureRandom.hex(4)
+    audience_user = User.create!(name: "AU#{suffix}", room: @room, role: User::AUDIENCE)
+
+    player_vote = Vote.create!(user: @user1, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "player")
+    audience_vote = Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
+
+    player_votes = Vote.by_players
+    assert_includes player_votes, player_vote
+    assert_not_includes player_votes, audience_vote
+  end
+
+  test "by_audience scope returns only audience votes" do
+    suffix = SecureRandom.hex(4)
+    audience_user = User.create!(name: "AU#{suffix}", room: @room, role: User::AUDIENCE)
+
+    player_vote = Vote.create!(user: @user1, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "player")
+    audience_vote = Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
+
+    audience_votes = Vote.by_audience
+    assert_includes audience_votes, audience_vote
+    assert_not_includes audience_votes, player_vote
+  end
+
+  test "audience? returns true for audience vote_type" do
+    suffix = SecureRandom.hex(4)
+    audience_user = User.create!(name: "AU#{suffix}", room: @room, role: User::AUDIENCE)
+    vote = Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
+    assert vote.audience?
+  end
+
+  test "audience? returns false for player vote_type" do
+    vote = Vote.create!(user: @user1, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "player")
+    assert_not vote.audience?
+  end
+
+  test "player? returns true for player vote_type" do
+    vote = Vote.create!(user: @user1, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "player")
+    assert vote.player?
+  end
+
+  test "player? returns false for audience vote_type" do
+    suffix = SecureRandom.hex(4)
+    audience_user = User.create!(name: "AU#{suffix}", room: @room, role: User::AUDIENCE)
+    vote = Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
+    assert_not vote.player?
+  end
+
+  test "points returns 0 for audience votes" do
+    suffix = SecureRandom.hex(4)
+    audience_user = User.create!(name: "AU#{suffix}", room: @room, role: User::AUDIENCE)
+    vote = Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
+    assert_equal 0, vote.points
+  end
+
+  test "vote_type validation rejects invalid values" do
+    vote = Vote.new(user: @user1, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "invalid")
+    assert_not vote.valid?
+    assert vote.errors[:vote_type].any?
+  end
 end

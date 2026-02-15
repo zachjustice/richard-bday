@@ -1,0 +1,67 @@
+<%= turbo_stream_from "rooms:#{@current_room.id}:audience-nudge" %>
+<div data-controller="audience-voting"
+     data-audience-voting-max-stars-value="<%= Vote::MAX_AUDIENCE_STARS %>"
+     class="<%= discord_authenticated? ? 'flex items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page' %>">
+  <div class="card-primary animate-slide-up <%= discord_authenticated? ? 'p-6 m-4 relative z-content' : 'p-10 m-10' %> max-sm:p-4 max-sm:mx-2 max-sm:my-4 max-w-2xl w-full flex flex-col">
+    <div id="audience-nudge-notice" role="status" aria-live="polite"></div>
+    <%= render "shared/round_badge" %>
+
+    <div class="text-center mb-6">
+      <h2 class="text-2xl max-sm:text-xl font-bold text-gray-900 leading-snug">
+        <%= game_prompt.prompt.description %>
+      </h2>
+      <p class="text-ink/60 mt-2 text-sm">
+        Give your stars to your favorites — they pick the audience favorite, not the winner!
+        <span data-audience-voting-target="remaining" class="inline-block font-bold text-accent-yellow ml-1" aria-live="polite" aria-atomic="true"><%= Vote::MAX_AUDIENCE_STARS %> stars left</span>
+      </p>
+    </div>
+
+    <%= form_with url: votes_path, method: :post,
+                  data: { audience_voting_target: "form", action: "submit->audience-voting#submit" },
+                  class: "flex flex-col gap-4 flex-1" do |form| %>
+      <%= form.hidden_field :game_prompt_id, value: game_prompt.id %>
+
+      <fieldset>
+        <legend class="sr-only">Vote with your stars</legend>
+        <div class="flex flex-col gap-3 overflow-y-auto scroll-fade-indicators p-1" style="max-height: 400px;">
+          <% answers.each do |answer| %>
+            <div class="flex items-center gap-3 rounded-xl border-2 border-ink/10 p-4 transition-all"
+                 data-audience-voting-target="answerCard"
+                 data-answer-id="<%= answer.id %>">
+              <div class="flex-1">
+                <p class="text-base font-medium text-ink m-0"><%= answer.text %></p>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button type="button"
+                        class="w-8 h-8 rounded-full border-2 border-ink/20 flex items-center justify-center text-lg font-bold hover:border-ink/40 transition-colors cursor-pointer"
+                        data-action="click->audience-voting#decrement"
+                        data-answer-id="<%= answer.id %>"
+                        aria-label="Remove star from <%= answer.text.truncate(30) %>">
+                  &minus;
+                </button>
+                <span class="text-xl font-bold min-w-[2ch] text-center"
+                      data-audience-voting-target="starCount"
+                      data-answer-id="<%= answer.id %>">0</span>
+                <button type="button"
+                        class="w-8 h-8 rounded-full border-2 border-accent-yellow bg-accent-yellow/20 flex items-center justify-center text-lg font-bold hover:bg-accent-yellow/40 transition-colors cursor-pointer"
+                        data-action="click->audience-voting#increment"
+                        data-answer-id="<%= answer.id %>"
+                        aria-label="Add star to <%= answer.text.truncate(30) %>">
+                  +
+                </button>
+                <input type="hidden" name="stars[<%= answer.id %>]" value="0"
+                       data-audience-voting-target="starInput"
+                       data-answer-id="<%= answer.id %>">
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </fieldset>
+
+      <%= form.submit "Submit Stars",
+                      class: "btn-primary mt-4",
+                      data: { audience_voting_target: "submitBtn" },
+                      disabled: true %>
+    <% end %>
+  </div>
+</div>

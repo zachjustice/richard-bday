@@ -1,6 +1,10 @@
 class VoteSubmittedJob < ApplicationJob
   def perform(vote)
     room = vote.game.room
+
+    # Audience votes are cosmetic - skip status updates and auto-advance
+    return if vote.audience?
+
     user = vote.user
 
     # if the room is in "Answering" status, return early.

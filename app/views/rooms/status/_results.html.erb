@@ -28,7 +28,13 @@
       <% answers_sorted_by_votes.each do |answer| %>
         <div class="flex flex-row p-3 border-2 rounded-xl border-accent-violet/40 <%= winner&.id == answer&.id ? 'bg-accent-violet/40' : 'bg-accent-violet/10'  %>">
           <div class="w-full flex flex-col flex-1">
-            <span class="text-lg block text-ink leading-tight font-bold"><%= answer.text %> <%= '🏆' if winner&.id == answer&.id %></span>
+            <span class="text-lg block text-ink leading-tight font-bold">
+              <%= answer.text %>
+              <%= '🏆' if winner&.id == answer&.id %>
+              <% if local_assigns[:audience_star_counts] && audience_star_counts[answer.id]&.positive? %>
+                <%= render "shared/audience_stars", count: audience_star_counts[answer.id] %>
+              <% end %>
+            </span>
             <span class="text-lg block text-ink/60 leading-tight font-medium whitespace-nowrap overflow-hidden text-ellipsis"><%= answer.user.avatar_with_name %></span>
             <% if local_assigns[:ranked_voting] && local_assigns[:points_by_answer] %>
               <span class="text-base font-bold text-accent-primary mt-1">

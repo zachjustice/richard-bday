@@ -59,4 +59,17 @@ class Room < ApplicationRecord
     return 1 if vote_once? || rank.nil?
     voting_config.dig("points", rank.to_s) || 0
   end
+
+  def active_audience_count
+    User.audience.where(room_id: id, is_active: true).count
+  end
+
+  def broadcast_audience_count
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "rooms:#{id}:users",
+      target: "waiting-room-audience-count",
+      partial: "rooms/partials/audience_count_badge",
+      locals: { audience_count: active_audience_count }
+    )
+  end
 end
