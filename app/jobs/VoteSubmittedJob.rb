@@ -34,8 +34,24 @@ class VoteSubmittedJob < ApplicationJob
       locals: { user: user, completed: true, color: "indigo" }
     )
 
+    # Update roaming avatar status badge
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "rooms:#{room.id}:avatar-status",
+      target: "waiting_room_user_#{user.id}",
+      partial: "rooms/partials/user_list_item",
+      locals: { user: user }
+    )
+
     users_in_room = User.players.where(room_id: room.id).count
     voted_users = User.players.where(room_id: room.id, status: UserStatus::Voted).count
+
+    # Update "X of N done" counter
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{room.id}:avatar-status",
+      action: :update,
+      target: "players-done-count",
+      html: "#{voted_users} of #{users_in_room}"
+    )
 
     # Check if its time to view the results!
     if voted_users >= users_in_room && room.status == RoomStatus::Voting

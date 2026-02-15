@@ -38,8 +38,10 @@ Rails.application.routes.draw do
   end
   post "/cable/auth", to: "cable_auth#create", as: :cable_auth
 
-  # Redirect Discord Activity iframe loads to /discord (they always include frame_id)
-  get "/", to: redirect { |_, req| "/discord?#{req.query_string}" },
+  # Discord Activity iframe loads always include frame_id. Route directly to the launch
+  # action (not a redirect) so the controller can strip X-Frame-Options via after_action.
+  # A redirect would carry Rails' default SAMEORIGIN header and block the iframe.
+  get "/", to: "discord/activities#launch",
       constraints: ->(req) { req.params[:frame_id].present? }
   root to: "rooms#create"
 
@@ -77,6 +79,7 @@ Rails.application.routes.draw do
   post "/rooms/:id/next", to: "rooms#next", as: :next_room
   post "/rooms/:id/end_game", to: "rooms#end_game", as: :end_room_game
   post "/rooms/:id/credits", to: "rooms#show_credits", as: :room_credits
+  post "/rooms/:id/final_results", to: "rooms#show_final_results", as: :room_final_results
   post "/rooms/:id/start_new_game", to: "rooms#start_new_game", as: :start_new_room_game
   patch "/rooms/:id/settings", to: "rooms#update_settings", as: :update_room_settings
   get "/rooms/:id/waiting_for_new_game", to: "rooms#waiting_for_new_game", as: :waiting_for_new_game

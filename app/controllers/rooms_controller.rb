@@ -9,7 +9,7 @@ class RoomsController < ApplicationController
 
     unless can_control_room?(room)
       flash[:alert] = "Only the room creator can initialize the game"
-      return redirect_to room_status_path(room)
+      return turbo_nav_or_redirect_to room_status_path(room)
     end
 
     room.update!(status: RoomStatus::StorySelection)
@@ -18,7 +18,13 @@ class RoomsController < ApplicationController
     GamePhasesService.new(room).update_room_status_view("rooms/status/story_selection", status_data, true)
 
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: [] }
+      format.turbo_stream do
+        if discord_authenticated?
+          render turbo_stream: turbo_stream.action(:navigate, room_status_path(room))
+        else
+          render turbo_stream: []
+        end
+      end
       format.html { redirect_to room_status_path(room) }
     end
   end
@@ -54,7 +60,13 @@ class RoomsController < ApplicationController
     GamePhasesService.new(room).update_room_status_view("rooms/status/answering", status_data)
 
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: [] }
+      format.turbo_stream do
+        if discord_authenticated?
+          render turbo_stream: turbo_stream.action(:navigate, game_prompt_path(first_game_prompt_id))
+        else
+          render turbo_stream: []
+        end
+      end
       format.html { redirect_to controller: "rooms", action: "status", id: room_id }
     end
   end
@@ -120,7 +132,7 @@ class RoomsController < ApplicationController
       if @current_user&.role == User::CREATOR
         redirect_to room_status_path(room)
       else
-        redirect_to controller: "game_prompts", action: "results", id: prev_game_prompt_id
+        turbo_nav_or_redirect_to game_prompt_results_path(prev_game_prompt_id)
       end
     else
       move_to_next_game_prompt(room, next_game_prompt_id)
@@ -129,7 +141,7 @@ class RoomsController < ApplicationController
       if @current_user&.role == User::CREATOR
         redirect_to room_status_path(room)
       else
-        redirect_to controller: "game_prompts", action: "show", id: next_game_prompt_id
+        turbo_nav_or_redirect_to game_prompt_path(next_game_prompt_id)
       end
     end
   end
@@ -138,7 +150,7 @@ class RoomsController < ApplicationController
     room = Room.find(params[:id])
     unless can_view_status?(room)
       flash[:alert] = "Only the room creator can view this page"
-      return redirect_to root_path
+      return turbo_nav_or_redirect_to root_path
     end
 
     status_data = RoomStatusService.new(room).call
@@ -217,9 +229,9 @@ class RoomsController < ApplicationController
     status_data = RoomStatusService.new(current_room).call
     GamePhasesService.new(current_room).update_room_status_view("rooms/status/waiting_room", status_data, true)
     if can_control_room?(current_room)
-      redirect_to controller: "rooms", action: "status", id: params[:id]
+      redirect_to room_status_path(current_room)
     else
-      redirect_to controller: "rooms", action: "waiting_for_new_game", id: params[:id]
+      turbo_nav_or_redirect_to waiting_for_new_game_path(current_room)
     end
   end
 
@@ -243,24 +255,38 @@ class RoomsController < ApplicationController
     end
   end
 
-  # Start a new game from Credits - goes directly to StorySelection
+  # Transition from Credits back to FinalResults phase
+  def show_final_results
+    room = Room.find(params[:id])
+    room.update!(status: RoomStatus::FinalResults)
+
+    status_data = RoomStatusService.new(room).call
+    GamePhasesService.new(room).update_room_status_view("rooms/status/final_results", status_data, true)
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: [] }
+      format.html { redirect_to room_status_path(room) }
+    end
+  end
+
+  # Start a new game from Credits - returns to WaitingRoom
   def start_new_game
     room = Room.find(params[:id])
     room.current_game&.update!(current_game_prompt: nil)
     room.update!(
-      status: RoomStatus::StorySelection,
+      status: RoomStatus::WaitingRoom,
       current_game: nil
     )
 
-    status_data = RoomStatusService.new(room).call
-    GamePhasesService.new(room).update_room_status_view("rooms/status/story_selection", status_data, true)
-
-    # Navigate players to waiting screen while creator selects story
+    # Navigate players to waiting screen
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{room.id}:nav-updates",
       action: :navigate,
       target: "/rooms/#{room.id}/waiting_for_new_game",
     )
+
+    status_data = RoomStatusService.new(room).call
+    GamePhasesService.new(room).update_room_status_view("rooms/status/waiting_room", status_data, true)
 
     respond_to do |format|
       format.turbo_stream { render turbo_stream: [] }
@@ -268,7 +294,7 @@ class RoomsController < ApplicationController
         if can_control_room?(room)
           redirect_to room_status_path(room)
         else
-          redirect_to controller: "rooms", action: "waiting_for_new_game", id: room.id
+          turbo_nav_or_redirect_to waiting_for_new_game_path(room)
         end
       end
     end
@@ -291,24 +317,29 @@ class RoomsController < ApplicationController
 
   def can_view_status?(room)
     return false unless @current_user&.room_id == room.id
-    @current_user.creator?
+    @current_user.creator? || (discord_authenticated? && @current_user.navigator?)
   end
 
   def can_control_room?(room)
     return false unless @current_user&.room_id == room.id
-    @current_user.creator?
+    @current_user.creator? || (discord_authenticated? && @current_user.navigator?)
   end
 
   def in_room?
     # Check if the user is in the room if a room specific page is being accessed.
     if params[:id] && @current_user&.room_id != params[:id].to_i
       flash[:notice] = "Navigating you to the right room..."
-      redirect_to controller: "rooms", id: @current_user&.room_id, action: "status"
+      if discord_authenticated?
+        turbo_nav_or_redirect_to show_room_path
+      else
+        redirect_to controller: "rooms", id: @current_user&.room_id, action: "status"
+      end
     end
   end
 
   def move_to_next_game_prompt(room, next_game_prompt_id)
     User.players.where(room: room).update_all(status: UserStatus::Answering)
+    GamePhasesService.new(room).broadcast_avatar_statuses
 
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{room.id}:nav-updates",
@@ -368,11 +399,11 @@ class RoomsController < ApplicationController
 
     case @current_room.status
     when RoomStatus::Answering
-      redirect_to controller: "game_prompts", action: "show", id: prompt_id
+      turbo_nav_or_redirect_to game_prompt_path(prompt_id)
     when RoomStatus::Voting
-      redirect_to controller: "game_prompts", action: "voting", id: prompt_id
+      turbo_nav_or_redirect_to game_prompt_voting_path(prompt_id)
     when RoomStatus::Results, RoomStatus::FinalResults
-      redirect_to controller: "game_prompts", action: "results", id: prompt_id
+      turbo_nav_or_redirect_to game_prompt_results_path(prompt_id)
     end
   end
 

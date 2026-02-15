@@ -7,8 +7,9 @@
 <div data-controller="ranked-voting"
      data-ranked-voting-max-slots-value="<%= max_slots %>"
      data-ranked-voting-medals-value="<%= medals.to_json %>"
-     class="min-h-screen flex items-center max-sm:items-start justify-center bg-page">
-  <div class="card-primary animate-slide-up p-10 m-10 max-sm:p-4 max-sm:mx-2 max-sm:my-4 max-w-2xl w-full flex flex-col min-h-[600px]">
+     class="<%= discord_authenticated? ? 'flex items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page' %>">
+  <div class="card-primary animate-slide-up <%= discord_authenticated? ? 'p-6 m-4 relative z-content' : 'p-10 m-10' %> max-sm:p-4 max-sm:mx-2 max-sm:my-4 max-w-2xl w-full flex flex-col min-h-[600px]">
+    <%= render "shared/round_badge" if discord_authenticated? %>
 
     <div class="text-center mb-6">
       <h2 class="text-2xl max-sm:text-xl font-bold text-gray-900 leading-snug">

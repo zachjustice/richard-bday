@@ -104,6 +104,10 @@ class RoomStatusService
     end
 
     answers_sorted_by_points = answers.sort_by { |a| -points_by_answer[a.id] }
+    # Pin the winning answer to first position
+    if winner && answers_sorted_by_points.delete(winner)
+      answers_sorted_by_points.unshift(winner)
+    end
 
     {
       votes_by_answer: votes_by_answer,

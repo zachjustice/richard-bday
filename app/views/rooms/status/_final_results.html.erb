@@ -63,16 +63,9 @@
           </h2>
 
           <!-- Authors section -->
-          <div style="margin-top: 1rem;">
-            <span style="font-size: 0.875rem; font-weight: 500; color: rgba(26, 26, 46, 0.6); font-style: italic; display: block; margin-bottom: 0.5rem;">Written by:</span>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; align-items: center;">
-              <% users.each do |user| %>
-                <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; color: #1A1A2E; border: 2px solid rgba(26, 26, 46, 0.2); background: rgba(76, 175, 80, 0.1); display: inline-flex; align-items: center; justify-content: center;">
-                  <%= user.avatar_with_name %>
-                </span>
-              <% end %>
-            </div>
-          </div>
+          <p style="margin-top: 1rem; font-size: 0.875rem; font-weight: 500; color: rgba(26, 26, 46, 0.6); font-style: italic;">
+            Written by: <span style="font-style: normal; font-weight: 600; color: #1A1A2E;"><%= users.map(&:name).join(", ") %></span>
+          </p>
         </div>
 
         <!-- Story Card (green with left border) -->

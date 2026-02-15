@@ -1,3 +1,9 @@
+---
+paths: 
+  - *.css 
+  - *.html 
+  - *.js
+---
 # Frontend Development Rules
 
 ## Things to AVOID
@@ -28,6 +34,14 @@ Following the Style Guide is critical.
   - Component is highly complex
 - Use @layer base, @layer components, @layer utilities as appropriate
 - Place css animations in applications.css
+
+### Accessibility
+- Semantic HTML (`<nav>`, `<button>`, `<main>`) over generic `<div>`s
+- Icon-only interactive elements need `aria-label` (not just `title`)
+- Modals/drawers: `role="dialog"`, `aria-modal="true"`, focus trap via `concerns/focus_trap.js`, Escape key
+- Form inputs must have associated `<label for="id">`
+- Decorative elements: `aria-hidden="true"`
+- Animations must be disabled in `prefers-reduced-motion` block in application.css
 
 ---
 

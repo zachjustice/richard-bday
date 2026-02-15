@@ -2,18 +2,18 @@
 
 <%# This page is typically viewed by players from a shared screen. Normally a TV. %>
 <%# Text and content should be easily viewable from a distance %>
-<div class="h-screen flex flex-col bg-page relative"
+<div class="min-h-screen flex flex-col bg-page relative"
      data-controller="room-status settings-modal tutorial-hints"
      data-tutorial-hints-editor-authenticated-value="<%= !!editor_authenticated? %>"
      data-action="settings-modal:opened->tutorial-hints#syncCheckbox">
   <%# Floating branded text - top left %>
-  <div class="fixed top-4 left-4 z-50">
+  <div class="fixed top-4 left-4 z-controls">
     <span class="text-2xl font-bold text-ink text-shadow-brand"><%= link_to "Blanksies", root_path %></span>
   </div>
 
   <%# Floating settings - top right %>
   <button type="button"
-          class="fixed top-4 right-4 z-50 p-2 bg-white rounded-lg cursor-pointer transition-all hover:scale-110 active:scale-95 text-xl border-2 border-ink"
+          class="fixed top-4 right-4 z-controls p-2 bg-white rounded-lg cursor-pointer transition-all hover:scale-110 active:scale-95 text-xl border-2 border-ink"
           style="box-shadow: 2px 2px 0px var(--color-ink);"
           data-action="click->settings-modal#toggle"
     aria-label="Open settings">
@@ -38,7 +38,7 @@
       arrow_direction: "left" %>
 
   <div id="status-content-inner" class="flex-1 flex items-center justify-center p-6">
-    <div class="card-primary p-0 m-0 max-w-[1400px] w-full max-h-[970px] flex flex-row min-h-0">
+    <div class="card-primary p-0 m-0 max-w-[1400px] w-full flex flex-row min-h-0 z-content">
       <div id="turbo-target-sidebar" class="flex">
         <% if @room.current_game&.story.present? && [RoomStatus::Answering, RoomStatus::Voting, RoomStatus::Results, RoomStatus::FinalResults].include?(@status) %>
           <%= render partial: "rooms/status/sidebar", locals: @status_data %>

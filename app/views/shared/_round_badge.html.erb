@@ -1,0 +1,7 @@
+<% if @current_round && @total_rounds %>
+  <div class="flex justify-center mb-3">
+    <span class="inline-flex items-center px-3 py-1 rounded-full bg-ink/8 text-xs font-bold text-ink/50 tracking-wide">
+      Round <%= @current_round %> of <%= @total_rounds %>
+    </span>
+  </div>
+<% end %>

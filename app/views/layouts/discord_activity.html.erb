@@ -15,7 +15,7 @@
       <%= javascript_import_module_tag "discord/activity" %>
     <% end %>
   </head>
-  <body class="bg-page min-h-screen">
+  <body class="bg-page min-h-screen <%= 'overflow-hidden' if @client_id %>">
     <% if @client_id %>
       <div id="discord-loading" class="min-h-screen flex items-center justify-center">
         <div class="card-primary p-8 text-center">
@@ -33,8 +33,42 @@
       </div>
     <% end %>
 
-    <main id="main-content">
-      <%= yield %>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-easter-egg focus:bg-accent-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:font-bold">
+      Skip to main content
+    </a>
+    <main id="main-content" tabindex="-1">
+      <% if @current_room %>
+        <%= turbo_stream_from "rooms:#{@current_room.id}:users" %>
+        <%= turbo_stream_from "rooms:#{@current_room.id}:avatar-status" %>
+
+        <div id="roaming-avatars"
+             class="fixed inset-0 z-avatars pointer-events-none"
+             data-controller="roaming-avatars"
+             data-roaming-avatars-phase-value="<%= @current_room.status %>"
+             data-roaming-avatars-current-user-value="<%= dom_id(@current_user, :waiting_room) if @current_user %>"
+             data-turbo-permanent>
+          <ul id="waiting-room" class="hidden" data-roaming-avatars-target="source">
+            <% User.players.where(room: @current_room).each do |user| %>
+              <%= render "rooms/partials/user_list_item", user: user %>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <% if @current_room&.current_game %>
+        <%= render "shared/discord_navbar", room: @current_room %>
+      <% end %>
+      <div class="<%= 'pt-14' if @current_room&.current_game %>">
+        <% if @current_room&.current_game&.next_game_phase_time %>
+          <% timer_duration = @current_room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS %>
+          <div class="fixed top-16 right-4 z-overlay">
+            <div class="countdown-timer-xs">
+              <%= render "shared/countdown_timer", duration: timer_duration, auto_start: true %>
+            </div>
+          </div>
+        <% end %>
+        <%= yield %>
+      </div>
     </main>
   </body>
 </html>

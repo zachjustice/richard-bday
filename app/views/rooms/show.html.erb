@@ -1,16 +1,51 @@
-<%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<%= render "shared/leave_game_button" %>
-<div class="min-h-screen flex items-center justify-center p-6 max-sm:p-4 max-[480px]:items-start max-[480px]:pt-16 bg-page">
-  <div class="card-primary animate-fade-in p-12 max-sm:p-8 max-w-xl w-full">
-    <div class="text-center mb-6">
-      <h1 class="text-3xl max-sm:text-2xl font-bold text-ink mb-3 leading-tight">Welcome, <%= @current_user.name %>!</h1>
+<% if discord_authenticated? %>
+  <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+
+  <div class="min-h-screen relative flex flex-col items-center p-6 max-sm:p-4 bg-page overflow-hidden">
+    <%# Header %>
+    <div class="text-center mb-6 animate-slide-up">
+      <h1 class="text-4xl max-sm:text-3xl font-bold text-shadow-heading">Blanksies</h1>
     </div>
 
-    <div class="card-secondary flex flex-col items-center gap-6 py-8 px-6 max-sm:py-6 max-sm:px-4 bg-accent-orange/10 mb-6">
-      <p class="text-lg max-sm:text-base font-medium text-ink text-center m-0">Waiting for other players to join...</p>
+    <%# Avatar picker card %>
+    <div class="card-primary animate-fade-in p-8 max-sm:p-6 max-w-xl w-full mb-8 relative z-content">
+      <div class="text-center mb-4">
+        <h2 class="text-2xl max-sm:text-xl font-bold text-ink">Welcome, <%= @current_user.name %>!</h2>
+      </div>
+      <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
+      <%= render "avatars/picker", user: @current_user, room: @current_room %>
     </div>
 
-    <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
-    <%= render "avatars/picker", user: @current_user, room: @current_room %>
+    <%# Player count %>
+    <div class="flex items-center justify-center gap-3 mb-4 relative z-content">
+      <span id="waiting-room-players-count" class="badge-primary">
+        <%= @users.size %> joined
+      </span>
+    </div>
+
+    <% if @current_user.navigator? %>
+      <div class="flex justify-center mt-6 relative z-content">
+        <%= form_with url: initialize_room_path(@current_room), method: :post do %>
+          <%= submit_tag "Let's Go!", class: "btn-primary" %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
-</div>
+<% else %>
+  <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+  <%= render "shared/leave_game_button" %>
+  <div class="min-h-screen flex items-center justify-center p-6 max-sm:p-4 max-[480px]:items-start max-[480px]:pt-16 bg-page">
+    <div class="card-primary animate-fade-in p-12 max-sm:p-8 max-w-xl w-full">
+      <div class="text-center mb-6">
+        <h1 class="text-3xl max-sm:text-2xl font-bold text-ink mb-3 leading-tight">Welcome, <%= @current_user.name %>!</h1>
+      </div>
+
+      <div class="card-secondary flex flex-col items-center gap-6 py-8 px-6 max-sm:py-6 max-sm:px-4 bg-accent-orange/10 mb-6">
+        <p class="text-lg max-sm:text-base font-medium text-ink text-center m-0">Waiting for other players to join...</p>
+      </div>
+
+      <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
+      <%= render "avatars/picker", user: @current_user, room: @current_room %>
+    </div>
+  </div>
+<% end %>

@@ -1,24 +1,54 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<%= render "shared/leave_game_button" %>
 
-<div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="h-screen flex items-center max-sm:items-center justify-center bg-page">
-  <div class="card-primary p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-[600px] w-full animate-fade-in">
-    <div class="text-center">
-      <div class="text-6xl mb-6 animate-swing">⏳</div>
-      <h2 class="text-3xl md:text-2xl font-bold text-gray-900 m-0 mb-3 leading-tight">Answer submitted</h2>
-      <p class="text-base md:text-sm text-gray-500 m-0 mb-8 italic">Waiting for everyone to submit answers...</p>
-      <div class="progress-dots mb-6">
-        <div class="progress-dot"></div>
-        <div class="progress-dot"></div>
-        <div class="progress-dot"></div>
+<% if discord_authenticated? %>
+  <%# Discord: compact waiting view with player done counter %>
+  <div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="flex flex-col items-center max-sm:items-start justify-center bg-page">
+    <div class="card-primary p-8 m-6 max-sm:p-5 max-sm:m-4 max-w-[500px] w-full animate-fade-in relative z-content">
+      <%= render "shared/round_badge" %>
+
+      <div class="text-center mb-6">
+        <p class="text-sm text-ink/60 italic m-0">Waiting for everyone to answer...</p>
       </div>
-      <%= render "shared/fun_facts" %>
 
-      <div class="mt-6">
+      <div class="mb-4">
+        <%= render "shared/fun_facts" %>
+      </div>
+
+      <div>
         <%= form_with url: change_answer_path(@game_prompt.id), method: :post do %>
-          <%= submit_tag "Change Answer", class: "btn-secondary btn-sm" %>
+          <%= submit_tag "Change Answer", class: "btn-secondary w-full" %>
         <% end %>
       </div>
     </div>
+
+    <% answered = User.players.where(room: @current_room, status: UserStatus::Answered).count %>
+    <% total = User.players.where(room: @current_room).count %>
+    <%= render "shared/players_done_counter", done_count: answered, total_count: total %>
   </div>
-</div>
+
+<% else %>
+  <%# Standard browser: original waiting view %>
+  <%= render "shared/leave_game_button" %>
+
+  <div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="h-screen flex items-center max-sm:items-center justify-center bg-page">
+    <div class="card-primary p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-[600px] w-full animate-fade-in">
+      <div class="text-center">
+        <div class="text-6xl mb-6 animate-swing">⏳</div>
+        <h2 class="text-3xl md:text-2xl font-bold text-gray-900 m-0 mb-3 leading-tight">Answer submitted</h2>
+        <p class="text-base md:text-sm text-gray-500 m-0 mb-8 italic">Waiting for everyone to submit answers...</p>
+        <div class="progress-dots mb-6">
+          <div class="progress-dot"></div>
+          <div class="progress-dot"></div>
+          <div class="progress-dot"></div>
+        </div>
+        <%= render "shared/fun_facts" %>
+
+        <div class="mt-6">
+          <%= form_with url: change_answer_path(@game_prompt.id), method: :post do %>
+            <%= submit_tag "Change Answer", class: "btn-secondary btn-sm" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

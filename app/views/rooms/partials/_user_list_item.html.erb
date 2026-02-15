@@ -1,3 +1,7 @@
-<li id="<%= dom_id(user, :waiting_room) %>" class="badge-primary text-nowrap text-ellipsis overflow-hidden max-w-[300px]">
+<li id="<%= dom_id(user, :waiting_room) %>"
+    class="badge-primary text-nowrap text-ellipsis overflow-hidden max-w-[300px]"
+    data-avatar="<%= user.avatar %>"
+    data-name="<%= user.name %>"
+    data-status="<%= user.status %>">
   <%= user.avatar_with_name %>
 </li>

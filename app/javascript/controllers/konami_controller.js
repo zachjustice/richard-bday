@@ -86,7 +86,7 @@ export default class extends Controller {
 
   spawnConfetti() {
     const colors = [
-      "#E63946", "#2196F3", "#FFD60A", "#4CAF50",
+      "#D63040", "#2196F3", "#FFD60A", "#4CAF50",
       "#FF6B35", "#7C4DFF", "#E040FB"
     ]
     const shapes = ["square", "circle", "strip", "large-square", "large-circle"]
@@ -112,7 +112,7 @@ export default class extends Controller {
 
     const ctx = canvas.getContext("2d")
     const colors = [
-      "#E63946", "#2196F3", "#FFD60A", "#4CAF50",
+      "#D63040", "#2196F3", "#FFD60A", "#4CAF50",
       "#FF6B35", "#7C4DFF", "#E040FB", "#FFFFFF"
     ]
 

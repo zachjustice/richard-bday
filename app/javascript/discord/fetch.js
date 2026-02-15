@@ -29,12 +29,19 @@ export function setupDiscordFetch() {
   }
 }
 
-// Inject Authorization header into Turbo fetch requests
+// Inject Authorization header and Turbo Stream Accept into Turbo fetch requests.
+// Adding Turbo Stream Accept on GET requests lets the server respond with
+// turbo_stream navigate actions (avoiding HTTP redirects that Discord's proxy
+// follows server-side, stripping the Auth header).
 export function setupDiscordTurbo() {
   document.addEventListener("turbo:before-fetch-request", (event) => {
     const token = discordActivity.getAuthToken()
     if (token) {
-      event.detail.fetchOptions.headers["Authorization"] = `Bearer ${token}`
+      const headers = event.detail.fetchOptions.headers
+      headers["Authorization"] = `Bearer ${token}`
+      if (headers["Accept"] && !headers["Accept"].includes("text/vnd.turbo-stream.html")) {
+        headers["Accept"] = `text/vnd.turbo-stream.html, ${headers["Accept"]}`
+      }
     }
   })
 }

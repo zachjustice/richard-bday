@@ -13,20 +13,23 @@
   --color-light: #FFFFFF;
 
   /* Primary Design Tokens */
-  --color-accent-primary: #E63946;    /* Red - CTAs, alerts */
+  --color-accent-primary: #D63040;    /* Red - CTAs, alerts (WCAG AA 4.82:1 with white) */
   --color-accent-secondary: #2196F3;  /* Blue - links, secondary actions */
   --color-accent-tertiary: #FFD60A;   /* Yellow - highlights, accents */
   --color-bg-page: #FFF8E7;           /* Cream - page backgrounds */
   --color-ink: var(--color-dark);               /* Dark - text, borders, shadows */
   --color-ink-inverted: var(--color-light);     /* Light - text/borders on dark backgrounds */
 
+  /* Accessible text variants (meet WCAG AA 4.5:1 on white/cream backgrounds) */
+  --color-accent-secondary-text: #1976D2; /* Darker blue for body text links (4.6:1 on white) */
+
   /* Light background variants for player items */
-  --color-accent-primary-light: rgba(230, 57, 70, 0.1);
+  --color-accent-primary-light: rgba(214, 48, 64, 0.1);
   --color-accent-secondary-light: rgba(33, 150, 243, 0.1);
   --color-accent-tertiary-light: rgba(255, 214, 10, 0.15);
 
   /* Extended Palette */
-  --color-accent-red: #E63946;
+  --color-accent-red: #D63040;
   --color-accent-orange: #FF6B35;
   --color-accent-yellow: #FFD60A;
   --color-accent-green: #4CAF50;
@@ -51,6 +54,17 @@
 
   /* Custom Border Radius */
   --radius-3xl: 24px;
+
+  /* Z-Index Scale — semantic stacking layers */
+  --z-index-avatars: 10;       /* Roaming emoji avatars, doodle decorations */
+  --z-index-content: 20;       /* Interactive content above avatars/doodles */
+  --z-index-overlay: 40;       /* Countdown timer, mobile nav overlay */
+  --z-index-controls: 50;      /* Fixed navbar, settings, flash messages */
+  --z-index-hints: 60;         /* Tutorial hints */
+  --z-index-music-button: 999; /* Music player button */
+  --z-index-modal: 1000;       /* All modals */
+  --z-index-tooltip: 1100;     /* Prompt tooltips */
+  --z-index-easter-egg: 9999;  /* Konami overlay, skip link */
 
   /* Custom Shadows - Updated for new palette */
   --shadow-button: 0 4px 15px rgba(230, 57, 70, 0.3);
@@ -153,6 +167,12 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  --animate-roaming-tooltip-fade-in: roaming-tooltip-fade-in 0.2s ease-out;
+  @keyframes roaming-tooltip-fade-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
   /* ============================================
      NEW BLANKSIES ANIMATIONS
      Bouncy, playful, intentional
@@ -230,6 +250,27 @@
     75% { transform: scale(1.15); }
     100% { transform: scale(1); }
   }
+
+  /* Avatar shimmer — sweeps a white highlight across current user's avatar */
+  @keyframes avatar-shimmer {
+    0%, 85%, 100% { background-position: 200% 0; }
+    95% { background-position: -200% 0; }
+  }
+
+  /* Avatar spark pop — burst outward and fade */
+  @keyframes avatar-spark-pop {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+    20% { transform: translate(calc(var(--spark-x) * 0.15), calc(var(--spark-y) * 0.15)) scale(var(--spark-scale, 1.2)); opacity: 1; }
+    100% { transform: translate(var(--spark-x), var(--spark-y)) scale(0); opacity: 0; }
+  }
+
+  /* Avatar flash red — brief red overlay on answer change */
+  @keyframes avatar-flash-red {
+    0% { background-color: inherit; }
+    40% { background-color: #E6394680; }
+    100% { background-color: inherit; }
+  }
+
 }
 
 /* Disable animations for users who prefer reduced motion */
@@ -245,6 +286,7 @@
   .animate-slide-in-right,
   .animate-flash-red,
   .animate-tooltip-fade-in,
+  .animate-roaming-tooltip-fade-in,
   .animate-bouncy,
   .animate-wiggle,
   .animate-pop,
@@ -252,8 +294,12 @@
   .animate-jello,
   .animate-draw,
   .animate-scribble,
-  .animate-hint-shake {
-    animation: none;
+  .animate-hint-shake,
+  .roaming-avatar,
+  .roaming-avatar--self::after,
+  .roaming-avatar-spark,
+  .roaming-avatar--flash-red {
+    animation: none !important;
   }
 }
 

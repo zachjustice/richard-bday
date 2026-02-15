@@ -27,6 +27,20 @@
 - Use @layer base, @layer components, @layer utilities as appropriate
 - Place css animations in applications.css
 
+## Accessibility
+- All new UI must meet WCAG 2.1 AA. Use `/a11y` to audit changes.
+- Semantic HTML: `<nav>`, `<main>`, `<button>`, proper heading hierarchy
+- Icon-only buttons/links require `aria-label`
+- Modals/drawers: `role="dialog"`, `aria-modal="true"`, focus trap (reuse `concerns/focus_trap.js`), Escape to close
+- Dynamic content updates need `aria-live` regions
+- Animations must have `@media (prefers-reduced-motion: reduce)` coverage
+- Run `rails test test/system/accessibility_test.rb` to verify
+
+## Discord Activity / Iframe
+- Discord's proxy follows HTTP redirects server-side and **strips the Authorization header** on redirect follows. This means the redirected request arrives at our app without the Bearer token, `discord_authenticated?` returns false, and Rails' default `X-Frame-Options: SAMEORIGIN` blocks the iframe.
+- **Never use `redirect_to` in controller paths reachable by Discord players.** Use `turbo_nav_or_redirect_to` instead — it renders a Turbo Stream navigate action so navigation happens client-side where the Bearer token interceptor injects the auth header.
+- Creator-only paths (e.g. `room_status_path`) can still use `redirect_to` since creators use a separate browser tab, not the Discord iframe.
+
 ## Testing
 - Ensure tests pass after adding new features
 - Add tests intentionally- tests have 2 costs: 1) maintenance and 2) running them. Ensure critical code paths are covered.

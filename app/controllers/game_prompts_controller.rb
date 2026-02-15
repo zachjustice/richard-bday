@@ -16,8 +16,11 @@ class GamePromptsController < ApplicationController
 
     # All answers have been collected, time to vote
     if @current_room.status == RoomStatus::Voting
-      redirect_to controller: "game_prompts", action: "voting", id: params[:id]
+      turbo_nav_or_redirect_to game_prompt_voting_path(params[:id])
+      return
     end
+
+    @users = User.players.where(room_id: @current_room.id) if discord_authenticated?
   end
 
   def change_answer
@@ -30,7 +33,25 @@ class GamePromptsController < ApplicationController
       locals: { user: @current_user, completed: false, color: "blue" }
     )
 
-    redirect_to controller: "game_prompts", action: "show", id: params[:id]
+    # Update roaming avatar status badge (Discord)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "rooms:#{@current_room.id}:avatar-status",
+      target: "waiting_room_user_#{@current_user.id}",
+      partial: "rooms/partials/user_list_item",
+      locals: { user: @current_user }
+    )
+
+    # Update "X of N done" counter
+    users_in_room = User.players.where(room: @current_room).count
+    answered_users = User.players.where(room: @current_room, status: UserStatus::Answered).count
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{@current_room.id}:avatar-status",
+      action: :update,
+      target: "players-done-count",
+      html: "#{answered_users} of #{users_in_room}"
+    )
+
+    turbo_nav_or_redirect_to game_prompt_path(params[:id])
   end
 
   def voting
@@ -58,6 +79,16 @@ class GamePromptsController < ApplicationController
 
   def results
     @status = @current_room.status
+
+    if discord_authenticated? && @status == RoomStatus::Results
+      service_data = RoomStatusService.new(@current_room).call
+      @winner = service_data[:winner]
+      @winners = service_data[:winners]
+      @answers_sorted_by_votes = service_data[:answers_sorted_by_votes]
+      @votes_by_answer = service_data[:votes_by_answer]
+      @points_by_answer = service_data[:points_by_answer]
+      @ranked_voting = service_data[:ranked_voting]
+    end
   end
 
   def tooltip
@@ -86,26 +117,28 @@ class GamePromptsController < ApplicationController
     case @current_room.status
     when RoomStatus::WaitingRoom
       if controller != "rooms" || id != @current_room.id || [ "show", "waiting_for_new_game" ].include?(action)
-        redirect_to controller: "rooms", action: "waiting_for_new_game", id: @current_room.id
+        turbo_nav_or_redirect_to waiting_for_new_game_path(@current_room)
       end
+    when RoomStatus::StorySelection, RoomStatus::Credits
+      turbo_nav_or_redirect_to show_room_path
     when RoomStatus::Answering
       if controller != "game_prompts" || id != current_game_prompt_id || ![ "show", "waiting" ].include?(action)
-        redirect_to controller: "game_prompts", action: "show", id: @current_room.current_game.current_game_prompt.id
+        turbo_nav_or_redirect_to game_prompt_path(@current_room.current_game.current_game_prompt)
       end
     when RoomStatus::Voting
       if controller != "game_prompts" || id != current_game_prompt_id || ![ "voting", "results" ].include?(action)
-        redirect_to controller: "game_prompts", action: "voting", id: @current_room.current_game.current_game_prompt.id
+        turbo_nav_or_redirect_to game_prompt_voting_path(@current_room.current_game.current_game_prompt)
       end
     when RoomStatus::Results
       if controller != "game_prompts" || id != current_game_prompt_id || action != "results"
-        redirect_to controller: "game_prompts", action: "results", id: @current_room.current_game.current_game_prompt.id
+        turbo_nav_or_redirect_to game_prompt_results_path(@current_room.current_game.current_game_prompt)
       end
     when RoomStatus::FinalResults
       if controller != "game_prompts" || id != current_game_prompt_id || action != "results"
-        redirect_to controller: "game_prompts", action: "results", id: @current_room.current_game.current_game_prompt.id
+        turbo_nav_or_redirect_to game_prompt_results_path(@current_room.current_game.current_game_prompt)
       end
     else
-      redirect_to controller: "rooms", action: "show"
+      turbo_nav_or_redirect_to show_room_path
     end
   end
 end

@@ -11,6 +11,7 @@ class GamePhasesService
 
   def move_to_voting
     User.players.where(room: @room).update_all(status: UserStatus::Voting)
+    broadcast_avatar_statuses
 
     # Cancel answering timer if everyone answered early
     cancel_scheduled_job(@room.current_game.answering_timer_job_id)
@@ -73,6 +74,17 @@ class GamePhasesService
         target: "turbo-target-sidebar",
         partial: "rooms/status/sidebar",
         locals: status_data
+      )
+    end
+  end
+
+  def broadcast_avatar_statuses
+    User.players.where(room: @room).find_each do |user|
+      Turbo::StreamsChannel.broadcast_replace_to(
+        "rooms:#{@room.id}:avatar-status",
+        target: "waiting_room_user_#{user.id}",
+        partial: "rooms/partials/user_list_item",
+        locals: { user: user }
       )
     end
   end

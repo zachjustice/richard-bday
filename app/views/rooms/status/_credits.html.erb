@@ -3,7 +3,7 @@
 <%# Celebratory doodle decorations %>
 <%= render "shared/credits_doodles" %>
 
-<div class="flex-1 flex flex-col justify-start min-h-0 relative z-10">
+<div class="flex-1 flex flex-col justify-start min-h-0 relative z-avatars">
   <%# Header with dramatic entrance %>
   <div class="text-center mb-6 animate-slide-up">
     <h1 class="text-5xl md:text-6xl font-black mb-2 tracking-tight" style="text-shadow: 4px 4px 0px var(--color-accent-tertiary);">
@@ -13,7 +13,7 @@
   </div>
 
   <%# Main content area - scrollable %>
-  <div class="flex-1 min-h-0 overflow-y-auto scroll-fade-indicators pb-4">
+  <div class="flex-1 min-h-0 pb-4">
     <%# Podium Section - The dramatic centerpiece %>
     <% if podium.present? && podium.any? %>
       <%= render "rooms/status/credits/podium", podium: podium %>
@@ -79,7 +79,7 @@
         Players in Room
         <span class="badge-primary text-sm py-1 px-3"><%= users&.size || 0 %></span>
       </h3>
-      <ul id="waiting-room" class="rainbow-cycle playful-tilt list-none p-0 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
+      <ul id="waiting-room" class="rainbow-cycle playful-tilt list-none p-1 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] overflow-y-auto max-h-[300px]">
         <% if users.present? %>
           <% users.each do |user| %>
             <%= render "rooms/partials/user_list_item", user: user %>
@@ -93,14 +93,9 @@
 
   <%# Action Buttons - Fixed at bottom %>
   <div class="flex justify-center gap-4 mt-6 pt-4 border-t-2 border-ink/10 flex-wrap">
-    <button type="button"
-            class="btn-primary bg-accent-blue text-base px-6 py-3"
-            onclick="history.back()">
-      <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      View Story
-    </button>
+    <%= form_with url: room_final_results_path(current_room), method: :post, class: "inline" do |form| %>
+      <%= form.submit "View Story", class: "btn-primary bg-accent-blue text-base px-6 py-3" %>
+    <% end %>
     <%= form_with url: start_new_room_game_path(current_room), method: :post, class: "inline" do |form| %>
       <%= form.submit "Start New Game", class: "btn-primary bg-accent-green text-base px-6 py-3" %>
     <% end %>

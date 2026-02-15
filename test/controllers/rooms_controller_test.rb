@@ -503,3 +503,288 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
 
   # End of tests for RoomsController#status authorization
 end
+
+class RoomsControllerCrossRoomAndNavigationTest < ActionDispatch::IntegrationTest
+  setup do
+    @story = stories(:one)
+    suffix = SecureRandom.hex(4)
+
+    # Room A: has a running game with prompts
+    @room_a = Room.create!(code: "ra#{suffix}", status: RoomStatus::WaitingRoom)
+    @creator_a = User.create!(name: "CreatorA#{suffix}", room: @room_a, role: User::CREATOR)
+    @player_a = User.create!(name: "PlayerA#{suffix}", room: @room_a, role: User::PLAYER)
+
+    # Room B: separate room
+    @room_b = Room.create!(code: "rb#{suffix}", status: RoomStatus::WaitingRoom)
+    @creator_b = User.create!(name: "CreatorB#{suffix}", room: @room_b, role: User::CREATOR)
+    @player_b = User.create!(name: "PlayerB#{suffix}", room: @room_b, role: User::PLAYER)
+
+    # Start a game in Room A so we have a current_game + current_game_prompt
+    resume_session_as(@room_a.code, @creator_a.name)
+    post start_room_path(@room_a), params: { story: @story.id }
+    @room_a.reload
+    @game_a = @room_a.current_game
+    @prompt_a = @game_a.current_game_prompt
+  end
+
+  #################################################
+  # Cross-Room Access Control Tests
+  #################################################
+
+  test "cross-room GET status is redirected to own room" do
+    resume_session_as(@room_b.code, @creator_b.name)
+
+    get room_status_path(@room_a)
+
+    assert_redirected_to room_status_path(@room_b)
+    assert_equal "Navigating you to the right room...", flash[:notice]
+  end
+
+  test "cross-room POST start is redirected and does not modify target room" do
+    resume_session_as(@room_b.code, @creator_b.name)
+    original_game_id = @room_a.current_game_id
+
+    post start_room_path(@room_a), params: { story: @story.id }
+
+    assert_response :redirect
+    @room_a.reload
+    assert_equal original_game_id, @room_a.current_game_id
+  end
+
+  test "cross-room POST next is redirected and does not advance target room" do
+    resume_session_as(@room_b.code, @creator_b.name)
+    original_prompt_id = @room_a.current_game.current_game_prompt_id
+
+    post next_room_path(@room_a)
+
+    assert_response :redirect
+    @room_a.reload
+    assert_equal original_prompt_id, @room_a.current_game.current_game_prompt_id
+  end
+
+  test "cross-room GET check_navigation is redirected not JSON" do
+    resume_session_as(@room_b.code, @player_b.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/game_prompts/#{@prompt_a.id}")
+
+    assert_response :redirect
+  end
+
+  #################################################
+  # check_navigation Endpoint Tests
+  #################################################
+
+  test "check_navigation returns nil when on correct path during Answering" do
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/game_prompts/#{@prompt_a.id}")
+
+    assert_response :success
+    assert_nil response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation returns redirect when on wrong path during Answering" do
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/game_prompts/#{@prompt_a.id}/voting")
+
+    assert_response :success
+    assert_equal "/game_prompts/#{@prompt_a.id}", response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation returns nil when no current game prompt" do
+    @game_a.update!(current_game_prompt: nil)
+    @room_a.update!(status: RoomStatus::WaitingRoom)
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/some/random/path")
+
+    assert_response :success
+    assert_nil response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation allows waiting page when user has answered" do
+    @player_a.update!(status: UserStatus::Answered)
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/game_prompts/#{@prompt_a.id}/waiting")
+
+    assert_response :success
+    assert_nil response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation allows results page when user has voted" do
+    @room_a.update!(status: RoomStatus::Voting)
+    @player_a.update!(status: UserStatus::Voted)
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/game_prompts/#{@prompt_a.id}/results")
+
+    assert_response :success
+    assert_nil response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation returns nil for StorySelection status" do
+    @room_a.update!(status: RoomStatus::StorySelection)
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/some/path")
+
+    assert_response :success
+    assert_nil response.parsed_body["redirect_to"]
+  end
+end
+
+class TurboNavOrRedirectToDiscordTest < ActionDispatch::IntegrationTest
+  setup do
+    @story = stories(:one)
+    suffix = SecureRandom.hex(4)
+
+    # Discord room with a running game
+    @room = Room.create!(
+      code: "dc#{suffix}",
+      status: RoomStatus::WaitingRoom,
+      is_discord_activity: true,
+      discord_instance_id: "inst-#{suffix}",
+      discord_channel_id: "ch-#{suffix}"
+    )
+    @creator = User.create!(name: "Creator-dc#{suffix}", room: @room, role: User::CREATOR)
+    @navigator = User.create!(
+      name: "Nav#{suffix}",
+      room: @room,
+      role: User::NAVIGATOR,
+      discord_id: "discord_nav_#{suffix}",
+      discord_username: "navuser#{suffix}"
+    )
+
+    # Create a Bearer token for the navigator
+    @token_record = DiscordActivityToken.create_for_user(@navigator)
+    @token = @token_record.token
+    @discord_headers = { "Authorization" => "Bearer #{@token}" }
+
+    # Start a game via cookie session (creator), then use Discord token for tests
+    resume_session_as(@room.code, @creator.name)
+    post start_room_path(@room), params: { story: @story.id }
+    @room.reload
+    @game = @room.current_game
+    @prompt = @game.current_game_prompt
+    end_session
+
+    # Second room for cross-room test
+    @room_b = Room.create!(code: "rb#{suffix}", status: RoomStatus::WaitingRoom)
+    @creator_b = User.create!(name: "CreatorB#{suffix}", room: @room_b, role: User::CREATOR)
+  end
+
+  test "in_room? guard renders turbo_stream navigate for Discord GET instead of redirect" do
+    get room_status_path(@room_b), headers: @discord_headers
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, "turbo-stream"
+    assert_includes response.body, "navigate"
+  end
+
+  test "redirect_to_active_game renders turbo_stream navigate for Discord GET" do
+    get show_room_path, headers: @discord_headers
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, "navigate"
+    assert_includes response.body, "/game_prompts/#{@prompt.id}"
+  end
+
+  test "next action renders turbo_stream navigate for Discord POST" do
+    post next_room_path(@room), headers: @discord_headers
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, "turbo-stream"
+    assert_includes response.body, "navigate"
+  end
+
+  test "non-Discord user gets redirect instead of turbo_nav" do
+    # Create a non-Discord navigator with cookie session
+    suffix2 = SecureRandom.hex(4)
+    room_c = Room.create!(code: "rc#{suffix2}", status: RoomStatus::WaitingRoom)
+    creator_c = User.create!(name: "CreatorC#{suffix2}", room: room_c, role: User::CREATOR)
+    navigator_c = User.create!(name: "NavC#{suffix2}", room: room_c, role: User::NAVIGATOR)
+
+    resume_session_as(room_c.code, creator_c.name)
+    post start_room_path(room_c), params: { story: @story.id }
+    room_c.reload
+
+    resume_session_as(room_c.code, navigator_c.name)
+    post next_room_path(room_c)
+
+    assert_response :redirect
+  end
+
+  test "Discord turbo_nav response includes iframe-safe headers" do
+    get show_room_path, headers: @discord_headers
+
+    assert_response :success
+    assert_nil response.headers["X-Frame-Options"]
+    assert_includes response.headers["Content-Security-Policy"], "frame-ancestors"
+    assert_includes response.headers["Content-Security-Policy"], "discord.com"
+  end
+
+  test "initialize_room renders turbo_stream navigate for unauthorized Discord player" do
+    # Create a regular Discord player (not navigator) who can't control the room
+    player = User.create!(
+      name: "Player#{SecureRandom.hex(4)}",
+      room: @room,
+      role: User::PLAYER,
+      discord_id: "discord_player_#{SecureRandom.hex(4)}",
+      discord_username: "playeruser"
+    )
+    player_token = DiscordActivityToken.create_for_user(player)
+    player_headers = { "Authorization" => "Bearer #{player_token.token}" }
+
+    post initialize_room_path(@room), headers: player_headers
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, "turbo-stream"
+    assert_includes response.body, "navigate"
+  end
+
+  test "status renders turbo_stream navigate for unauthorized Discord player" do
+    player = User.create!(
+      name: "Player#{SecureRandom.hex(4)}",
+      room: @room,
+      role: User::PLAYER,
+      discord_id: "discord_player_#{SecureRandom.hex(4)}",
+      discord_username: "playeruser2"
+    )
+    player_token = DiscordActivityToken.create_for_user(player)
+    player_headers = { "Authorization" => "Bearer #{player_token.token}" }
+
+    get room_status_path(@room), headers: player_headers
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, "turbo-stream"
+    assert_includes response.body, "navigate"
+  end
+
+  test "start_new_game does not redirect for Discord player" do
+    # start_new_game uses respond_to with format.turbo_stream rendering [],
+    # so Discord players (who send turbo_stream Accept header) get a success
+    # response instead of a redirect that would break the iframe. Player
+    # navigation happens via the broadcast_action_to navigate on the channel.
+    player = User.create!(
+      name: "Player#{SecureRandom.hex(4)}",
+      room: @room,
+      role: User::PLAYER,
+      discord_id: "discord_player_#{SecureRandom.hex(4)}",
+      discord_username: "playeruser3"
+    )
+    player_token = DiscordActivityToken.create_for_user(player)
+    player_headers = { "Authorization" => "Bearer #{player_token.token}" }
+
+    post start_new_room_game_path(@room), headers: player_headers
+
+    assert_response :success
+    refute_equal 302, response.status
+  end
+end

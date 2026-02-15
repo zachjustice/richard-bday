@@ -3,7 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
-    helper_method :authenticated?, :editor_authenticated?, :current_editor
+    helper_method :authenticated?, :editor_authenticated?, :current_editor, :discord_authenticated?
   end
 
   class_methods do
@@ -41,6 +41,18 @@ module Authentication
     end
 
     def find_session_by_discord_token
+      # Test-only: allow system tests to simulate Discord auth via a plain cookie
+      # since Cuprite can't set custom HTTP headers on browser requests.
+      if Rails.env.test? && (test_user_id = cookies[:discord_test_user_id])
+        user = User.find_by(id: test_user_id)
+        if user
+          @discord_authenticated = true
+          @current_user = user
+          @current_room = user.room
+          return true
+        end
+      end
+
       auth_header = request.headers["Authorization"]
       return nil unless auth_header&.start_with?("Bearer ")
 
@@ -75,6 +87,12 @@ module Authentication
     end
 
     def request_authentication
+      # Discord users auth via Bearer token — redirecting to login is useless in the iframe
+      if request.headers["Authorization"]&.start_with?("Bearer ")
+        head :unauthorized
+        return
+      end
+
       session[:return_to_after_authenticating] = request.url
       redirect_to new_session_path
     end

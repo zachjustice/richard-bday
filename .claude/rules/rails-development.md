@@ -1,3 +1,6 @@
+---
+paths: *.rb
+---
 # CLAUDE.md
 
 ## Purpose

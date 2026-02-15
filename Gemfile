@@ -61,6 +61,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "cuprite"  # Headless Chrome driver using Chrome DevTools Protocol
+  gem "axe-core-capybara"  # Automated WCAG accessibility testing
 end
 
 gem "requestjs-rails"

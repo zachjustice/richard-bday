@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= content_for(:title) || "Blank" %></title>
+    <title><%= content_for(:title) || "Blanksies" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -22,14 +22,14 @@
     <%= javascript_importmap_tags %>
   </head>
   <body class="<%= 'pt-navbar' if @show_editor_navbar %>" data-controller="konami">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-9999 focus:bg-accent-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:font-bold">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-easter-egg focus:bg-accent-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:font-bold">
       Skip to main content
     </a>
     <% if @show_editor_navbar %>
       <%= render "shared/editor_navbar" %>
     <% end %>
     <%= render "shared/flash_messages" %>
-    <main id="main-content">
+    <main id="main-content" tabindex="-1">
       <%= yield %>
     </main>
   </body>

@@ -1,0 +1,73 @@
+<%# Header — Winner announcement %>
+<div class="text-center mb-4">
+  <% if @winners.size == 1 %>
+    <h2 class="text-2xl font-bold text-ink mb-1">Winner!</h2>
+  <% elsif @winners.size > 1 %>
+    <h2 class="text-2xl font-bold text-ink mb-1"><%= @winners.size %>-Way Tie</h2>
+  <% else %>
+    <h2 class="text-2xl font-bold text-ink mb-1">No Winner</h2>
+  <% end %>
+</div>
+
+<%# Answer list — scrollable %>
+<div class="flex flex-col gap-1.5 overflow-y-auto max-h-[50vh] stagger-animation">
+  <% @answers_sorted_by_votes.each_with_index do |answer, index| %>
+    <% is_winner = @winner&.id == answer.id %>
+    <% medal = index < 3 ? GameConstants::RANKED_MEDALS[index] : nil %>
+    <% vote_count = @votes_by_answer[answer.id]&.size || 0 %>
+
+    <% if index < 3 %>
+      <%# Top 3: full detail with medal %>
+      <div class="flex flex-col gap-1 p-3 rounded-xl border-2 animate-fade-in
+                  <%= is_winner ? 'bg-accent-violet/25 border-accent-violet/60' : 'bg-ink/5 border-ink/10' %>">
+        <span class="text-base font-bold text-ink leading-snug">
+          <%= medal %> <%= answer.text %>
+        </span>
+
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs text-ink/50 truncate"><%= answer.user.avatar_with_name %></span>
+
+          <div class="flex items-center gap-0.5 shrink-0">
+            <% if @ranked_voting && @points_by_answer[answer.id]&.positive? %>
+              <span class="text-sm font-bold text-accent-violet"><%= @points_by_answer[answer.id] %>pts</span>
+            <% end %>
+            <% if @votes_by_answer[answer.id]&.any? %>
+              <% @votes_by_answer[answer.id].first(4).each do |vote| %>
+                <span class="text-sm"><%= vote.user.avatar %></span>
+              <% end %>
+              <% overflow = @votes_by_answer[answer.id].size - 4 %>
+              <% if overflow > 0 %>
+                <span class="text-sm font-bold text-ink/40">+<%= overflow %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <%# Rows 4+: compact single line %>
+      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg animate-fade-in bg-ink/5">
+        <span class="text-sm font-bold text-ink/30">#<%= index + 1 %></span>
+        <span class="text-sm text-ink truncate flex-1"><%= answer.text %></span>
+        <span class="text-sm text-ink/40 shrink-0">&middot; <%= answer.user.name %></span>
+        <% if vote_count > 0 %>
+          <span class="text-sm font-bold text-ink/40">(<%= vote_count %>)</span>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<%# Footer — Next Round / progress dots %>
+<div class="mt-4">
+  <% if @current_user.role == User::NAVIGATOR %>
+    <%= form_with url: "/rooms/#{@current_room.id}/next", method: :post, class: "flex justify-center" do |form| %>
+      <%= form.submit "Next Round", class: "btn-primary min-w-[200px]" %>
+    <% end %>
+  <% else %>
+    <div class="progress-dots">
+      <span class="progress-dot"></span>
+      <span class="progress-dot"></span>
+      <span class="progress-dot"></span>
+    </div>
+  <% end %>
+</div>

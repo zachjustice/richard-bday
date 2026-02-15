@@ -1,7 +1,11 @@
 module Discord
   class ActivitiesController < ApplicationController
     allow_unauthenticated_access
-    skip_before_action :verify_authenticity_token, only: [ :auth_callback ]
+    # Auth callback is the initial authentication step — no Bearer token or session
+    # exists yet. The request is secured by the Discord OAuth code exchange instead.
+    skip_forgery_protection only: :auth_callback
+    # The launch page loads before Discord auth, so set_discord_iframe_headers (which
+    # requires discord_authenticated?) won't fire. Must explicitly allow framing here.
     after_action :allow_discord_iframe, only: [ :launch ]
 
     # GET /discord - Entry point when Discord launches the activity
@@ -23,16 +27,23 @@ module Discord
 
       access_token = discord_token_response["access_token"]
 
+      discord_user = fetch_discord_user(access_token)
+      unless discord_user
+        return render json: { error: "Failed to fetch Discord user" }, status: :unprocessable_entity
+      end
+
       room = find_or_create_activity_room(instance_id, channel_id)
-      creator = find_or_create_room_creator(room)
-      creator.discord_activity_tokens.where("expires_at > ?", Time.current).destroy_all
-      activity_token = DiscordActivityToken.create_for_user(creator)
+      find_or_create_room_creator(room)
+      player = find_or_create_discord_player(room, discord_user)
+
+      player.discord_activity_tokens.where("expires_at > ?", Time.current).destroy_all
+      activity_token = DiscordActivityToken.create_for_user(player)
 
       render json: {
         token: activity_token.token,
         access_token: access_token,
         cable_url: cable_url,
-        user: { id: creator.id, name: creator.name, avatar: creator.avatar, role: creator.role },
+        user: { id: player.id, name: player.name, avatar: player.avatar, role: player.role },
         room: { id: room.id, code: room.code }
       }
     end
@@ -77,6 +88,41 @@ module Discord
       else
         "#{scheme}://#{host}:#{port}/cable"
       end
+    end
+
+    def fetch_discord_user(access_token)
+      uri = URI("https://discord.com/api/users/@me")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.open_timeout = 5
+      http.read_timeout = 10
+
+      request = Net::HTTP::Get.new(uri)
+      request["Authorization"] = "Bearer #{access_token}"
+
+      response = http.request(request)
+      return nil unless response.is_a?(Net::HTTPSuccess)
+
+      JSON.parse(response.body)
+    rescue Net::OpenTimeout, Net::ReadTimeout, SocketError, Errno::ECONNREFUSED, JSON::ParserError => e
+      Rails.logger.error("Discord user fetch failed: #{e.message}")
+      nil
+    end
+
+    def find_or_create_discord_player(room, discord_user)
+      existing = User.find_by(discord_id: discord_user["id"], room_id: room.id)
+      return existing if existing
+
+      player_count = User.players.where(room_id: room.id).count
+      role = player_count == 0 ? User::NAVIGATOR : User::PLAYER
+
+      User.create!(
+        name: discord_user["global_name"].presence || discord_user["username"],
+        room_id: room.id,
+        role: role,
+        discord_id: discord_user["id"],
+        discord_username: discord_user["username"]
+      )
     end
 
     def find_or_create_room_creator(room)

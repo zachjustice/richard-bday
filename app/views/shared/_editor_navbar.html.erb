@@ -1,5 +1,5 @@
 <%# Editor navigation bar - rendered when editor is authenticated %>
-<nav class="fixed top-0 left-0 right-0 z-50 bg-page border-b-3 border-ink"
+<nav class="fixed top-0 left-0 right-0 z-controls bg-page border-b-3 border-ink"
      style="box-shadow: 0 4px 0 var(--color-ink);"
      data-controller="mobile-nav">
   <div class="max-w-[1400px] mx-auto px-4 md:px-8">
@@ -23,6 +23,7 @@
         <%# User Account Icon %>
         <%= link_to editor_settings_path,
             class: "p-2 rounded-lg border-2 border-ink/20 hover:border-ink hover:bg-accent-tertiary/20 transition-all",
+            "aria-label": "Account settings",
             title: "Account" do %>
           <svg class="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -44,8 +45,12 @@
   </div>
 
   <%# Mobile Slide-out Menu %>
-  <div class="hidden md:hidden fixed inset-0 z-40"
-       data-mobile-nav-target="overlay">
+  <div class="hidden md:hidden fixed inset-0 z-overlay"
+       data-mobile-nav-target="overlay"
+       role="dialog"
+       aria-modal="true"
+       aria-label="Navigation menu"
+       aria-hidden="true">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-action="click->mobile-nav#close"></div>
     <div class="absolute right-0 top-0 h-full w-72 bg-page border-l-3 border-ink transform translate-x-full transition-transform"
          data-mobile-nav-target="drawer"

@@ -36,9 +36,8 @@ async function initializeDiscordActivity() {
 
     if (loadingEl) loadingEl.classList.add("hidden")
 
-    // Navigate to the room status page
-    const roomInfo = discordActivity.getRoomInfo()
-    Turbo.visit(`/rooms/${roomInfo.id}/status`)
+    // Navigate to the player lobby
+    Turbo.visit(`/rooms`)
   } catch (error) {
     console.error("Discord Activity initialization failed:", error)
     if (loadingEl) loadingEl.classList.add("hidden")

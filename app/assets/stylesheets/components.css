@@ -55,7 +55,8 @@
   /* Primary button with offset shadow */
   .btn-primary {
     @apply relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold uppercase tracking-wide;
-    @apply rounded-xl cursor-pointer transition-all duration-200 text-white;
+    @apply rounded-xl cursor-pointer transition-all duration-200;
+    @apply text-white;
     background-color: var(--color-accent-primary);
     border: 3px solid var(--color-ink);
     box-shadow: 4px 4px 0px var(--color-ink);
@@ -207,7 +208,7 @@
 
 /* Prompt Tooltip Component */
 .prompt-tooltip {
-  @apply fixed z-[1100] max-w-[400px] pointer-events-none animate-tooltip-fade-in;
+  @apply fixed z-tooltip max-w-[400px] pointer-events-none animate-tooltip-fade-in;
 }
 
 .prompt-tooltip.hidden {
@@ -252,7 +253,7 @@
 
 .form-input::placeholder {
   @apply font-normal;
-  color: rgba(26, 26, 46, 0.4);
+  color: rgba(26, 26, 46, 0.55);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -274,7 +275,7 @@
 
 .form-subheader {
   @apply text-base;
-  color: rgba(26, 26, 46, 0.6);
+  color: rgba(26, 26, 46, 0.65);
 }
 
 /* Alert/Notice Messages */
@@ -600,7 +601,7 @@
 
 /* Blank Modal Component */
 .blank-modal {
-  @apply fixed inset-0 z-[1000] flex items-center justify-center p-4 animate-fade-in;
+  @apply fixed inset-0 z-modal flex items-center justify-center p-4 animate-fade-in;
 }
 
 .blank-modal.hidden {
@@ -700,7 +701,7 @@
 
 /* Settings Modal */
 .settings-modal {
-  @apply fixed inset-0 z-[1000] flex items-center justify-center p-4 animate-fade-in;
+  @apply fixed inset-0 z-modal flex items-center justify-center p-4 animate-fade-in;
 }
 
 .settings-modal.hidden {
@@ -719,7 +720,7 @@
 
 /* Leave Game Modal */
 .leave-game-modal {
-  @apply fixed inset-0 z-[1000] flex items-center justify-center p-4 animate-fade-in;
+  @apply fixed inset-0 z-modal flex items-center justify-center p-4 animate-fade-in;
 }
 
 .leave-game-modal.hidden {
@@ -738,7 +739,7 @@
 
 /* Leave Game Button - fixed bottom-left */
 .leave-game-btn {
-  @apply fixed bottom-4 left-4 z-50 p-2 bg-white rounded-xl cursor-pointer transition-all;
+  @apply fixed bottom-4 left-4 z-controls p-2 bg-white rounded-xl cursor-pointer transition-all;
   @apply flex items-center justify-center;
   color: var(--color-ink);
   border: 2px solid var(--color-ink);
@@ -768,10 +769,22 @@
   }
 }
 
+/* Discord Activity Navbar */
+.discord-navbar {
+  @apply fixed top-0 left-0 right-0 z-controls h-14 flex items-center px-4 gap-3;
+  background-color: var(--color-bg-page);
+  border-bottom: 3px solid var(--color-ink);
+  box-shadow: 4px 4px 0px var(--color-ink);
+}
+
+.discord-phase-pill {
+  @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm font-semibold transition-all whitespace-nowrap;
+}
+
 /* Music Player Component */
 .music-player-button {
   @apply fixed bottom-5 left-5 w-[50px] h-[50px] bg-white rounded-xl;
-  @apply cursor-pointer transition-all z-[999] flex items-center justify-center;
+  @apply cursor-pointer transition-all z-music-button flex items-center justify-center;
   border: 3px solid var(--color-ink);
   box-shadow: 3px 3px 0px var(--color-ink);
   color: var(--color-ink);
@@ -788,7 +801,7 @@
 }
 
 .music-player-modal {
-  @apply fixed inset-0 z-[1000] flex items-center justify-center animate-fade-in;
+  @apply fixed inset-0 z-modal flex items-center justify-center animate-fade-in;
 }
 
 .music-player-modal.hidden {
@@ -1026,6 +1039,24 @@
   stroke-width: 4;
 }
 
+/* Extra-small countdown timer variant (Discord navbar) */
+.countdown-timer-xs {
+  @apply w-[36px] h-[36px] overflow-hidden;
+}
+
+.countdown-timer-xs .countdown-timer {
+  @apply w-[36px] h-[36px];
+}
+
+.countdown-timer-xs .countdown-timer-display {
+  @apply text-xs;
+}
+
+.countdown-timer-xs .countdown-timer-circle-bg,
+.countdown-timer-xs .countdown-timer-circle {
+  stroke-width: 3;
+}
+
 /* Flash Messages */
 .flash-message {
   @apply flex items-center justify-between gap-3 px-5 py-4 rounded-xl shadow-xl;
@@ -1080,6 +1111,73 @@
   background-attachment: local, local, scroll, scroll;
 }
 
+/* Roaming avatar tooltip - shown on tap to display user name */
+.roaming-avatar-tooltip {
+  @apply absolute z-controls px-3 py-1.5 rounded-xl text-sm font-bold whitespace-nowrap pointer-events-none animate-roaming-tooltip-fade-in;
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 4px;
+  background-color: var(--color-accent-tertiary);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 2px 2px 0px var(--color-ink);
+}
+
+.roaming-avatar-status {
+  @apply absolute z-controls text-xs font-bold leading-none pointer-events-none;
+  top: -4px;
+  right: -4px;
+}
+
+.roaming-avatar-status--pending {
+  @apply text-ink/70;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.roaming-avatar-status--done {
+  @apply text-accent-green;
+}
+
+/* Current user's avatar — brighter bg + periodic shimmer */
+.roaming-avatar--self {
+  overflow: visible;
+}
+
+.roaming-avatar--self::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: avatar-shimmer 5s ease-in infinite;
+  pointer-events: none;
+}
+
+/* Spark particles that burst outward on submit */
+.roaming-avatar-spark {
+  @apply absolute rounded-full pointer-events-none;
+  width: 8px;
+  height: 8px;
+  top: 50%;
+  left: 50%;
+  margin-top: -4px;
+  margin-left: -4px;
+  background-color: var(--spark-color, var(--color-accent-primary));
+  box-shadow: 0 0 4px var(--spark-color, var(--color-accent-primary));
+  animation: avatar-spark-pop var(--spark-duration, 0.8s) ease-out forwards;
+}
+
+/* Red flash when changing an answer */
+.roaming-avatar--flash-red {
+  animation: avatar-flash-red 0.4s ease-out !important;
+}
+
 /* TODO: can the below classes be accomplished with out components.css? Does it matter? */
 
 /* Staggered entrance animation for lists */
@@ -1123,7 +1221,7 @@
 .carousel-arrow {
   @apply flex items-center justify-center w-12 h-12 max-sm:w-10 max-sm:h-10;
   @apply bg-white rounded-xl cursor-pointer transition-all;
-  @apply text-ink z-10;
+  @apply text-ink z-avatars;
   border: 2px solid var(--color-ink);
   box-shadow: 2px 2px 0px var(--color-ink);
 }
@@ -1320,9 +1418,9 @@
    TUTORIAL HINTS COMPONENT
    ============================================ */
 
-/* z-60: Above settings button (z-50), below modals (z-1000) */
+/* z-hints: Above controls layer, below modals */
 .tutorial-hint {
-  @apply fixed z-[60] pointer-events-auto animate-tooltip-fade-in;
+  @apply fixed z-hints pointer-events-auto animate-tooltip-fade-in;
 }
 
 .tutorial-hint.hidden {
@@ -1602,7 +1700,7 @@
 }
 
 .multi-select-dropdown {
-  @apply absolute z-50 left-0 right-0 mt-2;
+  @apply absolute z-controls left-0 right-0 mt-2;
   @apply bg-white rounded-xl overflow-hidden;
   border: 2px solid var(--color-ink);
   box-shadow: 4px 4px 0px var(--color-ink);
@@ -1667,7 +1765,7 @@
 .konami-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: var(--z-index-easter-egg);
   display: flex;
   flex-direction: column;
   align-items: center;
