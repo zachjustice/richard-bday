@@ -38,8 +38,8 @@ class EditorPasswordsControllerTest < ActionDispatch::IntegrationTest
       new_password_confirmation: "newpassword456"
     }
 
-    assert_redirected_to editor_settings_path
-    assert_equal "Current password is incorrect.", flash[:alert]
+    assert_response :unprocessable_entity
+    assert_select ".alert-message", "Current password is incorrect."
     assert @editor.reload.authenticate("password123")
   end
 
@@ -52,8 +52,8 @@ class EditorPasswordsControllerTest < ActionDispatch::IntegrationTest
       new_password_confirmation: "different789"
     }
 
-    assert_redirected_to editor_settings_path
-    assert_equal "New passwords don't match.", flash[:alert]
+    assert_response :unprocessable_entity
+    assert_select ".alert-message", "New passwords don't match."
     assert @editor.reload.authenticate("password123")
   end
 
@@ -66,8 +66,8 @@ class EditorPasswordsControllerTest < ActionDispatch::IntegrationTest
       new_password_confirmation: ""
     }
 
-    assert_redirected_to editor_settings_path
-    assert_equal "New password can't be blank.", flash[:alert]
+    assert_response :unprocessable_entity
+    assert_select ".alert-message", "New password can't be blank."
   end
 
   test "rejects short new password" do
@@ -79,8 +79,8 @@ class EditorPasswordsControllerTest < ActionDispatch::IntegrationTest
       new_password_confirmation: "short"
     }
 
-    assert_redirected_to editor_settings_path
-    assert_match(/too short/i, flash[:alert])
+    assert_response :unprocessable_entity
+    assert_select ".alert-message", /too short/i
     assert @editor.reload.authenticate("password123")
   end
 

@@ -8,6 +8,11 @@ export default class extends Controller {
     this.boundHandleEscape = this.handleEscape.bind(this)
     Object.assign(this, FocusTrap)
     this.setupFocusTrap(this.modalTarget)
+
+    // Auto-open if there are validation errors
+    if (this.modalTarget.querySelector(".alert-message")) {
+      this.open()
+    }
   }
 
   disconnect() {

@@ -11,6 +11,11 @@
       <p class="text-base max-sm:text-sm text-ink/60 italic">Next, players vote on their favorite answer</p>
     </div>
 
+    <% if flash[:alert] %>
+      <div class="alert-message" role="alert"><%= flash[:alert] %></div>
+      <% flash.delete(:alert) %>
+    <% end %>
+
     <% if discord_authenticated? %>
     <div>
     <% else %>

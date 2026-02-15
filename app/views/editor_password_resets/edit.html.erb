@@ -8,7 +8,8 @@
     </div>
 
     <% if flash[:alert] %>
-      <div class="alert-message mb-4"><%= flash[:alert] %></div>
+      <div class="alert-message mb-4" role="alert"><%= flash[:alert] %></div>
+      <% flash.delete(:alert) %>
     <% end %>
 
     <%= form_with url: editor_reset_password_path(token: params[:token]), method: :patch, class: "flex flex-col gap-6" do |form| %>

@@ -1,25 +1,32 @@
 class EditorEmailsController < ApplicationController
   skip_before_action :require_authentication
   before_action :require_editor_auth, only: :create
+  before_action :set_settings_view_data, only: :create
 
   rate_limit to: 5, within: 10.minutes, only: [ :create ],
-    with: -> { redirect_to editor_settings_path, alert: "Too many requests. Please try again later." }
+    with: -> {
+      @email_error = "Too many requests. Please try again later."
+      render "editor_settings/show", status: :too_many_requests
+    }
 
   def create
     new_email = params[:new_email]&.downcase&.strip
 
     if new_email.blank?
-      redirect_to editor_settings_path, alert: "Email can't be blank."
+      @email_error = "Email can't be blank."
+      render "editor_settings/show", status: :unprocessable_entity
       return
     end
 
     if new_email == current_editor.email
-      redirect_to editor_settings_path, alert: "That's already your email address."
+      @email_error = "That's already your email address."
+      render "editor_settings/show", status: :unprocessable_entity
       return
     end
 
     if Editor.where.not(id: current_editor.id).exists?(email: new_email)
-      redirect_to editor_settings_path, alert: "That email is already registered."
+      @email_error = "That email is already registered."
+      render "editor_settings/show", status: :unprocessable_entity
       return
     end
 
@@ -36,7 +43,8 @@ class EditorEmailsController < ApplicationController
 
       redirect_to editor_settings_path, notice: "A confirmation link has been sent to #{new_email}."
     else
-      redirect_to editor_settings_path, alert: email_change.errors.full_messages.join(", ")
+      @email_error = email_change.errors.full_messages.join(", ")
+      render "editor_settings/show", status: :unprocessable_entity
     end
   end
 
@@ -64,6 +72,19 @@ class EditorEmailsController < ApplicationController
       redirect_to editor_login_path, notice: "Your email has been updated. Please sign in."
     else
       redirect_to editor_login_path, alert: "Unable to update email. Please try again."
+    end
+  end
+
+  private
+
+  def set_settings_view_data
+    @show_editor_navbar = true
+    @statistics = current_editor.stories.includes(:game).map do |story|
+      if story.game.present?
+        { story: story, times_played: 1, unique_players: User.where(room_id: story.game.room_id).players.count }
+      else
+        { story: story, times_played: 0, unique_players: 0 }
+      end
     end
   end
 end
