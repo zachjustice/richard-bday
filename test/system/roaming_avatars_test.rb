@@ -29,12 +29,12 @@ class RoamingAvatarsTest < ApplicationSystemTestCase
     assert_selector ".roaming-avatar[aria-label='Bob']", wait: 5
   end
 
-  test "clicking an avatar shows a tooltip with the player name" do
+  test "new avatars auto-show name tooltips" do
     visit_as_discord_user(@player1, show_room_path)
 
-    avatar = find(".roaming-avatar[aria-label='Bob']", wait: 5)
-    avatar.click
-    assert_selector ".roaming-avatar-tooltip", text: "Bob", wait: 3
+    # New avatars auto-show their name tooltip for 15 seconds
+    assert_selector ".roaming-avatar-tooltip", text: "Alice", wait: 5
+    assert_selector ".roaming-avatar-tooltip", text: "Bob", wait: 5
   end
 
   test "status badges are hidden during WaitingRoom phase" do
@@ -51,6 +51,7 @@ class RoamingAvatarsTest < ApplicationSystemTestCase
   def visit_as_discord_user(user, path)
     visit new_session_path
     page.execute_script("document.cookie = 'discord_test_user_id=#{user.id}; path=/'")
-    visit path
+    page.execute_script("window.location.href = '#{path}'")
+    assert_text "Welcome", wait: 5
   end
 end

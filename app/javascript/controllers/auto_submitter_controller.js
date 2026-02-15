@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { timerPhase } from "lib/timer_phase"
 
 export default class extends Controller {
   static targets = ["display", "container"]
@@ -88,18 +89,8 @@ export default class extends Controller {
   }
 
   updateColor() {
-    const progress = this.timeRemaining / this.durationValue
-    
-    if (progress > 0.5) {
-      // Green phase (100% - 50%)
-      this.element.setAttribute('data-phase', 'green')
-    } else if (progress > 0.25) {
-      // Orange phase (50% - 25%)
-      this.element.setAttribute('data-phase', 'orange')
-    } else {
-      // Red phase (25% - 0%)
-      this.element.setAttribute('data-phase', 'red')
-    }
+    const phase = timerPhase(this.timeRemaining, this.durationValue)
+    this.element.setAttribute('data-phase', phase)
   }
 
   submitForm() {

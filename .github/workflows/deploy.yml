@@ -43,6 +43,21 @@ jobs:
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
 
+  test_js:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Run JavaScript unit tests
+        run: deno test test/javascript/ --allow-read
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -88,7 +103,7 @@ jobs:
           if-no-files-found: ignore
 
   build-and-deploy:
-    needs: [ scan_ruby, scan_js, lint, test ]
+    needs: [ scan_ruby, scan_js, lint, test, test_js ]
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     environment: continuous-deploy
     runs-on: ubuntu-latest

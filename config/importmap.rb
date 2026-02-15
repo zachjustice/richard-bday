@@ -10,6 +10,7 @@ pin "jquery" # @3.7.1
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin_all_from "app/javascript/concerns", under: "concerns"
 pin_all_from "app/javascript/channels", under: "channels"
+pin_all_from "app/javascript/lib", under: "lib"
 pin "@nuintun/qrcode", to: "@nuintun--qrcode.js" # @5.0.2
 pin "html2canvas", to: "html2canvas.js", preload: false
 

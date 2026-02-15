@@ -1,4 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
+import { findInsertionIndex } from "lib/ordered_insert"
+import { shouldEnableSubmit } from "lib/voting_state"
 
 export default class extends Controller {
   static targets = ["slot", "answer", "answersContainer", "input", "submit", "form", "placeholder", "hintText"]
@@ -501,26 +503,14 @@ export default class extends Controller {
 
   // Restore answer to its original position based on initial order
   restoreToInitialOrder(answer) {
-    const answerId = answer.dataset.answerId
-    const targetIndex = this.initialAnswerOrder.indexOf(answerId)
-
-    // Get current answers in the container
     const containerAnswers = Array.from(
       this.answersContainerTarget.querySelectorAll(".ranking-answer")
     )
+    const existingIds = containerAnswers.map(a => a.dataset.answerId)
+    const insertAt = findInsertionIndex(answer.dataset.answerId, existingIds, this.initialAnswerOrder)
 
-    // Find the right position to insert
-    let insertBefore = null
-    for (const existing of containerAnswers) {
-      const existingIndex = this.initialAnswerOrder.indexOf(existing.dataset.answerId)
-      if (existingIndex > targetIndex) {
-        insertBefore = existing
-        break
-      }
-    }
-
-    if (insertBefore) {
-      this.answersContainerTarget.insertBefore(answer, insertBefore)
+    if (insertAt < containerAnswers.length) {
+      this.answersContainerTarget.insertBefore(answer, containerAnswers[insertAt])
     } else {
       this.answersContainerTarget.appendChild(answer)
     }
@@ -747,9 +737,6 @@ export default class extends Controller {
 
   updateSubmitState() {
     const filledSlots = this.inputTargets.filter(i => i.value !== "").length
-    const requiredSlots = Math.min(this.maxSlotsValue, this.answerTargets.length)
-
-    // Require all available slots to be filled
-    this.submitTarget.disabled = filledSlots < requiredSlots
+    this.submitTarget.disabled = !shouldEnableSubmit(filledSlots, this.maxSlotsValue, this.answerTargets.length)
   }
 }

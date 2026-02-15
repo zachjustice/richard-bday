@@ -60,7 +60,7 @@ export default class extends Controller {
       })
 
       matchingPrompts = matchingPrompts.sort((a, b)=> {
-        return b.tags.split(',').filter(t => tags.includes(t)).length 
+        return b.tags.split(',').filter(t => tags.includes(t)).length
         - a.tags.split(',').filter(t => tags.includes(t)).length;
       })
 

@@ -6,10 +6,15 @@
       "Bash(node --check:*)",
       "Bash(rails runner:*)",
       "Bash(xargs:*)",
-      "Bash(gem specification:*)"
+      "Bash(gem specification:*)",
+      "Bash(RAILS_ENV=test bin/rails test:*)",
+      "Bash(RAILS_ENV=test bin/rails db:test:prepare:*)"
     ]
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   }
 }
