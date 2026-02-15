@@ -1,5 +1,5 @@
-<div class="leave-game-modal hidden" data-change-email-modal-target="modal">
-  <div class="leave-game-backdrop" data-action="click->change-email-modal#close"></div>
+<div class="leave-game-modal hidden" data-modal-target="modal">
+  <div class="leave-game-backdrop" data-action="click->modal#close"></div>
   <div class="leave-game-content" style="max-width: 420px;">
     <div class="p-6">
       <h3 class="text-xl font-bold text-ink mb-1">Change Email</h3>
@@ -22,7 +22,7 @@
         </div>
 
         <div class="flex gap-3 justify-end mt-2">
-          <button type="button" class="btn-secondary" data-action="change-email-modal#close">
+          <button type="button" class="btn-secondary" data-action="modal#close">
             Cancel
           </button>
           <%= form.submit "Send Confirmation", class: "btn-primary" %>

@@ -1,13 +1,11 @@
 class EditorPasswordsController < ApplicationController
+  include EditorSettingsRenderable
   skip_before_action :require_authentication
   before_action :require_editor_auth
   before_action :set_settings_view_data
 
   rate_limit to: 5, within: 10.minutes, only: [ :update ],
-    with: -> {
-      @password_error = "Too many requests. Please try again later."
-      render "editor_settings/show", status: :too_many_requests
-    }
+    with: -> { redirect_to editor_settings_path, alert: "Too many requests. Please try again later." }
 
   def update
     unless current_editor.authenticate(params[:current_password])
@@ -34,19 +32,6 @@ class EditorPasswordsController < ApplicationController
     else
       @password_error = current_editor.errors.full_messages.join(", ")
       render "editor_settings/show", status: :unprocessable_entity
-    end
-  end
-
-  private
-
-  def set_settings_view_data
-    @show_editor_navbar = true
-    @statistics = current_editor.stories.includes(:game).map do |story|
-      if story.game.present?
-        { story: story, times_played: 1, unique_players: User.where(room_id: story.game.room_id).players.count }
-      else
-        { story: story, times_played: 0, unique_players: 0 }
-      end
     end
   end
 end

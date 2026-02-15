@@ -1,5 +1,5 @@
-<div class="leave-game-modal hidden" data-logout-modal-target="modal">
-  <div class="leave-game-backdrop" data-action="click->logout-modal#close"></div>
+<div class="leave-game-modal hidden" data-modal-target="modal">
+  <div class="leave-game-backdrop" data-action="click->modal#close"></div>
   <div class="leave-game-content">
     <div class="p-6 text-center">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-accent-primary/10 flex items-center justify-center">
@@ -12,7 +12,7 @@
       <p class="text-ink/60 mb-6">You'll need to sign back in to edit your stories.</p>
 
       <div class="flex gap-3 justify-center">
-        <button class="btn-secondary" data-action="logout-modal#close">
+        <button class="btn-secondary" data-action="modal#close">
           Cancel
         </button>
         <%= button_to "Sign Out", editor_logout_path,

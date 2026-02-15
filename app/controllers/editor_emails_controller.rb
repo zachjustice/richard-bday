@@ -1,13 +1,11 @@
 class EditorEmailsController < ApplicationController
+  include EditorSettingsRenderable
   skip_before_action :require_authentication
   before_action :require_editor_auth, only: :create
   before_action :set_settings_view_data, only: :create
 
   rate_limit to: 5, within: 10.minutes, only: [ :create ],
-    with: -> {
-      @email_error = "Too many requests. Please try again later."
-      render "editor_settings/show", status: :too_many_requests
-    }
+    with: -> { redirect_to editor_settings_path, alert: "Too many requests. Please try again later." }
 
   def create
     new_email = params[:new_email]&.downcase&.strip
@@ -72,19 +70,6 @@ class EditorEmailsController < ApplicationController
       redirect_to editor_login_path, notice: "Your email has been updated. Please sign in."
     else
       redirect_to editor_login_path, alert: "Unable to update email. Please try again."
-    end
-  end
-
-  private
-
-  def set_settings_view_data
-    @show_editor_navbar = true
-    @statistics = current_editor.stories.includes(:game).map do |story|
-      if story.game.present?
-        { story: story, times_played: 1, unique_players: User.where(room_id: story.game.room_id).players.count }
-      else
-        { story: story, times_played: 0, unique_players: 0 }
-      end
     end
   end
 end
