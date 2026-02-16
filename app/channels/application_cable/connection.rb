@@ -45,7 +45,18 @@ module ApplicationCable
     def disconnect
       return if !self.current_user
       return if self.current_user.role == User::CREATOR
-      return if self.current_user.audience?
+
+      if self.current_user.audience?
+        self.current_user.update(is_active: false)
+        room = self.current_user.room
+        Turbo::StreamsChannel.broadcast_action_to(
+          "rooms:#{room.id}:users",
+          action: :update,
+          target: "waiting-room-audience-count",
+          html: "#{room.active_audience_count} watching"
+        )
+        return
+      end
 
       room = self.current_user.room
 

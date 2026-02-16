@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["remaining", "starCount", "starInput", "submitBtn", "form"]
+  static targets = ["remaining", "starCount", "starInput", "submitBtn", "form", "answerCard"]
   static values = { maxStars: { type: Number, default: 5 } }
 
   connect() {
@@ -30,11 +30,13 @@ export default class extends Controller {
   }
 
   submit(event) {
-    if (this.totalStars() === 0) {
+    if (this.submitted || this.totalStars() === 0) {
       event.preventDefault()
-    } else {
-      this.submitted = true
+      return
     }
+    this.submitted = true
+    this.submitBtnTarget.disabled = true
+    this.submitBtnTarget.classList.add("btn-loading")
   }
 
   totalStars() {
@@ -46,7 +48,7 @@ export default class extends Controller {
     const remaining = this.maxStarsValue - total
     const atMax = remaining === 0
 
-    this.remainingTarget.textContent = `${remaining} left`
+    this.remainingTarget.textContent = `${remaining} stars left`
     this.submitBtnTarget.disabled = total === 0
 
     this.starCountTargets.forEach(el => {
@@ -59,14 +61,34 @@ export default class extends Controller {
       input.value = this.stars[answerId] || 0
     })
 
-    // Update aria-disabled on increment/decrement buttons
+    // Update increment buttons
     this.element.querySelectorAll('[data-action*="increment"]').forEach(btn => {
-      btn.setAttribute("aria-disabled", atMax ? "true" : "false")
+      const disabled = atMax
+      btn.setAttribute("aria-disabled", disabled ? "true" : "false")
+      btn.classList.toggle("opacity-40", disabled)
+      btn.classList.toggle("cursor-not-allowed", disabled)
+
+      const answerId = btn.dataset.answerId
+      const count = this.stars[answerId] || 0
+      const answerCard = this.answerCardTargets.find(c => c.dataset.answerId === answerId)
+      const answerText = answerCard?.querySelector("p")?.textContent?.trim() || "answer"
+      const truncated = answerText.length > 30 ? answerText.substring(0, 27) + "..." : answerText
+      btn.setAttribute("aria-label", `Add star to ${truncated} (${count} stars)`)
     })
+
+    // Update decrement buttons
     this.element.querySelectorAll('[data-action*="decrement"]').forEach(btn => {
       const answerId = btn.dataset.answerId
       const atZero = (this.stars[answerId] || 0) === 0
       btn.setAttribute("aria-disabled", atZero ? "true" : "false")
+      btn.classList.toggle("opacity-40", atZero)
+      btn.classList.toggle("cursor-not-allowed", atZero)
+
+      const count = this.stars[answerId] || 0
+      const answerCard = this.answerCardTargets.find(c => c.dataset.answerId === answerId)
+      const answerText = answerCard?.querySelector("p")?.textContent?.trim() || "answer"
+      const truncated = answerText.length > 30 ? answerText.substring(0, 27) + "..." : answerText
+      btn.setAttribute("aria-label", `Remove star from ${truncated} (${count} stars)`)
     })
   }
 }

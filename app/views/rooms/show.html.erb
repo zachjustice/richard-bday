@@ -1,5 +1,6 @@
 <% if discord_authenticated? %>
   <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+  <%= turbo_stream_from "rooms:#{@current_room.id}:users" %>
 
   <div class="min-h-screen relative flex flex-col items-center p-6 max-sm:p-4 bg-page overflow-hidden">
     <%# Header %>
@@ -28,9 +29,13 @@
     <% end %>
 
     <%# Player count %>
+    <% audience_count = @current_room.active_audience_count %>
     <div class="flex items-center justify-center gap-3 mb-4 relative z-content">
       <span id="waiting-room-players-count" class="badge-primary">
         <%= @users.size %> joined
+      </span>
+      <span id="waiting-room-audience-count" class="badge-primary <%= 'hidden' if audience_count == 0 %>">
+        <%= audience_count %> watching
       </span>
     </div>
 
@@ -44,6 +49,7 @@
   </div>
 <% else %>
   <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+  <%= turbo_stream_from "rooms:#{@current_room.id}:users" %>
   <%= render "shared/leave_game_button" %>
   <div class="min-h-screen flex items-center justify-center p-6 max-sm:p-4 max-[480px]:items-start max-[480px]:pt-16 bg-page">
     <div class="card-primary animate-fade-in p-12 max-sm:p-8 max-w-xl w-full">
@@ -64,6 +70,11 @@
         <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
         <%= render "avatars/picker", user: @current_user, room: @current_room %>
       <% end %>
+
+      <% non_discord_audience_count = @current_room.active_audience_count %>
+      <span id="waiting-room-audience-count" class="badge-primary mt-4 inline-block <%= 'hidden' if non_discord_audience_count == 0 %>">
+        <%= non_discord_audience_count %> watching
+      </span>
     </div>
   </div>
 <% end %>

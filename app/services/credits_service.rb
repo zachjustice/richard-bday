@@ -69,7 +69,7 @@ class CreditsService
   end
 
   def audience_favorite
-    audience_votes = @votes.select { |v| audience_user_ids.include?(v.user_id) }
+    audience_votes = @votes.select { |v| v.audience? }
     return nil if audience_votes.empty?
 
     # Count total stars per answer author across the whole game
@@ -84,11 +84,7 @@ class CreditsService
   end
 
   def player_votes
-    @player_votes ||= @votes.reject { |v| audience_user_ids.include?(v.user_id) }
-  end
-
-  def audience_user_ids
-    @audience_user_ids ||= User.audience.where(room: @room).pluck(:id).to_set
+    @player_votes ||= @votes.select { |v| v.vote_type == "player" }
   end
 
   def most_swear_words
@@ -121,10 +117,11 @@ class CreditsService
   def best_efficiency
     # Points per character - who got the most points with the least writing
     user_stats = Hash.new { |h, k| h[k] = { points: 0, characters: 0 } }
+    votes_by_answer = player_votes.group_by(&:answer_id)
 
     @answers.each do |answer|
       user_stats[answer.user_id][:characters] += answer.text.length
-      user_stats[answer.user_id][:points] += answer.votes.reject { |v| audience_user_ids.include?(v.user_id) }.sum(&:points)
+      user_stats[answer.user_id][:points] += (votes_by_answer[answer.id] || []).sum(&:points)
     end
 
     return nil if user_stats.empty?

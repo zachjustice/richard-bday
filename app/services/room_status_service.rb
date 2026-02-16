@@ -70,10 +70,9 @@ class RoomStatusService
   end
 
   def results_specific_data(answers, votes)
-    # Separate audience votes (rank IS NULL from audience users) from player votes
-    audience_user_ids = User.audience.where(room: @room).pluck(:id).to_set
-    player_votes = votes.reject { |v| audience_user_ids.include?(v.user_id) }
-    audience_votes = votes.select { |v| audience_user_ids.include?(v.user_id) }
+    # Separate audience votes from player votes
+    player_votes = votes.select { |v| v.vote_type == "player" }
+    audience_votes = votes.select { |v| v.audience? }
 
     # Unified points-based calculation for player votes only
     points_by_answer = Hash.new(0)

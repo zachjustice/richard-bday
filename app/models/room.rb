@@ -59,4 +59,12 @@ class Room < ApplicationRecord
     return 1 if vote_once? || rank.nil?
     voting_config.dig("points", rank.to_s) || 0
   end
+
+  def audience_user_ids
+    User.audience.where(room_id: id).pluck(:id).to_set
+  end
+
+  def active_audience_count
+    User.audience.where(room_id: id, is_active: true).count
+  end
 end

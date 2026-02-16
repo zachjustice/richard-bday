@@ -5,6 +5,14 @@ class Vote < ApplicationRecord
   belongs_to :game_prompt
 
   validates :rank, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+  validates :vote_type, inclusion: { in: %w[player audience] }
+
+  scope :by_players, -> { where(vote_type: "player") }
+  scope :by_audience, -> { where(vote_type: "audience") }
+
+  def audience?
+    vote_type == "audience"
+  end
 
   # Points are determined by the room's config, not hardcoded
   def points

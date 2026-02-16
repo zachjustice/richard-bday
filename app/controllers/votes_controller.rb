@@ -15,10 +15,23 @@ class VotesController < ApplicationController
 
   def create_audience_votes
     game_prompt_id = params[:game_prompt_id]
-    stars = params[:stars] || {}
+    stars = params[:stars]
 
-    # Sum only positive counts so crafted negative values can't bypass the total cap
-    total_stars = stars.values.sum { |v| [ v.to_i, 0 ].max }
+    # Validate stars is a Hash (ActionController::Parameters)
+    unless stars.is_a?(ActionController::Parameters) || stars.is_a?(Hash)
+      turbo_nav_or_redirect_to game_prompt_voting_path(game_prompt_id)
+      return
+    end
+
+    # Validate game_prompt belongs to the current game
+    unless GamePrompt.exists?(id: game_prompt_id, game_id: @current_room.current_game_id)
+      turbo_nav_or_redirect_to audience_destination
+      return
+    end
+
+    # Clamp individual star values and sum
+    clamped_stars = stars.transform_values { |v| v.to_i.clamp(0, MAX_AUDIENCE_STARS) }
+    total_stars = clamped_stars.values.sum
     if total_stars > MAX_AUDIENCE_STARS || total_stars <= 0
       turbo_nav_or_redirect_to game_prompt_voting_path(game_prompt_id)
       return
@@ -31,20 +44,22 @@ class VotesController < ApplicationController
         return
       end
 
-      stars.each do |answer_id, count|
-        next if count.to_i <= 0
-        count.to_i.times do
+      clamped_stars.each do |answer_id, count|
+        next if count <= 0
+        count.times do
           Vote.create!(
             answer_id: answer_id,
             user_id: @current_user.id,
             game_id: @current_room.current_game_id,
             game_prompt_id: game_prompt_id,
-            rank: nil
+            rank: nil,
+            vote_type: "audience"
           )
         end
       end
     end
 
+    flash[:notice] = "Stars submitted!"
     turbo_nav_or_redirect_to audience_destination
   rescue ActiveRecord::RecordInvalid => e
     flash[:alert] = e.message
@@ -82,7 +97,8 @@ class VotesController < ApplicationController
         user_id: @current_user.id,
         game_id: @current_room.current_game_id,
         game_prompt_id: params[:game_prompt_id],
-        rank: nil
+        rank: nil,
+        vote_type: "player"
       )
       successful = vote.save
       error = vote.errors
@@ -125,7 +141,8 @@ class VotesController < ApplicationController
             user_id: @current_user.id,
             game_id: @current_room.current_game_id,
             game_prompt_id: game_prompt_id,
-            rank: rank.to_i
+            rank: rank.to_i,
+            vote_type: "player"
           )
         end
       end

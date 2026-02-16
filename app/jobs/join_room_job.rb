@@ -3,7 +3,7 @@ class JoinRoomJob < ApplicationJob
     room = user.room
 
     if user.audience?
-      audience_count = User.audience.where(room: room).count
+      audience_count = room.active_audience_count
       Turbo::StreamsChannel.broadcast_action_to(
         "rooms:#{room.id}:users",
         action: :update,
