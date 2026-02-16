@@ -7,7 +7,8 @@ export default class extends Controller {
     taken: Array,
     current: String,
     index: Number,
-    justSelected: Boolean
+    justSelected: Boolean,
+    error: String
   }
 
   connect() {
@@ -38,6 +39,15 @@ export default class extends Controller {
       this.isFirstLoad = false
       this.updateIndicators()
       this.updateVisualState(false, true)
+      return
+    }
+
+    // If server returned an error (race condition), flash rejection
+    if (this.errorValue) {
+      this.isFirstLoad = false
+      this.updateIndicators()
+      this.updateVisualState(this.takenValue.includes(this.avatarsValue[this.indexValue]), false)
+      this.rejectSelection()
       return
     }
 
@@ -166,9 +176,27 @@ export default class extends Controller {
     const isTaken = this.takenValue.includes(avatar)
     const isCurrent = avatar === this.currentValue
 
-    if (!isTaken && !isCurrent) {
-      this.formTarget.requestSubmit()
+    if (isTaken || isCurrent) {
+      this.rejectSelection()
+      return
     }
+
+    this.formTarget.requestSubmit()
+  }
+
+  rejectSelection() {
+    const container = this.element.querySelector('[data-avatar-container]')
+    if (!container) return
+
+    // Remove first so re-adding re-triggers the animation
+    container.classList.remove('avatar-rejection')
+    // Force reflow so the browser sees the removal before re-add
+    void container.offsetWidth
+    container.classList.add('avatar-rejection')
+
+    container.addEventListener('animationend', () => {
+      container.classList.remove('avatar-rejection')
+    }, { once: true })
   }
 
   // Touch/Swipe support

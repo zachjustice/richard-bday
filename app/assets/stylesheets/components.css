@@ -1417,12 +1417,28 @@
   100% { transform: rotate(360deg) scale(1); }
 }
 
+/* Rejection animation — red flash + horizontal shake */
+.avatar-carousel-container.avatar-rejection {
+  animation: avatar-rejection-shake 0.4s ease-out;
+}
+
+@keyframes avatar-rejection-shake {
+  0%   { background-color: rgba(239, 68, 68, 0.3); transform: translateX(0); }
+  15%  { background-color: rgba(239, 68, 68, 0.4); transform: translateX(-6px); }
+  30%  { background-color: rgba(239, 68, 68, 0.3); transform: translateX(5px); }
+  45%  { background-color: rgba(239, 68, 68, 0.2); transform: translateX(-4px); }
+  60%  { background-color: rgba(239, 68, 68, 0.1); transform: translateX(3px); }
+  75%  { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .avatar-emoji.slide-out-left,
   .avatar-emoji.slide-out-right,
   .avatar-emoji.slide-in-left,
   .avatar-emoji.slide-in-right,
-  .animate-spin-once {
+  .animate-spin-once,
+  .avatar-carousel-container.avatar-rejection {
     animation: none;
   }
 
