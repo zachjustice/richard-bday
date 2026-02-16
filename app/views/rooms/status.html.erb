@@ -2,7 +2,7 @@
 
 <%# This page is typically viewed by players from a shared screen. Normally a TV. %>
 <%# Text and content should be easily viewable from a distance %>
-<div class="min-h-screen flex flex-col bg-page relative"
+<div class="h-screen overflow-hidden flex flex-col bg-page relative"
      data-controller="room-status settings-modal tutorial-hints"
      data-tutorial-hints-editor-authenticated-value="<%= !!editor_authenticated? %>"
      data-action="settings-modal:opened->tutorial-hints#syncCheckbox">
@@ -38,7 +38,7 @@
       text: "Play background music",
       arrow_direction: "right" %>
 
-  <div id="status-content-inner" class="flex-1 flex items-center justify-center p-6">
+  <div id="status-content-inner" class="flex-1 min-h-0 flex items-center justify-center px-6 py-14">
     <div class="card-primary p-0 m-0 max-w-[1400px] w-full max-h-full flex flex-row min-h-0 z-content">
       <div id="turbo-target-sidebar" class="flex">
         <% if @room.current_game&.story.present? && [RoomStatus::Answering, RoomStatus::Voting, RoomStatus::Results, RoomStatus::FinalResults].include?(@status) %>

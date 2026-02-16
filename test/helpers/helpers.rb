@@ -94,6 +94,52 @@ class Helpers
     end
   end
 
+  def create_audience_members(names_or_num)
+    if names_or_num.is_a? Numeric
+      names = create_fake_names(names_or_num)
+    else
+      names = names_or_num
+    end
+
+    names.each do |name|
+      User.find_or_create_by!(
+        room_id: @room_id,
+        name: name,
+        role: User::AUDIENCE
+      )
+    end
+  end
+
+  def create_audience_votes(num_voters = nil)
+    room = Room.find(@room_id)
+    g = room.current_game
+    gp = g.current_game_prompt
+    answers = Answer.where(game: g, game_prompt: gp).to_a
+    return if answers.empty?
+
+    audience = User.audience.where(room: room).to_a
+    voters = audience.reject do |u|
+      Vote.where(game: g, game_prompt: gp, user: u).exists?
+    end
+
+    voters = voters.first(num_voters) if num_voters
+
+    voters.each do |user|
+      total_stars = rand(1..Vote::MAX_AUDIENCE_STARS)
+      total_stars.times do
+        answer = answers.sample
+        Vote.create!(
+          game: g,
+          game_prompt: gp,
+          user: user,
+          answer: answer,
+          rank: nil,
+          vote_type: "audience"
+        )
+      end
+    end
+  end
+
   def move_to_answering(use_times_up_job = false)
     room = Room.find(@room_id)
     current_game_prompt_order = room.current_game.current_game_prompt.order
