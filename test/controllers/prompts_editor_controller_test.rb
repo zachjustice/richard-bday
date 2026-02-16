@@ -8,7 +8,7 @@ class PromptsEditorControllerTest < ActionDispatch::IntegrationTest
     @editor_session_two = editor_sessions(:two)
     @prompt_one = prompts(:one)   # owned by editor_one
     @prompt_two = prompts(:two)   # owned by editor_two
-    @prompt_three = prompts(:three) # no creator
+    @prompt_three = prompts(:three)
   end
 
   # Index tests
@@ -125,31 +125,5 @@ class PromptsEditorControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to prompts_index_path
   end
 
-  # Prompt with no creator tests
-  test "prompt with no creator cannot be updated by anyone" do
-    sign_in_as_editor(@editor_session_one)
-    # Create a fresh prompt with no creator
-    prompt = Prompt.create!(description: "No creator editable prompt", tags: "test", creator: nil)
-    original_description = prompt.description
-
-    patch update_prompt_path(prompt), params: {
-      prompt: { description: "Hacked description" }
-    }
-
-    assert_redirected_to prompts_index_path
-    prompt.reload
-    assert_equal original_description, prompt.description
-  end
-
-  test "prompt with no creator cannot be deleted by anyone" do
-    sign_in_as_editor(@editor_session_one)
-    # Create a fresh prompt with no creator
-    prompt = Prompt.create!(description: "No creator prompt", tags: "test", creator: nil)
-
-    assert_no_difference("Prompt.count") do
-      delete destroy_prompt_path(prompt)
-    end
-
-    assert_redirected_to prompts_index_path
-  end
+  # Creator is now required, so "no creator" scenario no longer applies
 end

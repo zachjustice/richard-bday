@@ -12,7 +12,8 @@ class AnswerSmoothingServiceTest < ActiveSupport::TestCase
     @story = Story.create!(title: "SmoothTest Story #{suffix}", text: "The {BLANK} went to the store.", original_text: "Test", published: true)
     @game = Game.create!(story: @story, room: @room)
     @blank = Blank.create!(story: @story, tags: "noun")
-    @prompt = Prompt.create!(description: "What do you do when hurt?", tags: "action")
+    @editor = Editor.create!(username: "sm#{suffix}", email: "sm#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    @prompt = Prompt.create!(description: "What do you do when hurt?", tags: "action", creator: @editor)
     @game_prompt = GamePrompt.create!(game: @game, prompt: @prompt, blank: @blank, order: 0)
     @user = User.create!(name: "Smth#{suffix[0..5]}", room: @room, role: User::PLAYER)
 

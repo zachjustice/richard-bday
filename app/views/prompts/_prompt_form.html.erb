@@ -9,6 +9,7 @@
     <%= form.text_area :description,
         rows: 2,
         placeholder: "What is a funny animal?",
+        required: true,
         class: "story-form-textarea" %>
   </div>
 
@@ -16,6 +17,7 @@
     <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-ink" %>
     <%= form.text_field :tags,
         placeholder: "noun,animal,funny",
+        required: true,
         class: "story-form-input" %>
   </div>
 

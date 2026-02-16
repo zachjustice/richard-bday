@@ -25,29 +25,22 @@ class PromptsController < ApplicationController
     if @prompt.save
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.append(
-              "prompts_list",
-              partial: "prompts/prompt",
-              locals: { prompt: @prompt }
-            ),
-            turbo_stream.replace(
-              "new_prompt_form",
-              partial: "prompts/form",
-              locals: { prompt: Prompt.new }
-            )
-          ]
+          render turbo_stream: turbo_stream.append(
+            "prompts_list",
+            partial: "prompts/prompt",
+            locals: { prompt: @prompt }
+          )
         end
         format.html { redirect_to prompts_index_path, notice: "Prompt created successfully" }
       end
     else
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
+          render turbo_stream: turbo_stream.update(
             "new_prompt_form",
             partial: "prompts/form",
             locals: { prompt: @prompt }
-          )
+          ), status: :unprocessable_entity
         end
         format.html { render :new, status: :unprocessable_entity }
       end

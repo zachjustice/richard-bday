@@ -10,7 +10,8 @@ class AnswerSmoothingJobTest < ActiveSupport::TestCase
     @story = Story.create!(title: "JobTest Story #{suffix}", text: "Test text", original_text: "Test", published: true)
     @game = Game.create!(story: @story, room: @room)
     @blank = Blank.create!(story: @story, tags: "noun")
-    @prompt = Prompt.create!(description: "Test prompt", tags: "action")
+    @editor = Editor.create!(username: "job#{suffix}", email: "job#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    @prompt = Prompt.create!(description: "Test prompt", tags: "action", creator: @editor)
     @game_prompt = GamePrompt.create!(game: @game, prompt: @prompt, blank: @blank, order: 0)
     @user = User.create!(name: "Job#{suffix[0..5]}", room: @room, role: User::PLAYER)
 

@@ -9,12 +9,19 @@
 #   end
 def seed_example_data
   puts("Example data")
+  seed_editor = Editor.find_or_create_by!(username: "seed") do |e|
+    e.password = "password123"
+    e.password_confirmation = "password123"
+  end
+
   prompts = [
     [ "What is the sexiest animal?", [ "animal", "noun" ] ],
     [ "What is the worst adjective for a cup of coffee?", [ "drink", "adjective" ] ],
     [ "What is the worst thing to say to a child that is sad their fish died?", [ "phrase" ] ]
   ].map do |name, tags|
-    Prompt.find_or_create_by!(description: name, tags: tags.join(","))
+    Prompt.find_or_create_by!(description: name, tags: tags.join(",")) do |p|
+      p.creator = seed_editor
+    end
   end
 
   original_story = "I loved my pet dog. My favorite think about her was that she was fluffy. But when she died after many years, my husband said \"I don't like dogs.\""
@@ -68,7 +75,7 @@ def seed_example_data
 end
 
 
-def create_story(story_parts)
+def create_story(story_parts, editor:)
   s = Story.find_by(original_text: story_parts[:original_text])
   if s.nil?
     puts("Creating story: #{story_parts[:title]}")
@@ -90,7 +97,9 @@ def create_story(story_parts)
       p = Prompt.find_or_create_by!(
         description: phrase,
         tags: tags_str
-      )
+      ) do |prompt|
+        prompt.creator = editor
+      end
 
       StoryPrompt.find_or_create_by!(
         story: s,
@@ -391,7 +400,11 @@ puts("Creating genres")
 end
 
 puts("Creating stories")
-stories.each { |s| create_story(s) }
+seed_editor = Editor.find_or_create_by!(username: "seed") do |e|
+  e.password = "password123"
+  e.password_confirmation = "password123"
+end
+stories.each { |s| create_story(s, editor: seed_editor) }
 
 # Create default editor for development
 if Rails.env.development?

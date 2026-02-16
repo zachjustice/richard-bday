@@ -7,6 +7,7 @@
     method: edit_mode ? :patch : :post,
     data: {
       controller: "blank-form",
+      action: "submit->blank-form#submitForm",
       blank_form_story_id_value: story.id,
       blank_form_blank_id_value: blank.id,
       blank_form_edit_mode_value: edit_mode,
@@ -20,6 +21,7 @@
     <%= form.label :tags, "Tags (comma-separated)", class: "font-semibold text-ink" %>
     <%= form.text_field :tags,
         placeholder: "noun,animal,funny",
+        required: true,
         class: "story-form-input",
         data: {
           action: "input->blank-form#filterPrompts",

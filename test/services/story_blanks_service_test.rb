@@ -9,6 +9,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
       original_text: "A story about blanks",
       published: false
     )
+    @editor = Editor.create!(username: "sbs#{@suffix}", email: "sbs#{@suffix}@test.com", password: "password123", password_confirmation: "password123")
   end
 
   test "creates blank with new prompts successfully" do
@@ -20,7 +21,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
       ]
     }
 
-    result = StoryBlanksService.new(story: @story, params: params).call
+    result = StoryBlanksService.new(story: @story, params: params, creator: @editor).call
 
     assert result.success
     assert result.blank.persisted?
@@ -30,7 +31,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
   end
 
   test "creates blank with existing prompts" do
-    existing = Prompt.create!(description: "SBS existing #{@suffix}", tags: "noun")
+    existing = Prompt.create!(description: "SBS existing #{@suffix}", tags: "noun", creator: @editor)
 
     params = {
       tags: "noun",
@@ -39,7 +40,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
     }
 
     before_prompt_count = Prompt.count
-    result = StoryBlanksService.new(story: @story, params: params).call
+    result = StoryBlanksService.new(story: @story, params: params, creator: @editor).call
 
     assert result.success
     assert_equal before_prompt_count, Prompt.count
@@ -47,7 +48,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
   end
 
   test "creates blank with both new and existing prompts" do
-    existing = Prompt.create!(description: "SBS both #{@suffix}", tags: "verb")
+    existing = Prompt.create!(description: "SBS both #{@suffix}", tags: "verb", creator: @editor)
 
     params = {
       tags: "verb",
@@ -57,7 +58,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
       ]
     }
 
-    result = StoryBlanksService.new(story: @story, params: params).call
+    result = StoryBlanksService.new(story: @story, params: params, creator: @editor).call
 
     assert result.success
     assert_equal 2, StoryPrompt.where(blank: result.blank).count
@@ -70,7 +71,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
       new_prompts: [ { description: "SBS tag fail #{@suffix}" } ]
     }
 
-    result = StoryBlanksService.new(story: @story, params: params).call
+    result = StoryBlanksService.new(story: @story, params: params, creator: @editor).call
 
     assert_not result.success
     assert_includes result.errors, "Tags can't be blank"
@@ -83,7 +84,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
       new_prompts: []
     }
 
-    result = StoryBlanksService.new(story: @story, params: params).call
+    result = StoryBlanksService.new(story: @story, params: params, creator: @editor).call
 
     assert_not result.success
     assert result.errors.any? { |e| e.include?("Must select at least one") }
@@ -96,7 +97,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
       new_prompts: [ { description: "SBS strip #{@suffix}" } ]
     }
 
-    result = StoryBlanksService.new(story: @story, params: params).call
+    result = StoryBlanksService.new(story: @story, params: params, creator: @editor).call
 
     assert result.success
     assert_equal "noun,verb", result.blank.tags
@@ -107,7 +108,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
     story_prompt_count_before = StoryPrompt.count
 
     # Pass a duplicate prompt description to trigger RecordInvalid
-    Prompt.create!(description: "SBS dup #{@suffix}", tags: "noun")
+    Prompt.create!(description: "SBS dup #{@suffix}", tags: "noun", creator: @editor)
 
     params = {
       tags: "noun",
@@ -115,7 +116,7 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
       new_prompts: [ { description: "SBS dup #{@suffix}" } ]
     }
 
-    result = StoryBlanksService.new(story: @story, params: params).call
+    result = StoryBlanksService.new(story: @story, params: params, creator: @editor).call
 
     assert_not result.success
     assert_equal blank_count_before, Blank.count

@@ -8,7 +8,8 @@ class BlanksController < ApplicationController
 
     result = StoryBlanksService.new(
       story: @story,
-      params: blank_with_prompts_params
+      params: blank_with_prompts_params,
+      creator: current_editor
     ).call
 
     if result.success
@@ -81,7 +82,8 @@ class BlanksController < ApplicationController
     result = StoryBlanksUpdateService.new(
       story: @story,
       blank: @blank,
-      params: blank_with_prompts_params
+      params: blank_with_prompts_params,
+      creator: current_editor
     ).call
 
     if result.success

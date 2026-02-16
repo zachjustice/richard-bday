@@ -28,7 +28,7 @@
     <% if @show_editor_navbar %>
       <%= render "shared/editor_navbar" %>
     <% end %>
-    <%= render "shared/flash_messages" %>
+    <%= render "shared/flash_messages" unless content_for?(:skip_flash_banner) %>
     <main id="main-content" tabindex="-1">
       <%= yield %>
     </main>
