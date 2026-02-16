@@ -103,7 +103,7 @@ class StoryEditingTest < ApplicationSystemTestCase
 
     first(".prompt-checkbox input[type='checkbox']").check
 
-    assert_no_selector "[data-blank-form-target='validationHint']", visible: true
+    assert_no_selector "[data-blank-form-target='validationHint']", visible: true, wait: 2
   end
 
   test "no validation hint before first submit attempt" do
@@ -134,9 +134,8 @@ class StoryEditingTest < ApplicationSystemTestCase
 
     assert_text "Successfully created Blank", wait: 5
 
-    # Modal closed (hidden class added by turbo stream)
-    modal = find("#blank-editor-modal", visible: :all)
-    assert_includes modal[:class], "hidden"
+    # Modal closed via custom Turbo Stream close_modal action (adds hidden class, not aria-hidden)
+    assert_selector "#blank-editor-modal.hidden", visible: :all
   end
 
   test "create blank with new prompt" do
@@ -146,17 +145,24 @@ class StoryEditingTest < ApplicationSystemTestCase
     wait_for_page_ready(controller: "blank-form")
 
     fill_in "Tags (comma-separated)", with: "food,noun"
-    click_button "+ Add New Prompt"
+    # Wait for filterPrompts debounce + XHR to settle before interacting with the form
+    assert_selector ".prompt-checkbox", wait: 5
 
-    # Fill the new prompt textarea via JS to ensure the value is set
-    page.execute_script("document.querySelector('[data-blank-form-target=\"newPromptInput\"]').value = 'Name your favorite food'")
+    click_button "+ Add New Prompt"
+    assert_selector "[data-blank-form-target='newPromptInput']", wait: 2
+
+    # Set value and dispatch input event so Stimulus validateSelection picks up the value
+    page.execute_script(<<~JS)
+      var el = document.querySelector('[data-blank-form-target="newPromptInput"]');
+      el.value = 'Name your favorite food';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    JS
 
     click_button "Create Blank"
 
     assert_text "Successfully created Blank", wait: 5
 
-    modal = find("#blank-editor-modal", visible: :all)
-    assert_includes modal[:class], "hidden"
+    assert_selector "#blank-editor-modal.hidden", visible: :all
   end
 
   test "edit blank opens modal with pre-filled data" do
@@ -166,10 +172,10 @@ class StoryEditingTest < ApplicationSystemTestCase
       find("button[title='Edit']").click
     end
 
-    # Modal opens via custom turbo stream action (sets hidden class, not aria-hidden)
-    assert_text "Edit Blank #{@blank_one.id}", wait: 5
-    modal = find("#blank-editor-modal", visible: true)
-    assert_not_includes modal[:class], "hidden"
+    # Modal opens via custom Turbo Stream open_modal action (removes hidden class)
+    assert_selector "#blank-modal-title", text: "Edit Blank #{@blank_one.id}", wait: 5
+    assert_no_selector "#blank-editor-modal.hidden", visible: :all
+    assert_field "Tags (comma-separated)", with: @blank_one.tags
   end
 
   test "delete blank removes it from list" do
@@ -180,15 +186,24 @@ class StoryEditingTest < ApplicationSystemTestCase
     wait_for_page_ready(controller: "blank-form")
 
     fill_in "Tags (comma-separated)", with: "food,noun"
+    assert_selector ".prompt-checkbox", wait: 5
+
     click_button "+ Add New Prompt"
-    page.execute_script("document.querySelector('[data-blank-form-target=\"newPromptInput\"]').value = 'Name a food'")
+    assert_selector "[data-blank-form-target='newPromptInput']", wait: 2
+
+    page.execute_script(<<~JS)
+      var el = document.querySelector('[data-blank-form-target="newPromptInput"]');
+      el.value = 'Name a food';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    JS
     click_button "Create Blank"
     assert_text "Successfully created Blank", wait: 5
 
-    # Find the newly created blank (last one in the list)
+    # Find the newly created blank (last in the list, appended by Turbo Stream)
     new_blank = all("#blanks_list .blank-item").last
     new_blank_id = new_blank[:id]
 
+    # Turbo's data-turbo-confirm uses native window.confirm() by default
     accept_confirm do
       within "##{new_blank_id}" do
         find("button[title='Delete']").click
@@ -205,12 +220,8 @@ class StoryEditingTest < ApplicationSystemTestCase
 
     within "#prompt_#{@prompt_one.id}" do
       find("button[title='Edit prompt']").click
-    end
-
-    # Wait for form animation to complete
-    sleep 0.6
-
-    within "#prompt_#{@prompt_one.id}" do
+      # Wait for edit form animation to complete
+      assert_field "prompt[description]", wait: 3
       fill_in "prompt[description]", with: "Updated prompt text"
       click_button "Save"
     end
@@ -223,18 +234,13 @@ class StoryEditingTest < ApplicationSystemTestCase
 
     within "#prompt_#{@prompt_one.id}" do
       find("button[title='Edit prompt']").click
-    end
-
-    sleep 0.6
-
-    within "#prompt_#{@prompt_one.id}" do
+      assert_field "prompt[description]", wait: 3
       click_button "Cancel"
     end
 
-    sleep 0.6
-
+    # Wait for cancel animation to complete and display to return
     within "#prompt_#{@prompt_one.id}" do
-      assert_text @prompt_one.description
+      assert_text @prompt_one.description, wait: 3
     end
   end
 
