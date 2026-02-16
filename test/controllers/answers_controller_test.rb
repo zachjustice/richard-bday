@@ -128,6 +128,45 @@ class AnswersControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # Critical Path 6: find_or_initialize_by update path
+
+  test "resubmitting answer updates existing text without creating a new record" do
+    # Add another user so we don't redirect to voting
+    User.create!(name: "TestUser2", room_id: @room.id)
+
+    Answer.create!(
+      text: "Original answer",
+      user_id: @user.id,
+      game_id: @game.id,
+      game_prompt_id: @game_prompt.id
+    )
+
+    assert_no_difference("Answer.count") do
+      post "/answer", params: {
+        text: "Updated answer",
+        prompt_id: @game_prompt.id
+      }
+    end
+
+    answer = Answer.find_by(user_id: @user.id, game_prompt_id: @game_prompt.id)
+    assert_equal "Updated answer", answer.text
+  end
+
+  # Critical Path 7: Validation failure
+
+  test "validation failure sets flash alert" do
+    User.create!(name: "TestUser2", room_id: @room.id)
+
+    long_text = "a" * (Answer::ANSWER_MAX_LENGTH + 1)
+    post "/answer", params: {
+      text: long_text,
+      prompt_id: @game_prompt.id
+    }
+
+    assert_redirected_to controller: "game_prompts", action: "show", id: @game_prompt.id
+    assert flash[:alert].present?, "Expected flash[:alert] to be set on validation failure"
+  end
+
   # Audience guard
 
   test "audience user cannot submit answers" do

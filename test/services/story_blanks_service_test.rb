@@ -103,6 +103,22 @@ class StoryBlanksServiceTest < ActiveSupport::TestCase
     assert_equal "noun,verb", result.blank.tags
   end
 
+  test "whitespace-only prompt descriptions are treated as blank" do
+    params = {
+      tags: "noun",
+      existing_prompt_ids: [],
+      new_prompts: [
+        { description: "   " },
+        { description: "\t\n" }
+      ]
+    }
+
+    result = StoryBlanksService.new(story: @story, params: params, creator: @editor).call
+
+    assert_not result.success
+    assert result.errors.any? { |e| e.include?("Must select at least one") }
+  end
+
   test "rolls back all records when prompt creation fails" do
     blank_count_before = Blank.count
     story_prompt_count_before = StoryPrompt.count

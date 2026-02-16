@@ -31,6 +31,13 @@
           <button onclick="location.reload()" class="btn-primary">Try Again</button>
         </div>
       </div>
+    <% else %>
+      <div class="min-h-screen flex items-center justify-center">
+        <div class="card-primary p-8 text-center">
+          <h1 class="text-2xl font-bold text-ink mb-4">Configuration Error</h1>
+          <p class="text-ink/70">Discord client ID is not configured. Please check server credentials.</p>
+        </div>
+      </div>
     <% end %>
 
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-easter-egg focus:bg-accent-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:font-bold">

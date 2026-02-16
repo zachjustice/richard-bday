@@ -169,6 +169,60 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
   end
 end
 
+class RoomStatusServicePhaseDataTest < ActiveSupport::TestCase
+  def setup
+    suffix = SecureRandom.hex(4)
+
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_replace_to) { |*| }
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_action_to) { |*| }
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_append_to) { |*| }
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_remove_to) { |*| }
+
+    @room = Room.create!(code: "ph#{suffix}", status: RoomStatus::WaitingRoom, voting_style: "vote_once")
+    @story = Story.create!(title: "PH #{suffix}", text: "A {0} story", original_text: "A {0} story", published: true)
+    @game = Game.create!(story: @story, room: @room)
+    @blank = Blank.create!(story: @story, tags: "noun")
+    @editor = Editor.create!(username: "ph#{suffix}", email: "ph#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    @prompt = Prompt.create!(description: "PH prompt #{suffix}", tags: "noun", creator: @editor)
+    @game_prompt = GamePrompt.create!(game: @game, prompt: @prompt, blank: @blank, order: 0)
+    @room.update!(current_game: @game)
+    @game.update!(current_game_prompt: @game_prompt)
+
+    @creator = User.create!(name: "Creator-PH#{suffix[0..3]}", room: @room, role: User::CREATOR)
+    @player1 = User.create!(name: "P1ph#{suffix}", room: @room, role: User::PLAYER)
+  end
+
+  test "StorySelection phase excludes unpublished stories" do
+    @room.update!(status: RoomStatus::StorySelection)
+    unpublished = Story.create!(title: "Unpub #{SecureRandom.hex(4)}", text: "t", original_text: "t", published: false)
+
+    result = RoomStatusService.new(@room).call
+
+    story_ids = result[:stories].map(&:id)
+    assert_not_includes story_ids, unpublished.id
+    assert_includes story_ids, @story.id
+  end
+
+  test "fetch_users excludes Creator-prefixed users" do
+    @room.update!(status: RoomStatus::WaitingRoom)
+    # @creator has name "Creator-PH..." and role CREATOR
+    # Also create a player whose name starts with "Creator-" to test the filter
+    sneaky = User.create!(name: "Creator-Sneaky", room: @room, role: User::PLAYER)
+
+    result = RoomStatusService.new(@room).call
+
+    user_names = result[:users].map(&:name)
+    assert_not user_names.any? { |n| n.starts_with?("Creator-") }, "Users starting with Creator- should be filtered out"
+    assert_includes user_names, @player1.name
+  end
+
+  test "accepts room ID integer instead of Room object" do
+    result = RoomStatusService.new(@room.id).call
+
+    assert_equal @room, result[:room]
+  end
+end
+
 class RoomStatusServiceFinalResultsTest < ActiveSupport::TestCase
   def setup
     suffix = SecureRandom.hex(4)

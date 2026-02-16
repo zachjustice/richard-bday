@@ -3,6 +3,8 @@
 require "test_helper"
 
 class SelectWinnerServiceTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   setup do
     @room = rooms(:one)
     @game = games(:one)
@@ -77,6 +79,15 @@ class SelectWinnerServiceTest < ActiveSupport::TestCase
     assert_not @answer2.reload.won?
     # Only one winner
     assert_equal 1, Answer.where(game_prompt: @game_prompt, won: true).count
+  end
+
+  test "enqueues AnswerSmoothingJob when smooth_answers is enabled" do
+    @room.update!(smooth_answers: true)
+    Vote.create!(user: @player1, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "player", rank: 1)
+
+    assert_enqueued_with(job: AnswerSmoothingJob) do
+      SelectWinnerService.new(@game_prompt, @room).call
+    end
   end
 
   test "ignores audience votes when selecting winner" do

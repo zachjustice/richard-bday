@@ -4,12 +4,22 @@ require "test_helper"
 
 class GamePhasesServiceTest < ActiveSupport::TestCase
   setup do
-    @room = rooms(:one)
-    @game = games(:one)
-    @game_prompt = game_prompts(:one)
+    suffix = SecureRandom.hex(4)
 
-    # Set up room and game for testing
-    @room.update!(status: RoomStatus::Answering, current_game: @game)
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_replace_to) { |*| }
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_action_to) { |*| }
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_append_to) { |*| }
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_remove_to) { |*| }
+
+    @room = Room.create!(code: "gp#{suffix}", status: RoomStatus::Answering, voting_style: "vote_once")
+    @story = Story.create!(title: "GP #{suffix}", text: "test", original_text: "test", published: true)
+    @game = Game.create!(story: @story, room: @room)
+    @blank = Blank.create!(story: @story, tags: "noun")
+    @editor = Editor.create!(username: "gp#{suffix}", email: "gp#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    @prompt = Prompt.create!(description: "GP prompt #{suffix}", tags: "noun", creator: @editor)
+    @game_prompt = GamePrompt.create!(game: @game, prompt: @prompt, blank: @blank, order: 0)
+
+    @room.update!(current_game: @game)
     @game.update!(current_game_prompt: @game_prompt)
   end
 
@@ -53,7 +63,6 @@ class GamePhasesServiceTest < ActiveSupport::TestCase
 
     # Stub broadcast methods to avoid ActionCable errors in test
     service.define_singleton_method(:update_room_status_view) { |*| }
-    Turbo::StreamsChannel.define_singleton_method(:broadcast_action_to) { |*| }
 
     service.move_to_voting
 
@@ -74,7 +83,6 @@ class GamePhasesServiceTest < ActiveSupport::TestCase
 
     # Stub broadcast methods to avoid ActionCable errors in test
     service.define_singleton_method(:update_room_status_view) { |*| }
-    Turbo::StreamsChannel.define_singleton_method(:broadcast_action_to) { |*| }
 
     service.move_to_results
 

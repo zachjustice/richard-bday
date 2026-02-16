@@ -124,6 +124,21 @@ class VoteTest < ActiveSupport::TestCase
     assert_equal 0, vote.points
   end
 
+  test "audience vote with rank is invalid" do
+    suffix = SecureRandom.hex(4)
+    audience_user = User.create!(name: "AU#{suffix}", room: @room, role: User::AUDIENCE)
+    vote = Vote.new(
+      user: audience_user,
+      answer: @answer2,
+      game: @game,
+      game_prompt: @game_prompt,
+      vote_type: "audience",
+      rank: 1
+    )
+    assert_not vote.valid?
+    assert vote.errors[:rank].any?
+  end
+
   test "vote_type validation rejects invalid values" do
     vote = Vote.new(user: @user1, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "invalid")
     assert_not vote.valid?

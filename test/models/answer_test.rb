@@ -37,6 +37,19 @@ class AnswerTest < ActiveSupport::TestCase
     assert answer.valid?, "Answer with normal text should be valid: #{answer.errors.full_messages}"
   end
 
+  # Composite uniqueness constraint
+  test "rejects duplicate game_prompt_id + user_id + game_id" do
+    room = Room.create!(code: "ansdup", status: "WaitingRoom")
+    game = Game.create!(story: stories(:one), room: room)
+    game_prompt = GamePrompt.create!(game: game, prompt: prompts(:one), blank: blanks(:one), order: 0)
+    user = User.create!(name: "DupTester", room: room, role: User::PLAYER)
+
+    Answer.create!(game_prompt: game_prompt, game: game, user: user, text: "first")
+    duplicate = Answer.new(game_prompt: game_prompt, game: game, user: user, text: "second")
+    assert_not duplicate.valid?
+    assert duplicate.errors[:game_prompt_id].any?
+  end
+
   # display_text helper
   test "display_text returns smoothed_text when present" do
     answer = answers(:one)

@@ -43,6 +43,18 @@ class AudienceVoteServiceTest < ActiveSupport::TestCase
     assert_equal 2, Vote.where(user: @audience, answer: @answer2).count
   end
 
+  test "accepts ActionController::Parameters as stars_params" do
+    stars = ActionController::Parameters.new(@answer1.id.to_s => "2", @answer2.id.to_s => "1")
+
+    result = AudienceVoteService.new(
+      user: @audience, game_prompt_id: @game_prompt.id,
+      stars_params: stars, room: @room
+    ).call
+
+    assert_kind_of AudienceVoteService::Success, result
+    assert_equal 3, Vote.where(user: @audience, game_prompt: @game_prompt).count
+  end
+
   test "invalid params returns failure" do
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,

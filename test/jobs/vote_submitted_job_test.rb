@@ -128,4 +128,31 @@ class VoteSubmittedJobTest < ActiveSupport::TestCase
     end
     assert_not move_called
   end
+
+  test "SelectWinnerService is called before move_to_results when all players voted" do
+    @user1.update!(status: UserStatus::Voted)
+    vote = Vote.create!(user: @user2, answer: @answer1, game: @game, game_prompt: @game_prompt)
+
+    call_order = []
+    SelectWinnerService.stub_any_instance(:call, proc { call_order << :select_winner }) do
+      GamePhasesService.stub_any_instance(:move_to_results, proc { call_order << :move_to_results }) do
+        VoteSubmittedJob.perform_now(vote)
+      end
+    end
+
+    assert_equal [ :select_winner, :move_to_results ], call_order
+  end
+
+  test "ranked voting with max_ranks exceeding available answers uses answers_count as required_ranks" do
+    @room.update!(voting_style: "ranked_top_3")
+    # Only 2 players, so user1 has only 1 other answer to rank
+    # max_ranks is 3, answers_count is 1, so required_ranks = min(1, 3) = 1
+    # A single vote should mark the user as Voted
+    vote = Vote.create!(user: @user1, answer: @answer2, game: @game, game_prompt: @game_prompt, rank: 1)
+
+    VoteSubmittedJob.perform_now(vote)
+
+    @user1.reload
+    assert_equal UserStatus::Voted, @user1.status
+  end
 end

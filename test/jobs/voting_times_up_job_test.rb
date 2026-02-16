@@ -45,4 +45,15 @@ class VotingTimesUpJobTest < ActiveSupport::TestCase
     end
     assert_not move_called
   end
+
+  test "SelectWinnerService is called before move_to_results" do
+    call_order = []
+    SelectWinnerService.stub_any_instance(:call, proc { call_order << :select_winner }) do
+      GamePhasesService.stub_any_instance(:move_to_results, proc { call_order << :move_to_results }) do
+        VotingTimesUpJob.perform_now(@room, @game_prompt.id)
+      end
+    end
+
+    assert_equal [ :select_winner, :move_to_results ], call_order
+  end
 end

@@ -182,6 +182,70 @@ class VotesControllerTest < ActionDispatch::IntegrationTest
       }
     end
   end
+
+  # Ranked voting tests
+
+  test "ranked voting creates votes with correct ranks" do
+    @room.update!(voting_style: "ranked_top_3")
+    # Create a second answer to rank
+    user2 = User.create!(name: "RankedUser2", room_id: @room.id)
+    answer2 = Answer.create!(
+      text: "Second answer",
+      user_id: user2.id,
+      game_id: @game.id,
+      game_prompt_id: @game_prompt.id
+    )
+
+    assert_difference("Vote.count", 2) do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        rankings: { "1" => @answer.id.to_s, "2" => answer2.id.to_s }
+      }
+    end
+
+    votes = Vote.where(user_id: @user.id, game_prompt_id: @game_prompt.id).order(:rank)
+    assert_equal 1, votes.first.rank
+    assert_equal @answer.id, votes.first.answer_id
+    assert_equal 2, votes.second.rank
+    assert_equal answer2.id, votes.second.answer_id
+  end
+
+  test "ranked voting skips blank rank entries" do
+    @room.update!(voting_style: "ranked_top_3")
+
+    assert_difference("Vote.count", 1) do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        rankings: { "1" => @answer.id.to_s, "2" => "", "3" => "" }
+      }
+    end
+
+    vote = Vote.find_by(user_id: @user.id, game_prompt_id: @game_prompt.id)
+    assert_equal 1, vote.rank
+    assert_equal @answer.id, vote.answer_id
+  end
+
+  test "ranked voting duplicate submission redirects without creating new votes" do
+    @room.update!(voting_style: "ranked_top_3")
+    # Pre-create a ranked vote
+    Vote.create!(
+      answer_id: @answer.id,
+      user_id: @user.id,
+      game_id: @game.id,
+      game_prompt_id: @game_prompt.id,
+      rank: 1,
+      vote_type: "player"
+    )
+
+    assert_no_difference("Vote.count") do
+      post "/vote", params: {
+        game_prompt_id: @game_prompt.id,
+        rankings: { "1" => @answer.id.to_s }
+      }
+    end
+
+    assert_redirected_to controller: "game_prompts", action: "results", id: @game_prompt.id
+  end
 end
 
 class AudienceVotesControllerTest < ActionDispatch::IntegrationTest
