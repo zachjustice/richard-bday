@@ -1,7 +1,7 @@
 ---
-paths: 
-  - *.css 
-  - *.html 
+paths:
+  - *.css
+  - *.html.erb
   - *.js
 ---
 # Frontend Development Rules
@@ -19,7 +19,7 @@ paths:
 ### Philosophy
 - **Purpose-driven naming**: Names describe the entity's purpose, not the appearance
 - **Tailwind best practices**: idiomatic tailwind code
-- **Playful Chaos**: The UI should embody the spirit of party games- energitic, colorful, playful, chaotic
+- **Playful Chaos**: The UI should embody the spirit of party games- energetic, colorful, playful, chaotic
 
 ### Style Guide for CSS / Tailwind
 Following the Style Guide is critical.
@@ -42,6 +42,22 @@ Following the Style Guide is critical.
 - Form inputs must have associated `<label for="id">`
 - Decorative elements: `aria-hidden="true"`
 - Animations must be disabled in `prefers-reduced-motion` block in application.css
+
+### Responsive Card Layout
+Primary content cards (room status, stories/prompts index, editor settings) follow a strict responsive contract:
+
+- **Card height** expands/shrinks with content — never a fixed height
+- **Minimum height**: cards set a floor (e.g. `min-h-[20rem]`) so the page scrolls rather than the card collapsing to nothing on short viewports
+- **Inner list scrolling**: when a card contains a list, the list scrolls internally so the card doesn't grow beyond the viewport
+
+The pattern relies on two flex layers — breaking either causes regressions:
+```
+Card container:  flex-1 min-h-0 flex flex-col
+Inner list:      flex-1 min-h-0 overflow-y-auto
+```
+`min-h-0` is critical — without it, flex children default to `min-height: auto` and overflow their parent. Every ancestor up to the viewport must also participate in the flex chain.
+
+When modifying card layouts, verify in the browser at both tall and short viewport heights.
 
 ---
 

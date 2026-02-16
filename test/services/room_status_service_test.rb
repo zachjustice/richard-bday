@@ -37,6 +37,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     Vote.create!(user: @player3, answer: @answer1, game: @game, game_prompt: @game_prompt)
     Vote.create!(user: @player1, answer: @answer2, game: @game, game_prompt: @game_prompt)
 
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     assert_equal @answer1, result[:winner]
@@ -48,6 +49,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     Vote.create!(user: @player2, answer: @answer1, game: @game, game_prompt: @game_prompt)
     Vote.create!(user: @player1, answer: @answer2, game: @game, game_prompt: @game_prompt)
 
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     assert_includes [ @answer1, @answer2 ], result[:winner]
@@ -65,6 +67,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
   end
 
   test "picks a random answer as winner when no votes exist but answers do" do
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     winner = result[:winner]
@@ -75,6 +78,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
   test "creates default poop answer when no answers and no votes exist" do
     Answer.where(game_prompt: @game_prompt).destroy_all
 
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     winner = result[:winner]
@@ -88,6 +92,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     Vote.create!(user: @player3, answer: @answer1, game: @game, game_prompt: @game_prompt)
     Vote.create!(user: @player1, answer: @answer2, game: @game, game_prompt: @game_prompt)
 
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     sorted = result[:answers_sorted_by_votes]
@@ -103,6 +108,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     # player1 ranks: answer2=1st(30)
     Vote.create!(user: @player1, answer: @answer2, game: @game, game_prompt: @game_prompt, rank: 1)
 
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     assert_equal 30, result[:points_by_answer][@answer1.id]
@@ -115,7 +121,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     Vote.create!(user: @player2, answer: @answer1, game: @game, game_prompt: @game_prompt)
 
     assert_enqueued_with(job: AnswerSmoothingJob) do
-      RoomStatusService.new(@room).call
+      SelectWinnerService.new(@game_prompt, @room).call
     end
   end
 
@@ -129,6 +135,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
     Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
 
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     assert_equal @answer1, result[:winner]
@@ -141,6 +148,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     Vote.create!(user: audience_user, answer: @answer1, game: @game, game_prompt: @game_prompt, vote_type: "audience")
     Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
 
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     assert_equal 2, result[:audience_star_counts][@answer1.id]
@@ -154,6 +162,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
     Vote.create!(user: audience_user, answer: @answer2, game: @game, game_prompt: @game_prompt, vote_type: "audience")
 
+    SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
     assert_equal @answer2, result[:audience_favorite]

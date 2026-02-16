@@ -1,5 +1,6 @@
 class FixVoteUniqueIndex < ActiveRecord::Migration[8.0]
   def up
+    # Player votes must be unique per prompt/user/answer. Audience votes allow duplicates (multiple stars).
     remove_index :votes, name: "idx_votes_prompt_user_answer_unique"
     add_index :votes, [ :game_prompt_id, :user_id, :answer_id ],
       unique: true,

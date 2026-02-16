@@ -11,7 +11,7 @@ module ApplicationCable
 
       self.current_user.update(is_active: true)
 
-      # Audience members connect for updates but don't affect player state
+      # Audience members track active status for count display but don't participate in player state management.
       if self.current_user.audience?
         return
       end

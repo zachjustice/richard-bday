@@ -347,6 +347,14 @@ class AudienceGamePromptsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  test "audience user not redirected when already on waiting page during answering phase" do
+    @room.update!(status: RoomStatus::Answering)
+
+    get "/game_prompts/#{@game_prompt.id}/waiting"
+
+    assert_response :success
+  end
+
   test "audience user can access voting page" do
     @room.update!(status: RoomStatus::Voting)
 

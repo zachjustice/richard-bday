@@ -42,7 +42,6 @@ class SessionsController < ApplicationController
       if room.code == code
         return redirect_to after_authentication_url
       end
-    else
     end
 
     room = Room.find_by(code: code)

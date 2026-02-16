@@ -59,6 +59,7 @@ class VoteSubmittedJob < ApplicationJob
 
     # Check if its time to view the results!
     if voted_users >= users_in_room && room.status == RoomStatus::Voting
+      SelectWinnerService.new(room.current_game.current_game_prompt, room).call
       GamePhasesService.new(room).move_to_results
     end
   end

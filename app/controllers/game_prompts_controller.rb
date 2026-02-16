@@ -1,4 +1,6 @@
 class GamePromptsController < ApplicationController
+  include GamePhaseNavigation
+
   skip_before_action :require_authentication, only: [ :tooltip ]
   before_action :redirect_to_current_game_phase, except: [ :tooltip, :change_answer ]
 
@@ -66,7 +68,10 @@ class GamePromptsController < ApplicationController
     @answers = Answer.where(game_id: @current_room.current_game_id, game_prompt_id: params[:id])
 
     if @current_user.audience?
-      # Audience sees all answers and skips player status tracking
+      if Vote.exists?(user_id: @current_user.id, game_prompt_id: params[:id], vote_type: "audience")
+        turbo_nav_or_redirect_to game_prompt_results_path(params[:id])
+        return
+      end
       @answers = @answers.to_a
       return
     end
@@ -145,7 +150,9 @@ class GamePromptsController < ApplicationController
       turbo_nav_or_redirect_to show_room_path
     when RoomStatus::Answering
       if @current_user.audience?
-        turbo_nav_or_redirect_to game_prompt_waiting_path(@current_room.current_game.current_game_prompt)
+        unless controller == "game_prompts" && id == current_game_prompt_id && action == "waiting"
+          turbo_nav_or_redirect_to game_prompt_waiting_path(@current_room.current_game.current_game_prompt)
+        end
       elsif controller != "game_prompts" || id != current_game_prompt_id || ![ "show", "waiting" ].include?(action)
         turbo_nav_or_redirect_to game_prompt_path(@current_room.current_game.current_game_prompt)
       end

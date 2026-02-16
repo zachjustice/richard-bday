@@ -11,8 +11,8 @@
         <%= game_prompt.prompt.description %>
       </h2>
       <p class="text-ink/60 mt-2 text-sm">
-        Give your stars to your favorites — they pick the audience favorite, not the winner!
-        <span data-audience-voting-target="remaining" class="inline-block font-bold text-accent-yellow ml-1" aria-live="polite" aria-atomic="true"><%= Vote::MAX_AUDIENCE_STARS %> stars left</span>
+        Give your stars to your favorites — your votes pick the fan favorite
+        <span data-audience-voting-target="remaining" class="inline-block font-bold text-ink text-shadow-brand ml-1" aria-live="polite" aria-atomic="true"><%= Vote::MAX_AUDIENCE_STARS %> stars left</span>
       </p>
     </div>
 
@@ -23,7 +23,7 @@
 
       <fieldset>
         <legend class="sr-only">Vote with your stars</legend>
-        <div class="flex flex-col gap-3 overflow-y-auto scroll-fade-indicators p-1" style="max-height: 400px;">
+        <div class="flex flex-col gap-3 overflow-y-auto scroll-fade-indicators p-1 max-h-[60vh]">
           <% answers.each do |answer| %>
             <div class="flex items-center gap-3 rounded-xl border-2 border-ink/10 p-4 transition-all"
                  data-audience-voting-target="answerCard"
@@ -35,18 +35,20 @@
                 <button type="button"
                         class="w-8 h-8 rounded-full border-2 border-ink/20 flex items-center justify-center text-lg font-bold hover:border-ink/40 transition-colors cursor-pointer"
                         data-action="click->audience-voting#decrement"
-                        data-answer-id="<%= answer.id %>"
-                        aria-label="Remove star from <%= answer.text.truncate(30) %>">
+                  data-answer-id="<%= answer.id %>"
+                  aria-label="Remove star from <%= answer.text.truncate(30) %>">
                   &minus;
                 </button>
                 <span class="text-xl font-bold min-w-[2ch] text-center"
                       data-audience-voting-target="starCount"
-                      data-answer-id="<%= answer.id %>">0</span>
+                      data-answer-id="<%= answer.id %>"
+                      aria-live="polite"
+                      aria-atomic="true">0</span>
                 <button type="button"
                         class="w-8 h-8 rounded-full border-2 border-accent-yellow bg-accent-yellow/20 flex items-center justify-center text-lg font-bold hover:bg-accent-yellow/40 transition-colors cursor-pointer"
                         data-action="click->audience-voting#increment"
-                        data-answer-id="<%= answer.id %>"
-                        aria-label="Add star to <%= answer.text.truncate(30) %>">
+                  data-answer-id="<%= answer.id %>"
+                  aria-label="Add star to <%= answer.text.truncate(30) %>">
                   +
                 </button>
                 <input type="hidden" name="stars[<%= answer.id %>]" value="0"

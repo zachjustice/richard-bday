@@ -1,4 +1,6 @@
 class VotesController < ApplicationController
+  include GamePhaseNavigation
+
   def create
     if @current_user.audience?
       create_audience_votes
@@ -12,81 +14,21 @@ class VotesController < ApplicationController
   private
 
   def create_audience_votes
-    game_prompt_id = params[:game_prompt_id]
-    stars = params[:stars]
+    result = AudienceVoteService.new(
+      user: @current_user,
+      game_prompt_id: params[:game_prompt_id],
+      stars_params: params[:stars],
+      room: @current_room
+    ).call
 
-    # Validate stars is a Hash (ActionController::Parameters)
-    unless stars.is_a?(ActionController::Parameters) || stars.is_a?(Hash)
-      turbo_nav_or_redirect_to game_prompt_voting_path(game_prompt_id)
-      return
-    end
-
-    # Validate game_prompt belongs to the current game
-    unless GamePrompt.exists?(id: game_prompt_id, game_id: @current_room.current_game_id)
-      turbo_nav_or_redirect_to audience_destination
-      return
-    end
-
-    # Clamp individual star values and sum
-    clamped_stars = stars.transform_values { |v| v.to_i.clamp(0, Vote::MAX_AUDIENCE_STARS) }
-
-    # Validate answer_ids belong to this game_prompt
-    valid_answer_ids = Answer.where(game_prompt_id: game_prompt_id, game_id: @current_room.current_game_id).pluck(:id).to_set
-    if clamped_stars.keys.any? { |id| !valid_answer_ids.include?(id.to_i) }
-      turbo_nav_or_redirect_to game_prompt_voting_path(game_prompt_id)
-      return
-    end
-
-    total_stars = clamped_stars.values.sum
-    if total_stars > Vote::MAX_AUDIENCE_STARS || total_stars <= 0
-      turbo_nav_or_redirect_to game_prompt_voting_path(game_prompt_id)
-      return
-    end
-
-    Vote.transaction do
-      # Prevent duplicate audience submissions
-      if Vote.lock.where(user_id: @current_user.id, game_prompt_id: game_prompt_id).exists?
-        flash[:notice] = "You've already voted for this round!"
-        turbo_nav_or_redirect_to audience_destination
-        return
-      end
-
-      clamped_stars.each do |answer_id, count|
-        next if count <= 0
-        count.times do
-          Vote.create!(
-            answer_id: answer_id,
-            user_id: @current_user.id,
-            game_id: @current_room.current_game_id,
-            game_prompt_id: game_prompt_id,
-            rank: nil,
-            vote_type: "audience"
-          )
-        end
-      end
-    end
-
-    flash[:notice] = "Stars submitted!"
-    turbo_nav_or_redirect_to audience_destination
-  rescue ActiveRecord::RecordInvalid => e
-    flash[:alert] = e.message
-    turbo_nav_or_redirect_to game_prompt_voting_path(game_prompt_id)
-  end
-
-  def audience_destination
-    current_prompt = @current_room.current_game&.current_game_prompt
-    return show_room_path unless current_prompt
-    case @current_room.status
-    when RoomStatus::Voting
-      game_prompt_voting_path(current_prompt)
-    when RoomStatus::Results, RoomStatus::FinalResults
-      game_prompt_results_path(current_prompt)
-    when RoomStatus::Credits
-      show_room_path
-    when RoomStatus::Answering
-      game_prompt_waiting_path(current_prompt)
+    case result
+    in AudienceVoteService::Success
+      turbo_nav_or_redirect_to game_prompt_results_path(params[:game_prompt_id])
+    in AudienceVoteService::Failure(error:) if error
+      flash[error.include?("already") ? :notice : :alert] = error
+      turbo_nav_or_redirect_to path_for_current_phase(@current_room, @current_user)
     else
-      show_room_path
+      turbo_nav_or_redirect_to path_for_current_phase(@current_room, @current_user)
     end
   end
 

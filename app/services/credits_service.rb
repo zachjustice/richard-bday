@@ -25,7 +25,7 @@ class CreditsService
     @game = game
     @room = game.room
     @answers = Answer.where(game_id: game.id).includes(:user, :votes)
-    @votes = Vote.where(game_id: game.id).includes(:user, :answer)
+    @votes = Vote.where(game_id: game.id).includes(:user, answer: :user)
     @game_prompts = GamePrompt.where(game_id: game.id).order(:order)
 
     # Build user lookup from preloaded associations to avoid N+1 queries

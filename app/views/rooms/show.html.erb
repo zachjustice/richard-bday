@@ -14,7 +14,7 @@
         <div class="text-center">
           <div class="text-5xl mb-4" aria-hidden="true"><%= User::AUDIENCE_AVATAR %></div>
           <h2 class="text-2xl max-sm:text-xl font-bold text-ink mb-2">Welcome, <%= @current_user.name %>!</h2>
-          <p class="text-ink/60 text-sm">You're watching as an audience member. You'll vote when it's time.</p>
+          <p class="text-ink/60 text-sm">You're watching as an audience member. During each round, you'll vote with stars to pick the fan-favorite answers.</p>
         </div>
       </div>
     <% else %>
@@ -57,7 +57,7 @@
       <% if @current_user.audience? %>
         <div class="card-secondary flex flex-col items-center gap-6 py-8 px-6 max-sm:py-6 max-sm:px-4 bg-accent-orange/10 mb-6">
           <div class="text-4xl" aria-hidden="true"><%= User::AUDIENCE_AVATAR %></div>
-          <p class="text-lg max-sm:text-base font-medium text-ink text-center m-0">You're watching as an audience member. You'll vote when it's time.</p>
+          <p class="text-lg max-sm:text-base font-medium text-ink text-center m-0">You're watching as an audience member. During each round, you'll vote with stars to pick the fan-favorite answers.</p>
         </div>
       <% else %>
         <div class="card-secondary flex flex-col items-center gap-6 py-8 px-6 max-sm:py-6 max-sm:px-4 bg-accent-orange/10 mb-6">

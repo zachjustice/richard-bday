@@ -5,6 +5,26 @@
 - Friends gather together in a shared space and follow the directives from the room status screen typically displayed on a TV or monitor that everyone can see.
 - Over the course of the game, players answer prompts, vote on their favorite answers, and the winning responses fill in the blanks of the story.
 
+## Game Flow
+
+### Phases
+`WaitingRoom` → `StorySelection` → [`Answering` → `Voting` → `Results`] (loop per prompt) → `FinalResults` → `Credits`
+
+- Phase constants defined in `app/controllers/concerns/RoomStatus.rb`
+- Transitions managed by `GamePhasesService` and `RoomsController`
+- Phases advance via creator action, player completion, or timeout (`time_to_answer_seconds`, `time_to_vote_seconds`)
+
+### Voting
+Two independent voting systems run during each `Voting` phase:
+
+- **Player votes** (`vote_type: "player"`) — determine the winner
+  - `vote_once`: 1 vote = 1 point
+  - `ranked_top_3`: rank 3 answers → 30/20/10 points
+  - Voting style set per room (`Room::VOTING_STYLES`)
+- **Audience votes** (`vote_type: "audience"`) — cosmetic "audience favorite"
+  - Distribute 1–5 stars across answers (`AudienceVoteService`)
+  - Do not affect winner selection
+
 ## Tech Stack
 - **Framework:** Ruby on Rails 8.0
 - **Database:** SQLite3 (production-ready with solid_cache, solid_queue, solid_cable)
@@ -15,26 +35,18 @@
 - Also using: Turbo, Stimulus, ActiveJob, Tailwind v4, ActionCable
 
 ## Developer Guidelines
-- Before adding new components in components.css check, first check if it already exists in components.css 
-- Strongly prefer using tailwind utility classes whenever possible 
-- However, create component classes when:
-  - The pattern is reused multiple times, OR
-  - Utility-based implementation is not possible
-- Create partials when any of the following is true:
-  - Required for Turbo Streams
-  - Component is frequently reused
-  - Component is highly complex
+- Frontend styling and design rules are in `.claude/rules/frontend-development.md` 
 - Use @layer base, @layer components, @layer utilities as appropriate
-- Place css animations in applications.css
+- Place CSS animations in application.css
 
 ## Accessibility
 - All new UI must meet WCAG 2.1 AA. Use `/a11y` to audit changes.
-- Semantic HTML: `<nav>`, `<main>`, `<button>`, proper heading hierarchy
-- Icon-only buttons/links require `aria-label`
-- Modals/drawers: `role="dialog"`, `aria-modal="true"`, focus trap (reuse `concerns/focus_trap.js`), Escape to close
-- Dynamic content updates need `aria-live` regions
 - Animations must have `@media (prefers-reduced-motion: reduce)` coverage
-- Run `rails test test/system/accessibility_test.rb` to verify
+
+## Rails Conventions
+- SolidQueue for background jobs (keep jobs idempotent)
+- Services return `Data.define` result types (`Success`/`Failure`) — controllers pattern-match on them
+- Turbo Streams broadcast to scoped channels: `"rooms:#{room.id}:<channel>"`
 
 ## Discord Activity / Iframe
 - Discord's proxy follows HTTP redirects server-side and **strips the Authorization header** on redirect follows. This means the redirected request arrives at our app without the Bearer token, `discord_authenticated?` returns false, and Rails' default `X-Frame-Options: SAMEORIGIN` blocks the iframe.
@@ -43,4 +55,5 @@
 
 ## Testing
 - Ensure tests pass after adding new features
+- Add tests for new features
 - Add tests intentionally- tests have 2 costs: 1) maintenance and 2) running them. Ensure critical code paths are covered.

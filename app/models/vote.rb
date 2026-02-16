@@ -7,6 +7,7 @@ class Vote < ApplicationRecord
   belongs_to :game_prompt
 
   validates :rank, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+  validates :rank, absence: true, if: :audience?
   validates :vote_type, inclusion: { in: %w[player audience] }
 
   scope :by_players, -> { where(vote_type: "player") }

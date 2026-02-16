@@ -449,6 +449,7 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     Vote.create!(user: @user, answer: answer2, game_prompt: game_prompt, game: @room.current_game)
     Vote.create!(user: user2, answer: answer1, game_prompt: game_prompt, game: @room.current_game)
 
+    SelectWinnerService.new(game_prompt, @room).call
     @room.update!(status: RoomStatus::Results)
 
     get room_status_path(@room)

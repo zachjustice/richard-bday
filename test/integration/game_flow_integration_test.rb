@@ -93,6 +93,8 @@ class GameFlowIntegrationTest < ActionDispatch::IntegrationTest
     # Step 7: Verify results page shows votes
     resume_session_as(@room.code, @creator.name)
     @room.reload
+    # Select winner before transitioning to Results (normally done by jobs)
+    SelectWinnerService.new(first_prompt, @room).call
     @room.update!(status: RoomStatus::Results)
 
     get room_status_path(@room)

@@ -301,6 +301,10 @@
   .roaming-avatar--flash-red {
     animation: none !important;
   }
+
+  .countdown-timer-pause-play {
+    transition: none;
+  }
 }
 
 /* Global base styles */

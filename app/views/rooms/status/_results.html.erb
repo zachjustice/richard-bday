@@ -1,17 +1,32 @@
-<div class="flex-1 flex flex-col justify-start min-h-0"
+<div class="flex-1 flex flex-col justify-start min-h-[20rem]"
      data-controller="results-auto-advance"
      data-results-auto-advance-duration-value="15">
   <div class="card-status-header-violet relative">
     <div class="absolute top-3 right-3">
-      <div class="countdown-timer countdown-timer-sm" data-phase="green">
+      <button type="button"
+              class="countdown-timer countdown-timer-sm group"
+              data-phase="green"
+              data-action="click->results-auto-advance#toggle"
+              data-results-auto-advance-target="timerButton"
+              aria-label="Pause auto-advance timer">
         <span class="countdown-timer-display"
               data-results-auto-advance-target="display">15</span>
+        <span class="countdown-timer-pause-play opacity-0 group-hover:opacity-100"
+              data-results-auto-advance-target="pauseIcon"
+              aria-hidden="true">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </span>
+        <span class="countdown-timer-pause-play hidden opacity-0 group-hover:opacity-100"
+              data-results-auto-advance-target="playIcon"
+              aria-hidden="true">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </span>
         <svg class="countdown-timer-svg" viewBox="0 0 100 100">
           <circle class="countdown-timer-circle-bg" cx="50" cy="50" r="45"></circle>
           <circle class="countdown-timer-circle" cx="50" cy="50" r="45"
                   data-results-auto-advance-target="circle"></circle>
         </svg>
-      </div>
+      </button>
     </div>
 
     <% if winners.size == 1 %>
@@ -23,56 +38,190 @@
     <% end %>
   </div>
 
-  <div class="card-status-content-violet py-4 flex">
-    <div class="flex flex-1 min-h-0 flex-col gap-2 overflow-y-auto scroll-fade-indicators">
-      <% answers_sorted_by_votes.each do |answer| %>
-        <div class="flex flex-row p-3 border-2 rounded-xl border-accent-violet/40 <%= winner&.id == answer&.id ? 'bg-accent-violet/40' : 'bg-accent-violet/10'  %>">
-          <div class="w-full flex flex-col flex-1">
-            <span class="text-lg block text-ink leading-tight font-bold">
-              <%= answer.text %>
-              <%= '🏆' if winner&.id == answer&.id %>
-              <% if local_assigns[:audience_star_counts] && audience_star_counts[answer.id]&.positive? %>
-                <%= render "shared/audience_stars", count: audience_star_counts[answer.id] %>
+  <div class="card-status-content-violet py-4 flex flex-col overflow-hidden min-w-0">
+    <div class="flex flex-1 min-h-0 min-w-0 flex-col gap-4">
+      <%
+        sorted = answers_sorted_by_votes
+        first  = sorted[0]
+        second = sorted[1]
+        third  = sorted[2]
+        remaining_answers = sorted.drop(3)
+      %>
+
+      <%# === 1ST PLACE CARD (full width) === %>
+      <% if first %>
+        <div class="animate-slide-up rounded-xl border-3 border-ink p-4 bg-accent-tertiary/50"
+             style="animation-delay: 0.3s; box-shadow: 6px 6px 0px var(--color-ink);">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-5xl animate-bouncy" style="animation-delay: 0.5s;">🥇</span>
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2">
+                <p class="font-bold text-ink text-lg m-0"><%= first.user.name %></p>
+                <span class="text-2xl"><%= first.user.avatar %></span>
+              </div>
+              <% if winner&.id == first.id %>
+                <span class="text-[10px] font-black text-ink uppercase tracking-wide">Champion</span>
               <% end %>
-            </span>
-            <span class="text-lg block text-ink/60 leading-tight font-medium whitespace-nowrap overflow-hidden text-ellipsis"><%= answer.user.avatar_with_name %></span>
-            <% if local_assigns[:ranked_voting] && local_assigns[:points_by_answer] %>
-              <span class="text-base font-bold text-accent-primary mt-1">
-                <%= points_by_answer[answer.id] %> points
-              </span>
-            <% end %>
+            </div>
           </div>
-          <div class="flex flex-1 flex-col items-end w-full">
-            <% if votes_by_answer[answer.id]&.any? %>
-              <div class="flex flex-col gap-2">
+          <p class="text-lg font-medium text-ink leading-snug m-0"><%= first.text %></p>
+          <div class="flex flex-wrap items-center gap-2 mt-2">
+            <% if local_assigns[:ranked_voting] && local_assigns[:points_by_answer] %>
+              <span class="text-sm text-ink/70 font-semibold"><%= points_by_answer[first.id] %> pts</span>
+            <% end %>
+            <% if votes_by_answer[first.id]&.any? %>
+              <span class="text-[10px] font-bold text-ink/40 uppercase tracking-wide">Votes</span>
+              <div class="flex flex-wrap items-center gap-0.5">
                 <% if local_assigns[:ranked_voting] %>
-                  <%# Grouped by rank for ranked voting %>
-                  <% votes_by_answer[answer.id].group_by(&:rank).sort_by { |rank, _| rank || 999 }.each do |rank, rank_votes| %>
+                  <% votes_by_answer[first.id].group_by(&:rank).sort_by { |rank, _| rank || 999 }.each do |rank, rank_votes| %>
                     <% next if rank.nil? %>
-                    <div class="flex items-center gap-1 flex-wrap">
-                      <span class="text-lg"><%= GameConstants::RANKED_MEDALS[rank - 1] %></span>
-                      <% visible_votes = rank_votes.first(5) %>
-                      <% remaining_count = rank_votes.size - 5 %>
-                      <% visible_votes.each do |vote| %>
-                        <span class="text-lg"><%= vote.user.avatar %></span>
+                    <div class="flex items-center gap-0.5">
+                      <span class="text-sm"><%= GameConstants::RANKED_MEDALS[rank - 1] %></span>
+                      <% rank_votes.first(3).each do |vote| %>
+                        <span class="text-sm"><%= vote.user.avatar %></span>
                       <% end %>
-                      <% if remaining_count > 0 %>
-                        <span class="text-sm font-bold text-ink/60">+<%= remaining_count %></span>
+                      <% if rank_votes.size > 3 %>
+                        <span class="text-xs font-bold text-ink/60">+<%= rank_votes.size - 3 %></span>
                       <% end %>
                     </div>
                   <% end %>
                 <% else %>
-                  <%# Simple list for vote-once %>
-                  <div class="flex flex-wrap gap-2">
-                    <% visible_votes = votes_by_answer[answer.id].first(5) %>
-                    <% remaining_count = votes_by_answer[answer.id].size - 5 %>
-                    <% visible_votes.each do |vote| %>
-                      <span class="text-xl"><%= vote.user.avatar %></span>
+                  <% votes_by_answer[first.id].first(5).each do |vote| %>
+                    <span class="text-base"><%= vote.user.avatar %></span>
+                  <% end %>
+                  <% if votes_by_answer[first.id].size > 5 %>
+                    <span class="text-xs font-bold text-ink/60">+<%= votes_by_answer[first.id].size - 5 %></span>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+            <% if local_assigns[:audience_star_counts] && audience_star_counts[first.id]&.positive? %>
+              <span class="text-[10px] font-bold text-ink/40 uppercase tracking-wide">Audience</span>
+              <%= render "shared/audience_stars", count: audience_star_counts[first.id] %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <%# === 2ND / 3RD PLACE CARDS (side by side) === %>
+      <% if second %>
+        <div class="flex gap-3">
+          <%# 2nd Place %>
+          <div class="flex-1 min-w-0 animate-slide-up rounded-xl border-2 border-ink p-3 bg-accent-blue/20"
+               style="animation-delay: 0.4s; box-shadow: 4px 4px 0px var(--color-ink);">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-4xl animate-bouncy" style="animation-delay: 0.6s;">🥈</span>
+              <div class="flex items-center gap-1.5">
+                <p class="font-bold text-ink text-base m-0 truncate"><%= second.user.name %></p>
+                <span class="text-xl"><%= second.user.avatar %></span>
+              </div>
+            </div>
+            <p class="text-base text-ink leading-snug m-0"><%= second.text %></p>
+            <div class="flex flex-wrap items-center gap-2 mt-2">
+              <% if local_assigns[:ranked_voting] && local_assigns[:points_by_answer] %>
+                <span class="text-xs text-ink/70 font-semibold"><%= points_by_answer[second.id] %> pts</span>
+              <% end %>
+              <% if votes_by_answer[second.id]&.any? %>
+                <span class="text-[10px] font-bold text-ink/40 uppercase tracking-wide">Votes</span>
+                <div class="flex flex-wrap items-center gap-0.5">
+                  <% if local_assigns[:ranked_voting] %>
+                    <% votes_by_answer[second.id].group_by(&:rank).sort_by { |rank, _| rank || 999 }.each do |rank, rank_votes| %>
+                      <% next if rank.nil? %>
+                      <div class="flex items-center gap-0.5">
+                        <span class="text-sm"><%= GameConstants::RANKED_MEDALS[rank - 1] %></span>
+                        <% rank_votes.first(3).each do |vote| %>
+                          <span class="text-sm"><%= vote.user.avatar %></span>
+                        <% end %>
+                        <% if rank_votes.size > 3 %>
+                          <span class="text-xs font-bold text-ink/60">+<%= rank_votes.size - 3 %></span>
+                        <% end %>
+                      </div>
                     <% end %>
-                    <% if remaining_count > 0 %>
-                      <span class="text-sm font-bold text-ink/60">+<%= remaining_count %></span>
+                  <% else %>
+                    <% votes_by_answer[second.id].first(4).each do |vote| %>
+                      <span class="text-base"><%= vote.user.avatar %></span>
+                    <% end %>
+                    <% if votes_by_answer[second.id].size > 4 %>
+                      <span class="text-xs font-bold text-ink/60">+<%= votes_by_answer[second.id].size - 4 %></span>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+              <% if local_assigns[:audience_star_counts] && audience_star_counts[second.id]&.positive? %>
+                <span class="text-[10px] font-bold text-ink/40 uppercase tracking-wide">Audience</span>
+                <%= render "shared/audience_stars", count: audience_star_counts[second.id] %>
+              <% end %>
+            </div>
+          </div>
+
+          <%# 3rd Place (only if it exists) %>
+          <% if third %>
+            <div class="flex-1 min-w-0 animate-slide-up rounded-xl border-2 border-ink p-3 bg-accent-orange/20"
+                 style="animation-delay: 0.5s; box-shadow: 4px 4px 0px var(--color-ink);">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-4xl animate-bouncy" style="animation-delay: 0.7s;">🥉</span>
+                <div class="flex items-center gap-1.5">
+                  <p class="font-bold text-ink text-base m-0 truncate"><%= third.user.name %></p>
+                  <span class="text-xl"><%= third.user.avatar %></span>
+                </div>
+              </div>
+              <p class="text-base text-ink leading-snug m-0"><%= third.text %></p>
+              <div class="flex flex-wrap items-center gap-2 mt-2">
+                <% if local_assigns[:ranked_voting] && local_assigns[:points_by_answer] %>
+                  <span class="text-xs text-ink/70 font-semibold"><%= points_by_answer[third.id] %> pts</span>
+                <% end %>
+                <% if votes_by_answer[third.id]&.any? %>
+                  <span class="text-[10px] font-bold text-ink/40 uppercase tracking-wide">Votes</span>
+                  <div class="flex flex-wrap items-center gap-0.5">
+                    <% if local_assigns[:ranked_voting] %>
+                      <% votes_by_answer[third.id].group_by(&:rank).sort_by { |rank, _| rank || 999 }.each do |rank, rank_votes| %>
+                        <% next if rank.nil? %>
+                        <div class="flex items-center gap-0.5">
+                          <span class="text-sm"><%= GameConstants::RANKED_MEDALS[rank - 1] %></span>
+                          <% rank_votes.first(3).each do |vote| %>
+                            <span class="text-sm"><%= vote.user.avatar %></span>
+                          <% end %>
+                          <% if rank_votes.size > 3 %>
+                            <span class="text-xs font-bold text-ink/60">+<%= rank_votes.size - 3 %></span>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    <% else %>
+                      <% votes_by_answer[third.id].first(4).each do |vote| %>
+                        <span class="text-base"><%= vote.user.avatar %></span>
+                      <% end %>
+                      <% if votes_by_answer[third.id].size > 4 %>
+                        <span class="text-xs font-bold text-ink/60">+<%= votes_by_answer[third.id].size - 4 %></span>
+                      <% end %>
                     <% end %>
                   </div>
+                <% end %>
+                <% if local_assigns[:audience_star_counts] && audience_star_counts[third.id]&.positive? %>
+                  <span class="text-[10px] font-bold text-ink/40 uppercase tracking-wide">Audience</span>
+                  <%= render "shared/audience_stars", count: audience_star_counts[third.id] %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# === COMPACT ROWS (4th+) === %>
+      <% if remaining_answers.any? %>
+        <div class="flex-1 min-h-0 overflow-y-auto scroll-fade-indicators stagger-animation">
+          <div class="flex flex-col gap-1.5 px-1">
+            <% remaining_answers.each_with_index do |answer, i| %>
+              <% rank = i + 4 %>
+              <% vote_count = votes_by_answer[answer.id]&.size || 0 %>
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg animate-fade-in bg-ink/5">
+                <span class="text-sm font-bold text-ink/30">#<%= rank %></span>
+                <span class="text-base text-ink flex-1"><%= answer.text %></span>
+                <span class="text-sm text-ink/40 shrink-0">&middot; <%= answer.user.name %></span>
+                <% if vote_count > 0 %>
+                  <span class="text-sm font-bold text-ink/40">(<%= vote_count %>)</span>
+                <% end %>
+                <% if local_assigns[:audience_star_counts] && audience_star_counts[answer.id]&.positive? %>
+                  <%= render "shared/audience_stars", count: audience_star_counts[answer.id] %>
                 <% end %>
               </div>
             <% end %>

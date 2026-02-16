@@ -16,6 +16,8 @@ class VotingTimesUpJobTest < ActiveSupport::TestCase
     @game_prompt = GamePrompt.create!(game: @game, prompt: @prompt, blank: @blank, order: 0)
     @room.update!(current_game: @game)
     @game.update!(current_game_prompt: @game_prompt)
+
+    @creator = User.create!(name: "Creator-vt#{suffix}", room: @room, role: User::CREATOR)
   end
 
   test "calls move_to_results when status is Voting and game_prompt_id matches" do

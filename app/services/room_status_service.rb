@@ -86,25 +86,8 @@ class RoomStatusService
     max_points = points_by_answer.values.max || 0
     winners = answers.select { |a| points_by_answer[a.id] == max_points }
 
-    winner = Answer.where(
-      game_prompt: @room.current_game.current_game_prompt,
-      won: true
-    ).first
-
-    if winner.nil? && winners.any?
-      winner = winners.sample
-      winner.update!(won: true)
-      AnswerSmoothingJob.perform_later(winner) if @room.smooth_answers?
-    elsif winner.nil?
-      # No one voted. Create a default answer
-      winner = Answer.create!(
-        game: @room.current_game,
-        game_prompt: @room.current_game.current_game_prompt,
-        user: User.creator.find_by(room: @room),
-        text: Answer::DEFAULT_ANSWER,
-        won: true
-      )
-    end
+    # Winner should already be selected by SelectWinnerService
+    winner = Answer.find_by(game_prompt: @room.current_game.current_game_prompt, won: true)
 
     answers_sorted_by_points = answers.sort_by { |a| -points_by_answer[a.id] }
     # Pin the winning answer to first position

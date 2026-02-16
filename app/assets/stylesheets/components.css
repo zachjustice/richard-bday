@@ -759,9 +759,9 @@
   box-shadow: 8px 8px 0px var(--color-ink);
 }
 
-/* Leave Game Button - fixed bottom-left */
+/* Leave Game Button - fixed top-right */
 .leave-game-btn {
-  @apply fixed bottom-4 left-4 z-controls p-2 bg-white rounded-xl cursor-pointer transition-all;
+  @apply fixed top-4 right-4 z-controls p-2 bg-white rounded-xl cursor-pointer transition-all;
   @apply flex items-center justify-center;
   color: var(--color-ink);
   border: 2px solid var(--color-ink);
@@ -770,7 +770,7 @@
 
 @media (min-width: 640px) {
   .leave-game-btn {
-    @apply bottom-5 left-5 p-2.5;
+    @apply top-5 right-5 p-2.5;
   }
 }
 
@@ -805,7 +805,7 @@
 
 /* Music Player Component */
 .music-player-button {
-  @apply fixed bottom-5 left-5 w-[50px] h-[50px] bg-white rounded-xl;
+  @apply fixed top-4 right-[72px] w-[50px] h-[50px] bg-white rounded-xl;
   @apply cursor-pointer transition-all z-music-button flex items-center justify-center;
   border: 3px solid var(--color-ink);
   box-shadow: 3px 3px 0px var(--color-ink);
@@ -1059,6 +1059,31 @@
 .countdown-timer-sm .countdown-timer-circle-bg,
 .countdown-timer-sm .countdown-timer-circle {
   stroke-width: 4;
+}
+
+/* Pause/play overlay */
+.countdown-timer-pause-play {
+  @apply absolute inset-0 flex items-center justify-center z-[2] text-ink/70;
+}
+
+/* When paused, always show the play icon (don't require hover) */
+.countdown-timer[data-paused] .countdown-timer-pause-play:not(.hidden) {
+  @apply opacity-100;
+}
+
+/* Dim number when overlay icon is visible */
+.countdown-timer:hover .countdown-timer-display,
+.countdown-timer[data-paused] .countdown-timer-display {
+  @apply opacity-30;
+}
+
+/* Visual cue that timer is frozen */
+.countdown-timer[data-paused] .countdown-timer-circle {
+  @apply opacity-50;
+}
+
+button.countdown-timer {
+  @apply cursor-pointer;
 }
 
 /* Extra-small countdown timer variant (Discord navbar) */
@@ -1518,10 +1543,10 @@
   right: 70px;
 }
 
-/* Music hint - bottom left, pointing toward music button */
+/* Music hint - top right, pointing toward music button */
 .tutorial-hint--music {
-  bottom: 18px;
-  left: 85px;
+  top: 12px;
+  right: 120px;
 }
 
 .tutorial-hint-content {
@@ -1541,7 +1566,7 @@
 }
 
 .tutorial-hint--music .tutorial-hint-content {
-  animation: hint-bounce-right 2s ease-in-out 0.3s 3;
+  animation: hint-bounce 2s ease-in-out 0.3s 3;
 }
 
 @keyframes hint-bounce-right {

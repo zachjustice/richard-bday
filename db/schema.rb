@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_16_025910) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_16_170359) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -209,7 +209,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_025910) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "room_id", null: false
-    t.string "role", default: "Player"
+    t.string "role", default: "Player", null: false
     t.boolean "is_active", default: true, null: false
     t.string "status", default: "Answering"
     t.string "avatar", null: false
@@ -237,6 +237,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_025910) do
     t.index [ "game_prompt_id", "user_id", "rank" ], name: "idx_votes_prompt_user_rank_unique", unique: true, where: "rank IS NOT NULL"
     t.index [ "game_prompt_id" ], name: "index_votes_on_game_prompt_id"
     t.index [ "user_id" ], name: "index_votes_on_user_id"
+    t.check_constraint "vote_type IN ('player', 'audience')", name: "check_vote_type_values"
   end
 
   add_foreign_key "answers", "game_prompts"
