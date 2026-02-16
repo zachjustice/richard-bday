@@ -50,7 +50,7 @@ class AudienceVoteService
 
   def create_votes!
     Vote.transaction do
-      if Vote.lock.where(user_id: @user.id, game_prompt_id: @game_prompt_id).exists?
+      if Vote.lock.where(user_id: @user.id, game_prompt_id: @game_prompt_id, vote_type: "audience").exists?
         raise ActiveRecord::RecordInvalid.new(Vote.new), "Your stars for this round were already counted!"
       end
 

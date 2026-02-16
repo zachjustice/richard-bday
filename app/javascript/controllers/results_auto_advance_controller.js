@@ -48,7 +48,7 @@ export default class extends Controller {
       this.animationFrame = null
     }
 
-    this.element.querySelector(".countdown-timer").setAttribute("data-paused", "")
+    this.timerButtonTarget.setAttribute("data-paused", "")
     this.pauseIconTarget.classList.add("hidden")
     this.playIconTarget.classList.remove("hidden")
     this.timerButtonTarget.setAttribute("aria-label", "Resume auto-advance timer")
@@ -63,7 +63,7 @@ export default class extends Controller {
     this.startTime = Date.now() - (elapsedBeforePause * 1000)
     this.pausedAtRemaining = null
 
-    this.element.querySelector(".countdown-timer").removeAttribute("data-paused")
+    this.timerButtonTarget.removeAttribute("data-paused")
     this.playIconTarget.classList.add("hidden")
     this.pauseIconTarget.classList.remove("hidden")
     this.timerButtonTarget.setAttribute("aria-label", "Pause auto-advance timer")
@@ -97,7 +97,7 @@ export default class extends Controller {
 
   updateColor() {
     const phase = timerPhase(this.timeRemaining, this.durationValue)
-    this.element.querySelector("[data-phase]").setAttribute("data-phase", phase)
+    this.timerButtonTarget.setAttribute("data-phase", phase)
   }
 
   _handleKeydown(event) {
@@ -106,6 +106,7 @@ export default class extends Controller {
     const tag = event.target.tagName
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON") return
     if (event.target.isContentEditable) return
+    if (!this.element.contains(document.activeElement) && document.activeElement !== document.body) return
 
     event.preventDefault()
     this.toggle()

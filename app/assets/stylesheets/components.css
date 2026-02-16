@@ -1565,17 +1565,6 @@ button.countdown-timer {
   40% { transform: translateX(0); }
 }
 
-.tutorial-hint--music .tutorial-hint-content {
-  animation: hint-bounce 2s ease-in-out 0.3s 3;
-}
-
-@keyframes hint-bounce-right {
-  0%, 100% { transform: translateX(0); }
-  10%, 30% { transform: translateX(4px); }
-  20% { transform: translateX(-4px); }
-  40% { transform: translateX(0); }
-}
-
 .tutorial-hint-text {
   @apply whitespace-nowrap;
 }

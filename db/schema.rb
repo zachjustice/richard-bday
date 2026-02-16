@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_16_170359) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_16_202725) do
   create_table "answers", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "text", null: false
@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_170359) do
     t.index [ "game_prompt_id", "game_id", "user_id" ], name: "index_answers_on_game_prompt_id_and_game_id_and_user_id", unique: true
     t.index [ "game_prompt_id", "user_id" ], name: "index_game_prompts_on_game_prompt_id_and_room_id_and_user_id", unique: true
     t.index [ "game_prompt_id" ], name: "index_answers_on_game_prompt_id"
+    t.index [ "game_prompt_id" ], name: "index_answers_on_game_prompt_id_unique_winner", unique: true, where: "won = 1"
     t.index [ "user_id" ], name: "index_answers_on_user_id"
   end
 

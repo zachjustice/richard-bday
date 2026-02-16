@@ -63,7 +63,7 @@ class Helpers
     # Get players who haven't voted yet
     players = User.players.where(room: room).to_a
     players_without_votes = players.reject do |u|
-      Vote.where(game: g, game_prompt: gp, user: u).exists?
+      Vote.where(game: g, game_prompt: gp, user: u, vote_type: "player").exists?
     end
 
     # Create votes
@@ -80,7 +80,8 @@ class Helpers
             game_prompt: gp,
             user: user,
             answer: answer,
-            rank: rank_idx + 1
+            rank: rank_idx + 1,
+            vote_type: "player"
           )
         end
       else
@@ -88,7 +89,8 @@ class Helpers
           game: g,
           game_prompt: gp,
           user: user,
-          answer: tie ? answers[idx % answers.size] : answers.sample
+          answer: tie ? answers[idx % answers.size] : answers.sample,
+          vote_type: "player"
         )
       end
     end

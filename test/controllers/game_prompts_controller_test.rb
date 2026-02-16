@@ -370,4 +370,13 @@ class AudienceGamePromptsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
   end
+
+  test "audience user cannot submit an answer" do
+    @room.update!(status: RoomStatus::Answering)
+
+    post "/answer", params: { prompt_id: @game_prompt.id, text: "sneaky" }
+
+    assert_response :redirect
+    assert_equal 0, Answer.where(user: @audience_user, game_prompt: @game_prompt).count
+  end
 end
