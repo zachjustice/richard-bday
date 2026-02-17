@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Terms of Service · Blanksies</title>
+
+  <style>
+    :root {
+      --color-accent-primary: #D63040;
+      --color-accent-secondary: #2196F3;
+      --color-accent-tertiary: #FFD60A;
+      --color-bg-page: #FFF8E7;
+      --color-ink: #1A1A2E;
+      --color-ink-muted: rgba(26, 26, 46, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      color: var(--color-ink);
+      background-color: var(--color-bg-page);
+      padding: 2rem 1rem;
+    }
+
+    .page-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .card {
+      background: white;
+      border: 3px solid var(--color-ink);
+      border-radius: 1.5rem;
+      box-shadow: 8px 8px 0px var(--color-ink);
+      padding: 2.5rem 1.5rem;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: var(--color-ink);
+    }
+
+    .updated {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--color-ink-muted);
+      margin-bottom: 2rem;
+    }
+
+    .section-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--color-accent-primary);
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .body-text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--color-ink);
+      margin-bottom: 0.75rem;
+    }
+
+    .body-text a {
+      color: var(--color-accent-secondary);
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    .body-text a:hover {
+      color: var(--color-accent-primary);
+    }
+
+    ul {
+      margin: 0.5rem 0 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--color-ink);
+    }
+
+    ul li {
+      margin-bottom: 0.25rem;
+    }
+
+    .links {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--color-ink-muted);
+    }
+
+    .links a {
+      color: var(--color-ink);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+
+    .links a:hover {
+      color: var(--color-accent-secondary);
+    }
+
+    /* Doodle decorations */
+    .doodles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .doodle {
+      position: absolute;
+      animation: wiggle 3s ease-in-out infinite;
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(var(--rotation)) translate(0, 0); }
+      50% { transform: rotate(calc(var(--rotation) + 3deg)) translate(2px, -2px); }
+    }
+
+    .doodle-star {
+      top: 10%;
+      left: 5%;
+      width: 48px;
+      height: 48px;
+      --rotation: 12deg;
+    }
+
+    .doodle-squiggle {
+      top: 20%;
+      right: 8%;
+      width: 64px;
+      height: 32px;
+      --rotation: -6deg;
+    }
+
+    .doodle-circle {
+      bottom: 25%;
+      left: 8%;
+      width: 56px;
+      height: 56px;
+      --rotation: -15deg;
+    }
+
+    .doodle-arrow {
+      top: 45%;
+      right: 6%;
+      width: 40px;
+      height: 40px;
+      --rotation: 12deg;
+    }
+
+    .doodle-x {
+      bottom: 35%;
+      right: 12%;
+      width: 40px;
+      height: 40px;
+      --rotation: 6deg;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { animation: none; }
+      .doodle { animation: none; }
+    }
+
+    @media (min-width: 768px) {
+      .card {
+        padding: 3rem 2.5rem;
+      }
+
+      .title {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="doodles" aria-hidden="true">
+    <svg class="doodle doodle-star" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <path d="M24 4v8M24 36v8M4 24h8M36 24h8M10 10l6 6M32 32l6 6M10 38l6-6M32 16l6-6" style="color: var(--color-accent-tertiary)"/>
+    </svg>
+
+    <svg class="doodle doodle-squiggle" viewBox="0 0 64 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+      <path d="M4 16c8-12 16 12 24 0s16 12 24 0" style="color: var(--color-accent-primary)"/>
+    </svg>
+
+    <svg class="doodle doodle-circle" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <circle cx="28" cy="28" r="20" stroke-dasharray="8 6" style="color: var(--color-accent-secondary)"/>
+      <circle cx="28" cy="28" r="4" fill="currentColor" style="color: var(--color-accent-secondary)"/>
+    </svg>
+
+    <svg class="doodle doodle-arrow" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 32C14 24 22 18 32 8M24 6l10 2-2 10" style="color: var(--color-accent-tertiary)"/>
+    </svg>
+
+    <svg class="doodle doodle-x" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+      <path d="M10 10l20 20M30 10l-20 20" style="color: var(--color-accent-primary)"/>
+    </svg>
+  </div>
+
+  <div class="page-wrapper" role="main">
+    <div class="card">
+      <h1 class="title">Terms of Service</h1>
+      <p class="updated">Last updated: February 16, 2026</p>
+
+      <h2 class="section-heading">1. Acceptance of Terms</h2>
+      <p class="body-text">By accessing or using Blanksies, you agree to be bound by these Terms of Service. If you do not agree, do not use the service.</p>
+
+      <h2 class="section-heading">2. Description of Service</h2>
+      <p class="body-text">Blanksies is a multiplayer fill-in-the-blank party game. Players answer prompts, vote on their favorite answers, and winning responses fill in the blanks of a story. Blanksies is also available as a Discord Activity, allowing gameplay directly within Discord.</p>
+
+      <h2 class="section-heading">3. Eligibility</h2>
+      <p class="body-text">You must be at least 13 years old to use Blanksies. If you are under 18, you must have permission from a parent or legal guardian to use the service.</p>
+
+      <h2 class="section-heading">4. User Accounts</h2>
+      <p class="body-text">Editors create accounts using an email address to write and manage stories. Players join games without creating an account. To close an editor account, contact us at <a href="mailto:blanksies@zachjustice.dev">blanksies@zachjustice.dev</a>.</p>
+
+      <h2 class="section-heading">5. User Content</h2>
+      <p class="body-text">You retain ownership of any content you submit during gameplay, such as answers to prompts. By submitting content, you grant Blanksies a non-exclusive, worldwide, royalty-free license to display, store, and use your content as necessary to operate the service. Game answers may persist in historical session data.</p>
+
+      <h2 class="section-heading">6. Acceptable Use</h2>
+      <p class="body-text">You agree not to use Blanksies to:</p>
+      <ul>
+        <li>Post hate speech, harassment, or threats</li>
+        <li>Submit sexual content involving minors</li>
+        <li>Engage in illegal activity</li>
+        <li>Abuse or disrupt the platform</li>
+      </ul>
+      <p class="body-text">Report violations to <a href="mailto:blanksies@zachjustice.dev">blanksies@zachjustice.dev</a>.</p>
+
+      <h2 class="section-heading">7. Content Moderation</h2>
+      <p class="body-text">We reserve the right to remove content and ban users who violate these terms. We do not pre-screen user-submitted content but will respond to reports of violations.</p>
+
+      <h2 class="section-heading">8. Discord Activity</h2>
+      <p class="body-text">When used as a Discord Activity, Blanksies is also subject to <a href="https://discord.com/terms" target="_blank" rel="noopener noreferrer">Discord's Terms of Service</a>. Discord may collect data in accordance with their privacy policy. Blanksies is not affiliated with Discord, Inc. We may discontinue the Discord Activity integration at any time.</p>
+
+      <h2 class="section-heading">9. Intellectual Property</h2>
+      <p class="body-text">Blanksies and its original content, features, and functionality are owned by Blanksies. Users retain all rights to the content they submit. If you believe your copyrighted work has been used in violation of your rights, contact us at <a href="mailto:blanksies@zachjustice.dev">blanksies@zachjustice.dev</a> with a DMCA notice.</p>
+
+      <h2 class="section-heading">10. Account Termination</h2>
+      <p class="body-text">We may suspend or terminate your access for violations of these terms. You may close your account at any time by emailing <a href="mailto:blanksies@zachjustice.dev">blanksies@zachjustice.dev</a>. Previously submitted content may remain in historical session data after account closure.</p>
+
+      <h2 class="section-heading">11. Disclaimers</h2>
+      <p class="body-text">Blanksies is provided "as is" and "as available" without warranties of any kind, whether express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+
+      <h2 class="section-heading">12. Limitation of Liability</h2>
+      <p class="body-text">To the maximum extent permitted by law, Blanksies and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the service. Total liability is limited to $100 USD.</p>
+
+      <h2 class="section-heading">13. Indemnification</h2>
+      <p class="body-text">You agree to indemnify and hold harmless Blanksies and its operators from any claims, damages, or expenses arising from your content, your use of the service, or your violation of these terms.</p>
+
+      <h2 class="section-heading">14. Governing Law</h2>
+      <p class="body-text">These terms are governed by the laws of the State of Georgia, USA. Any disputes shall be resolved exclusively in the courts of Georgia. Before pursuing legal action, you agree to attempt informal resolution by contacting us at <a href="mailto:blanksies@zachjustice.dev">blanksies@zachjustice.dev</a>.</p>
+
+      <h2 class="section-heading">15. Changes to Terms</h2>
+      <p class="body-text">We may update these terms from time to time. Continued use of Blanksies after changes constitutes acceptance of the updated terms.</p>
+
+      <h2 class="section-heading">16. Severability &amp; General</h2>
+      <p class="body-text">If any provision of these terms is found to be unenforceable, the remaining provisions will remain in effect. Our failure to enforce any provision does not constitute a waiver. These terms constitute the entire agreement between you and Blanksies regarding the service.</p>
+
+      <h2 class="section-heading">17. Contact</h2>
+      <p class="body-text">For questions about these terms, contact us at <a href="mailto:blanksies@zachjustice.dev">blanksies@zachjustice.dev</a>.</p>
+
+      <div class="links">
+        <a href="/rooms/create">home</a> · <a href="/about">about</a> · <a href="/copyright">copyright</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

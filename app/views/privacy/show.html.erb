@@ -1,0 +1,59 @@
+<div class="min-h-screen bg-page overflow-auto">
+  <%= render "shared/doodle_decorations" %>
+
+  <div class="relative z-content flex flex-col min-h-screen">
+    <main class="flex-1 flex flex-col items-center justify-center px-4 py-12">
+      <div class="w-full max-w-2xl mx-auto animate-slide-up">
+        <div class="card-primary text-left">
+          <h1 class="heading border-b-3 border-ink pb-2 mb-8">Privacy Policy</h1>
+
+          <div class="space-y-6">
+
+            <h2 class="label text-xl mt-8 mb-4">What We Collect</h2>
+
+            <h3 class="label mb-2">Players</h3>
+            <p class="body">When you join a game, we store your display name, avatar (emoji), answers to prompts, and votes. We do not collect your email address or require a password.</p>
+
+            <h3 class="label mb-2">Discord Players</h3>
+            <p class="body">If you join through Discord, we additionally store your Discord user ID and username, obtained through Discord OAuth authentication.</p>
+
+            <h3 class="label mb-2">Editors</h3>
+            <p class="body">Story editors provide an email address and username. Passwords are securely hashed using bcrypt and are never stored in plain text.</p>
+
+            <h2 class="label text-xl mt-8 mb-4">Cookies &amp; Sessions</h2>
+            <p class="body">We use signed, httponly cookies to maintain your session:</p>
+            <ul class="ml-8 mb-6 list-disc space-y-2 body">
+              <li><strong>player_session_id</strong> &mdash; identifies your player session</li>
+              <li><strong>editor_session_id</strong> &mdash; identifies your editor session</li>
+            </ul>
+            <p class="body">Your IP address and user agent are stored as part of your session data. We do not use any analytics or tracking cookies.</p>
+
+            <h2 class="label text-xl mt-8 mb-4">Third-Party Services</h2>
+
+            <h3 class="label mb-2">Discord</h3>
+            <p class="body">We use Discord OAuth to authenticate players joining through the Discord activity. Discord&rsquo;s own privacy policy governs how Discord handles your data.</p>
+
+            <h3 class="label mb-2">Anthropic (Claude API)</h3>
+            <p class="body">We use the Anthropic Claude API to smooth player-submitted answers for grammar and readability. Only the answer text is sent &mdash; no player names, identifiers, or other personal information.</p>
+
+            <h2 class="label text-xl mt-8 mb-4">Data Retention</h2>
+            <p class="body">Game data (answers, votes, stories) is retained indefinitely. Discord OAuth tokens expire after 24 hours. Editor invitation links expire after 30 days.</p>
+
+            <h2 class="label text-xl mt-8 mb-4">Children&rsquo;s Privacy</h2>
+            <p class="body">Blanksies is not directed at children under 13. We do not knowingly collect personal information from children under 13. If you believe a child has provided us with personal information, please contact us so we can remove it.</p>
+
+            <h2 class="label text-xl mt-8 mb-4">Contact</h2>
+            <p class="body">If you have questions about this privacy policy, contact us at
+              <a href="mailto:blanksies@zachjustice.dev" class="font-semibold">blanksies@zachjustice.dev</a>.
+            </p>
+
+            <div class="mt-12 pt-8 border-t-3 border-ink text-center">
+              <p class="italic body mb-4">Last updated: February 16, 2026</p>
+              <%= link_to "← Back", root_path, class: "inline-block" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
