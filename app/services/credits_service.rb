@@ -72,14 +72,14 @@ class CreditsService
     audience_votes = @votes.select { |v| v.audience? }
     return nil if audience_votes.empty?
 
-    # Count total stars per answer author across the whole game
-    stars_by_user = Hash.new(0)
+    # Count total kudos per answer author across the whole game
+    kudos_by_user = Hash.new(0)
     audience_votes.each do |vote|
       author_id = vote.answer.user_id
-      stars_by_user[author_id] += 1
+      kudos_by_user[author_id] += 1
     end
 
-    winner_id, count = stars_by_user.max_by { |_, c| c }
+    winner_id, count = kudos_by_user.max_by { |_, c| c }
     { user: @users_by_id[winner_id], count: count }
   end
 

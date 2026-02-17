@@ -30,11 +30,11 @@ class AudienceVoteServiceTest < ActiveSupport::TestCase
   end
 
   test "valid submission creates votes and returns success" do
-    stars = { @answer1.id.to_s => "3", @answer2.id.to_s => "2" }
+    kudos = { @answer1.id.to_s => "3", @answer2.id.to_s => "2" }
 
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Success, result
@@ -43,12 +43,12 @@ class AudienceVoteServiceTest < ActiveSupport::TestCase
     assert_equal 2, Vote.where(user: @audience, answer: @answer2).count
   end
 
-  test "accepts ActionController::Parameters as stars_params" do
-    stars = ActionController::Parameters.new(@answer1.id.to_s => "2", @answer2.id.to_s => "1")
+  test "accepts ActionController::Parameters as kudos_params" do
+    kudos = ActionController::Parameters.new(@answer1.id.to_s => "2", @answer2.id.to_s => "1")
 
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Success, result
@@ -58,7 +58,7 @@ class AudienceVoteServiceTest < ActiveSupport::TestCase
   test "invalid params returns failure" do
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: "not_a_hash", room: @room
+      kudos_params: "not_a_hash", room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Failure, result
@@ -66,89 +66,89 @@ class AudienceVoteServiceTest < ActiveSupport::TestCase
   end
 
   test "duplicate submission returns already counted message" do
-    stars = { @answer1.id.to_s => "3" }
+    kudos = { @answer1.id.to_s => "3" }
 
     first = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
     assert_kind_of AudienceVoteService::Success, first
 
     second = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
     assert_kind_of AudienceVoteService::Failure, second
-    assert_equal "Your stars for this round were already counted!", second.error
+    assert_equal "Your kudos for this round were already counted!", second.error
   end
 
-  test "star values are clamped to max" do
-    stars = { @answer1.id.to_s => "10" }
+  test "kudos values are clamped to max" do
+    kudos = { @answer1.id.to_s => "10" }
 
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Success, result
-    assert_equal Vote::MAX_AUDIENCE_STARS, Vote.where(user: @audience, game_prompt: @game_prompt).count
+    assert_equal Vote::MAX_AUDIENCE_KUDOS, Vote.where(user: @audience, game_prompt: @game_prompt).count
   end
 
-  test "total stars exceeding max returns failure" do
-    stars = {
-      @answer1.id.to_s => Vote::MAX_AUDIENCE_STARS.to_s,
+  test "total kudos exceeding max returns failure" do
+    kudos = {
+      @answer1.id.to_s => Vote::MAX_AUDIENCE_KUDOS.to_s,
       @answer2.id.to_s => "1"
     }
 
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Failure, result
   end
 
-  test "zero total stars returns failure" do
-    stars = { @answer1.id.to_s => "0", @answer2.id.to_s => "0" }
+  test "zero total kudos returns failure" do
+    kudos = { @answer1.id.to_s => "0", @answer2.id.to_s => "0" }
 
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Failure, result
   end
 
   test "invalid answer ids returns failure" do
-    stars = { "999999" => "3" }
+    kudos = { "999999" => "3" }
 
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Failure, result
   end
 
   test "invalid game_prompt_id returns failure" do
-    stars = { @answer1.id.to_s => "3" }
+    kudos = { @answer1.id.to_s => "3" }
 
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: 999999,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Failure, result
   end
 
   test "DB failure in create_votes rolls back transaction, allowing retry" do
-    stars = { @answer1.id.to_s => "3" }
+    kudos = { @answer1.id.to_s => "3" }
 
     # First call: force a DB failure inside the transaction
     Vote.stub(:create!, ->(*) { raise ActiveRecord::RecordInvalid.new(Vote.new) }) do
       result = AudienceVoteService.new(
         user: @audience, game_prompt_id: @game_prompt.id,
-        stars_params: stars, room: @room
+        kudos_params: kudos, room: @room
       ).call
 
       assert_kind_of AudienceVoteService::Failure, result
@@ -157,7 +157,7 @@ class AudienceVoteServiceTest < ActiveSupport::TestCase
     # Retry should succeed because the transaction rolled back
     result = AudienceVoteService.new(
       user: @audience, game_prompt_id: @game_prompt.id,
-      stars_params: stars, room: @room
+      kudos_params: kudos, room: @room
     ).call
 
     assert_kind_of AudienceVoteService::Success, result

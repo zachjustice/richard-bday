@@ -1,5 +1,6 @@
 <%# app/views/rooms/waiting_for_new_game.html.erb %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+<%= render "shared/leave_game_button" unless discord_authenticated? %>
 <div id="results" class="min-h-screen flex items-center justify-center bg-page">
   <div class="card-primary p-10 m-10 max-sm:p-6 max-sm:m-4 max-w-[600px] w-full animate-fade-in">
     <div class="text-center">

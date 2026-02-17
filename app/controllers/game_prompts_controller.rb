@@ -107,7 +107,7 @@ class GamePromptsController < ApplicationController
       @points_by_answer = service_data[:points_by_answer]
       @ranked_voting = service_data[:ranked_voting]
       @audience_favorite = service_data[:audience_favorite]
-      @audience_star_counts = service_data[:audience_star_counts]
+      @audience_kudos_counts = service_data[:audience_kudos_counts]
     end
   end
 
@@ -138,7 +138,7 @@ class GamePromptsController < ApplicationController
     # Audience members have unlimited time to vote, so they may still be on a
     # previous round's voting page when the game advances. We exempt them here:
     # once they submit, the votes controller navigates them to the correct phase.
-    # Audience stars are non-critical, so missing a round is acceptable.
+    # Audience kudos are non-critical, so missing a round is acceptable.
     return if @current_user.audience? && controller == "game_prompts" && action == "voting"
 
     case @current_room.status

@@ -141,7 +141,7 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     assert_equal @answer1, result[:winner]
   end
 
-  test "audience_star_counts populated when audience votes exist" do
+  test "audience_kudos_counts populated when audience votes exist" do
     audience_user = User.create!(name: "AUD#{SecureRandom.hex(4)}", room: @room, role: User::AUDIENCE)
 
     Vote.create!(user: audience_user, answer: @answer1, game: @game, game_prompt: @game_prompt, vote_type: "audience")
@@ -151,11 +151,11 @@ class RoomStatusServiceTest < ActiveSupport::TestCase
     SelectWinnerService.new(@game_prompt, @room).call
     result = RoomStatusService.new(@room).call
 
-    assert_equal 2, result[:audience_star_counts][@answer1.id]
-    assert_equal 1, result[:audience_star_counts][@answer2.id]
+    assert_equal 2, result[:audience_kudos_counts][@answer1.id]
+    assert_equal 1, result[:audience_kudos_counts][@answer2.id]
   end
 
-  test "audience_favorite is the answer with most audience stars" do
+  test "audience_favorite is the answer with most audience kudos" do
     audience_user = User.create!(name: "AUD#{SecureRandom.hex(4)}", room: @room, role: User::AUDIENCE)
 
     Vote.create!(user: audience_user, answer: @answer1, game: @game, game_prompt: @game_prompt, vote_type: "audience")

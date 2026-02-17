@@ -17,7 +17,7 @@ class VotesController < ApplicationController
     result = AudienceVoteService.new(
       user: @current_user,
       game_prompt_id: params[:game_prompt_id],
-      stars_params: params[:stars],
+      kudos_params: params[:kudos],
       room: @current_room
     ).call
 

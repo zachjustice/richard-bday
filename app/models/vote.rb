@@ -1,5 +1,5 @@
 class Vote < ApplicationRecord
-  MAX_AUDIENCE_STARS = 5
+  MAX_AUDIENCE_KUDOS = 5
 
   belongs_to :user
   belongs_to :answer
