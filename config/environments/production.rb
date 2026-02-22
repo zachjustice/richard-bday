@@ -87,9 +87,9 @@ Rails.application.configure do
     "https://www.#{ENV['HOST']}",
     /\.discordsays\.com$/
   ]
-  config.hosts << "https://blanksies.zachjustice.dev"
-  config.hosts << /\.?#{Regexp.escape(ENV.fetch("HOST", ""))}$/
+  config.hosts << "blanksies.zachjustice.dev"
+  config.hosts << /(.*\.)?#{Regexp.escape(ENV.fetch("HOST", ""))}/
   config.hosts << "localhost"
   config.hosts << "174.138.60.116"
-  config.hosts << /\.discordsays\.com$/
+  config.hosts << /(.*\.)?discordsays\.com/
 end
