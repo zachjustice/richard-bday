@@ -57,3 +57,4 @@ Two independent voting systems run during each `Voting` phase:
 - Ensure tests pass after adding new features
 - Add tests for new features
 - Add tests intentionally- tests have 2 costs: 1) maintenance and 2) running them. Ensure critical code paths are covered.
+- Discord iframe actions that use `respond_to` need tests for **both** format branches. Turbo requests hit `format.turbo_stream`, but non-Turbo requests (which Discord's server-side redirect produces) hit `format.html`. Test the HTML fallback by sending only Discord auth headers (no Turbo Accept header) and asserting no 302 redirect.

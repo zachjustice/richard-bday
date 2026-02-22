@@ -1,0 +1,10 @@
+<% if room.active_audience_count < User::MAX_AUDIENCE %>
+  <div class="bg-white rounded-xl p-3 border-2 border-ink/20 shadow-sm w-[140px]"
+       data-controller="audience-qr"
+       data-audience-qr-room-code-value="<%= room.code %>">
+    <p class="text-xs font-bold text-ink text-center mb-2">Join the Audience</p>
+    <img data-audience-qr-target="image" src=""
+         class="w-[100px] h-[100px] mx-auto"
+         alt="QR code to join as audience for room <%= room.code.upcase %>">
+  </div>
+<% end %>

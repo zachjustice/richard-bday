@@ -271,6 +271,53 @@
     100% { background-color: inherit; }
   }
 
+  /* Crown bob — gentle floating motion on winner crown */
+  @keyframes avatar-crown-bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-2px); }
+  }
+
+  /* Party hat tilt — subtle rocking on audience favorite hat */
+  @keyframes avatar-hat-tilt {
+    0%, 100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-50%) rotate(3deg); }
+    75% { transform: translateX(-50%) rotate(-3deg); }
+  }
+
+  /* Firework rocket launch — shoots upward with slight wiggle */
+  @keyframes avatar-firework-launch {
+    0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+    30% { transform: translate(-52%, -30px) scale(1.1); opacity: 1; }
+    60% { transform: translate(-48%, -60px) scale(0.9); opacity: 1; }
+    100% { transform: translate(-50%, -90px) scale(0.3); opacity: 0; }
+  }
+
+  /* Firework burst — particles fly outward and fade */
+  @keyframes avatar-firework-burst {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+    20% { transform: translate(calc(var(--burst-x) * 0.2), calc(var(--burst-y) * 0.2)) scale(1); opacity: 1; }
+    100% { transform: translate(var(--burst-x), var(--burst-y)) scale(0); opacity: 0; }
+  }
+
+  /* Medal sway — subtle left-right tilt for medal decorations */
+  @keyframes avatar-medal-sway {
+    0%, 100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-50%) rotate(4deg); }
+    75% { transform: translateX(-50%) rotate(-4deg); }
+  }
+
+  /* Bolt pulse — opacity/scale pulse for lightning bolt */
+  @keyframes avatar-bolt-pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+    50% { transform: translateX(-50%) scale(1.15); opacity: 1; }
+  }
+
+  /* Star twinkle — sparkle effect for audience favorite star */
+  @keyframes avatar-star-twinkle {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+    50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  }
+
 }
 
 /* Disable animations for users who prefer reduced motion */
@@ -298,7 +345,18 @@
   .roaming-avatar,
   .roaming-avatar--self::after,
   .roaming-avatar-spark,
-  .roaming-avatar--flash-red {
+  .roaming-avatar--flash-red,
+  .roaming-avatar-crown,
+  .roaming-avatar-party-hat,
+  .roaming-avatar-rocket,
+  .roaming-avatar-burst,
+  .roaming-avatar-trophy,
+  .roaming-avatar-medal,
+  .roaming-avatar-horns,
+  .roaming-avatar-bolt,
+  .roaming-avatar-eraser,
+  .roaming-avatar-nightcap,
+  .roaming-avatar-star {
     animation: none !important;
   }
 

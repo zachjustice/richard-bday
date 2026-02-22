@@ -83,6 +83,9 @@ Rails.application.routes.draw do
   post "/rooms/:id/start_new_game", to: "rooms#start_new_game", as: :start_new_room_game
   patch "/rooms/:id/settings", to: "rooms#update_settings", as: :update_room_settings
   get "/rooms/:id/waiting_for_new_game", to: "rooms#waiting_for_new_game", as: :waiting_for_new_game
+  get "/rooms/:id/story", to: "rooms#story", as: :room_story
+  post "/rooms/:id/story_image", to: "rooms#upload_story_image", as: :room_story_image
+  get "/rooms/:id/game_credits", to: "rooms#game_credits", as: :room_game_credits
   get "/rooms/:id/check_navigation", to: "rooms#check_navigation", as: :check_room_navigation
 
 

@@ -31,13 +31,6 @@
           <button onclick="location.reload()" class="btn-primary">Try Again</button>
         </div>
       </div>
-    <% else %>
-      <div class="min-h-screen flex items-center justify-center">
-        <div class="card-primary p-8 text-center">
-          <h1 class="text-2xl font-bold text-ink mb-4">Configuration Error</h1>
-          <p class="text-ink/70">Discord client ID is not configured. Please check server credentials.</p>
-        </div>
-      </div>
     <% end %>
 
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-easter-egg focus:bg-accent-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:font-bold">
@@ -55,8 +48,20 @@
              data-roaming-avatars-current-user-value="<%= dom_id(@current_user, :waiting_room) if @current_user %>"
              data-turbo-permanent>
           <ul id="waiting-room" class="hidden" data-roaming-avatars-target="source">
-            <% User.players.where(room: @current_room).each do |user| %>
-              <%= render "rooms/partials/user_list_item", user: user %>
+            <% if @current_room.status == RoomStatus::Credits %>
+              <% credits_accolades = @current_room.current_game&.credits_accolades || {} %>
+              <% User.players.where(room: @current_room).each do |user| %>
+                <%= render "rooms/partials/user_list_item", user: user, accolade: credits_accolades[user.id] || "" %>
+              <% end %>
+            <% else %>
+              <% accolades = @current_room.current_game&.last_round_accolades || {} %>
+              <% User.players.where(room: @current_room).each do |user| %>
+                <% accolade = [
+                  ("winner" if accolades[:winner_user_id] == user.id),
+                  ("audience_favorite" if accolades[:audience_favorite_user_id] == user.id)
+                ].compact.join(" ") %>
+                <%= render "rooms/partials/user_list_item", user: user, accolade: accolade %>
+              <% end %>
             <% end %>
           </ul>
         </div>
@@ -66,7 +71,7 @@
         <%= render "shared/discord_navbar", room: @current_room %>
       <% end %>
       <div class="<%= 'pt-14' if @current_room&.current_game %>">
-        <% if @current_room&.current_game&.next_game_phase_time %>
+        <% if @current_room&.current_game&.next_game_phase_time && @current_room.status.in?([RoomStatus::Answering, RoomStatus::Voting]) %>
           <% timer_duration = @current_room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS %>
           <div class="fixed top-16 right-4 z-overlay">
             <div class="countdown-timer-xs">

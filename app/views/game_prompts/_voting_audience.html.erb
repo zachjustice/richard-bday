@@ -1,7 +1,7 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:audience-nudge" %>
 <div data-controller="audience-voting"
      data-audience-voting-max-stars-value="<%= Vote::MAX_AUDIENCE_STARS %>"
-     class="<%= discord_authenticated? ? 'flex items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page' %>">
+     class="<%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] flex items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page' %>">
   <div class="card-primary animate-slide-up <%= discord_authenticated? ? 'p-6 m-4 relative z-content' : 'p-10 m-10' %> max-sm:p-4 max-sm:mx-2 max-sm:my-4 max-w-2xl w-full flex flex-col">
     <div id="audience-nudge-notice" role="status" aria-live="polite"></div>
     <%= render "shared/round_badge" %>

@@ -7,7 +7,7 @@
 <% if @current_user.audience? %>
   <%= render "game_prompts/voting_audience", game_prompt: @game_prompt, answers: @answers %>
 <% elsif @current_room.vote_once? %>
-  <div class="<%= discord_authenticated? ? 'flex items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page overflow-auto' %>">
+  <div class="<%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] flex items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page overflow-auto' %>">
     <div class="card-primary animate-slide-up <%= discord_authenticated? ? 'p-6 m-4 relative z-content' : 'p-10 m-10' %> max-sm:p-4 max-sm:m-4 max-w-2xl w-full flex flex-col flex-1 min-h-0 max-h-[640px]">
       <%= render "shared/round_badge" if discord_authenticated? %>
 

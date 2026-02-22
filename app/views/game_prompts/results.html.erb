@@ -1,22 +1,9 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 <%= render "shared/leave_game_button" unless discord_authenticated? %>
-<div id="results" data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="<%= discord_authenticated? ? 'flex flex-col items-center max-sm:items-start justify-center bg-page' : 'h-screen flex items-center max-sm:items-start justify-center bg-page' %>">
-  <div class="card-primary animate-fade-in relative z-content <%= discord_authenticated? ? 'm-4 p-8 max-sm:p-6' : 'm-4 p-12 max-sm:p-8' %> max-w-xl w-full max-h-[90vh] overflow-hidden">
+<div id="results" data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="<%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] flex flex-col items-center max-sm:items-start justify-center bg-page' : 'h-screen flex items-center max-sm:items-start justify-center bg-page' %>">
+  <div class="card-primary relative z-content <%= discord_authenticated? ? 'm-4 p-8 max-sm:p-6' : 'm-4 p-12 max-sm:p-8' %> max-w-xl w-full max-h-[90vh] overflow-hidden">
     <%= render "shared/round_badge" if discord_authenticated? %>
-    <% if @status == RoomStatus::FinalResults %>
-      <div class="text-center">
-        <span class="text-5xl max-sm:text-4xl mb-4 block animate-bounce-custom">🎉</span>
-        <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Game Complete!</h2>
-        <% if @current_user.role == User::NAVIGATOR %>
-          <p class="text-base max-sm:text-sm text-gray-500 italic mb-8">Click 'Start New Game' when you're ready!</p>
-          <%= form_with url: "/rooms/#{@current_room.id}/end_game", method: :post, class: "flex justify-center" do |form| %>
-            <%= form.submit "Start New Game", class: "btn-primary min-w-[200px]" %>
-          <% end %>
-        <% else %>
-          <p class="text-base max-sm:text-sm text-gray-500 italic">Check the big screen for the final results!</p>
-        <% end %>
-      </div>
-    <% elsif @status == RoomStatus::WaitingRoom %>
+    <% if @status == RoomStatus::WaitingRoom %>
       <div class="text-center">
         <span class="text-5xl max-sm:text-4xl mb-4 block animate-swing">⏳</span>
         <h2 class="text-3xl max-sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">Between Games</h2>
@@ -41,7 +28,7 @@
         </div>
         <% if @current_user.role == User::NAVIGATOR %>
           <%= form_with url: "/rooms/#{@current_room.id}/next", method: :post, class: "flex justify-center" do |form| %>
-            <%= form.submit "Next Round", class: "btn-primary min-w-[200px]" %>
+            <%= form.submit(@current_round == @total_rounds ? "Story Time" : "Next Round", class: "btn-primary min-w-[200px]") %>
           <% end %>
         <% else %>
           <div class="progress-dots">
@@ -53,9 +40,14 @@
       <% end %>
     <% end %>
   </div>
-  <% if discord_authenticated? && @status != RoomStatus::Results && @status != RoomStatus::FinalResults && @status != RoomStatus::WaitingRoom %>
+  <% if discord_authenticated? && @status != RoomStatus::Results && @status != RoomStatus::WaitingRoom %>
     <% voted = User.players.where(room: @current_room, status: UserStatus::Voted).count %>
     <% total = User.players.where(room: @current_room).count %>
     <%= render "shared/players_done_counter", done_count: voted, total_count: total %>
+  <% end %>
+  <% if discord_authenticated? %>
+    <div class="fixed bottom-4 right-4 z-content">
+      <%= render "shared/audience_qr_card", room: @current_room %>
+    </div>
   <% end %>
 </div>

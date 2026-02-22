@@ -10,9 +10,13 @@ module GamePhaseNavigation
     case room.status
     when RoomStatus::Voting
       game_prompt_voting_path(prompt)
-    when RoomStatus::Results, RoomStatus::FinalResults
+    when RoomStatus::Results
       game_prompt_results_path(prompt)
-    when RoomStatus::Credits, RoomStatus::StorySelection
+    when RoomStatus::FinalResults
+      room_story_path(room)
+    when RoomStatus::Credits
+      room_game_credits_path(room)
+    when RoomStatus::StorySelection
       show_room_path
     when RoomStatus::Answering
       user.audience? ? game_prompt_waiting_path(prompt) : game_prompt_path(prompt)
