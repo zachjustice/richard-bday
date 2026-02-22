@@ -127,7 +127,7 @@ class Helpers
     voters = voters.first(num_voters) if num_voters
 
     voters.each do |user|
-      total_stars = rand(1..Vote::MAX_AUDIENCE_STARS)
+      total_stars = rand(1..Vote::MAX_AUDIENCE_KUDOS)
       total_stars.times do
         answer = answers.sample
         Vote.create!(

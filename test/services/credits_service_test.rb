@@ -188,13 +188,13 @@ class CreditsServiceTest < ActiveSupport::TestCase
 
   # --- Audience favorite ---
 
-  test "audience_favorite returns player with most audience stars across game" do
+  test "audience_favorite returns player with most audience kudos across game" do
     audience_user = User.create!(name: "AUD#{SecureRandom.hex(4)}", room: @room, role: User::AUDIENCE)
     a1 = Answer.create!(game_prompt: @gp1, game: @game, user: @user_a, text: "x")
     a2 = Answer.create!(game_prompt: @gp1, game: @game, user: @user_b, text: "y")
     a3 = Answer.create!(game_prompt: @gp2, game: @game, user: @user_a, text: "x2")
 
-    # 2 audience stars for user_a (via a1 and a3), 1 for user_b (via a2)
+    # 2 audience kudos for user_a (via a1 and a3), 1 for user_b (via a2)
     Vote.create!(user: audience_user, answer: a1, game: @game, game_prompt: @gp1, vote_type: "audience")
     Vote.create!(user: audience_user, answer: a3, game: @game, game_prompt: @gp2, vote_type: "audience")
     Vote.create!(user: audience_user, answer: a2, game: @game, game_prompt: @gp1, vote_type: "audience")

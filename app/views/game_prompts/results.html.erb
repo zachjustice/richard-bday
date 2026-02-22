@@ -1,6 +1,6 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 <%= render "shared/leave_game_button" unless discord_authenticated? %>
-<div id="results" data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="<%= discord_authenticated? ? 'flex flex-col items-center max-sm:items-start justify-center bg-page' : 'h-screen flex items-center max-sm:items-start justify-center bg-page' %>">
+<div id="results" data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="<%= discord_authenticated? ? 'flex flex-col items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page pt-16' %>">
   <div class="card-primary animate-fade-in relative z-content <%= discord_authenticated? ? 'm-4 p-8 max-sm:p-6' : 'm-4 p-12 max-sm:p-8' %> max-w-xl w-full max-h-[90vh] overflow-hidden">
     <%= render "shared/round_badge" if discord_authenticated? %>
     <% if @status == RoomStatus::FinalResults %>

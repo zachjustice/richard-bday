@@ -272,40 +272,40 @@ class AudienceVotesControllerTest < ActionDispatch::IntegrationTest
     resume_session_as(@room.code, @audience_user.name)
   end
 
-  test "audience create submits stars and redirects" do
+  test "audience create submits kudos and redirects" do
     assert_difference("Vote.count", 5) do
       post "/vote", params: {
         game_prompt_id: @game_prompt.id,
-        stars: { @answer1.id.to_s => "3", @answer2.id.to_s => "2" }
+        kudos: { @answer1.id.to_s => "3", @answer2.id.to_s => "2" }
       }
     end
     assert_response :redirect
   end
 
-  test "audience star values are clamped to max" do
+  test "audience kudos values are clamped to max" do
     post "/vote", params: {
       game_prompt_id: @game_prompt.id,
-      stars: { @answer1.id.to_s => "999" }
+      kudos: { @answer1.id.to_s => "999" }
     }
 
     votes = Vote.where(user: @audience_user, game_prompt: @game_prompt)
-    assert votes.count <= Vote::MAX_AUDIENCE_STARS
+    assert votes.count <= Vote::MAX_AUDIENCE_KUDOS
   end
 
-  test "audience votes rejected when total stars exceed max" do
+  test "audience votes rejected when total kudos exceed max" do
     assert_no_difference("Vote.count") do
       post "/vote", params: {
         game_prompt_id: @game_prompt.id,
-        stars: { @answer1.id.to_s => Vote::MAX_AUDIENCE_STARS.to_s, @answer2.id.to_s => "1" }
+        kudos: { @answer1.id.to_s => Vote::MAX_AUDIENCE_KUDOS.to_s, @answer2.id.to_s => "1" }
       }
     end
   end
 
-  test "audience votes rejected when total stars is zero" do
+  test "audience votes rejected when total kudos is zero" do
     assert_no_difference("Vote.count") do
       post "/vote", params: {
         game_prompt_id: @game_prompt.id,
-        stars: { @answer1.id.to_s => "0", @answer2.id.to_s => "0" }
+        kudos: { @answer1.id.to_s => "0", @answer2.id.to_s => "0" }
       }
     end
   end
@@ -316,7 +316,7 @@ class AudienceVotesControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference("Vote.count") do
       post "/vote", params: {
         game_prompt_id: @game_prompt.id,
-        stars: { @answer1.id.to_s => "3" }
+        kudos: { @answer1.id.to_s => "3" }
       }
     end
   end
@@ -325,16 +325,16 @@ class AudienceVotesControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference("Vote.count") do
       post "/vote", params: {
         game_prompt_id: @game_prompt.id,
-        stars: { "999999" => "3" }
+        kudos: { "999999" => "3" }
       }
     end
   end
 
-  test "audience votes rejected with non-hash stars param" do
+  test "audience votes rejected with non-hash kudos param" do
     assert_no_difference("Vote.count") do
       post "/vote", params: {
         game_prompt_id: @game_prompt.id,
-        stars: "not_a_hash"
+        kudos: "not_a_hash"
       }
     end
     assert_response :redirect
@@ -349,7 +349,7 @@ class AudienceVotesControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference("Vote.count") do
       post "/vote", params: {
         game_prompt_id: other_game_prompt.id,
-        stars: { @answer1.id.to_s => "3" }
+        kudos: { @answer1.id.to_s => "3" }
       }
     end
     assert_response :redirect

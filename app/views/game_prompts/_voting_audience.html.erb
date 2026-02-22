@@ -1,6 +1,6 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:audience-nudge" %>
 <div data-controller="audience-voting"
-     data-audience-voting-max-stars-value="<%= Vote::MAX_AUDIENCE_STARS %>"
+     data-audience-voting-max-kudos-value="<%= Vote::MAX_AUDIENCE_KUDOS %>"
      class="<%= discord_authenticated? ? 'flex items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page' %>">
   <div class="card-primary animate-slide-up <%= discord_authenticated? ? 'p-6 m-4 relative z-content' : 'p-10 m-10' %> max-sm:p-4 max-sm:mx-2 max-sm:my-4 max-w-2xl w-full flex flex-col">
     <div id="audience-nudge-notice" role="status" aria-live="polite"></div>
@@ -11,8 +11,8 @@
         <%= game_prompt.prompt.description %>
       </h2>
       <p class="text-ink/60 mt-2 text-sm">
-        Give your stars to your favorites — your votes pick the fan favorite
-        <span data-audience-voting-target="remaining" class="inline-block font-bold text-ink text-shadow-brand ml-1" aria-live="polite" aria-atomic="true"><%= Vote::MAX_AUDIENCE_STARS %> stars left</span>
+        Give kudos to answers to help pick the fan favorite
+        <span data-audience-voting-target="remaining" class="inline-block font-bold text-ink text-shadow-brand ml-1" aria-live="polite" aria-atomic="true"><%= Vote::MAX_AUDIENCE_KUDOS %> kudos left</span>
       </p>
     </div>
 
@@ -22,7 +22,7 @@
       <%= form.hidden_field :game_prompt_id, value: game_prompt.id %>
 
       <fieldset>
-        <legend class="sr-only">Vote with your stars</legend>
+        <legend class="sr-only">Vote with your kudos</legend>
         <div class="flex flex-col gap-3 overflow-y-auto scroll-fade-indicators p-1 max-h-[60vh]">
           <% answers.each do |answer| %>
             <div class="flex items-center gap-3 rounded-xl border-2 border-ink/10 p-4 transition-all"
@@ -33,26 +33,29 @@
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <button type="button"
-                        class="w-8 h-8 rounded-full border-2 border-ink/20 flex items-center justify-center text-lg font-bold hover:border-ink/40 transition-colors cursor-pointer"
+                        class="w-8 h-8 rounded-full border-2 border-ink/20 flex items-center justify-center text-ink hover:border-ink/40 transition-colors cursor-pointer"
                         data-action="click->audience-voting#decrement"
                   data-answer-id="<%= answer.id %>"
-                  aria-label="Remove star from <%= answer.text.truncate(30) %>">
-                  &minus;
+                  aria-label="Remove kudos from <%= answer.text.truncate(30) %>">
+                  <span class="block w-2.5 h-0.5 bg-current rounded-full" aria-hidden="true"></span>
                 </button>
                 <span class="text-xl font-bold min-w-[2ch] text-center"
-                      data-audience-voting-target="starCount"
+                      data-audience-voting-target="kudosCount"
                       data-answer-id="<%= answer.id %>"
                       aria-live="polite"
                       aria-atomic="true">0</span>
                 <button type="button"
-                        class="w-8 h-8 rounded-full border-2 border-accent-yellow bg-accent-yellow/20 flex items-center justify-center text-lg font-bold hover:bg-accent-yellow/40 transition-colors cursor-pointer"
+                        class="w-8 h-8 rounded-full border-2 border-accent-yellow bg-accent-yellow/20 flex items-center justify-center text-ink hover:bg-accent-yellow/40 transition-colors cursor-pointer"
                         data-action="click->audience-voting#increment"
                   data-answer-id="<%= answer.id %>"
-                  aria-label="Add star to <%= answer.text.truncate(30) %>">
-                  +
+                  aria-label="Add kudos to <%= answer.text.truncate(30) %>">
+                  <span class="relative flex items-center justify-center w-2.5 h-2.5" aria-hidden="true">
+                    <span class="absolute block w-2.5 h-0.5 bg-current rounded-full"></span>
+                    <span class="absolute block w-0.5 h-2.5 bg-current rounded-full"></span>
+                  </span>
                 </button>
-                <input type="hidden" name="stars[<%= answer.id %>]" value="0"
-                       data-audience-voting-target="starInput"
+                <input type="hidden" name="kudos[<%= answer.id %>]" value="0"
+                       data-audience-voting-target="kudosInput"
                        data-answer-id="<%= answer.id %>">
               </div>
             </div>
@@ -60,7 +63,7 @@
         </div>
       </fieldset>
 
-      <%= form.submit "Submit Stars",
+      <%= form.submit "Submit Kudos",
                       class: "btn-primary mt-4",
                       data: { audience_voting_target: "submitBtn" },
                       disabled: true %>

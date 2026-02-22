@@ -2,13 +2,13 @@
 <% if count > 0 %>
   <span class="text-sm font-bold text-ink text-shadow-brand inline-flex items-center"
         role="img"
-        aria-label="<%= count %> audience <%= count == 1 ? 'star' : 'stars' %>">
+        aria-label="<%= count %> audience kudos">
     <% if count <= 4 %>
       <% count.times do |i| %>
-        <span class="<%= '-ml-3' if i > 0 %>" style="position: relative; z-index: <%= count - i %>" aria-hidden="true">⭐</span>
+        <span class="<%= '-ml-3' if i > 0 %>" style="position: relative; z-index: <%= count - i %>" aria-hidden="true">👏</span>
       <% end %>
     <% else %>
-      <span style="position: relative" aria-hidden="true">⭐</span>
+      <span style="position: relative" aria-hidden="true">👏</span>
       <span >x<%= count %></span>
     <% end %>
   </span>
