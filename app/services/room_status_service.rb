@@ -106,11 +106,11 @@ class RoomStatusService
 
     # Audience favorite calculation (only when audience voted)
     if audience_votes.any?
-      audience_star_counts = Hash.new(0)
-      audience_votes.each { |v| audience_star_counts[v.answer_id] += 1 }
-      max_audience_stars = audience_star_counts.values.max
-      audience_favorite = answers.detect { |a| audience_star_counts[a.id] == max_audience_stars }
-      result[:audience_star_counts] = audience_star_counts
+      audience_kudos_counts = Hash.new(0)
+      audience_votes.each { |v| audience_kudos_counts[v.answer_id] += 1 }
+      max_audience_kudos = audience_kudos_counts.values.max
+      audience_favorite = answers.detect { |a| audience_kudos_counts[a.id] == max_audience_kudos }
+      result[:audience_kudos_counts] = audience_kudos_counts
       result[:audience_favorite] = audience_favorite
     end
 

@@ -2,8 +2,6 @@
 <% unless @current_user.audience? %>
   <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 <% end %>
-<%= render "shared/leave_game_button" unless discord_authenticated? %>
-
 <% if @current_user.audience? %>
   <%= render "game_prompts/voting_audience", game_prompt: @game_prompt, answers: @answers %>
 <% elsif @current_room.vote_once? %>
