@@ -82,10 +82,12 @@ Rails.application.configure do
   # config.action_cable.mount_path = nil
   config.action_cable.url = "wss://#{ENV['HOST']}/cable"
   config.action_cable.allowed_request_origins = [
+    "https://blanksies.zachjustice.dev",
     "https://#{ENV['HOST']}",
     "https://www.#{ENV['HOST']}",
     /\.discordsays\.com$/
   ]
+  config.hosts << "https://blanksies.zachjustice.dev"
   config.hosts << /\.#{ENV["HOST"]}$/
   config.hosts << "localhost"
   config.hosts << "174.138.60.116"
