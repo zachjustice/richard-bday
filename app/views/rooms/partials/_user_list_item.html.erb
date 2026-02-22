@@ -2,6 +2,7 @@
     class="badge-primary text-nowrap text-ellipsis overflow-hidden max-w-[300px]"
     data-avatar="<%= user.avatar %>"
     data-name="<%= user.name %>"
-    data-status="<%= user.status %>">
+    data-status="<%= user.status %>"
+    <% if local_assigns.key?(:accolade) %>data-accolade="<%= accolade %>"<% end %>>
   <%= user.avatar_with_name %>
 </li>

@@ -1272,6 +1272,113 @@ button.countdown-timer {
   animation: avatar-flash-red 0.4s ease-out !important;
 }
 
+/* Crown decoration for round winner */
+.roaming-avatar-crown {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  margin-bottom: -2px;
+  animation: avatar-crown-bob 2s ease-in-out infinite;
+}
+
+/* Party hat decoration for audience favorite */
+.roaming-avatar-party-hat {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  margin-bottom: -4px;
+  animation: avatar-hat-tilt 3s ease-in-out infinite;
+}
+
+/* Winner glow ring */
+.roaming-avatar--winner {
+  box-shadow: 0 0 12px 4px rgba(255, 214, 10, 0.5);
+}
+
+/* Podium glow rings for credits phase */
+.roaming-avatar--podium-1st {
+  box-shadow: 0 0 14px 5px rgba(255, 214, 10, 0.5);
+}
+.roaming-avatar--podium-2nd {
+  box-shadow: 0 0 12px 4px rgba(192, 192, 192, 0.4);
+}
+.roaming-avatar--podium-3rd {
+  box-shadow: 0 0 10px 3px rgba(205, 127, 50, 0.35);
+}
+
+/* Base class for credits decorations (positioned above avatar) */
+.roaming-avatar-decoration {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  margin-bottom: -2px;
+}
+
+/* Trophy — gentle bob for 1st place */
+.roaming-avatar-trophy {
+  animation: avatar-crown-bob 2s ease-in-out infinite;
+}
+
+/* Medal — subtle sway for 2nd/3rd place */
+.roaming-avatar-medal {
+  animation: avatar-medal-sway 3s ease-in-out infinite;
+}
+
+/* Devil horns — no animation, static */
+.roaming-avatar-horns {}
+
+/* Graduation cap — static */
+.roaming-avatar-mortarboard {}
+
+/* Lightning bolt — glow pulse */
+.roaming-avatar-bolt {
+  animation: avatar-bolt-pulse 2s ease-in-out infinite;
+}
+
+/* Eraser — slight wiggle */
+.roaming-avatar-eraser {
+  animation: avatar-hat-tilt 3s ease-in-out infinite;
+}
+
+/* Sleep cap — gentle sway */
+.roaming-avatar-nightcap {
+  animation: avatar-medal-sway 4s ease-in-out infinite;
+}
+
+/* Star headband — twinkle */
+.roaming-avatar-star {
+  animation: avatar-star-twinkle 2s ease-in-out infinite;
+}
+
+/* Firework rocket — launches upward from avatar */
+.roaming-avatar-rocket {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  pointer-events: none;
+  animation: avatar-firework-launch 0.6s ease-out forwards;
+}
+
+/* Firework burst particle — flies outward and fades */
+.roaming-avatar-burst {
+  @apply absolute rounded-full pointer-events-none;
+  width: 6px;
+  height: 6px;
+  top: 50%;
+  left: 50%;
+  margin-top: -3px;
+  margin-left: -3px;
+  background-color: var(--burst-color, var(--color-accent-primary));
+  box-shadow: 0 0 4px var(--burst-color, var(--color-accent-primary));
+  animation: avatar-firework-burst var(--burst-duration, 0.8s) ease-out forwards;
+}
+
 /* TODO: can the below classes be accomplished with out components.css? Does it matter? */
 
 /* Staggered entrance animation for lists */

@@ -1,0 +1,7 @@
+<span id="navbar-audience-count"
+      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold
+             bg-accent-orange/15 text-ink/70 transition-opacity duration-200
+             <%= 'hidden' if audience_count == 0 %>"
+      aria-live="polite" aria-atomic="true">
+  <%= audience_count %> <%= audience_count == 1 ? 'fan' : 'fans' %> in the audience
+</span>

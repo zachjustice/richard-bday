@@ -40,6 +40,8 @@ class GamePhasesService
 
     @room.update!(status: RoomStatus::Results)
 
+    broadcast_avatar_statuses
+
     status_data = RoomStatusService.new(@room).call
     update_room_status_view("rooms/status/results", status_data)
 
@@ -79,12 +81,30 @@ class GamePhasesService
   end
 
   def broadcast_avatar_statuses
+    accolades = @room.current_game&.last_round_accolades || {}
+    User.players.where(room: @room).find_each do |user|
+      accolade = [
+        ("winner" if accolades[:winner_user_id] == user.id),
+        ("audience_favorite" if accolades[:audience_favorite_user_id] == user.id)
+      ].compact.join(" ")
+
+      Turbo::StreamsChannel.broadcast_replace_to(
+        "rooms:#{@room.id}:avatar-status",
+        target: "waiting_room_user_#{user.id}",
+        partial: "rooms/partials/user_list_item",
+        locals: { user: user, accolade: accolade }
+      )
+    end
+  end
+
+  def broadcast_credits_avatar_statuses
+    accolades = @room.current_game&.credits_accolades || {}
     User.players.where(room: @room).find_each do |user|
       Turbo::StreamsChannel.broadcast_replace_to(
         "rooms:#{@room.id}:avatar-status",
         target: "waiting_room_user_#{user.id}",
         partial: "rooms/partials/user_list_item",
-        locals: { user: user }
+        locals: { user: user, accolade: accolades[user.id] || "" }
       )
     end
   end

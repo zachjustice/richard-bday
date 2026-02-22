@@ -729,6 +729,15 @@ class TurboNavOrRedirectToDiscordTest < ActionDispatch::IntegrationTest
     assert_includes response.headers["Content-Security-Policy"], "discord.com"
   end
 
+  test "initialize_room format.html fallback uses turbo_nav for Discord navigator" do
+    @room.update!(status: RoomStatus::WaitingRoom)
+
+    post initialize_room_path(@room), headers: @discord_headers
+
+    assert_response :success
+    assert_includes response.body, "navigate"
+  end
+
   test "initialize_room renders turbo_stream navigate for unauthorized Discord player" do
     # Create a regular Discord player (not navigator) who can't control the room
     player = User.create!(
@@ -787,5 +796,251 @@ class TurboNavOrRedirectToDiscordTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     refute_equal 302, response.status
+  end
+
+  test "Discord navigator sees story page during FinalResults" do
+    # Advance through all prompts to reach FinalResults
+    GamePrompt.where(game_id: @game.id).each do |gp|
+      Answer.create!(text: "test", user: @navigator, game_prompt: gp, game: @game, won: true)
+    end
+
+    game_prompts = GamePrompt.where(game_id: @game.id).order(:order)
+    game_prompts.count.times do
+      resume_session_as(@room.code, @creator.name)
+      post next_room_path(@room)
+      @room.reload
+    end
+    end_session
+
+    @room.reload
+    assert_equal RoomStatus::FinalResults, @room.status
+
+    get room_story_path(@room), headers: @discord_headers
+
+    assert_response :success
+    assert_select "h2", @room.current_game.story.title
+  end
+
+  test "Discord navigator sees credits page during Credits" do
+    GamePrompt.where(game_id: @game.id).each do |gp|
+      Answer.create!(text: "test", user: @navigator, game_prompt: gp, game: @game, won: true)
+    end
+    @room.update!(status: RoomStatus::Credits)
+
+    get room_game_credits_path(@room), headers: @discord_headers
+
+    assert_response :success
+    assert_select "h1", /GAME OVER!/
+  end
+
+  test "Discord player redirected from story during wrong phase" do
+    get room_story_path(@room), headers: @discord_headers
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, "navigate"
+  end
+
+  test "redirect_to_active_game sends Discord player to story during FinalResults" do
+    GamePrompt.where(game_id: @game.id).each do |gp|
+      Answer.create!(text: "test", user: @navigator, game_prompt: gp, game: @game, won: true)
+    end
+    @room.update!(status: RoomStatus::FinalResults)
+
+    get show_room_path, headers: @discord_headers
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, "navigate"
+    assert_includes response.body, "/rooms/#{@room.id}/story"
+  end
+
+  test "redirect_to_active_game sends Discord player to credits during Credits" do
+    GamePrompt.where(game_id: @game.id).each do |gp|
+      Answer.create!(text: "test", user: @navigator, game_prompt: gp, game: @game, won: true)
+    end
+    @room.update!(status: RoomStatus::Credits)
+
+    get show_room_path, headers: @discord_headers
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_includes response.body, "navigate"
+    assert_includes response.body, "/rooms/#{@room.id}/game_credits"
+  end
+end
+
+class RoomsControllerStoryAndCreditsTest < ActionDispatch::IntegrationTest
+  setup do
+    @story = stories(:one)
+    suffix = SecureRandom.hex(4)
+
+    @room = Room.create!(code: "sc#{suffix}", status: RoomStatus::WaitingRoom)
+    @creator = User.create!(name: "Creator-sc#{suffix}", room: @room, role: User::CREATOR)
+    @player = User.create!(name: "PlayerSC#{suffix}", room: @room, role: User::PLAYER)
+
+    # Start a game and create winning answers for all prompts
+    resume_session_as(@room.code, @creator.name)
+    post start_room_path(@room), params: { story: @story.id }
+    @room.reload
+    @game = @room.current_game
+
+    GamePrompt.where(game_id: @game.id).each do |gp|
+      Answer.create!(text: "winning answer", user: @player, game_prompt: gp, game: @game, won: true)
+    end
+  end
+
+  test "story action renders for creator during FinalResults" do
+    @room.update!(status: RoomStatus::FinalResults)
+
+    get room_story_path(@room)
+
+    assert_response :success
+    assert_select "h2", @room.current_game.story.title
+  end
+
+  test "story action renders for player during FinalResults" do
+    @room.update!(status: RoomStatus::FinalResults)
+    resume_session_as(@room.code, @player.name)
+
+    get room_story_path(@room)
+
+    assert_response :success
+  end
+
+  test "story action redirects during wrong phase" do
+    @room.update!(status: RoomStatus::Answering)
+    resume_session_as(@room.code, @player.name)
+
+    get room_story_path(@room)
+
+    assert_redirected_to show_room_path
+  end
+
+  test "story action renders during Credits phase too" do
+    @room.update!(status: RoomStatus::Credits)
+
+    get room_story_path(@room)
+
+    assert_response :success
+  end
+
+  test "game_credits action renders during Credits" do
+    @room.update!(status: RoomStatus::Credits)
+
+    get room_game_credits_path(@room)
+
+    assert_response :success
+    assert_select "h1", /GAME OVER!/
+  end
+
+  test "game_credits action renders during FinalResults" do
+    @room.update!(status: RoomStatus::FinalResults)
+
+    get room_game_credits_path(@room)
+
+    assert_response :success
+  end
+
+  test "game_credits action redirects during wrong phase" do
+    @room.update!(status: RoomStatus::Answering)
+    resume_session_as(@room.code, @player.name)
+
+    get room_game_credits_path(@room)
+
+    assert_redirected_to show_room_path
+  end
+
+  test "check_navigation returns story path during FinalResults" do
+    @room.update!(status: RoomStatus::FinalResults)
+    resume_session_as(@room.code, @player.name)
+
+    get check_room_navigation_path(@room, current_path: "/some/old/path")
+
+    assert_response :success
+    assert_equal "/rooms/#{@room.id}/story", response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation returns nil when on story path during FinalResults" do
+    @room.update!(status: RoomStatus::FinalResults)
+    resume_session_as(@room.code, @player.name)
+
+    get check_room_navigation_path(@room, current_path: "/rooms/#{@room.id}/story")
+
+    assert_response :success
+    assert_nil response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation allows story path during Credits" do
+    @room.update!(status: RoomStatus::Credits)
+    resume_session_as(@room.code, @player.name)
+
+    get check_room_navigation_path(@room, current_path: "/rooms/#{@room.id}/story")
+
+    assert_response :success
+    assert_nil response.parsed_body["redirect_to"]
+  end
+
+  #################################################
+  # Tests for RoomsController#upload_story_image
+  #################################################
+
+  test "upload_story_image succeeds with valid PNG during FinalResults" do
+    @room.update!(status: RoomStatus::FinalResults)
+
+    png_data = "\x89PNG\r\n\x1a\n" + ("\x00" * 100)
+    image = Rack::Test::UploadedFile.new(
+      StringIO.new(png_data), "image/png", true, original_filename: "story.png"
+    )
+
+    post room_story_image_path(@room), params: { image: image }
+
+    assert_response :success
+    body = response.parsed_body
+    assert body["image_url"].present?
+    assert_match %r{/uploads/stories/#{@room.id}-#{@game.id}-\w+\.png}, body["image_url"]
+  end
+
+  test "upload_story_image rejects non-PNG content type" do
+    @room.update!(status: RoomStatus::FinalResults)
+
+    image = Rack::Test::UploadedFile.new(
+      StringIO.new("not a png"), "image/jpeg", true, original_filename: "story.jpg"
+    )
+
+    post room_story_image_path(@room), params: { image: image }
+
+    assert_response :unprocessable_entity
+    assert_equal "Only PNG images are accepted", response.parsed_body["error"]
+  end
+
+  test "upload_story_image rejects during wrong phase" do
+    @room.update!(status: RoomStatus::Answering)
+    resume_session_as(@room.code, @player.name)
+
+    post room_story_image_path(@room)
+
+    assert_redirected_to show_room_path
+  end
+
+  test "upload_story_image rejects missing image" do
+    @room.update!(status: RoomStatus::FinalResults)
+
+    post room_story_image_path(@room), params: {}
+
+    assert_response :unprocessable_entity
+    assert_equal "No image provided", response.parsed_body["error"]
+  end
+
+  test "cross-room player cannot access another room story" do
+    @room.update!(status: RoomStatus::FinalResults)
+
+    other_room = Room.create!(code: "ot#{SecureRandom.hex(2)}", status: RoomStatus::WaitingRoom)
+    other_player = User.create!(name: "OtherP#{SecureRandom.hex(4)}", room: other_room, role: User::PLAYER)
+    resume_session_as(other_room.code, other_player.name)
+
+    get room_story_path(@room)
+
+    assert_response :redirect
   end
 end

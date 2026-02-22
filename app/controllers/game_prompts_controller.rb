@@ -146,7 +146,7 @@ class GamePromptsController < ApplicationController
       if controller != "rooms" || id != @current_room.id || [ "show", "waiting_for_new_game" ].include?(action)
         turbo_nav_or_redirect_to waiting_for_new_game_path(@current_room)
       end
-    when RoomStatus::StorySelection, RoomStatus::Credits
+    when RoomStatus::StorySelection
       turbo_nav_or_redirect_to show_room_path
     when RoomStatus::Answering
       if @current_user.audience?
@@ -165,9 +165,9 @@ class GamePromptsController < ApplicationController
         turbo_nav_or_redirect_to game_prompt_results_path(@current_room.current_game.current_game_prompt)
       end
     when RoomStatus::FinalResults
-      if controller != "game_prompts" || id != current_game_prompt_id || action != "results"
-        turbo_nav_or_redirect_to game_prompt_results_path(@current_room.current_game.current_game_prompt)
-      end
+      turbo_nav_or_redirect_to room_story_path(@current_room)
+    when RoomStatus::Credits
+      turbo_nav_or_redirect_to room_game_credits_path(@current_room)
     else
       turbo_nav_or_redirect_to show_room_path
     end

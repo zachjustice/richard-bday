@@ -1,0 +1,113 @@
+<%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+<% if discord_authenticated? %>
+  <%= render "shared/discord_navbar", room: @current_room %>
+<% end %>
+<div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>"
+     class="flex flex-col items-center bg-page relative <%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] justify-center' : 'min-h-screen justify-center' %>">
+
+  <%= render "shared/credits_doodles" %>
+
+  <div class="card-primary relative z-content m-4 p-8 max-sm:p-5 max-w-xl w-full">
+    <%# Header %>
+    <div class="text-center mb-4">
+      <h1 class="text-4xl max-sm:text-3xl font-black mb-1 tracking-tight" style="text-shadow: 3px 3px 0px var(--color-accent-tertiary);">
+        GAME OVER!
+      </h1>
+      <p class="text-sm text-ink/70 font-medium">Thank you for participating...</p>
+    </div>
+
+    <%# Scrollable content area %>
+    <div class="overflow-y-auto max-h-[60vh]">
+      <%# Podium %>
+      <% if @podium.present? && @podium.any? %>
+        <%= render "rooms/status/credits/podium", podium: @podium %>
+      <% end %>
+
+      <%# Superlatives - single column for mobile %>
+      <div class="flex flex-col gap-3 mt-5 p-1">
+        <%= render "rooms/status/credits/superlative_card",
+            title: "Most Naughty Words",
+            icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M7 8.5L9 7M15 7l2 1.5" stroke-linecap="round"/></svg>',
+            winner: @most_swear_words,
+            stat_label: "spicy words",
+            stat_value: @most_swear_words&.dig(:count),
+            color: "red",
+            delay_index: 0 %>
+
+        <%= render "rooms/status/credits/superlative_card",
+            title: "Most Prolific Writer",
+            icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>',
+            winner: @most_characters,
+            stat_label: "characters",
+            stat_value: @most_characters&.dig(:count),
+            color: "blue",
+            delay_index: 1 %>
+
+        <%= render "rooms/status/credits/superlative_card",
+            title: "Most Points with Shortest Answers",
+            icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+            winner: @best_efficiency,
+            stat_label: "pts/char",
+            stat_value: @best_efficiency&.dig(:ratio),
+            color: "green",
+            delay_index: 2 %>
+
+        <%= render "rooms/status/credits/superlative_card",
+            title: "Most Spelling Errors",
+            icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h8M8 15h4"/></svg>',
+            winner: @most_spelling_mistakes,
+            stat_label: "creative spellings",
+            stat_value: @most_spelling_mistakes&.dig(:count),
+            color: "orange",
+            delay_index: 3 %>
+
+        <%= render "rooms/status/credits/superlative_card",
+            title: "Slowest Turns",
+            icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
+            winner: @slowest_player,
+            stat_label: "of time used",
+            stat_value: @slowest_player.present? ? "#{@slowest_player[:avg_percentile]}%" : nil,
+            color: "indigo",
+            delay_index: 4 %>
+
+        <% if @audience_favorite %>
+          <%= render "rooms/status/credits/superlative_card",
+              title: "Audience Favorite",
+              icon_svg: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+              winner: @audience_favorite,
+              stat_label: "stars received",
+              stat_value: @audience_favorite&.dig(:count),
+              color: "orange",
+              delay_index: 5 %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Footer actions %>
+    <div class="mt-4 pt-4 border-t-2 border-ink/10">
+      <% if discord_authenticated? %>
+        <div class="flex flex-col gap-2">
+          <%= link_to "View Story", room_story_path(@room), class: "btn-primary bg-accent-blue w-full text-center" %>
+          <%= form_with url: start_new_room_game_path(@room), method: :post, class: "flex justify-center" do |form| %>
+            <%= form.submit "New Game", class: "btn-primary bg-accent-green w-full" %>
+          <% end %>
+        </div>
+      <% elsif @current_user.role == User::NAVIGATOR %>
+        <div class="flex flex-col gap-2">
+          <%= form_with url: room_final_results_path(@room), method: :post, class: "flex justify-center" do |form| %>
+            <%= form.submit "View Story", class: "btn-primary bg-accent-blue w-full" %>
+          <% end %>
+          <%= form_with url: start_new_room_game_path(@room), method: :post, class: "flex justify-center" do |form| %>
+            <%= form.submit "Start New Game", class: "btn-primary bg-accent-green w-full" %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="progress-dots">
+          <span class="progress-dot"></span>
+          <span class="progress-dot"></span>
+          <span class="progress-dot"></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

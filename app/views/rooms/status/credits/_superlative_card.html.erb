@@ -49,11 +49,10 @@
     }
   }
   colors = color_classes[color] || color_classes["blue"]
-  delay_ms = (delay_index || 0) * 100 + 300
 %>
 
-<div class="rounded-2xl border-2 <%= colors[:border] %> <%= colors[:bg] %> p-4 transition-all hover:-translate-y-1 animate-slide-up"
-     style="animation-delay: <%= delay_ms %>ms; box-shadow: 4px 4px 0px var(--color-ink);">
+<div class="rounded-2xl border-2 <%= colors[:border] %> <%= colors[:bg] %> p-4 transition-all hover:-translate-y-1"
+     style="box-shadow: 4px 4px 0px var(--color-ink);">
   <%# Header with icon and title %>
   <div class="flex items-center gap-3 mb-3">
     <div class="w-12 h-12 rounded-xl <%= colors[:accent] %> flex items-center justify-center text-white border-2 border-ink"

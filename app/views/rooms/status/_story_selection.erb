@@ -7,6 +7,7 @@
   <%# Header section with title styling %>
   <div class="text-center mb-4 animate-slide-up">
     <h1 class="text-4xl md:text-5xl font-bold mb-3 text-shadow-heading">PICK A STORY</h1>
+    <%= render "rooms/partials/audience_count_badge", audience_count: room.active_audience_count %>
   </div>
 
   <%# Bottom Section %>

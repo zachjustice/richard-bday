@@ -1,0 +1,66 @@
+<%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
+<% if discord_authenticated? %>
+  <%= render "shared/discord_navbar", room: @current_room %>
+<% end %>
+<div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>"
+     class="flex flex-col items-center bg-page <%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] justify-center' : 'min-h-screen justify-center' %>">
+  <div class="card-primary animate-fade-in relative z-content m-4 p-8 max-sm:p-5 max-w-xl w-full">
+    <%# Story title + attribution %>
+    <div class="text-center mb-4">
+      <h2 class="text-2xl max-sm:text-xl font-bold text-ink mb-2"><%= @story_title %></h2>
+      <span class="text-sm text-ink/60 italic">Written by:</span>
+      <div class="flex flex-wrap gap-1.5 justify-center mt-1.5">
+        <% @users.each do |user| %>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold text-ink border-2 border-ink/20 bg-accent-green/10"><%= user.avatar_with_name %></span>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Story body %>
+    <div class="card-status-content-green overflow-y-auto max-h-[55vh] mt-4">
+      <p class="text-base max-sm:text-sm text-ink leading-relaxed m-0 text-left">
+        <%= simple_format(render_story_with_bold_underline(@story_text, @blank_id_to_answer_text), {}, sanitize: false) %>
+      </p>
+    </div>
+
+    <%# Footer actions %>
+    <div class="mt-4 pt-4 border-t-2 border-ink/10">
+      <% if discord_authenticated? %>
+        <div class="flex gap-3 justify-center"
+             data-controller="discord-share-image"
+             data-discord-share-image-upload-url-value="<%= room_story_image_path(@current_room) %>"
+             data-discord-share-image-message-value="Check out our Blanksies story: <%= @story_title %>!">
+          <button type="button" class="btn-secondary gap-2"
+                  data-action="click->discord-share-image#share"
+                  data-discord-share-image-target="shareButton"
+                  aria-label="Share this story image on Discord">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+            </svg>
+            Share to Discord
+          </button>
+          <%= link_to "View Credits", room_game_credits_path(@current_room), class: "btn-primary bg-accent-orange text-sm" %>
+          <div class="hidden" data-discord-share-image-target="exportContainer">
+            <%= render "rooms/status/story_export_container",
+                 story_title: @story_title,
+                 authors: @users.map(&:name),
+                 story_text: @story_text,
+                 blank_id_to_answer_text: @blank_id_to_answer_text %>
+          </div>
+        </div>
+      <% elsif @current_user.role == User::NAVIGATOR %>
+        <div class="flex justify-center">
+          <%= form_with url: room_credits_path(@room), method: :post, class: "inline" do |form| %>
+            <%= form.submit "View Credits", class: "btn-primary min-w-[200px]" %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="progress-dots">
+          <span class="progress-dot"></span>
+          <span class="progress-dot"></span>
+          <span class="progress-dot"></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

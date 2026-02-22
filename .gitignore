@@ -29,6 +29,7 @@
 !/tmp/storage/.keep
 
 /public/assets
+/public/uploads
 
 # Ignore database backups.
 /backups/

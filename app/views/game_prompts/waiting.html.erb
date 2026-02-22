@@ -2,7 +2,7 @@
 
 <% if discord_authenticated? %>
   <%# Discord: compact waiting view with player done counter %>
-  <div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="flex flex-col items-center max-sm:items-start justify-center bg-page">
+  <div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>" class="min-h-[calc(100dvh-var(--spacing-navbar))] flex flex-col items-center max-sm:items-start justify-center bg-page">
     <div class="card-primary p-8 m-6 max-sm:p-5 max-sm:m-4 max-w-[500px] w-full animate-fade-in relative z-content">
       <%= render "shared/round_badge" %>
 

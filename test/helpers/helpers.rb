@@ -179,7 +179,7 @@ class Helpers
 
   private def create_fake_answers(num_fake_answers)
     num_fake_answers.times.map do
-      Faker::Lorem.sentence(word_count: rand(5...20)).gsub(".", "")
+      Faker::Lorem.sentence(word_count: rand(5...20)).gsub(".", "")[0...150]
     end
   end
 end

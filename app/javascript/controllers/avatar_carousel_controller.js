@@ -51,7 +51,15 @@ export default class extends Controller {
       return
     }
 
-    // Start the spin animation
+    // User already has an avatar — show it as current without spinning
+    if (this.currentValue) {
+      this.isFirstLoad = false
+      this.updateIndicators()
+      this.updateVisualState(false, true)
+      return
+    }
+
+    // No avatar yet — spin to a random one (fallback)
     requestAnimationFrame(() => {
       this.spinToRandom()
     })

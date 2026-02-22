@@ -10,7 +10,7 @@
 </div>
 
 <%# Answer list — scrollable %>
-<div class="flex flex-col gap-1.5 overflow-y-auto max-h-[50vh] stagger-animation">
+<div class="flex flex-col gap-1.5 overflow-y-auto max-h-[50vh]">
   <% @answers_sorted_by_votes.each_with_index do |answer, index| %>
     <% is_winner = @winner&.id == answer.id %>
     <% medal = index < 3 ? GameConstants::RANKED_MEDALS[index] : nil %>
@@ -18,7 +18,7 @@
 
     <% if index < 3 %>
       <%# Top 3: full detail with medal %>
-      <div class="flex flex-col gap-1 p-3 rounded-xl border-2 animate-fade-in
+      <div class="flex flex-col gap-1 p-3 rounded-xl border-2
                   <%= is_winner ? 'bg-accent-violet/25 border-accent-violet/60' : 'bg-ink/5 border-ink/10' %>">
         <span class="text-base font-bold text-ink leading-snug">
           <%= medal %> <%= answer.text %>
@@ -48,7 +48,7 @@
       </div>
     <% else %>
       <%# Rows 4+: compact single line %>
-      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg animate-fade-in bg-ink/5">
+      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-ink/5">
         <span class="text-sm font-bold text-ink/30">#<%= index + 1 %></span>
         <span class="text-sm text-ink truncate flex-1"><%= answer.text %></span>
         <span class="text-sm text-ink/40 shrink-0">&middot; <%= answer.user.name %></span>
@@ -64,7 +64,7 @@
 <div class="mt-4">
   <% if @current_user.role == User::NAVIGATOR %>
     <%= form_with url: "/rooms/#{@current_room.id}/next", method: :post, class: "flex justify-center" do |form| %>
-      <%= form.submit "Next Round", class: "btn-primary min-w-[200px]" %>
+      <%= form.submit(@current_round == @total_rounds ? "Story Time" : "Next Round", class: "btn-primary min-w-[200px]") %>
     <% end %>
   <% else %>
     <div class="progress-dots">

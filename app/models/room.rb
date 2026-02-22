@@ -65,11 +65,22 @@ class Room < ApplicationRecord
   end
 
   def broadcast_audience_count
+    count = active_audience_count
+
+    # Waiting room / story selection badge
     Turbo::StreamsChannel.broadcast_replace_to(
       "rooms:#{id}:users",
       target: "waiting-room-audience-count",
       partial: "rooms/partials/audience_count_badge",
-      locals: { audience_count: active_audience_count }
+      locals: { audience_count: count }
+    )
+
+    # Discord navbar badge
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "rooms:#{id}:users",
+      target: "navbar-audience-count",
+      partial: "shared/navbar_audience_badge",
+      locals: { audience_count: count }
     )
   end
 end

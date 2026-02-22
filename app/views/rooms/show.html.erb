@@ -43,6 +43,11 @@
         <% end %>
       </div>
     <% end %>
+
+    <%# Join the Audience QR code - fixed bottom-right %>
+    <div class="fixed bottom-4 right-4 z-content">
+      <%= render "shared/audience_qr_card", room: @current_room %>
+    </div>
   </div>
 <% else %>
   <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
