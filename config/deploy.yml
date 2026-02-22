@@ -27,6 +27,7 @@ servers:
 proxy:
   ssl: true
   hosts:
+    - blanksies.zachjustice.dev
     - blanksies.net
     - www.blanksies.net
 
