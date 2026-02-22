@@ -96,6 +96,9 @@ Rails.application.routes.draw do
   # Copyright page
   get "/copyright", to: "copyright#show", as: :copyright
 
+  # Privacy policy
+  get "/privacy", to: "privacy#show", as: :privacy
+
   # About page
   get "/about", to: "about#show", as: :about
 
