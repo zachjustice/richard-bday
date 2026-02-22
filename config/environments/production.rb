@@ -83,6 +83,7 @@ Rails.application.configure do
   config.action_cable.url = "wss://#{ENV['HOST']}/cable"
   config.action_cable.allowed_request_origins = [
     "https://#{ENV['HOST']}",
+    "https://www.#{ENV['HOST']}",
     /\.discordsays\.com$/
   ]
   config.hosts << ENV["HOST"]
