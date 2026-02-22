@@ -88,7 +88,7 @@ Rails.application.configure do
     /\.discordsays\.com$/
   ]
   config.hosts << "https://blanksies.zachjustice.dev"
-  config.hosts << /\.#{ENV["HOST"]}$/
+  config.hosts << /\.?#{ENV["HOST"]}$/
   config.hosts << "localhost"
   config.hosts << "174.138.60.116"
   config.hosts << /\.discordsays\.com$/

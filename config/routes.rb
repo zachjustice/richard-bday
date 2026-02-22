@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  # Redirect old domain to new domain
+  constraints(host: "blanksies.zachjustice.dev") do
+    match "(*path)", to: redirect { |params, request|
+      "https://blanksies.net/#{params[:path]}#{request.query_string.present? ? "?#{request.query_string}" : ""}"
+    }, via: :all
+  end
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
 
