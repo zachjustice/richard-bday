@@ -27,12 +27,11 @@ class RoomEvent < ApplicationRecord
   belongs_to :game, optional: true
 
   validates :event_type, presence: true, inclusion: { in: EventTypes::ALL }
-  validates :sequence, presence: true
 
-  before_validation :set_sequence, on: :create
+  before_validation :set_event_time_at, on: :create
 
-  scope :chronological, -> { order(sequence: :asc) }
-  scope :reverse_chronological, -> { order(sequence: :desc) }
+  scope :chronological, -> { order(event_time_at: :asc) }
+  scope :reverse_chronological, -> { order(event_time_at: :desc) }
   scope :by_type, ->(type) { where(event_type: type) }
   scope :for_game, ->(game_id) { where(game_id: game_id) }
 
@@ -44,6 +43,11 @@ class RoomEvent < ApplicationRecord
   def actor_display_name
     return "System" unless actor_type && actor_id
 
+    # Use cached actor_name from metadata if available
+    cached_name = metadata&.dig("actor_name")
+    return cached_name if cached_name.present?
+
+    # Fallback to database lookup
     case actor_type
     when "User"
       user = User.find_by(id: actor_id)
@@ -62,10 +66,7 @@ class RoomEvent < ApplicationRecord
 
   private
 
-  def set_sequence
-    return if sequence.present?
-
-    max_sequence = RoomEvent.where(room_id: room_id).maximum(:sequence) || 0
-    self.sequence = max_sequence + 1
+  def set_event_time_at
+    self.event_time_at ||= Time.current
   end
 end

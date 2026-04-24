@@ -20,7 +20,7 @@ class RoomEventsController < ApplicationController
 
     @events = @events.limit(500)
     @event_types = RoomEvent::EventTypes::ALL
-    @games = Game.where(room_id: @room.id).order(created_at: :desc)
+    @games = @room.games.order(created_at: :desc)
   end
 
   private

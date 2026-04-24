@@ -1,12 +1,7 @@
 <tr class="border-b border-ink/5 hover:bg-ink/5 transition-colors">
-  <!-- Sequence -->
-  <td class="py-3 px-2 text-xs font-mono text-ink/40">
-    <%= event.sequence %>
-  </td>
-
   <!-- Time -->
   <td class="py-3 px-2 text-xs text-ink/60 whitespace-nowrap">
-    <%= relative_time_with_tooltip(event.created_at) %>
+    <%= relative_time_with_tooltip(event.event_time_at) %>
   </td>
 
   <!-- Game -->
@@ -44,7 +39,7 @@
     <% if event.metadata.present? && event.metadata.keys.any? %>
       <details>
         <summary class="text-xs text-ink/40 cursor-pointer hover:text-ink/60 whitespace-nowrap">View</summary>
-        <pre class="text-xs text-ink/50 mt-1 p-2 bg-ink/5 rounded-lg overflow-x-auto max-w-xs"><%= JSON.pretty_generate(event.metadata) %></pre>
+        <pre class="text-xs text-ink/50 mt-1 p-2 bg-ink/5 rounded-lg overflow-x-auto max-w-xs"><%= h(JSON.pretty_generate(event.metadata)) %></pre>
       </details>
     <% else %>
       <span class="text-xs text-ink/30">-</span>

@@ -2,6 +2,10 @@ class RoomEventLogger
   class << self
     def log(room:, event_type:, game: nil, actor: nil, metadata: {})
       actor_type, actor_id = extract_actor_info(actor)
+      actor_name = extract_actor_name(actor)
+
+      # Cache actor_name in metadata to avoid N+1 queries on display
+      enriched_metadata = metadata.merge(actor_name: actor_name).compact
 
       RoomEvent.create!(
         room: room,
@@ -9,10 +13,11 @@ class RoomEventLogger
         event_type: event_type,
         actor_type: actor_type,
         actor_id: actor_id,
-        metadata: metadata
+        metadata: enriched_metadata
       )
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error("[RoomEventLogger] Failed to log event: #{e.message}")
+      raise if Rails.env.development? || Rails.env.test?
       nil
     end
 
@@ -142,6 +147,19 @@ class RoomEventLogger
         [ "Editor", actor.id ]
       else
         [ actor.class.name, actor.id ]
+      end
+    end
+
+    def extract_actor_name(actor)
+      return nil unless actor
+
+      case actor
+      when User
+        "#{actor.avatar} #{actor.name}"
+      when Editor
+        actor.username
+      else
+        nil
       end
     end
   end
