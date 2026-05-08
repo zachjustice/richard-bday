@@ -67,10 +67,9 @@
       <%= form.submit(@current_round == @total_rounds ? "Story Time" : "Next Round", class: "btn-primary min-w-[200px]") %>
     <% end %>
   <% else %>
-    <div class="progress-dots">
-      <span class="progress-dot"></span>
-      <span class="progress-dot"></span>
-      <span class="progress-dot"></span>
-    </div>
+    <% navigator = User.find_by(room: @current_room, role: User::NAVIGATOR) %>
+    <p class="text-center text-sm text-ink/60 font-medium">
+      Waiting on <%= navigator&.name || "the navigator" %> to advance the game
+    </p>
   <% end %>
 </div>

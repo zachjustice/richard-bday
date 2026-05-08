@@ -84,8 +84,8 @@ class GamePhasesService
     accolades = @room.current_game&.last_round_accolades || {}
     User.players.where(room: @room).find_each do |user|
       accolade = [
-        ("winner" if accolades[:winner_user_id] == user.id),
-        ("audience_favorite" if accolades[:audience_favorite_user_id] == user.id)
+        (AccoladeTags::WINNER if accolades[:winner_user_id] == user.id),
+        (AccoladeTags::AUDIENCE_FAVORITE if accolades[:audience_favorite_user_id] == user.id)
       ].compact.join(" ")
 
       Turbo::StreamsChannel.broadcast_replace_to(

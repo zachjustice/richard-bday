@@ -1,11 +1,12 @@
 require "faker"
 
 class Helpers
-  def initialize(room_id)
-    @room_id = room_id
+  def initialize(room_id = nil)
+    @room_id = room_id || Room.last!.id
   end
 
-  def create_users(names_or_num)
+  def create_users(names_or_num = nil)
+    names_or_num ||= User.available_avatars(@room_id).size
     if names_or_num.is_a? Numeric
       names = create_fake_names(names_or_num)
     else
@@ -21,24 +22,23 @@ class Helpers
     end
   end
 
-  def create_answers(answers_or_num)
-    return "No answers" if !answers_or_num
-
-    if answers_or_num.is_a? Numeric
-      answers = create_fake_answers(answers_or_num)
-    else
-      answers = answers_or_num.dup
-    end
-
+  def create_answers(answers_or_num = nil)
     room = Room.find(@room_id)
     g = room.current_game
     gp = g.current_game_prompt
-
 
     # Get players who haven't answered yet
     players = User.players.where(room: room).to_a
     players_without_answers = players.reject do |u|
       Answer.where(game: g, game_prompt: gp, user: u).exists?
+    end
+
+    if answers_or_num.is_a? Numeric
+      answers = create_fake_answers(answers_or_num)
+    elsif answers_or_num.is_a? Array
+      answers = answers_or_num.dup
+    else
+      answers = create_fake_answers(players_without_answers.size)
     end
 
     # Create answers
@@ -54,7 +54,7 @@ class Helpers
     end
   end
 
-  def create_votes(num_votes, tie = false)
+  def create_votes(num_votes = nil, tie: false)
     room = Room.find(@room_id)
     g = room.current_game
     gp = g.current_game_prompt
@@ -67,6 +67,7 @@ class Helpers
     end
 
     # Create votes
+    num_votes ||= players_without_votes.length
     # Chose the smaller value- i.e. if there are fewer players or requested num of votes
     [ num_votes, players_without_votes.length ].min.times do |idx|
       user = players_without_votes[idx]
@@ -96,7 +97,7 @@ class Helpers
     end
   end
 
-  def create_audience_members(names_or_num)
+  def create_audience_members(names_or_num = 5)
     if names_or_num.is_a? Numeric
       names = create_fake_names(names_or_num)
     else

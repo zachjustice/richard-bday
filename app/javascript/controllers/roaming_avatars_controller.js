@@ -1,4 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
+import {
+  WINNER, AUDIENCE_FAVORITE,
+  PODIUM_1ST, PODIUM_2ND, PODIUM_3RD,
+  NAUGHTY, PROLIFIC, EFFICIENT, MISSPELLER, SLOWPOKE, CROWD_PICK,
+  CREDITS_TAGS
+} from "lib/accolade_tags"
 
 const STORAGE_KEY = "roaming-avatar-positions"
 
@@ -491,9 +497,10 @@ export default class extends Controller {
     }
     entry.el.classList.remove("roaming-avatar--winner", "roaming-avatar--podium-1st", "roaming-avatar--podium-2nd", "roaming-avatar--podium-3rd")
 
-    // Detect credits-phase accolades
-    const creditsTags = ["podium_1st", "podium_2nd", "podium_3rd", "naughty", "prolific", "efficient", "misspeller", "slowpoke", "audience_fav"]
-    const isCredits = creditsTags.some(tag => accolade.includes(tag))
+    // Token-based matching avoids substring collisions
+    // (e.g. "audience_fav" matching inside "audience_favorite")
+    const tokens = accolade.split(" ").filter(Boolean)
+    const isCredits = CREDITS_TAGS.some(tag => tokens.includes(tag))
 
     if (isCredits) {
       this.applyCreditsDecorations(entry, accolade)
@@ -501,8 +508,8 @@ export default class extends Controller {
     }
 
     // Round-based accolades (winner/audience_favorite)
-    const isWinner = accolade.includes("winner")
-    const isFavorite = accolade.includes("audience_favorite")
+    const isWinner = tokens.includes(WINNER)
+    const isFavorite = tokens.includes(AUDIENCE_FAVORITE)
     const hasBoth = isWinner && isFavorite
 
     // Speed multiplier: winners move 50% faster
@@ -528,13 +535,13 @@ export default class extends Controller {
 
     // Determine podium rank
     const podiumTag = tags.find(t => t.startsWith("podium_"))
-    if (podiumTag === "podium_1st") {
+    if (podiumTag === PODIUM_1ST) {
       entry.speedMultiplier = 1.5
       entry.el.classList.add("roaming-avatar--podium-1st")
-    } else if (podiumTag === "podium_2nd") {
+    } else if (podiumTag === PODIUM_2ND) {
       entry.speedMultiplier = 1.25
       entry.el.classList.add("roaming-avatar--podium-2nd")
-    } else if (podiumTag === "podium_3rd") {
+    } else if (podiumTag === PODIUM_3RD) {
       entry.speedMultiplier = 1.1
       entry.el.classList.add("roaming-avatar--podium-3rd")
     } else {
@@ -590,15 +597,15 @@ export default class extends Controller {
 
   createCreditsDecoration(tag) {
     const svgMap = {
-      podium_1st: { svg: this.svgTrophy(), cls: "roaming-avatar-trophy" },
-      podium_2nd: { svg: this.svgMedalSilver(), cls: "roaming-avatar-medal" },
-      podium_3rd: { svg: this.svgMedalBronze(), cls: "roaming-avatar-medal" },
-      naughty: { svg: this.svgDevilHorns(), cls: "roaming-avatar-horns" },
-      prolific: { svg: this.svgMortarboard(), cls: "roaming-avatar-mortarboard" },
-      efficient: { svg: this.svgBolt(), cls: "roaming-avatar-bolt" },
-      misspeller: { svg: this.svgEraser(), cls: "roaming-avatar-eraser" },
-      slowpoke: { svg: this.svgNightcap(), cls: "roaming-avatar-nightcap" },
-      audience_fav: { svg: this.svgStar(), cls: "roaming-avatar-star" },
+      [PODIUM_1ST]: { svg: this.svgTrophy(), cls: "roaming-avatar-trophy" },
+      [PODIUM_2ND]: { svg: this.svgMedalSilver(), cls: "roaming-avatar-medal" },
+      [PODIUM_3RD]: { svg: this.svgMedalBronze(), cls: "roaming-avatar-medal" },
+      [NAUGHTY]: { svg: this.svgDevilHorns(), cls: "roaming-avatar-horns" },
+      [PROLIFIC]: { svg: this.svgMortarboard(), cls: "roaming-avatar-mortarboard" },
+      [EFFICIENT]: { svg: this.svgBolt(), cls: "roaming-avatar-bolt" },
+      [MISSPELLER]: { svg: this.svgEraser(), cls: "roaming-avatar-eraser" },
+      [SLOWPOKE]: { svg: this.svgNightcap(), cls: "roaming-avatar-nightcap" },
+      [CROWD_PICK]: { svg: this.svgStar(), cls: "roaming-avatar-star" },
     }
     const info = svgMap[tag]
     if (!info) return null
@@ -686,10 +693,11 @@ export default class extends Controller {
 
   scaleForAccolade(accolade) {
     if (!accolade) return ""
-    if (accolade.includes("podium_1st")) return " scale(1.3)"
-    if (accolade.includes("podium_2nd")) return " scale(1.15)"
-    if (accolade.includes("podium_3rd")) return " scale(1.1)"
-    if (accolade.includes("winner")) return " scale(1.2)"
+    const tokens = accolade.split(" ")
+    if (tokens.includes(PODIUM_1ST)) return " scale(1.3)"
+    if (tokens.includes(PODIUM_2ND)) return " scale(1.15)"
+    if (tokens.includes(PODIUM_3RD)) return " scale(1.1)"
+    if (tokens.includes(WINNER)) return " scale(1.2)"
     return ""
   }
 
@@ -897,6 +905,21 @@ export default class extends Controller {
         bottom: r.bottom - containerRect.top + 8,
         borderRadius
       })
+    }
+
+    const qrCard = document.querySelector('[data-controller="audience-qr"]')
+    if (qrCard) {
+      const r = qrCard.getBoundingClientRect()
+      if (r.width > 0 && r.height > 0) {
+        const borderRadius = parseFloat(getComputedStyle(qrCard).borderRadius) || 0
+        this.obstacles.push({
+          left: r.left - containerRect.left - 4,
+          top: r.top - containerRect.top - 4,
+          right: r.right - containerRect.left + 4,
+          bottom: r.bottom - containerRect.top + 4,
+          borderRadius
+        })
+      }
     }
   }
 

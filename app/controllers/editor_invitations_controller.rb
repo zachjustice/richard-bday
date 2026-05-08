@@ -7,7 +7,7 @@ class EditorInvitationsController < ApplicationController
     if @invitation.nil?
       redirect_to editor_login_path, alert: "Invalid invitation link."
     elsif @invitation.expired?
-      redirect_to editor_login_path, alert: "This invitation has expired. Contact blanksies@zachjustice.dev for a new one."
+      redirect_to editor_login_path, alert: "This invitation has expired. Contact support@blanksies.net for a new one."
     elsif @invitation.accepted?
       redirect_to editor_login_path, alert: "This invitation has already been used."
     else

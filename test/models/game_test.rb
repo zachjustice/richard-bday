@@ -176,7 +176,7 @@ class GameTest < ActiveSupport::TestCase
     assert_includes result[user_a.id], "prolific"
   end
 
-  test "credits_accolades includes audience_fav tag" do
+  test "credits_accolades includes crowd_pick tag" do
     suffix = SecureRandom.hex(4)
     room = Room.create!(code: "cd#{suffix}", status: RoomStatus::Credits, voting_style: "vote_once")
     story = Story.create!(title: "CD #{suffix}", text: "test", original_text: "test", published: true)
@@ -195,6 +195,6 @@ class GameTest < ActiveSupport::TestCase
 
     result = game.credits_accolades
 
-    assert_includes result[user_a.id], "audience_fav"
+    assert_includes result[user_a.id], "crowd_pick"
   end
 end

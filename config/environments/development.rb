@@ -75,4 +75,9 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
   config.hosts << /.*\.trycloudflare\.com$/
   config.hosts << /.*\.discordsays\.com$/
+
+  # Load test helpers for convenience in the console.
+  console do
+    require Rails.root.join("test/helpers/helpers.rb")
+  end
 end

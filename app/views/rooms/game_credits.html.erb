@@ -1,7 +1,4 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<% if discord_authenticated? %>
-  <%= render "shared/discord_navbar", room: @current_room %>
-<% end %>
 <div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>"
      class="flex flex-col items-center bg-page relative <%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] justify-center' : 'min-h-screen justify-center' %>">
 
@@ -86,12 +83,19 @@
     <%# Footer actions %>
     <div class="mt-4 pt-4 border-t-2 border-ink/10">
       <% if discord_authenticated? %>
-        <div class="flex flex-col gap-2">
-          <%= link_to "View Story", room_story_path(@room), class: "btn-primary bg-accent-blue w-full text-center" %>
-          <%= form_with url: start_new_room_game_path(@room), method: :post, class: "flex justify-center" do |form| %>
-            <%= form.submit "New Game", class: "btn-primary bg-accent-green w-full" %>
-          <% end %>
-        </div>
+        <% if @current_user.navigator? %>
+          <div class="flex flex-col gap-2">
+            <%= link_to "View Story", room_story_path(@room), class: "btn-primary bg-accent-blue w-full text-center" %>
+            <%= form_with url: start_new_room_game_path(@room), method: :post, class: "flex justify-center" do |form| %>
+              <%= form.submit "New Game", class: "btn-primary bg-accent-green w-full" %>
+            <% end %>
+          </div>
+        <% else %>
+          <% navigator = User.find_by(room: @current_room, role: User::NAVIGATOR) %>
+          <p class="text-center text-sm text-ink/60 font-medium">
+            Waiting on <%= navigator&.name || "the navigator" %> to advance the game
+          </p>
+        <% end %>
       <% elsif @current_user.role == User::NAVIGATOR %>
         <div class="flex flex-col gap-2">
           <%= form_with url: room_final_results_path(@room), method: :post, class: "flex justify-center" do |form| %>

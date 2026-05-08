@@ -40,21 +40,20 @@ class Game < ApplicationRecord
     result = {}
 
     # Podium: 1st, 2nd, 3rd
-    tags = %w[podium_1st podium_2nd podium_3rd]
     data[:podium].each_with_index do |entry, i|
-      next unless tags[i]
+      next unless AccoladeTags::PODIUM_TAGS[i]
       uid = entry[:user].id
-      result[uid] = [ result[uid], tags[i] ].compact.join(" ")
+      result[uid] = [ result[uid], AccoladeTags::PODIUM_TAGS[i] ].compact.join(" ")
     end
 
     # Superlatives
     {
-      most_swear_words: "naughty",
-      most_characters: "prolific",
-      best_efficiency: "efficient",
-      most_spelling_mistakes: "misspeller",
-      slowest_player: "slowpoke",
-      audience_favorite: "audience_fav"
+      most_swear_words: AccoladeTags::NAUGHTY,
+      most_characters: AccoladeTags::PROLIFIC,
+      best_efficiency: AccoladeTags::EFFICIENT,
+      most_spelling_mistakes: AccoladeTags::MISSPELLER,
+      slowest_player: AccoladeTags::SLOWPOKE,
+      audience_favorite: AccoladeTags::CROWD_PICK
     }.each do |key, tag|
       winner = data[key]
       next unless winner

@@ -1,11 +1,16 @@
 <%# Usage: <%= render "shared/countdown_timer", duration: 60, auto_start: true %>
+<%# Optional: urgency_threshold: 30, urgency_scale: 3 — enables grow+shake effect %>
 <% duration ||= 60 %>
 <% auto_start = local_assigns.fetch(:auto_start, true) %>
+<% urgency_threshold = local_assigns.fetch(:urgency_threshold, 0) %>
+<% urgency_scale = local_assigns.fetch(:urgency_scale, 1) %>
 <div
   class="countdown-timer"
   data-controller="countdown-timer"
   data-countdown-timer-duration-value="<%= duration %>"
   data-countdown-timer-auto-start-value="<%= auto_start %>"
+  data-countdown-timer-urgency-threshold-value="<%= urgency_threshold %>"
+  data-countdown-timer-urgency-scale-value="<%= urgency_scale %>"
   data-phase="green"
   role="timer"
   aria-label="Countdown timer">

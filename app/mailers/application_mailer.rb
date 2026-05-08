@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "blanksies@zachjustice.dev"
+  default from: "support@blanksies.net"
   layout "mailer"
 end

@@ -33,16 +33,16 @@ kamal deploy
 ### Editor Management
 ```bash"
 # Invite a new editor by email (sends invitation email)
-rake "editors:invite[email@example.com]
+bundle exec rake "editors:invite[email@example.com]"
 
 # Create an editor directly (for testing)
-rake "editors:create[username,password,email]"
+bundle exec rake "editors:create[username,password,email]"
 
 # List all editors
-rake editors:list
+bundle exec rake editors:list
 
 # Delete an editor
-rake editors:delete[username]
+bundle exec rake editors:delete[username]
 ```
 
 ### Database Backup & Restore

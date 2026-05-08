@@ -1,7 +1,4 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
-<% if discord_authenticated? %>
-  <%= render "shared/discord_navbar", room: @current_room %>
-<% end %>
 <div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>"
      class="flex flex-col items-center bg-page <%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] justify-center' : 'min-h-screen justify-center' %>">
   <div class="card-primary animate-fade-in relative z-content m-4 p-8 max-sm:p-5 max-w-xl w-full">

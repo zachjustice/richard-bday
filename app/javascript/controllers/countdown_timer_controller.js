@@ -5,13 +5,16 @@ export default class extends Controller {
   static targets = ["display", "circle"]
   static values = {
     duration: { type: Number, default: 60 },
-    autoStart: { type: Boolean, default: true }
+    autoStart: { type: Boolean, default: true },
+    urgencyThreshold: { type: Number, default: 0 },
+    urgencyScale: { type: Number, default: 1 }
   }
 
   connect() {
     this.timeRemaining = Math.round(this.durationValue)
     this.startTime = null
     this.currentPhase = null
+    this.urgencyTriggered = false
     this.updateDisplay()
     this.setupCircle()
     this.createAnnouncer()
@@ -56,7 +59,8 @@ export default class extends Controller {
     this.updateDisplay()
     this.updateCircle()
     this.updateColor()
-    
+    this.checkUrgency()
+
     if (this.timeRemaining > 0) {
       this.animationFrame = requestAnimationFrame(() => this.animate())
     } else {
@@ -92,6 +96,22 @@ export default class extends Controller {
     if (this.currentPhase !== newPhase) {
       this.announcePhaseChange(newPhase)
       this.currentPhase = newPhase
+    }
+  }
+
+  checkUrgency() {
+    if (this.urgencyThresholdValue <= 0 || this.urgencyTriggered) return
+    if (this.timeRemaining > this.urgencyThresholdValue) return
+
+    this.urgencyTriggered = true
+    this.element.style.setProperty("--urgency-scale", this.urgencyScaleValue)
+    this.element.dataset.urgency = "active"
+
+    if (this.announcer) {
+      this.announcer.textContent = ""
+      setTimeout(() => {
+        this.announcer.textContent = `${Math.ceil(this.urgencyThresholdValue)} seconds remaining!`
+      }, 50)
     }
   }
 

@@ -57,8 +57,8 @@
               <% accolades = @current_room.current_game&.last_round_accolades || {} %>
               <% User.players.where(room: @current_room).each do |user| %>
                 <% accolade = [
-                  ("winner" if accolades[:winner_user_id] == user.id),
-                  ("audience_favorite" if accolades[:audience_favorite_user_id] == user.id)
+                  (AccoladeTags::WINNER if accolades[:winner_user_id] == user.id),
+                  (AccoladeTags::AUDIENCE_FAVORITE if accolades[:audience_favorite_user_id] == user.id)
                 ].compact.join(" ") %>
                 <%= render "rooms/partials/user_list_item", user: user, accolade: accolade %>
               <% end %>
@@ -67,15 +67,25 @@
         </div>
       <% end %>
 
-      <% if @current_room&.current_game %>
+      <% show_discord_navbar = @current_room && !@hide_discord_navbar %>
+      <% if show_discord_navbar %>
         <%= render "shared/discord_navbar", room: @current_room %>
       <% end %>
-      <div class="<%= 'pt-14' if @current_room&.current_game %>">
+      <% if @current_room %>
+        <%= render "shared/music_player", hide_floating_button: true %>
+        <% if @current_user&.navigator? %>
+          <div data-controller="settings-modal"
+               data-action="open-settings-modal@window->settings-modal#open">
+            <%= render "rooms/settings/settings_modal", room: @current_room %>
+          </div>
+        <% end %>
+      <% end %>
+      <div class="<%= 'pt-[var(--spacing-navbar)]' if show_discord_navbar %>">
         <% if @current_room&.current_game&.next_game_phase_time && @current_room.status.in?([RoomStatus::Answering, RoomStatus::Voting]) %>
           <% timer_duration = @current_room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS %>
           <div class="fixed top-16 right-4 z-overlay">
             <div class="countdown-timer-xs">
-              <%= render "shared/countdown_timer", duration: timer_duration, auto_start: true %>
+              <%= render "shared/countdown_timer", duration: timer_duration, auto_start: true, urgency_threshold: 30, urgency_scale: 3 %>
             </div>
           </div>
         <% end %>

@@ -7,72 +7,123 @@
   }
 %>
 
-<nav class="discord-navbar" aria-label="Game navigation">
-  <%# Left — Branding %>
-  <span class="text-xl font-bold text-ink text-shadow-brand w-20 shrink-0">Blanksies</span>
-
-  <%# Center — Phase Progress %>
-  <div class="flex-1 flex items-center justify-center gap-1">
-    <% RoomsHelper::GAME_PHASES.each_with_index do |phase, index| %>
-      <%
-        is_current = phase[:status] == room.status
-        current_index = RoomsHelper::GAME_PHASES.find_index { |p| p[:status] == room.status }
-        is_completed = current_index && index < current_index
-        # FinalResults means all 3 main phases are completed
-        is_completed = true if room.status == RoomStatus::FinalResults
-        item_color = phase_colors[phase[:status]]
-      %>
-
-      <% if index > 0 %>
-        <span class="text-ink/20 text-xs mx-0.5">──</span>
-      <% end %>
-
-      <div class="discord-phase-pill
-                  <%= if is_current
-                        "#{item_color[:bg_dark]} border-2 #{item_color[:border]}"
-                      elsif is_completed
-                        "bg-accent-green/15 text-ink/60"
-                      else
-                        "bg-ink/5 text-ink/35"
-                      end %>"
-           aria-label="<%= phase[:text] %>: <%= is_current ? 'current phase' : (is_completed ? 'completed' : 'upcoming') %>">
-        <% if is_completed %>
-          <span class="text-accent-green text-xs">✓</span>
-        <% else %>
-          <span class="text-xs"><%= phase[:icon] %></span>
-        <% end %>
-        <span class="hidden sm:inline text-xs"><%= phase[:text] %></span>
-      </div>
-    <% end %>
-
-    <%# Separator + Final Story %>
-    <span class="text-ink/15 text-xs mx-0.5">│</span>
-    <%
-      is_final = room.status.in?([RoomStatus::FinalResults, RoomStatus::Credits])
-      final_color = phase_colors[RoomStatus::FinalResults]
-    %>
-    <div class="discord-phase-pill
-                <%= is_final ? "#{final_color[:bg_dark]} border-2 #{final_color[:border]}" : "bg-ink/5 text-ink/35" %>"
-         aria-label="Final Story: <%= is_final ? 'current phase' : 'upcoming' %>">
-      <span class="text-xs">📜</span>
-      <span class="hidden sm:inline text-xs">Final</span>
+<nav class="discord-navbar" aria-label="Game navigation" data-controller="discord-navbar">
+  <%# Left — Branding + Room Code %>
+  <div class="flex items-center gap-1.5 shrink-0">
+    <span class="text-xl font-bold text-ink text-shadow-brand">Blanksies</span>
+    <div data-controller="copy-code" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-sm font-medium bg-accent-yellow/20 border border-ink/20">
+      <span class="text-ink/50 uppercase tracking-wide text-sm">Room</span>
+      <span class="tracking-widest text-ink font-bold"><%= room.code.upcase %></span>
+      <button class="p-0.5 rounded cursor-pointer transition-all hover:scale-110 active:scale-95"
+              data-room-code="<%= room.code.upcase %>"
+              data-action="click->copy-code#copy"
+        title="Copy room code"
+        aria-label="Copy room code">
+        <svg class="w-3 h-3 text-ink/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15V5a2 2 0 012-2h10"/>
+        </svg>
+      </button>
     </div>
   </div>
 
-  <%# Right — Audience Badge + Refresh %>
-  <div class="flex items-center gap-1 justify-end">
-    <%= render "shared/navbar_audience_badge", audience_count: room.active_audience_count %>
-    <button type="button"
-            class="p-1.5 rounded-lg cursor-pointer transition-all hover:bg-ink/5 active:scale-95 text-ink/60 hover:text-ink"
-            data-controller="refresh-nav"
-            data-refresh-nav-room-id-value="<%= room.id %>"
-            data-action="click->refresh-nav#refresh"
-            aria-label="Refresh page"
-            title="Refresh page">
-      <svg class="w-5 h-5" data-refresh-nav-target="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5"/>
-        <path stroke-linecap="round" stroke-linejoin="round" d="M20.49 9A9 9 0 0 0 5.64 5.64L4 9m16 6l-1.64 3.36A9 9 0 0 1 3.51 15"/>
-      </svg>
-    </button>
-  </div>
+  <% if room.current_game %>
+    <%# Center — Phase Progress %>
+    <div class="flex-1 flex items-center justify-center gap-1">
+      <% RoomsHelper::GAME_PHASES.each_with_index do |phase, index| %>
+        <%
+          is_current = phase[:status] == room.status
+          current_index = RoomsHelper::GAME_PHASES.find_index { |p| p[:status] == room.status }
+          is_completed = current_index && index < current_index
+          # FinalResults means all 3 main phases are completed
+          is_completed = true if room.status == RoomStatus::FinalResults
+          item_color = phase_colors[phase[:status]]
+        %>
+
+        <% if index > 0 %>
+          <span class="text-ink/20 text-xs mx-0.5">──</span>
+        <% end %>
+
+        <div class="discord-phase-pill
+                    <%= if is_current
+                          "#{item_color[:bg_dark]} border-2 #{item_color[:border]}"
+                        elsif is_completed
+                          "bg-accent-green/15 text-ink/60"
+                        else
+                          "bg-ink/5 text-ink/35"
+                        end %>"
+             aria-label="<%= phase[:text] %>: <%= is_current ? 'current phase' : (is_completed ? 'completed' : 'upcoming') %>">
+          <% if is_completed %>
+            <span class="text-accent-green text-xs">✓</span>
+          <% else %>
+            <span class="text-xs"><%= phase[:icon] %></span>
+          <% end %>
+          <span class="hidden sm:inline text-xs"><%= phase[:text] %></span>
+        </div>
+      <% end %>
+
+      <%# Separator + Final Story %>
+      <span class="text-ink/15 text-xs mx-0.5">│</span>
+      <%
+        is_final = room.status.in?([RoomStatus::FinalResults, RoomStatus::Credits])
+        final_color = phase_colors[RoomStatus::FinalResults]
+      %>
+      <div class="discord-phase-pill
+                  <%= is_final ? "#{final_color[:bg_dark]} border-2 #{final_color[:border]}" : "bg-ink/5 text-ink/35" %>"
+           aria-label="Final Story: <%= is_final ? 'current phase' : 'upcoming' %>">
+        <span class="text-xs">📜</span>
+        <span class="hidden sm:inline text-xs">Final</span>
+      </div>
+    </div>
+
+    <%# Right — Audience Badge + Share + Refresh %>
+    <div class="flex items-center gap-1 justify-end">
+      <%= render "shared/navbar_audience_badge", audience_count: room.active_audience_count %>
+      <button type="button"
+              class="hidden p-1.5 rounded-lg cursor-pointer transition-all hover:bg-ink/5 active:scale-95 text-ink/60 hover:text-ink"
+              data-controller="audience-share"
+              data-action="click->audience-share#requestRestore audience-qr-dismissed@window->audience-share#show audience-qr-restored@window->audience-share#hide"
+              aria-label="Show audience QR code"
+              title="Show audience QR code">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM17.5 14v7M14 17.5h7"/>
+        </svg>
+      </button>
+      <button type="button"
+              class="p-1.5 rounded-lg cursor-pointer transition-all hover:bg-ink/5 active:scale-95 text-ink/60 hover:text-ink"
+              data-controller="refresh-nav"
+              data-refresh-nav-room-id-value="<%= room.id %>"
+              data-action="click->refresh-nav#refresh"
+        aria-label="Refresh page"
+        title="Refresh page">
+        <svg class="w-5 h-5" data-refresh-nav-target="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.49 9A9 9 0 0 0 5.64 5.64L4 9m16 6l-1.64 3.36A9 9 0 0 1 3.51 15"/>
+        </svg>
+      </button>
+      <button type="button"
+              class="p-1.5 rounded-lg cursor-pointer transition-all hover:bg-ink/5 active:scale-95 text-ink/60 hover:text-ink"
+              data-action="click->discord-navbar#openMusicPlayer"
+              aria-label="Open music player"
+              title="Open music player">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 18V5l12-2v13"/>
+          <circle cx="6" cy="18" r="3"/>
+          <circle cx="18" cy="16" r="3"/>
+        </svg>
+      </button>
+      <% if @current_user&.navigator? %>
+        <button type="button"
+                class="p-1.5 rounded-lg cursor-pointer transition-all hover:bg-ink/5 active:scale-95 text-ink/60 hover:text-ink"
+                data-action="click->discord-navbar#openSettings"
+                aria-label="Open settings"
+                title="Open settings">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+      <% end %>
+    </div>
+  <% end %>
 </nav>

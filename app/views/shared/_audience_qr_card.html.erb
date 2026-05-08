@@ -1,10 +1,19 @@
 <% if room.active_audience_count < User::MAX_AUDIENCE %>
-  <div class="bg-white rounded-xl p-3 border-2 border-ink/20 shadow-sm w-[140px]"
+  <div class="bg-white rounded-xl p-4 border-2 border-ink/20 shadow-sm relative"
        data-controller="audience-qr"
-       data-audience-qr-room-code-value="<%= room.code %>">
-    <p class="text-xs font-bold text-ink text-center mb-2">Join the Audience</p>
+       data-audience-qr-room-code-value="<%= room.code %>"
+       data-action="audience-qr-restore@window->audience-qr#restore">
+    <button type="button"
+            class="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full text-ink/40 hover:text-ink hover:bg-ink/10 transition-colors cursor-pointer"
+            data-action="audience-qr#dismiss"
+            aria-label="Dismiss audience QR code">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <p class="text-sm font-bold text-ink text-center mb-2 pr-7">Join the Audience</p>
     <img data-audience-qr-target="image" src=""
-         class="w-[100px] h-[100px] mx-auto"
+         class="w-[140px] h-[140px] mx-auto"
          alt="QR code to join as audience for room <%= room.code.upcase %>">
   </div>
 <% end %>

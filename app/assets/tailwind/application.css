@@ -50,7 +50,7 @@
 
   /* Custom Spacing */
   --spacing-32: 8rem;
-  --spacing-navbar: 4rem;
+  --spacing-navbar: 3.5rem;
 
   /* Custom Border Radius */
   --radius-3xl: 24px;
@@ -318,6 +318,16 @@
     50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
   }
 
+  /* Timer urgency — shake after scale-up when time is low */
+  @keyframes timer-urgency-shake {
+    0%   { transform: scale(var(--urgency-scale, 3)); }
+    20%  { transform: scale(var(--urgency-scale, 3)) translateX(-4px); }
+    40%  { transform: scale(var(--urgency-scale, 3)) translateX(4px); }
+    60%  { transform: scale(var(--urgency-scale, 3)) translateX(-3px); }
+    80%  { transform: scale(var(--urgency-scale, 3)) translateX(2px); }
+    100% { transform: scale(var(--urgency-scale, 3)); }
+  }
+
 }
 
 /* Disable animations for users who prefer reduced motion */
@@ -362,6 +372,11 @@
 
   .countdown-timer-pause-play {
     transition: none;
+  }
+
+  /* Disable urgency shake but keep the scale transition (non-motion size change) */
+  .countdown-timer-xs .countdown-timer[data-urgency="active"] {
+    animation: none !important;
   }
 }
 
