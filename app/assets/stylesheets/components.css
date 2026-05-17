@@ -1774,6 +1774,16 @@ button.countdown-timer {
   box-shadow: 4px 4px 0px var(--color-ink);
 }
 
+/* When expanded inside a flex column, claim available height so the inner
+   list can scroll instead of pushing siblings out of the parent card. */
+.accordion-section-expanded {
+  @apply flex flex-col flex-1 min-h-0;
+}
+
+.accordion-section-expanded > .accordion-content {
+  @apply flex-1 min-h-0 flex flex-col;
+}
+
 .accordion-header {
   @apply flex items-center justify-between px-5 py-4 cursor-pointer select-none;
   @apply font-bold text-lg transition-colors;

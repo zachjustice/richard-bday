@@ -3,7 +3,7 @@
 <%# Doodle decorations %>
 <%= render "shared/waiting_room_doodles" %>
 
-<div class="flex-1 flex flex-col justify-start min-h-0 relative z-content" data-controller="story-selection">
+<div class="flex-1 flex flex-col justify-start min-h-[500px] relative z-content" data-controller="story-selection">
   <%# Header section with title styling %>
   <div class="text-center mb-4 animate-slide-up">
     <h1 class="text-4xl md:text-5xl font-bold mb-3 text-shadow-heading">PICK A STORY</h1>
@@ -17,7 +17,7 @@
       <%= form_with url: start_room_path(room), method: :post, class: "flex flex-1 flex-col min-h-0 gap-4" do %>
 
         <%# Story Selection Accordion %>
-        <div class="accordion-section" data-story-selection-target="storySection">
+        <div class="accordion-section accordion-section-expanded" data-story-selection-target="storySection">
           <div class="accordion-header" data-action="click->story-selection#toggleStorySection">
             <span>Choose a Story</span>
             <svg data-story-selection-target="storyChevron" class="accordion-chevron accordion-chevron-expanded w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +31,7 @@
           </div>
 
           <div class="accordion-content" data-story-selection-target="storySectionContent">
-            <div class="p-4">
+            <div class="p-4 flex flex-1 flex-col min-h-0">
               <%# Search Input %>
               <div class="search-input-container mb-2 px-2">
                 <svg class="search-input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,7 @@
               </div>
 
               <%# Story List %>
-              <fieldset class="flex-1 min-h-0 overflow-y-auto p-3 pb-4 gap-2 flex flex-col max-h-[400px] scroll-fade-indicators border-0">
+              <fieldset class="flex-1 min-h-0 overflow-y-auto p-3 pb-4 gap-2 flex flex-col scroll-fade-indicators border-0">
                 <legend class="sr-only">Select a story</legend>
                 <% stories.each do |story| %>
                   <label class="cursor-pointer block"

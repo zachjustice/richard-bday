@@ -128,7 +128,9 @@ export default class extends Controller {
   }
 
   expandStorySection() {
+    if (this.votingSectionExpanded) this.collapseVotingSection()
     this.storySectionExpanded = true
+    this.storySectionTarget.classList.add('accordion-section-expanded')
     this.storySectionContentTarget.classList.remove('accordion-content-collapsed')
     this.storySectionSummaryTarget.classList.add('hidden')
     this.storyChevronTarget.classList.add('accordion-chevron-expanded')
@@ -136,13 +138,16 @@ export default class extends Controller {
 
   collapseStorySection() {
     this.storySectionExpanded = false
+    this.storySectionTarget.classList.remove('accordion-section-expanded')
     this.storySectionContentTarget.classList.add('accordion-content-collapsed')
     this.storySectionSummaryTarget.classList.remove('hidden')
     this.storyChevronTarget.classList.remove('accordion-chevron-expanded')
   }
 
   expandVotingSection() {
+    if (this.storySectionExpanded) this.collapseStorySection()
     this.votingSectionExpanded = true
+    this.votingSectionTarget.classList.add('accordion-section-expanded')
     this.votingSectionContentTarget.classList.remove('accordion-content-collapsed')
     this.votingSectionSummaryTarget.classList.add('hidden')
     this.votingChevronTarget.classList.add('accordion-chevron-expanded')
@@ -150,6 +155,7 @@ export default class extends Controller {
 
   collapseVotingSection() {
     this.votingSectionExpanded = false
+    this.votingSectionTarget.classList.remove('accordion-section-expanded')
     this.votingSectionContentTarget.classList.add('accordion-content-collapsed')
     this.votingSectionSummaryTarget.classList.remove('hidden')
     this.votingChevronTarget.classList.remove('accordion-chevron-expanded')
