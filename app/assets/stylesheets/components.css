@@ -1805,7 +1805,6 @@ button.countdown-timer {
 
 .accordion-content {
   @apply overflow-hidden transition-all duration-300 ease-out;
-  max-height: var(--accordion-max-height, 100vh);
 }
 
 .accordion-content-collapsed {

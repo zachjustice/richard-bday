@@ -17,7 +17,10 @@ bundle install
 # Setup database
 bin/rails db:setup
 
-# Start the server
+# Setup RAILS_MASTER_KEY
+# Copy over config/master.key or create a new one
+
+# Start the server; use ./bin/dev for tailwindcss
 ./bin/dev
 ```
 
@@ -31,7 +34,7 @@ kamal deploy
 ```
 
 ### Editor Management
-```bash"
+```bash
 # Invite a new editor by email (sends invitation email)
 bundle exec rake "editors:invite[email@example.com]"
 
