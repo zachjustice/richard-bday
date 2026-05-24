@@ -9,8 +9,16 @@ import $ from 'jquery';
 window.$ = $;
 window.jQuery = $;
 
+let lastNavigateUrl = null
+let lastNavigateAt = 0
+let debounceThresholdSeconds = 2000
+
 Turbo.StreamActions.navigate = function () {
   const url = this.target
+  const now = Date.now()
+  if (url === lastNavigateUrl && now - lastNavigateAt < debounceThresholdSeconds) return
+  lastNavigateUrl = url
+  lastNavigateAt = now
   Turbo.visit(url)
 }
 

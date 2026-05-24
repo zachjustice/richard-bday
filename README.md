@@ -93,4 +93,9 @@ kamal app exec --interactive --reuse "bin/rails console"
 
 # SSH into container
 kamal app exec --interactive --reuse "bash"
+
+# Setup local tunnel for discord activity
+cloudflared tunnel --url http://127.0.0.1:3000
+# Then, update target root mapping on 'Activity URL Mappings' page
+# https://discord.com/developers/applications/1469881527532785987/embedded/url-mappings
 ```
