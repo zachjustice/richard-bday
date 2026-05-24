@@ -11,7 +11,7 @@ window.jQuery = $;
 
 let lastNavigateUrl = null
 let lastNavigateAt = 0
-let debounceThresholdSeconds = 2000
+let debounceThresholdSeconds = 1000
 
 Turbo.StreamActions.navigate = function () {
   const url = this.target
