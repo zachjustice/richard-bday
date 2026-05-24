@@ -8,6 +8,7 @@ A Rails application for playing collaborative fill-in-the-blank stories with fri
 - Ruby 3.4.1
 - SQLite3
 - Foreman
+- Deno (for the JS unit test suite under `test/javascript/`) — `brew install deno`
 
 ### Local Development
 ```bash
@@ -22,6 +23,15 @@ bin/rails db:setup
 
 # Start the server; use ./bin/dev for tailwindcss
 ./bin/dev
+```
+
+### Running Tests
+```bash
+# Ruby tests
+bin/rails test
+
+# JS unit tests (pure-function modules under app/javascript/lib/)
+deno test test/javascript/ --allow-read
 ```
 
 ### Manual Deployment (if needed)

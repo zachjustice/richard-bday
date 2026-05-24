@@ -4,6 +4,7 @@ import "@rails/request.js"
 
 import "controllers"
 import $ from 'jquery';
+import { shouldDedupeNavigate } from "lib/navigate_dedupe"
 
 // export for others scripts to use
 window.$ = $;
@@ -16,7 +17,7 @@ let debounceThresholdSeconds = 1000
 Turbo.StreamActions.navigate = function () {
   const url = this.target
   const now = Date.now()
-  if (url === lastNavigateUrl && now - lastNavigateAt < debounceThresholdSeconds) return
+  if (shouldDedupeNavigate(url, lastNavigateUrl, lastNavigateAt, now, debounceThresholdSeconds)) return
   lastNavigateUrl = url
   lastNavigateAt = now
   Turbo.visit(url)
