@@ -25,6 +25,14 @@
   html.is-discord-activity .card-primary {
     max-width: 720px;
   }
+
+  /* Story selection partial sets min-h-[500px] for TV presence; that floor
+     pushes the accordion out of the card inside the shorter Discord iframe.
+     Relax it so the existing accordion flex chain (fieldset is
+     flex-1 min-h-0 overflow-y-auto) handles overflow internally. */
+  html.is-discord-activity [data-controller~="story-selection"] {
+    min-height: 0;
+  }
 }
 
 /* Tier 2: cramped Discord */
