@@ -10,3 +10,35 @@
  */
 
 /* All styles are now managed through Tailwind (app/assets/tailwind/application.css) */
+
+/* ============================================
+   Discord Activity: compact-viewport tiers
+   Height-based steps that shrink rem-derived
+   sizes inside the Discord iframe without
+   regressing the TV or phone player views.
+   ============================================ */
+
+/* Tier 1: laptop Discord */
+@media (max-height: 800px) {
+  html.is-discord-activity { font-size: 14px; }
+
+  html.is-discord-activity .card-primary {
+    max-width: 720px;
+  }
+}
+
+/* Tier 2: cramped Discord */
+@media (max-height: 560px) {
+  html.is-discord-activity { font-size: 12px; }
+
+  html.is-discord-activity .card-primary {
+    max-width: 100%;
+    width: calc(100% - 1rem);
+  }
+
+  /* Avatar carousel is hardcoded in px — won't shrink with rem */
+  html.is-discord-activity .avatar-carousel-container {
+    width: 140px;
+    min-height: 70px;
+  }
+}
