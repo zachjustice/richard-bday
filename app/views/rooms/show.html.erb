@@ -2,15 +2,15 @@
   <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
   <%= turbo_stream_from "rooms:#{@current_room.id}:users" %>
 
-  <div class="min-h-[calc(100dvh-var(--spacing-navbar))] relative flex flex-col items-center justify-center p-6 max-sm:p-4 bg-page overflow-hidden">
+  <div class="h-[calc(100dvh-var(--spacing-navbar))] min-h-0 relative flex flex-col items-center justify-center p-6 max-sm:p-4 bg-page overflow-hidden">
     <%# Header %>
-    <div class="text-center mb-6 animate-slide-up">
+    <div class="text-center mb-6 animate-slide-up flex-shrink-0">
       <h1 class="text-4xl max-sm:text-3xl font-bold text-shadow-heading">Blanksies</h1>
     </div>
 
     <% if @current_user.audience? %>
       <%# Audience: simplified waiting view %>
-      <div class="card-primary animate-fade-in p-8 max-sm:p-6 max-w-xl w-full mb-8 relative z-content">
+      <div class="card-primary animate-fade-in p-8 max-sm:p-6 max-w-xl w-full mb-8 relative z-content flex flex-col min-h-0 max-h-full overflow-y-auto">
         <div class="text-center">
           <div class="text-5xl mb-4" aria-hidden="true"><%= User::AUDIENCE_AVATAR %></div>
           <h2 class="text-2xl max-sm:text-xl font-bold text-ink mb-2">Welcome, <%= @current_user.name %>!</h2>
@@ -19,17 +19,19 @@
       </div>
     <% else %>
       <%# Avatar picker card %>
-      <div class="card-primary animate-fade-in p-8 max-sm:p-6 max-w-xl w-full mb-8 relative z-content">
-        <div class="text-center mb-4">
+      <div class="card-primary animate-fade-in p-8 max-sm:p-6 max-w-xl w-full mb-8 relative z-content flex flex-col min-h-0 max-h-full">
+        <div class="text-center mb-4 flex-shrink-0">
           <h2 class="text-2xl max-sm:text-xl font-bold text-ink">Welcome, <%= @current_user.name %>!</h2>
         </div>
-        <p class="text-ink/60 text-center mb-2">Choose your avatar</p>
-        <%= render "avatars/picker", user: @current_user, room: @current_room %>
+        <p class="text-ink/60 text-center mb-2 flex-shrink-0">Choose your avatar</p>
+        <div class="flex-1 min-h-0 overflow-y-auto">
+          <%= render "avatars/picker", user: @current_user, room: @current_room %>
+        </div>
       </div>
     <% end %>
 
     <%# Player count %>
-    <div class="flex items-center justify-center gap-3 mb-4 relative z-content">
+    <div class="flex items-center justify-center gap-3 mb-4 relative z-content flex-shrink-0">
       <span id="waiting-room-players-count" class="badge-primary">
         <%= @users.size %> joined
       </span>
@@ -37,7 +39,7 @@
     </div>
 
     <% if @current_user.navigator? %>
-      <div class="flex justify-center mt-6 relative z-content">
+      <div class="flex justify-center mt-6 relative z-content flex-shrink-0">
         <%= form_with url: initialize_room_path(@current_room), method: :post do %>
           <%= submit_tag "Let's Go!", class: "btn-primary" %>
         <% end %>
