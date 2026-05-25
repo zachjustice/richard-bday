@@ -4,7 +4,7 @@
 <% just_selected = local_assigns[:just_selected] || false %>
 
 <div id="avatar-picker"
-     class="mt-6"
+     class="mt-6 flex flex-col min-h-0 h-full"
      data-controller="avatar-carousel"
      data-avatar-carousel-avatars-value="<%= User::AVATARS.to_json %>"
      data-avatar-carousel-taken-value="<%= taken_avatars.to_json %>"
@@ -15,8 +15,8 @@
      tabindex="0">
 
   <%# Loading state - shown until JS initializes %>
-  <div data-avatar-carousel-target="loading">
-    <div class="flex items-center justify-center gap-3 max-sm:gap-2">
+  <div data-avatar-carousel-target="loading" class="flex flex-col min-h-0 flex-1">
+    <div class="flex-1 min-h-0 flex items-center justify-center gap-3 max-sm:gap-2">
       <button type="button" class="carousel-arrow opacity-50 cursor-not-allowed" disabled aria-label="Previous avatar">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
@@ -39,7 +39,7 @@
       </button>
     </div>
 
-    <div class="flex justify-center gap-3 mt-4">
+    <div class="flex justify-center gap-3 mt-4 flex-shrink-0">
       <button type="button" class="btn-primary py-3 px-6 text-base opacity-50 cursor-not-allowed" disabled>
         Submit
       </button>
@@ -48,19 +48,19 @@
       </button>
     </div>
 
-    <p class="text-center text-sm text-ink/50 mt-3">Swipe or use arrows to browse</p>
+    <p class="text-center text-sm text-ink/50 mt-3 flex-shrink-0">Swipe or use arrows to browse</p>
   </div>
 
   <%# Main carousel - hidden until JS initializes %>
-  <div data-avatar-carousel-target="carousel" class="hidden">
+  <div data-avatar-carousel-target="carousel" class="hidden flex flex-col min-h-0 flex-1">
 
   <% if local_assigns[:error] %>
-    <div role="alert" class="text-center mb-4 p-3 rounded-xl bg-accent-red/15 border-2 border-accent-red/30">
+    <div role="alert" class="text-center mb-4 p-3 rounded-xl bg-accent-red/15 border-2 border-accent-red/30 flex-shrink-0">
       <span class="text-sm font-bold text-ink"><%= error %></span>
     </div>
   <% end %>
 
-  <div class="flex items-center justify-center gap-3 max-sm:gap-2">
+  <div class="flex-1 min-h-0 flex items-center justify-center gap-3 max-sm:gap-2">
     <%# Left Arrow %>
     <button type="button"
             class="carousel-arrow"
@@ -97,7 +97,7 @@
   </div>
 
   <%# Hidden form for submission %>
-  <%= form_with url: update_avatar_path, method: :patch, class: "mt-4", data: { avatar_carousel_target: "form" } do %>
+  <%= form_with url: update_avatar_path, method: :patch, class: "mt-4 flex-shrink-0", data: { avatar_carousel_target: "form" } do %>
     <%= hidden_field_tag :avatar, user.avatar %>
 
     <div class="flex justify-center gap-3">
@@ -115,6 +115,6 @@
     </div>
   <% end %>
 
-    <p class="text-center text-sm text-ink/50 mt-3">Swipe or use arrows to browse</p>
+    <p class="text-center text-sm text-ink/50 mt-3 flex-shrink-0">Swipe or use arrows to browse</p>
   </div>
 </div>
