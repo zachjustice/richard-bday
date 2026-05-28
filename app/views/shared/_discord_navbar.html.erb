@@ -8,9 +8,10 @@
 %>
 
 <nav class="discord-navbar" aria-label="Game navigation" data-controller="discord-navbar">
-  <%# Left — Branding + Room Code %>
+  <%# Left — Branding + Audience Watching + Room Code %>
   <div class="flex items-center gap-1.5 shrink-0">
     <span class="text-xl font-bold text-ink text-shadow-brand">Blanksies</span>
+    <%= render "shared/navbar_audience_badge", audience_count: room.active_audience_count %>
     <div data-controller="copy-code" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-sm font-medium bg-accent-yellow/20 border border-ink/20">
       <span class="text-ink/50 uppercase tracking-wide text-sm">Room</span>
       <span class="tracking-widest text-ink font-bold"><%= room.code.upcase %></span>
@@ -76,9 +77,8 @@
       </div>
     </div>
 
-    <%# Right — Audience Badge + Share + Refresh %>
+    <%# Right — Share + Refresh %>
     <div class="flex items-center gap-1 justify-end">
-      <%= render "shared/navbar_audience_badge", audience_count: room.active_audience_count %>
       <button type="button"
               class="hidden p-1.5 rounded-lg cursor-pointer transition-all hover:bg-ink/5 active:scale-95 text-ink/60 hover:text-ink"
               data-controller="audience-share"

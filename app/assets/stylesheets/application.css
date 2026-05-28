@@ -18,12 +18,15 @@
    regressing the TV or phone player views.
    ============================================ */
 
+/* Base: widen the player card to 75% of the iframe width */
+html.is-discord-activity .card-primary {
+  max-width: 75vw;
+}
+
 /* Tier 1: laptop Discord */
 @media (max-height: 800px) {
-  html.is-discord-activity { font-size: 14px; }
-
-  html.is-discord-activity .card-primary {
-    max-width: 720px;
+  html.is-discord-activity {
+    font-size: 14px;
   }
 
   /* Story selection partial sets min-h-[500px] for TV presence; that floor
@@ -37,11 +40,8 @@
 
 /* Tier 2: cramped Discord */
 @media (max-height: 560px) {
-  html.is-discord-activity { font-size: 12px; }
-
-  html.is-discord-activity .card-primary {
-    max-width: 100%;
-    width: calc(100% - 1rem);
+  html.is-discord-activity {
+    font-size: 12px;
   }
 
   /* Avatar carousel is hardcoded in px — won't shrink with rem */

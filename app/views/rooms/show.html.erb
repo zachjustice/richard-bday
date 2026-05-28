@@ -35,7 +35,6 @@
       <span id="waiting-room-players-count" class="badge-primary">
         <%= @users.size %> joined
       </span>
-      <%= render "rooms/partials/audience_count_badge", audience_count: @current_room.active_audience_count %>
     </div>
 
     <% if @current_user.navigator? %>
