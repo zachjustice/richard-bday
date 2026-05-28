@@ -125,6 +125,10 @@ class ApplicationController < ActionController::Base
     when RoomStatus::Results
       prompt = @current_room.current_game&.current_game_prompt
       prompt ? game_prompt_results_path(prompt) : show_room_path
+    when RoomStatus::FinalResults
+      room_story_path(@current_room)
+    when RoomStatus::Credits
+      room_game_credits_path(@current_room)
     else
       show_room_path
     end

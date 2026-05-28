@@ -7,13 +7,25 @@ class DevPhaseSimulatorService
     RoomStatus::StorySelection,
     RoomStatus::Answering,
     RoomStatus::Voting,
-    RoomStatus::Results
+    RoomStatus::Results,
+    RoomStatus::FinalResults,
+    RoomStatus::Credits
   ].freeze
 
   DEFAULT_PLAYER_COUNT_FOR_ANSWERING = User::MAX_PLAYERS
   DEFAULT_AUDIENCE_COUNT_FOR_RESULTS = User::MAX_AUDIENCE
-  PHASES_THAT_NEED_FULL_GAME = [ RoomStatus::Answering, RoomStatus::Voting, RoomStatus::Results ].freeze
-  PHASES_THAT_NEED_AUDIENCE = [ RoomStatus::Results ].freeze
+  PHASES_THAT_NEED_FULL_GAME = [
+    RoomStatus::Answering,
+    RoomStatus::Voting,
+    RoomStatus::Results,
+    RoomStatus::FinalResults,
+    RoomStatus::Credits
+  ].freeze
+  PHASES_THAT_NEED_AUDIENCE = [
+    RoomStatus::Results,
+    RoomStatus::FinalResults,
+    RoomStatus::Credits
+  ].freeze
 
   def initialize(room:, target_status:, player_count: nil, audience_count: nil)
     @room = room
@@ -50,6 +62,10 @@ class DevPhaseSimulatorService
       seed_voting
     when RoomStatus::Results
       seed_results
+    when RoomStatus::FinalResults
+      seed_final_results
+    when RoomStatus::Credits
+      seed_credits
     end
 
     Success.new(room: @room)
@@ -70,6 +86,10 @@ class DevPhaseSimulatorService
     when RoomStatus::Results
       return false unless @room.current_game&.dev_seeded? && @room.current_game.current_game_prompt_id.present?
       Answer.exists?(game_prompt_id: @room.current_game.current_game_prompt_id, won: true)
+    when RoomStatus::FinalResults, RoomStatus::Credits
+      return false unless @room.current_game&.dev_seeded?
+      prompt_ids = GamePrompt.where(game_id: @room.current_game_id).pluck(:id)
+      prompt_ids.any? && prompt_ids.all? { |id| Answer.exists?(game_prompt_id: id, won: true) }
     else
       true
     end
@@ -114,7 +134,13 @@ class DevPhaseSimulatorService
     ensure_dev_seeded_game_with_prompt
 
     game = @room.current_game
-    game_prompt = game.current_game_prompt
+    seed_answers_for(game, game.current_game_prompt)
+
+    User.players.where(room: @room).update_all(status: UserStatus::Voting)
+    @room.update!(status: RoomStatus::Voting)
+  end
+
+  def seed_answers_for(game, game_prompt)
     User.players.where(room: @room).find_each do |player|
       next if Answer.exists?(user_id: player.id, game_prompt_id: game_prompt.id, game_id: game.id)
       Answer.create!(
@@ -124,9 +150,6 @@ class DevPhaseSimulatorService
         text: Faker::Lorem.sentence(word_count: rand(5...20)).gsub(".", "")[0...150]
       )
     end
-
-    User.players.where(room: @room).update_all(status: UserStatus::Voting)
-    @room.update!(status: RoomStatus::Voting)
   end
 
   def ensure_dev_seeded_game_with_prompt
@@ -149,6 +172,29 @@ class DevPhaseSimulatorService
 
     User.players.where(room: @room).update_all(status: UserStatus::Voted)
     @room.update!(status: RoomStatus::Results)
+  end
+
+  def seed_final_results
+    ensure_dev_seeded_game_with_prompt
+
+    game = @room.current_game
+    prompts = GamePrompt.where(game_id: game.id).order(:order)
+
+    prompts.each do |gp|
+      game.update!(current_game_prompt: gp) unless game.current_game_prompt_id == gp.id
+      seed_answers_for(game, gp)
+      seed_player_votes(game, gp)
+      seed_audience_votes(game, gp)
+      SelectWinnerService.new(gp, @room).call
+    end
+
+    User.players.where(room: @room).update_all(status: UserStatus::Voted)
+    @room.update!(status: RoomStatus::FinalResults)
+  end
+
+  def seed_credits
+    seed_final_results
+    @room.update!(status: RoomStatus::Credits)
   end
 
   def seed_player_votes(game, game_prompt)

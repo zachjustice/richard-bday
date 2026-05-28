@@ -71,7 +71,7 @@ class DevPhaseSimulatorServiceTest < ActiveSupport::TestCase
 
   test "unsupported target_status returns Failure" do
     result = DevPhaseSimulatorService.new(
-      room: @room, target_status: RoomStatus::FinalResults
+      room: @room, target_status: "NotARealPhase"
     ).call
 
     assert_kind_of DevPhaseSimulatorService::Failure, result
@@ -514,5 +514,137 @@ class DevPhaseSimulatorServiceTest < ActiveSupport::TestCase
     assert_equal first_game_id, @room.reload.current_game_id
     assert_equal first_vote_ids, Vote.where(game_id: first_game_id).pluck(:id).sort
     assert_equal first_winner_id, Answer.find_by(game_id: first_game_id, won: true).id
+  end
+
+  # Helper to set up a multi-prompt published story usable by Final/Credits tests.
+  def setup_multi_prompt_story(num_blanks: 3)
+    suffix = SecureRandom.hex(4)
+    blanks_text = (1..num_blanks).map { |i| "blank#{i} {b#{i}}" }.join(" ")
+    multi_story = Story.create!(
+      title: "A multi #{suffix}",
+      text: "placeholder",
+      original_text: blanks_text,
+      published: true
+    )
+    blanks = []
+    num_blanks.times do |i|
+      b = Blank.create!(story: multi_story, tags: "tag#{i}")
+      blanks << b
+      prompt = Prompt.create!(description: "p#{i}-#{suffix}", tags: "tag#{i}", creator: @editor)
+      StoryPrompt.create!(story: multi_story, blank: b, prompt: prompt)
+    end
+    multi_story.update!(text: blanks.map { |b| "{#{b.id}}" }.join(" "))
+    # Make sure this story is selected first (earliest by title)
+    Story.where.not(id: multi_story.id).update_all(published: false)
+    multi_story
+  end
+
+  test "FinalResults target seeds answers, votes, and a winner for every GamePrompt" do
+    setup_multi_prompt_story(num_blanks: 3)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil, voting_style: "vote_once")
+
+    result = DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::FinalResults,
+      player_count: 3,
+      audience_count: 2
+    ).call
+
+    assert_kind_of DevPhaseSimulatorService::Success, result
+    @room.reload
+    assert_equal RoomStatus::FinalResults, @room.status
+    assert @room.current_game.dev_seeded?
+
+    game = @room.current_game
+    prompts = GamePrompt.where(game_id: game.id)
+    assert_equal 3, prompts.count
+
+    prompts.each do |gp|
+      answers = Answer.where(game_prompt_id: gp.id, game_id: game.id)
+      assert_equal 3, answers.count, "prompt #{gp.id} should have one answer per player"
+      assert answers.where(won: true).exists?, "prompt #{gp.id} should have a winner"
+      assert Vote.by_players.where(game_prompt_id: gp.id).exists?, "prompt #{gp.id} should have player votes"
+      assert Vote.by_audience.where(game_prompt_id: gp.id).exists?, "prompt #{gp.id} should have audience votes"
+    end
+
+    assert_equal [ UserStatus::Voted ], User.players.where(room: @room).pluck(:status).uniq
+  end
+
+  test "FinalResults makes FinalStoryService return non-empty data" do
+    setup_multi_prompt_story(num_blanks: 2)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::FinalResults,
+      player_count: 2,
+      audience_count: 1
+    ).call
+
+    data = FinalStoryService.new(@room.reload.current_game).call
+    assert data[:story_text].present?
+    assert_equal 2, data[:blank_id_to_answer_text].size
+  end
+
+  test "FinalResults is idempotent on re-call" do
+    setup_multi_prompt_story(num_blanks: 2)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::FinalResults,
+      player_count: 2,
+      audience_count: 1
+    ).call
+    first_game_id = @room.reload.current_game_id
+    first_winner_ids = Answer.where(game_id: first_game_id, won: true).pluck(:id).sort
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::FinalResults,
+      player_count: 2,
+      audience_count: 1
+    ).call
+
+    assert_equal first_game_id, @room.reload.current_game_id
+    assert_equal first_winner_ids, Answer.where(game_id: first_game_id, won: true).pluck(:id).sort
+  end
+
+  test "Credits target seeds full game and sets status to Credits" do
+    setup_multi_prompt_story(num_blanks: 2)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil, voting_style: "vote_once")
+
+    result = DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Credits,
+      player_count: 3,
+      audience_count: 2
+    ).call
+
+    assert_kind_of DevPhaseSimulatorService::Success, result
+    @room.reload
+    assert_equal RoomStatus::Credits, @room.status
+    assert @room.current_game.dev_seeded?
+
+    game = @room.current_game
+    GamePrompt.where(game_id: game.id).find_each do |gp|
+      assert Answer.where(game_prompt_id: gp.id, won: true).exists?, "prompt #{gp.id} should have winner"
+    end
+  end
+
+  test "Credits makes CreditsService return non-empty podium and audience_favorite" do
+    setup_multi_prompt_story(num_blanks: 2)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Credits,
+      player_count: 3,
+      audience_count: 3
+    ).call
+
+    data = CreditsService.new(@room.reload.current_game).call
+    assert data[:podium].any?, "podium should have at least one entry"
+    assert data[:audience_favorite].present?, "audience_favorite should be set"
   end
 end
