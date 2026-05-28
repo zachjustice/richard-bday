@@ -46,6 +46,29 @@ class GamePromptsControllerTest < ActionDispatch::IntegrationTest
     assert_select "textarea", text: /Test answer/
   end
 
+  test "show does not render countdown auto-submitter when game is dev_seeded" do
+    Answer.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
+    @game.update!(dev_seeded: true)
+
+    get "/game_prompts/#{@game_prompt.id}"
+
+    assert_response :success
+    assert_select "[data-controller='auto-submitter']", false,
+      "auto-submitter should not render when game.dev_seeded? is true"
+    assert_select "[data-auto-submitter-target='container']", false,
+      "auto-submitter countdown container should not render when dev_seeded"
+  end
+
+  test "show renders countdown auto-submitter when game is not dev_seeded" do
+    Answer.where(user_id: @user.id, game_prompt_id: @game_prompt.id).delete_all
+    @game.update!(dev_seeded: false)
+
+    get "/game_prompts/#{@game_prompt.id}"
+
+    assert_response :success
+    assert_select "[data-controller='auto-submitter']", 1
+  end
+
   test "show should check answer existence for current user only" do
     # Create answer for different user
     other_user = users(:two)

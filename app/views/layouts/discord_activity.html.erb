@@ -81,7 +81,7 @@
         <% end %>
       <% end %>
       <div class="<%= 'pt-[var(--spacing-navbar)]' if show_discord_navbar %>">
-        <% if @current_room&.current_game&.next_game_phase_time && @current_room.status.in?([RoomStatus::Answering, RoomStatus::Voting]) %>
+        <% if @current_room&.current_game&.next_game_phase_time && @current_room.status.in?([RoomStatus::Answering, RoomStatus::Voting]) && !@current_room.current_game.dev_seeded? %>
           <% timer_duration = @current_room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS %>
           <div class="fixed top-16 right-4 z-overlay">
             <div class="countdown-timer-xs">

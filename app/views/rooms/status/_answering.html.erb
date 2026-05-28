@@ -2,7 +2,9 @@
 
 <div class="flex-1 flex flex-col justify-start min-h-0">
   <div class="card-status-header-blue">
-    <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
+    <% unless room.current_game.dev_seeded? %>
+      <%= render "shared/countdown_timer", duration: room.current_game.next_game_phase_time - Time.now - GameConstants::COUNTDOWN_FORGIVENESS_SECONDS, auto_start: true %>
+    <% end %>
     <h1 class="text-4xl font-bold text-ink mb-3 leading-tight">Answer the prompt on your device</h1>
     <p class="text-ink/60 italic m-0">Everyone answers the same prompt</p>
     <div class="sr-only" aria-live="polite" aria-atomic="true" id="answers-status">

@@ -112,6 +112,13 @@ class ApplicationController < ActionController::Base
     case target_status
     when RoomStatus::WaitingRoom
       waiting_for_new_game_path(@current_room)
+    when RoomStatus::Answering
+      prompt = @current_room.current_game&.current_game_prompt
+      if prompt
+        @current_user&.audience? ? game_prompt_waiting_path(prompt) : game_prompt_path(prompt)
+      else
+        show_room_path
+      end
     else
       show_room_path
     end

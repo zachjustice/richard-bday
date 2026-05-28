@@ -17,7 +17,7 @@
       <div class="alert-message mb-4" role="alert"><%= flash[:alert] %></div>
     <% end %>
 
-    <% if discord_authenticated? %>
+    <% if discord_authenticated? || @current_room.current_game.dev_seeded? %>
     <div>
     <% else %>
     <div data-controller="auto-submitter"
@@ -39,7 +39,7 @@
               class: "form-input min-h-24" %>
         </div>
 
-        <% if @current_room&.current_game&.next_game_phase_time && !discord_authenticated? %>
+        <% if @current_room&.current_game&.next_game_phase_time && !discord_authenticated? && !@current_room.current_game.dev_seeded? %>
           <div class="hidden text-center text-sm text-gray-500 italic" data-auto-submitter-target="container">
             Auto-submitting
             <span class="font-semibold" data-auto-submitter-target="display">in 10</span>
