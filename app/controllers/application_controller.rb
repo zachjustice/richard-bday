@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   skip_forgery_protection if: -> { request.headers["Authorization"]&.start_with?("Bearer ") || discord_authenticated? }
   before_action :set_cache_headers
   before_action :set_discord_iframe_headers
+  before_action :apply_dev_phase_shortcut
   before_action :set_round_info
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
@@ -60,5 +61,59 @@ class ApplicationController < ActionController::Base
 
     response.headers.delete("X-Frame-Options")
     response.headers["Content-Security-Policy"] = "frame-ancestors https://discord.com https://*.discordsays.com"
+  end
+
+  # Dev-only shortcut: `?roomStatus=Wait` (case-insensitive starts-with) drives the
+  # current room to the matched RoomStatus via DevPhaseSimulatorService, then redirects
+  # to the canonical URL for the user's role. See issue #39.
+  def apply_dev_phase_shortcut
+    return if Rails.env.production?
+    return if params[:roomStatus].blank?
+    return unless @current_room
+
+    target_status = resolve_room_status_prefix(params[:roomStatus])
+    result = DevPhaseSimulatorService.new(
+      room: @current_room,
+      target_status: target_status,
+      player_count: params[:players]&.to_i,
+      audience_count: params[:audience]&.to_i
+    ).call
+
+    if result.is_a?(DevPhaseSimulatorService::Failure)
+      raise "DevPhaseSimulator failed: #{result.error}"
+    end
+
+    @current_room.reload
+    canonical = canonical_dev_path_for(target_status)
+    return if request.path == canonical
+
+    separator = canonical.include?("?") ? "&" : "?"
+    target_url = "#{canonical}#{separator}roomStatus=#{CGI.escape(params[:roomStatus].to_s)}"
+    turbo_nav_or_redirect_to(target_url)
+  end
+
+  def resolve_room_status_prefix(prefix)
+    needle = prefix.to_s.downcase
+    matches = RoomStatus.constants.map(&:to_s).select { |c| c.downcase.start_with?(needle) }
+    if matches.empty?
+      raise ArgumentError, "Unknown roomStatus prefix #{prefix.inspect}: no RoomStatus constant matches"
+    end
+    if matches.size > 1
+      raise ArgumentError, "Ambiguous roomStatus prefix #{prefix.inspect} matches: #{matches.inspect}"
+    end
+    matches.first
+  end
+
+  def canonical_dev_path_for(target_status)
+    if @current_user&.creator? || (discord_authenticated? && @current_user&.navigator?)
+      return room_status_path(@current_room)
+    end
+
+    case target_status
+    when RoomStatus::WaitingRoom
+      waiting_for_new_game_path(@current_room)
+    else
+      show_room_path
+    end
   end
 end
