@@ -484,6 +484,40 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, Answer.where(id: [ answer1.id, answer2.id ], won: true).count
   end
 
+  test "status for Results passes seeded=true to results-auto-advance when dev_seeded" do
+    post start_room_path(@room), params: { story: @story.id }
+    @room.reload
+
+    game_prompt = @room.current_game.current_game_prompt
+    user2 = User.create!(name: "Player2-rs", room: @room)
+    Answer.create!(text: "A1", user: @user, game_prompt: game_prompt, game: @room.current_game)
+    Answer.create!(text: "A2", user: user2, game_prompt: game_prompt, game: @room.current_game, won: true)
+    @room.current_game.update!(dev_seeded: true)
+    @room.update!(status: RoomStatus::Results)
+
+    get room_status_path(@room)
+
+    assert_response :success
+    assert_select "[data-controller='results-auto-advance'][data-results-auto-advance-seeded-value='true']"
+  end
+
+  test "status for Results passes seeded=false to results-auto-advance when not dev_seeded" do
+    post start_room_path(@room), params: { story: @story.id }
+    @room.reload
+
+    game_prompt = @room.current_game.current_game_prompt
+    user2 = User.create!(name: "Player2-rs2", room: @room)
+    Answer.create!(text: "A1", user: @user, game_prompt: game_prompt, game: @room.current_game)
+    Answer.create!(text: "A2", user: user2, game_prompt: game_prompt, game: @room.current_game, won: true)
+    @room.current_game.update!(dev_seeded: false)
+    @room.update!(status: RoomStatus::Results)
+
+    get room_status_path(@room)
+
+    assert_response :success
+    assert_select "[data-controller='results-auto-advance'][data-results-auto-advance-seeded-value='false']"
+  end
+
   test "status should render successfully for FinalResults status" do
     post start_room_path(@room), params: { story: @story.id }
     @room.reload

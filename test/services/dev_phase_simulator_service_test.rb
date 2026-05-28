@@ -71,7 +71,7 @@ class DevPhaseSimulatorServiceTest < ActiveSupport::TestCase
 
   test "unsupported target_status returns Failure" do
     result = DevPhaseSimulatorService.new(
-      room: @room, target_status: RoomStatus::Results
+      room: @room, target_status: RoomStatus::FinalResults
     ).call
 
     assert_kind_of DevPhaseSimulatorService::Failure, result
@@ -341,5 +341,178 @@ class DevPhaseSimulatorServiceTest < ActiveSupport::TestCase
 
     statuses = User.players.where(room: @room).pluck(:status).uniq
     assert_equal [ UserStatus::Voting ], statuses
+  end
+
+  test "Results target seeds Voting preconditions, votes, and marks a winner (vote_once)" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil, voting_style: "vote_once")
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 3,
+      audience_count: 2
+    ).call
+
+    @room.reload
+    assert_equal RoomStatus::Results, @room.status
+    assert @room.current_game.dev_seeded?
+    game_prompt = @room.current_game.current_game_prompt
+
+    # Every player has at least one player-vote
+    player_ids = User.players.where(room: @room).pluck(:id)
+    voted_ids = Vote.by_players.where(game_prompt_id: game_prompt.id).pluck(:user_id).uniq.sort
+    assert_equal player_ids.sort, voted_ids
+
+    # vote_once: 1 vote per player, rank is nil
+    Vote.by_players.where(game_prompt_id: game_prompt.id).each do |v|
+      assert_nil v.rank
+    end
+    assert_equal 3, Vote.by_players.where(game_prompt_id: game_prompt.id).count
+
+    # A winner is selected
+    assert Answer.exists?(game_prompt_id: game_prompt.id, won: true)
+
+    # Players marked Voted
+    assert_equal [ UserStatus::Voted ], User.players.where(room: @room).pluck(:status).uniq
+  end
+
+  test "Results target creates ranked votes per player (ranked_top_3)" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil, voting_style: "ranked_top_3")
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 4,
+      audience_count: 0
+    ).call
+
+    @room.reload
+    game_prompt = @room.current_game.current_game_prompt
+
+    # Each player should have up to max_ranks (3) votes with distinct ranks 1..3
+    User.players.where(room: @room).find_each do |player|
+      ranks = Vote.by_players.where(game_prompt_id: game_prompt.id, user_id: player.id).pluck(:rank).sort
+      assert_equal [ 1, 2, 3 ], ranks, "player #{player.id} should have ranks 1,2,3"
+    end
+
+    # A winner is selected
+    assert Answer.exists?(game_prompt_id: game_prompt.id, won: true)
+  end
+
+  test "Results target defaults audience_count to User::MAX_AUDIENCE" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 2
+    ).call
+
+    assert_equal User::MAX_AUDIENCE, User.audience.where(room: @room).count
+  end
+
+  test "Results target seeds audience and creates audience star votes" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 2,
+      audience_count: 3
+    ).call
+
+    @room.reload
+    assert_equal 3, User.audience.where(room: @room).count
+
+    game_prompt = @room.current_game.current_game_prompt
+    audience_votes = Vote.by_audience.where(game_prompt_id: game_prompt.id)
+    assert audience_votes.any?, "expected at least one audience vote"
+
+    # Every audience member gave between 1 and MAX_AUDIENCE_STARS total stars
+    User.audience.where(room: @room).find_each do |aud|
+      count = audience_votes.where(user_id: aud.id).count
+      assert count.between?(1, Vote::MAX_AUDIENCE_STARS),
+        "audience #{aud.id} should have 1..#{Vote::MAX_AUDIENCE_STARS} stars (got #{count})"
+    end
+  end
+
+  test "Results target trims fake audience members when count is below current" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    # Seed once with 5 audience
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 2,
+      audience_count: 5
+    ).call
+    assert_equal 5, User.audience.where(room: @room).count
+
+    # Re-seed with 2 audience — trim should kick in
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 2,
+      audience_count: 2
+    ).call
+
+    assert_equal 2, User.audience.where(room: @room).count
+  end
+
+  test "Results target never trims real audience (sessions or discord_id)" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    real_web = User.create!(room: @room, name: "RealWebAud", role: User::AUDIENCE)
+    Session.create!(user: real_web, ip_address: "127.0.0.1", user_agent: "test")
+    real_discord = User.create!(room: @room, name: "RealDiscordAud", role: User::AUDIENCE, discord_id: "99999")
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 2,
+      audience_count: 5
+    ).call
+
+    # Trim back down to 2 — but the 2 real audience members must survive
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 2,
+      audience_count: 2
+    ).call
+
+    remaining_ids = User.audience.where(room: @room).pluck(:id)
+    assert_includes remaining_ids, real_web.id
+    assert_includes remaining_ids, real_discord.id
+  end
+
+  test "Results target is idempotent when room already at dev-seeded Results with winner" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 2,
+      audience_count: 1
+    ).call
+    first_game_id = @room.reload.current_game_id
+    first_vote_ids = Vote.where(game_id: first_game_id).pluck(:id).sort
+    first_winner_id = Answer.find_by(game_id: first_game_id, won: true).id
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Results,
+      player_count: 2,
+      audience_count: 1
+    ).call
+
+    assert_equal first_game_id, @room.reload.current_game_id
+    assert_equal first_vote_ids, Vote.where(game_id: first_game_id).pluck(:id).sort
+    assert_equal first_winner_id, Answer.find_by(game_id: first_game_id, won: true).id
   end
 end

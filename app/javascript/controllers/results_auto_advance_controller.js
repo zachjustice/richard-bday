@@ -4,7 +4,8 @@ import { timerPhase } from "lib/timer_phase"
 export default class extends Controller {
   static targets = ["display", "circle", "form", "pauseIcon", "playIcon", "timerButton"]
   static values = {
-    duration: { type: Number, default: 15 }
+    duration: { type: Number, default: 15 },
+    seeded: { type: Boolean, default: false }
   }
 
   connect() {
@@ -15,11 +16,14 @@ export default class extends Controller {
     this.circleTarget.style.strokeDasharray = this.circumference
     this.circleTarget.style.strokeDashoffset = 0
     this.updateDisplay()
-    this.startTime = Date.now()
-    this.animate()
 
     this._onKeydown = this._handleKeydown.bind(this)
     document.addEventListener("keydown", this._onKeydown)
+
+    if (this.seededValue) return
+
+    this.startTime = Date.now()
+    this.animate()
   }
 
   disconnect() {
@@ -80,7 +84,7 @@ export default class extends Controller {
 
     if (this.timeRemaining > 0) {
       this.animationFrame = requestAnimationFrame(() => this.animate())
-    } else {
+    } else if (!this.seededValue) {
       this.formTarget.requestSubmit()
     }
   }
