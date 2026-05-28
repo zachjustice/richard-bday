@@ -5,10 +5,12 @@ class DevPhaseSimulatorService
   SUPPORTED_STATUSES = [
     RoomStatus::WaitingRoom,
     RoomStatus::StorySelection,
-    RoomStatus::Answering
+    RoomStatus::Answering,
+    RoomStatus::Voting
   ].freeze
 
   DEFAULT_PLAYER_COUNT_FOR_ANSWERING = User::MAX_PLAYERS
+  PHASES_THAT_NEED_FULL_GAME = [ RoomStatus::Answering, RoomStatus::Voting ].freeze
 
   def initialize(room:, target_status:, player_count: nil, audience_count: nil)
     @room = room
@@ -22,7 +24,7 @@ class DevPhaseSimulatorService
       return Failure.new(error: "Unsupported target_status: #{@target_status.inspect}. Supported: #{SUPPORTED_STATUSES.inspect}")
     end
 
-    if @target_status == RoomStatus::Answering
+    if PHASES_THAT_NEED_FULL_GAME.include?(@target_status)
       @player_count ||= DEFAULT_PLAYER_COUNT_FOR_ANSWERING
     end
 
@@ -37,6 +39,8 @@ class DevPhaseSimulatorService
       seed_story_selection
     when RoomStatus::Answering
       seed_answering
+    when RoomStatus::Voting
+      seed_voting
     end
 
     Success.new(room: @room)
@@ -50,6 +54,10 @@ class DevPhaseSimulatorService
     case @target_status
     when RoomStatus::Answering
       @room.current_game&.dev_seeded? && @room.current_game.current_game_prompt_id.present?
+    when RoomStatus::Voting
+      return false unless @room.current_game&.dev_seeded? && @room.current_game.current_game_prompt_id.present?
+      players = User.players.where(room: @room)
+      players.any? && players.all? { |p| Answer.exists?(user_id: p.id, game_prompt_id: @room.current_game.current_game_prompt_id, game_id: @room.current_game_id) }
     else
       true
     end
@@ -90,6 +98,30 @@ class DevPhaseSimulatorService
     User.players.where(room: @room).update_all(status: UserStatus::Answering)
   end
 
+  def seed_voting
+    ensure_dev_seeded_game_with_prompt
+
+    game = @room.current_game
+    game_prompt = game.current_game_prompt
+    User.players.where(room: @room).find_each do |player|
+      next if Answer.exists?(user_id: player.id, game_prompt_id: game_prompt.id, game_id: game.id)
+      Answer.create!(
+        user: player,
+        game_prompt: game_prompt,
+        game: game,
+        text: Faker::Lorem.sentence(word_count: rand(5...20)).gsub(".", "")[0...150]
+      )
+    end
+
+    User.players.where(room: @room).update_all(status: UserStatus::Voting)
+    @room.update!(status: RoomStatus::Voting)
+  end
+
+  def ensure_dev_seeded_game_with_prompt
+    return if @room.current_game&.dev_seeded? && @room.current_game.current_game_prompt_id.present?
+    seed_answering
+  end
+
   def create_game_prompts(story, game)
     blanks = Blank.where(story_id: story.id).order(:id)
     selected_prompts = []
@@ -123,7 +155,7 @@ class DevPhaseSimulatorService
             role: User::PLAYER
           )
         end
-      elsif target_players < current_player_count && @target_status == RoomStatus::Answering
+      elsif target_players < current_player_count && PHASES_THAT_NEED_FULL_GAME.include?(@target_status)
         excess = current_player_count - target_players
         fake_players_scope(@room).order(:created_at).limit(excess).destroy_all
       end

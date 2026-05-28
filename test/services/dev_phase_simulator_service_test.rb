@@ -71,7 +71,7 @@ class DevPhaseSimulatorServiceTest < ActiveSupport::TestCase
 
   test "unsupported target_status returns Failure" do
     result = DevPhaseSimulatorService.new(
-      room: @room, target_status: RoomStatus::Voting
+      room: @room, target_status: RoomStatus::Results
     ).call
 
     assert_kind_of DevPhaseSimulatorService::Failure, result
@@ -240,5 +240,106 @@ class DevPhaseSimulatorServiceTest < ActiveSupport::TestCase
         player_count: 1
       ).call
     end
+  end
+
+  test "Voting target creates an Answer for every player on current game prompt" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Voting,
+      player_count: 3
+    ).call
+
+    @room.reload
+    assert_equal RoomStatus::Voting, @room.status
+    assert @room.current_game.dev_seeded, "expected current_game.dev_seeded to be true"
+    game_prompt = @room.current_game.current_game_prompt
+    player_ids = User.players.where(room: @room).pluck(:id)
+    assert_equal 3, player_ids.count
+    assert_equal player_ids.sort,
+                 Answer.where(game_prompt_id: game_prompt.id, game_id: @room.current_game_id).pluck(:user_id).sort
+  end
+
+  test "Voting target answer text matches Faker convention and stays within Answer::ANSWER_MAX_LENGTH" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Voting,
+      player_count: 4
+    ).call
+
+    answers = Answer.where(game_id: @room.reload.current_game_id)
+    assert answers.any?
+    answers.each do |answer|
+      assert_not_includes answer.text, "."
+      assert answer.text.length <= Answer::ANSWER_MAX_LENGTH
+      assert answer.text.length > 0
+    end
+  end
+
+  test "Voting target does not enqueue VotingTimesUpJob" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    assert_no_enqueued_jobs only: VotingTimesUpJob do
+      DevPhaseSimulatorService.new(
+        room: @room,
+        target_status: RoomStatus::Voting,
+        player_count: 2
+      ).call
+    end
+  end
+
+  test "Voting target leaves next_game_phase_time nil so countdown is suppressed" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Voting,
+      player_count: 1
+    ).call
+
+    assert_nil @room.reload.current_game.next_game_phase_time
+  end
+
+  test "Voting target is idempotent when room already at dev-seeded Voting with answers" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Voting,
+      player_count: 2
+    ).call
+    first_game_id = @room.reload.current_game_id
+    first_answer_ids = Answer.where(game_id: first_game_id).pluck(:id).sort
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Voting,
+      player_count: 2
+    ).call
+
+    assert_equal first_game_id, @room.reload.current_game_id
+    assert_equal first_answer_ids, Answer.where(game_id: first_game_id).pluck(:id).sort
+  end
+
+  test "Voting target sets all players to UserStatus::Voting" do
+    StoryPrompt.create!(story: @story, blank: @blank, prompt: @prompt)
+    @room.update!(status: RoomStatus::WaitingRoom, current_game: nil)
+
+    DevPhaseSimulatorService.new(
+      room: @room,
+      target_status: RoomStatus::Voting,
+      player_count: 3
+    ).call
+
+    statuses = User.players.where(room: @room).pluck(:status).uniq
+    assert_equal [ UserStatus::Voting ], statuses
   end
 end

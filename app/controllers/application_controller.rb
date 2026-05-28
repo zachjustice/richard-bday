@@ -119,6 +119,9 @@ class ApplicationController < ActionController::Base
       else
         show_room_path
       end
+    when RoomStatus::Voting
+      prompt = @current_room.current_game&.current_game_prompt
+      prompt ? game_prompt_voting_path(prompt) : show_room_path
     else
       show_room_path
     end

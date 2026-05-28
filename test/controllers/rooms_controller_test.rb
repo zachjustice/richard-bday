@@ -436,6 +436,31 @@ class RoomsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "status for Voting does not render countdown when game is dev_seeded" do
+    post start_room_path(@room), params: { story: @story.id }
+    @room.reload
+    @room.current_game.update!(dev_seeded: true)
+    @room.update!(status: RoomStatus::Voting)
+
+    get room_status_path(@room)
+
+    assert_response :success
+    assert_select "[data-controller='countdown-timer']", false,
+      "countdown-timer should not render on Voting status when game.dev_seeded? is true"
+  end
+
+  test "status for Voting renders countdown when game is not dev_seeded" do
+    post start_room_path(@room), params: { story: @story.id }
+    @room.reload
+    @room.current_game.update!(next_game_phase_time: 30.seconds.from_now, dev_seeded: false)
+    @room.update!(status: RoomStatus::Voting)
+
+    get room_status_path(@room)
+
+    assert_response :success
+    assert_select "[data-controller~='countdown-timer']"
+  end
+
   test "status should render successfully and mark winner for Results status" do
     post start_room_path(@room), params: { story: @story.id }
     @room.reload
