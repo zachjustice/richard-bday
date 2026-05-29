@@ -11,7 +11,6 @@
   <%# Left — Branding + Audience Watching + Room Code %>
   <div class="flex items-center gap-1.5 shrink-0">
     <span class="text-xl font-bold text-ink text-shadow-brand">Blanksies</span>
-    <%= render "shared/navbar_audience_badge", audience_count: room.active_audience_count %>
     <div data-controller="copy-code" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-sm font-medium bg-accent-yellow/20 border border-ink/20">
       <span class="text-ink/50 uppercase tracking-wide text-sm">Room</span>
       <span class="tracking-widest text-ink font-bold"><%= room.code.upcase %></span>
@@ -26,6 +25,7 @@
         </svg>
       </button>
     </div>
+    <%= render "shared/navbar_audience_badge", audience_count: room.active_audience_count %>
   </div>
 
   <% if room.current_game %>

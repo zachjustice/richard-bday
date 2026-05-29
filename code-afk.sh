@@ -9,7 +9,7 @@ fi
 ISSUE_URL="$2"
 
 for ((i=1; i<=$1; i++)); do
-  result=$(claude --permission-mode acceptEdits -p "@PLAN.md @progress.txt $ISSUE_URL \
+  result=$(claude --permission-mode acceptEdits -p "@progress.txt $ISSUE_URL \
   1. For this plan, find the highest-priority task and implement it. \
   2. Run your tests and type checks. \
   3. Update the plan with what was done. \

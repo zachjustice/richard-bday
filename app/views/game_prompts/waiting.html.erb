@@ -7,11 +7,9 @@
       <%= render "shared/round_badge" %>
 
       <div class="text-center mb-6">
-        <% if @current_user.audience? %>
-          <p class="text-sm text-ink/60 italic m-0">Waiting for players to answer...</p>
-        <% else %>
-          <p class="text-sm text-ink/60 italic m-0">Waiting for everyone to answer...</p>
-        <% end %>
+        <% answered = User.players.where(room: @current_room, status: UserStatus::Answered).count %>
+        <% total = User.players.where(room: @current_room).count %>
+        <%= render "shared/players_done_counter", done_count: answered, total_count: total %>
       </div>
 
       <div class="mb-4">
@@ -19,17 +17,13 @@
       </div>
 
       <% unless @current_user.audience? %>
-        <div>
+        <div class="flex justify-center">
           <%= form_with url: change_answer_path(@game_prompt.id), method: :post do %>
-            <%= submit_tag "Change Answer", class: "btn-secondary w-full" %>
+            <%= submit_tag "Change Answer", class: "btn-secondary" %>
           <% end %>
         </div>
       <% end %>
     </div>
-
-    <% answered = User.players.where(room: @current_room, status: UserStatus::Answered).count %>
-    <% total = User.players.where(room: @current_room).count %>
-    <%= render "shared/players_done_counter", done_count: answered, total_count: total %>
   </div>
 
 <% else %>

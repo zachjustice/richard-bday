@@ -512,7 +512,7 @@
 }
 
 .message-card {
-  @apply relative flex flex-col items-center gap-4 p-6;
+  @apply relative flex flex-col items-center gap-4 p-6 w-full;
   @apply rounded-2xl border-2 opacity-0 translate-y-5 transition-all duration-500 pointer-events-none;
   @apply bg-accent-blue/10 border-accent-blue/40
 }

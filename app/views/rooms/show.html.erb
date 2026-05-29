@@ -30,20 +30,17 @@
       </div>
     <% end %>
 
-    <%# Player count %>
+    <%# Player count + Let's Go %>
     <div class="flex items-center justify-center gap-3 mb-4 relative z-content flex-shrink-0">
+      <% if @current_user.navigator? %>
+        <%= form_with url: initialize_room_path(@current_room), method: :post do %>
+          <%= submit_tag "Let's Go!", class: "btn-primary" %>
+        <% end %>
+      <% end %>
       <span id="waiting-room-players-count" class="badge-primary">
         <%= @users.size %> joined
       </span>
     </div>
-
-    <% if @current_user.navigator? %>
-      <div class="flex justify-center mt-6 relative z-content flex-shrink-0">
-        <%= form_with url: initialize_room_path(@current_room), method: :post do %>
-          <%= submit_tag "Let's Go!", class: "btn-primary" %>
-        <% end %>
-      </div>
-    <% end %>
 
     <%# Join the Audience QR code - fixed bottom-right %>
     <div class="fixed bottom-4 right-4 z-content">
