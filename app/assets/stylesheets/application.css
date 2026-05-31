@@ -50,3 +50,32 @@ html.is-discord-activity .card-primary {
     min-height: 70px;
   }
 }
+
+/* Status page in Discord: account for fixed navbar height and allow story selection
+   to grow beyond the viewport so the page can scroll. The h-screen + overflow-hidden
+   on .room-status-page is intentional for the TV view; these overrides relax it for
+   the Discord iframe where the navbar consumes space and the creator needs to scroll. */
+html.is-discord-activity .room-status-page {
+  height: auto;
+  min-height: calc(100dvh - var(--spacing-navbar));
+  overflow: visible;
+}
+
+/* Reduce vertical padding in the compact Discord iframe (py-14 is too tall). */
+html.is-discord-activity .room-status-page #status-content-inner {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
+/* Without a height constraint the card's max-h-full resolves to none; state explicitly
+   so browsers with quirky percentage-height resolution don't clamp it. */
+html.is-discord-activity .room-status-page #status-content-inner > .card-primary {
+  max-height: none;
+}
+
+/* Story list: floor at ~5 visible story items; cap at 60dvh so internal scroll
+   still activates on taller viewports when there are many stories. */
+html.is-discord-activity [data-story-selection-target="storySectionContent"] fieldset {
+  min-height: 360px;
+  max-height: 60dvh;
+}

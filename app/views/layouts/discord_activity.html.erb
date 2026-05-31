@@ -15,7 +15,7 @@
       <%= javascript_import_module_tag "discord/activity" %>
     <% end %>
   </head>
-  <body class="bg-page min-h-screen <%= 'overflow-hidden' if @client_id %>">
+  <body class="bg-page min-h-screen">
     <% if @client_id %>
       <div id="discord-loading" class="min-h-screen flex items-center justify-center">
         <div class="card-primary p-8 text-center">
@@ -67,7 +67,7 @@
         </div>
       <% end %>
 
-      <% show_discord_navbar = @current_room && !@hide_discord_navbar %>
+      <% show_discord_navbar = @current_room.present? %>
       <% if show_discord_navbar %>
         <%= render "shared/discord_navbar", room: @current_room %>
       <% end %>

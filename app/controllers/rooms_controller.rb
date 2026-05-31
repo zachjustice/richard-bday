@@ -162,8 +162,6 @@ class RoomsController < ApplicationController
       return turbo_nav_or_redirect_to root_path
     end
 
-    @hide_discord_navbar = true
-
     status_data = RoomStatusService.new(room).call
     @status_data = status_data
 
