@@ -23,6 +23,8 @@ bin/rails db:setup
 
 # Start the server; use ./bin/dev for tailwindcss
 ./bin/dev
+# For http instead of https; defaults to https 'cause the discord activity url override requires https
+SSL=0 ./bin/dev
 ```
 
 ### Running Tests

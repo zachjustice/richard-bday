@@ -52,7 +52,7 @@ module Discord
 
     def allow_discord_iframe
       response.headers.delete("X-Frame-Options")
-      response.headers["Content-Security-Policy"] = "frame-ancestors https://discord.com https://*.discordsays.com"
+      response.headers["Content-Security-Policy"] = "frame-ancestors #{ApplicationController::DISCORD_FRAME_ANCESTORS.join(' ')}"
     end
 
     def exchange_discord_code(code)

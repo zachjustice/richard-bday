@@ -1,4 +1,13 @@
 class ApplicationController < ActionController::Base
+  # Origins permitted to frame the app. discordsays.com is wildcarded because Discord
+  # assigns each Activity its own proxy subdomain there.
+  DISCORD_FRAME_ANCESTORS = %w[
+    https://discord.com
+    https://canary.discord.com
+    https://ptb.discord.com
+    https://*.discordsays.com
+  ].freeze
+
   include Authentication
   layout :choose_layout
   skip_before_action :require_authentication, only: :not_found_method
@@ -60,7 +69,7 @@ class ApplicationController < ActionController::Base
     return unless discord_authenticated?
 
     response.headers.delete("X-Frame-Options")
-    response.headers["Content-Security-Policy"] = "frame-ancestors https://discord.com https://*.discordsays.com"
+    response.headers["Content-Security-Policy"] = "frame-ancestors #{DISCORD_FRAME_ANCESTORS.join(' ')}"
   end
 
   # Dev-only shortcut: `?roomStatus=Wait` (case-insensitive starts-with) drives the

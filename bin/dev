@@ -8,6 +8,10 @@ fi
 # Default to port 3000 if not specified
 export PORT="${PORT:-3000}"
 
+# Default to HTTPS via mkcert (config/ssl/) so the Discord Activity URL Override
+# (https://localhost:3000) works. Run `SSL=0 ./bin/dev` to opt back to HTTP.
+export SSL="${SSL:-1}"
+
 # Let the debug gem allow remote connections,
 # but avoid loading until `debugger` is called
 export RUBY_DEBUG_OPEN="true"

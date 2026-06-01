@@ -28,7 +28,17 @@ threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-port ENV.fetch("PORT", 3000)
+# When SSL=1 in development, bind HTTPS using a locally-trusted mkcert cert
+# (see config/ssl/). Used for Discord Activity URL Override, which only frames
+# https://localhost:* per Discord's CSP.
+if ENV.fetch("RAILS_ENV", "development") == "development" && ENV["SSL"] == "1"
+  ssl_bind "127.0.0.1", ENV.fetch("PORT", 3000), {
+    key:  "config/ssl/localhost+2-key.pem",
+    cert: "config/ssl/localhost+2.pem"
+  }
+else
+  port ENV.fetch("PORT", 3000)
+end
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
