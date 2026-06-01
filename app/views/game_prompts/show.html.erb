@@ -1,7 +1,7 @@
 <% content_for(:skip_flash_banner, true) %>
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 <div class="<%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] flex flex-col items-center max-sm:items-start justify-center bg-page' : 'min-h-screen flex items-center max-sm:items-start justify-center bg-page overflow-auto' %>">
-  <div class="card-primary animate-slide-up <%= discord_authenticated? ? 'p-6 m-4 relative z-content' : 'p-10 m-10' %> max-sm:p-6 max-sm:m-4 max-w-2xl w-full flex flex-col min-h-0">
+  <div class="card-primary animate-slide-up relative z-content <%= discord_authenticated? ? 'p-6 m-4' : 'p-10 m-10' %> max-sm:p-6 max-sm:m-4 max-w-2xl w-full flex flex-col min-h-0">
     <%= render "shared/round_badge" if discord_authenticated? %>
 
     <div class="text-center p-8 max-sm:p-6 mb-8 bg-accent-blue/10 rounded-2xl border-2 border-ink/10">

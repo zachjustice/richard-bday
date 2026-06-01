@@ -9,54 +9,150 @@
   <% end %>
 </div>
 
-<%# Answer list — scrollable %>
-<div class="flex flex-col gap-1.5 overflow-y-auto max-h-[50vh]">
-  <% @answers_sorted_by_votes.each_with_index do |answer, index| %>
-    <% is_winner = @winner&.id == answer.id %>
-    <% medal = index < 3 ? GameConstants::RANKED_MEDALS[index] : nil %>
-    <% vote_count = @votes_by_answer[answer.id]&.size || 0 %>
+<%# Podium — 1st (full width), 2nd/3rd (side-by-side), then compact rows %>
+<div class="flex flex-col gap-3 overflow-y-auto max-h-[50vh]">
+  <%
+    sorted = @answers_sorted_by_votes
+    first  = sorted[0]
+    second = sorted[1]
+    third  = sorted[2]
+    remaining = sorted.drop(3)
+  %>
 
-    <% if index < 3 %>
-      <%# Top 3: full detail with medal %>
-      <div class="flex flex-col gap-1 p-3 rounded-xl border-2
-                  <%= is_winner ? 'bg-accent-violet/25 border-accent-violet/60' : 'bg-ink/5 border-ink/10' %>">
-        <span class="text-base font-bold text-ink leading-snug">
-          <%= medal %> <%= answer.text %>
-          <% if @audience_kudos_counts && @audience_kudos_counts[answer.id]&.positive? %>
-            <%= render "shared/audience_kudos", count: @audience_kudos_counts[answer.id] %>
+  <%# === 1ST PLACE CARD (full width) === %>
+  <% if first %>
+    <div class="animate-slide-up rounded-xl border-3 border-ink p-3 bg-accent-tertiary/50"
+         style="animation-delay: 0.3s; box-shadow: 6px 6px 0px var(--color-ink);">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="text-4xl animate-bouncy" style="animation-delay: 0.5s;">🥇</span>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="text-xl"><%= first.user.avatar %></span>
+            <p class="font-bold text-ink text-base m-0"><%= first.user.name %></p>
+          </div>
+          <% if @winner&.id == first.id %>
+            <span class="text-[10px] font-black text-ink uppercase tracking-wide">Champion</span>
           <% end %>
-        </span>
+        </div>
+      </div>
+      <p class="text-base font-medium text-ink leading-snug m-0"><%= first.text %></p>
+      <div class="flex flex-wrap items-center gap-2 mt-2">
+        <% if @ranked_voting && @points_by_answer && @points_by_answer[first.id]&.positive? %>
+          <span class="text-sm text-ink/70 font-semibold"><%= @points_by_answer[first.id] %> pts</span>
+        <% end %>
+        <% unless @ranked_voting %>
+          <% if @votes_by_answer[first.id]&.any? %>
+            <div class="flex flex-wrap items-center gap-0.5">
+              <% @votes_by_answer[first.id].first(5).each do |vote| %>
+                <span class="text-base"><%= vote.user.avatar %></span>
+              <% end %>
+              <% if @votes_by_answer[first.id].size > 5 %>
+                <span class="text-xs font-bold text-ink/60">+<%= @votes_by_answer[first.id].size - 5 %></span>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+        <% if @audience_kudos_counts && @audience_kudos_counts[first.id]&.positive? %>
+          <%= render "shared/audience_kudos", count: @audience_kudos_counts[first.id] %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-xs text-ink/50 truncate"><%= answer.user.avatar_with_name %></span>
-
-          <div class="flex items-center gap-0.5 shrink-0">
-            <% if @ranked_voting && @points_by_answer[answer.id]&.positive? %>
-              <span class="text-sm font-bold text-accent-violet"><%= @points_by_answer[answer.id] %>pts</span>
+  <%# === 2ND / 3RD PLACE CARDS (side by side, stack on narrow) === %>
+  <% if second %>
+    <div class="flex gap-3 max-sm:flex-col">
+      <%# 2nd Place %>
+      <div class="flex-1 min-w-0 flex flex-col animate-slide-up rounded-xl border-2 border-ink p-3 bg-accent-blue/20"
+           style="animation-delay: 0.4s; box-shadow: 4px 4px 0px var(--color-ink);">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-3xl animate-bouncy" style="animation-delay: 0.6s;">🥈</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-lg"><%= second.user.avatar %></span>
+            <p class="font-bold text-ink text-sm m-0 truncate"><%= second.user.name %></p>
+          </div>
+        </div>
+        <p class="text-sm text-ink leading-snug m-0"><%= second.text %></p>
+        <div class="flex flex-wrap items-center gap-2 mt-auto pt-2">
+          <% if @ranked_voting && @points_by_answer && @points_by_answer[second.id]&.positive? %>
+            <span class="text-xs text-ink/70 font-semibold"><%= @points_by_answer[second.id] %> pts</span>
+          <% end %>
+          <% unless @ranked_voting %>
+            <% if @votes_by_answer[second.id]&.any? %>
+              <div class="flex flex-wrap items-center gap-0.5">
+                <% @votes_by_answer[second.id].first(5).each do |vote| %>
+                  <span class="text-sm"><%= vote.user.avatar %></span>
+                <% end %>
+                <% if @votes_by_answer[second.id].size > 5 %>
+                  <span class="text-xs font-bold text-ink/60">+<%= @votes_by_answer[second.id].size - 5 %></span>
+                <% end %>
+              </div>
             <% end %>
-            <% if @votes_by_answer[answer.id]&.any? %>
-              <% @votes_by_answer[answer.id].first(4).each do |vote| %>
-                <span class="text-sm"><%= vote.user.avatar %></span>
+          <% end %>
+          <% if @audience_kudos_counts && @audience_kudos_counts[second.id]&.positive? %>
+            <%= render "shared/audience_kudos", count: @audience_kudos_counts[second.id] %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# 3rd Place (only if it exists) %>
+      <% if third %>
+        <div class="flex-1 min-w-0 flex flex-col animate-slide-up rounded-xl border-2 border-ink p-3 bg-accent-orange/20"
+             style="animation-delay: 0.5s; box-shadow: 4px 4px 0px var(--color-ink);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-3xl animate-bouncy" style="animation-delay: 0.7s;">🥉</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-lg"><%= third.user.avatar %></span>
+              <p class="font-bold text-ink text-sm m-0 truncate"><%= third.user.name %></p>
+            </div>
+          </div>
+          <p class="text-sm text-ink leading-snug m-0"><%= third.text %></p>
+          <div class="flex flex-wrap items-center gap-2 mt-auto pt-2">
+            <% if @ranked_voting && @points_by_answer && @points_by_answer[third.id]&.positive? %>
+              <span class="text-xs text-ink/70 font-semibold"><%= @points_by_answer[third.id] %> pts</span>
+            <% end %>
+            <% unless @ranked_voting %>
+              <% if @votes_by_answer[third.id]&.any? %>
+                <div class="flex flex-wrap items-center gap-0.5">
+                  <% @votes_by_answer[third.id].first(5).each do |vote| %>
+                    <span class="text-sm"><%= vote.user.avatar %></span>
+                  <% end %>
+                  <% if @votes_by_answer[third.id].size > 5 %>
+                    <span class="text-xs font-bold text-ink/60">+<%= @votes_by_answer[third.id].size - 5 %></span>
+                  <% end %>
+                </div>
               <% end %>
-              <% overflow = @votes_by_answer[answer.id].size - 4 %>
-              <% if overflow > 0 %>
-                <span class="text-sm font-bold text-ink/40">+<%= overflow %></span>
-              <% end %>
+            <% end %>
+            <% if @audience_kudos_counts && @audience_kudos_counts[third.id]&.positive? %>
+              <%= render "shared/audience_kudos", count: @audience_kudos_counts[third.id] %>
             <% end %>
           </div>
         </div>
-      </div>
-    <% else %>
-      <%# Rows 4+: compact single line %>
-      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-ink/5">
-        <span class="text-sm font-bold text-ink/30">#<%= index + 1 %></span>
-        <span class="text-sm text-ink truncate flex-1"><%= answer.text %></span>
-        <span class="text-sm text-ink/40 shrink-0">&middot; <%= answer.user.name %></span>
-        <% if vote_count > 0 %>
-          <span class="text-sm font-bold text-ink/40">(<%= vote_count %>)</span>
-        <% end %>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# === COMPACT ROWS (4th+) === %>
+  <% if remaining.any? %>
+    <div class="flex flex-col gap-1.5">
+      <% remaining.each_with_index do |answer, i| %>
+        <% rank = i + 4 %>
+        <% vote_count = @votes_by_answer[answer.id]&.size || 0 %>
+        <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-ink/5">
+          <span class="text-sm font-bold text-ink/30">#<%= rank %></span>
+          <span class="text-sm text-ink truncate flex-1"><%= answer.text %></span>
+          <span class="text-sm text-ink/40 shrink-0">&middot; <%= answer.user.name %></span>
+          <% if @ranked_voting && @points_by_answer && @points_by_answer[answer.id]&.positive? %>
+            <span class="text-sm font-bold text-ink/40"><%= @points_by_answer[answer.id] %>pts</span>
+          <% elsif vote_count > 0 %>
+            <span class="text-sm font-bold text-ink/40">(<%= vote_count %>)</span>
+          <% end %>
+          <% if @audience_kudos_counts && @audience_kudos_counts[answer.id]&.positive? %>
+            <%= render "shared/audience_kudos", count: @audience_kudos_counts[answer.id] %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 </div>
 

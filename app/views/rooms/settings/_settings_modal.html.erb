@@ -7,7 +7,7 @@
      aria-hidden="true">
   <div class="settings-backdrop" data-action="click->settings-modal#close"></div>
   <div class="settings-content">
-    <div class="flex items-center justify-between px-8 py-6 border-b-3 border-ink">
+    <div class="flex items-center justify-between px-8 py-6 border-b-3 border-ink flex-shrink-0">
       <h2 id="settings-modal-title" class="text-2xl font-bold text-ink m-0">Room Settings</h2>
       <button type="button"
               class="modal-close-btn"
@@ -18,7 +18,7 @@
         </svg>
       </button>
     </div>
-    <div id="settings-form">
+    <div id="settings-form" class="flex-1 min-h-0 flex flex-col">
       <%= render "rooms/settings/settings_form", room: room %>
     </div>
   </div>

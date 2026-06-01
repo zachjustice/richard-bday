@@ -29,6 +29,7 @@
       <%= render "shared/editor_navbar" %>
     <% end %>
     <%= render "shared/flash_messages" unless content_for?(:skip_flash_banner) %>
+    <%= render "shared/doodle_decorations" %>
     <main id="main-content" tabindex="-1">
       <%= yield %>
     </main>

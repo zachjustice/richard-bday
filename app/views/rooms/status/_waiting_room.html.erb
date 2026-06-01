@@ -1,8 +1,5 @@
 <%= turbo_stream_from "rooms:#{room.id}:users" %>
 
-<%# Doodle decorations %>
-<%= render "shared/waiting_room_doodles" %>
-
 <div class="flex-1 flex flex-col justify-start min-h-0 relative z-avatars">
   <%# Header section with title styling %>
   <div class="text-center mb-4 animate-slide-up">
