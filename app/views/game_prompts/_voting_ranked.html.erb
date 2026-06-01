@@ -11,7 +11,7 @@
   <div class="card-primary animate-slide-up <%= discord_authenticated? ? 'p-6 m-4 relative z-content' : 'p-10 m-10' %> max-sm:p-4 max-sm:mx-2 max-sm:my-4 max-w-2xl w-full flex flex-col min-h-[600px]">
     <%= render "shared/round_badge" if discord_authenticated? %>
 
-    <div class="text-center mb-6">
+    <div class="text-center mb-4">
       <h2 class="text-2xl max-sm:text-xl font-bold text-gray-900 leading-snug">
         <%= @game_prompt.prompt.description %>
       </h2>
@@ -30,11 +30,11 @@
 
     <%= form_with url: "/vote", method: :post,
                   data: { ranked_voting_target: "form" },
-                  class: "flex flex-col gap-6 flex-1" do |form| %>
+                  class: "flex flex-col gap-4 flex-1" do |form| %>
       <%= form.hidden_field :game_prompt_id, value: @game_prompt.id %>
 
       <%# Ranking slots %>
-      <div class="flex flex-col gap-3"
+      <div class="flex flex-col gap-2"
            data-ranked-voting-target="slots"
            role="group"
            aria-label="Ranking slots - place your top <%= max_slots %> answers here">

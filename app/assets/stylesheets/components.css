@@ -374,7 +374,7 @@
    Exception made because medals are universally recognized symbols for 1st/2nd/3rd place rankings
    and provide immediate visual hierarchy without requiring custom iconography. */
 .ranking-slot {
-  @apply flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-ink/20 min-h-[70px] transition-all;
+  @apply flex items-center gap-4 px-4 py-2 rounded-xl border-2 border-dashed border-ink/20 min-h-[56px] transition-all;
 }
 
 .ranking-slot-filled {
@@ -386,7 +386,7 @@
 }
 
 .ranking-slot .ranking-answer {
-  @apply flex-1 min-w-0;
+  @apply flex-1 min-w-0 py-2;
 }
 
 .ranking-slot .ranking-answer .answer-text {
@@ -394,7 +394,7 @@
 }
 
 .ranking-medal {
-  @apply text-3xl flex-none;
+  @apply text-2xl flex-none;
 }
 
 .ranking-points {
