@@ -63,7 +63,7 @@ Rails.application.configure do
 
   # Allow ActionCable connections from Discord Activity iframes
   config.action_cable.allowed_request_origins = [
-    /http:\/\/localhost:\d+/,
+    /https?:\/\/localhost:\d+/,
     /\.trycloudflare\.com$/,
     /\.discordsays\.com$/
   ]

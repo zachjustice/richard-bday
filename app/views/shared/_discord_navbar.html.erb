@@ -45,6 +45,10 @@
           <span class="text-ink/20 text-xs mx-0.5">──</span>
         <% end %>
 
+        <%
+          phase_state = is_current ? "current phase" : (is_completed ? "completed" : "upcoming")
+          phase_tooltip = "#{phase[:text]}: #{phase_state}"
+        %>
         <div class="discord-phase-pill
                     <%= if is_current
                           "#{item_color[:bg_dark]} border-2 #{item_color[:border]}"
@@ -53,7 +57,8 @@
                         else
                           "bg-ink/5 text-ink/35"
                         end %>"
-             aria-label="<%= phase[:text] %>: <%= is_current ? 'current phase' : (is_completed ? 'completed' : 'upcoming') %>">
+             title="<%= phase_tooltip %>"
+             aria-label="<%= phase_tooltip %>">
           <% if is_completed %>
             <span class="text-accent-green text-xs">✓</span>
           <% else %>
@@ -69,9 +74,13 @@
         is_final = room.status.in?([RoomStatus::FinalResults, RoomStatus::Credits])
         final_color = phase_colors[RoomStatus::FinalResults]
       %>
+      <%
+        final_tooltip = "Final Story: #{is_final ? 'current phase' : 'upcoming'}"
+      %>
       <div class="discord-phase-pill
                   <%= is_final ? "#{final_color[:bg_dark]} border-2 #{final_color[:border]}" : "bg-ink/5 text-ink/35" %>"
-           aria-label="Final Story: <%= is_final ? 'current phase' : 'upcoming' %>">
+           title="<%= final_tooltip %>"
+           aria-label="<%= final_tooltip %>">
         <span class="text-xs">📜</span>
         <span class="hidden sm:inline text-xs">Final</span>
       </div>
