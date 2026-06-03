@@ -66,6 +66,25 @@ class RankedVotingKeyboardTest < ApplicationSystemTestCase
     assert_selector "[data-ranked-voting-target='answersContainer'] [data-answer-id='#{answers[0].id}']"
   end
 
+  test "answers list height stays constant when an answer is moved into a slot" do
+    answers = sign_in_and_setup_voting
+    visit game_prompt_voting_path(@game_prompt)
+    wait_for_page_ready(controller: "ranked-voting")
+
+    container_selector = "[data-ranked-voting-target='answersContainer']"
+    height_script = "document.querySelector(\"#{container_selector}\").offsetHeight"
+
+    initial_height = page.evaluate_script(height_script)
+    assert initial_height.positive?, "expected answers container to have a height"
+
+    # Move an answer into a slot — the container loses a child but should not shrink
+    place_answer_in_slot(answers[0].id, "1")
+    assert_selector "[data-rank='1'] [data-answer-id='#{answers[0].id}']"
+
+    assert_equal initial_height, page.evaluate_script(height_script),
+      "answers list should keep the same height after an answer is ranked"
+  end
+
   test "Escape clears keyboard selection" do
     answers = sign_in_and_setup_voting
     visit game_prompt_voting_path(@game_prompt)

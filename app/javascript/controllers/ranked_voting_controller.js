@@ -27,6 +27,19 @@ export default class extends Controller {
     this.setupDragHandlers()
     this.setupKeyboardHandlers()
     this.updateSubmitState()
+    this.lockAnswersContainerHeight()
+  }
+
+  // Pin the answers list to its initial height so moving answers into rank
+  // slots doesn't shrink the list and open up empty space below the submit
+  // button. Captures the natural rendered height (capped at the CSS max-height)
+  // so it works whether the list started scrollable or shorter than the cap.
+  lockAnswersContainerHeight() {
+    const container = this.answersContainerTarget
+    const initialHeight = container.offsetHeight
+    if (initialHeight > 0) {
+      container.style.height = `${initialHeight}px`
+    }
   }
 
   setupDragHandlers() {
