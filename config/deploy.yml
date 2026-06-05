@@ -8,10 +8,15 @@ image: zachjustice/richard_bday
 servers:
   web:
     - 174.138.60.116
-  job:
-    hosts:
-      - 174.138.60.116
-    cmd: bin/jobs
+  # To offload jobs to a dedicated container (or host), uncomment this role.
+  # Then also flip `SOLID_QUEUE_IN_PUMA` to false below so jobs only run here,
+  # not inside the web container's Puma master. Worth doing once the web tier
+  # is busy enough that sharing CPU/RAM with the job supervisor causes latency,
+  # or once you scale to a second host and want jobs on their own machine.
+  # job:
+  #   hosts:
+  #     - 174.138.60.116
+  #   cmd: bin/jobs
   # TODO figure out how to do standalone cable deployments
   # cable:
   #   hosts:
@@ -51,11 +56,14 @@ env:
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
     SOLID_QUEUE_IN_PUMA: true
 
-    # Set number of processes dedicated to Solid Queue (default: 1)
-    JOB_CONCURRENCY: 3
+    # Number of Solid Queue worker processes. Each is a full Rails process (~150-250 MB),
+    # so keep this at 1 on the 1 GB droplet. `queue.yml` still gives each worker 3 threads.
+    JOB_CONCURRENCY: 1
 
-    # Set number of cores available to the application on each server (default: 1).
-    # WEB_CONCURRENCY: 2
+    # Puma in single mode (no forked web workers) — right call on 1 vCPU / 1 GB.
+    # Bump to 2 once you size up the droplet.
+    WEB_CONCURRENCY: 0
+    RAILS_MAX_THREADS: 3
 
     # Match this to any external database server to configure Active Record correctly
     # Use richard_bday-db for a db accessory server on same machine via local kamal docker network.
