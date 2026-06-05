@@ -62,7 +62,7 @@ The production droplet is a 1 GB / 1 vCPU DigitalOcean instance, which is tight 
 Rails 8 + Solid Queue. A few things are trimmed to fit and should be reversed when
 the droplet is sized up:
 
-- `config/deploy.yml` — `WEB_CONCURRENCY: 0` (Puma single mode), `JOB_CONCURRENCY: 1`,
+- `config/deploy.yml` — Bump up `WEB_CONCURRENCY: 0` (Puma single mode), `JOB_CONCURRENCY: 1`,
   `RAILS_MAX_THREADS: 4`. The commented-out `job:` role can be enabled for a dedicated
   jobs container (also flip `SOLID_QUEUE_IN_PUMA` to false in that case).
 - `config/queue.yml` — Solid Queue workers run with `threads: 2`. Bump back to 3+ when
@@ -75,8 +75,10 @@ the droplet is sized up:
   ```
 
 The droplet also has a 1 GB swapfile and the Dockerfile preloads jemalloc (cuts Ruby
-RSS ~25-40%). Once on a 2 GB+ host, the right order to undo these is: re-enable
-`recurring.yml` → bump worker threads → enable the `job:` role.
+RSS ~25-40%).
+
+Once on a 2 GB+ host, the right order to undo these is to (1) re-enable
+`recurring.yml` (2) bump worker threads and (3) enable the `job:` role.
 
 ### Useful Commands
 ```bash
