@@ -63,7 +63,9 @@ env:
     # Puma in single mode (no forked web workers) — right call on 1 vCPU / 1 GB.
     # Bump to 2 once you size up the droplet.
     WEB_CONCURRENCY: 0
-    RAILS_MAX_THREADS: 3
+    # Drives both Puma's thread count and the DB pool size. Must be >= Solid Queue's
+    # worker threads + 2 (heartbeat + dispatcher), so 5 covers `threads: 3` in queue.yml.
+    RAILS_MAX_THREADS: 5
 
     # Match this to any external database server to configure Active Record correctly
     # Use richard_bday-db for a db accessory server on same machine via local kamal docker network.
