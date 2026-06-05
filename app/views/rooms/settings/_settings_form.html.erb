@@ -7,7 +7,7 @@
                 action: "turbo:submit-start->settings-modal#submitting turbo:submit-end->settings-modal#submitted"
               },
               class: "flex-1 min-h-0 flex flex-col" do |form| %>
-  <div class="flex-1 min-h-0 overflow-y-auto p-8 flex flex-col gap-6">
+  <div class="flex-1 min-h-0 overflow-y-auto scroll-fade-indicators p-8 flex flex-col gap-6">
     <% if room.errors.any? %>
       <div class="p-4 rounded-xl border-3 border-accent-primary bg-accent-primary/10">
         <% room.errors.full_messages.each do |message| %>
