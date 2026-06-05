@@ -56,6 +56,28 @@ bin/restore-db development backups/development_backup_20260207_143000.sqlite3
 bin/restore-db production backups/production_backup_20260207_143000.sqlite3
 ```
 
+### Scaling Notes
+
+The production droplet is a 1 GB / 1 vCPU DigitalOcean instance, which is tight for
+Rails 8 + Solid Queue. A few things are trimmed to fit and should be reversed when
+the droplet is sized up:
+
+- `config/deploy.yml` — `WEB_CONCURRENCY: 0` (Puma single mode), `JOB_CONCURRENCY: 1`,
+  `RAILS_MAX_THREADS: 4`. The commented-out `job:` role can be enabled for a dedicated
+  jobs container (also flip `SOLID_QUEUE_IN_PUMA` to false in that case).
+- `config/queue.yml` — Solid Queue workers run with `threads: 2`. Bump back to 3+ when
+  RAM allows.
+- `config/recurring.yml` — recurring jobs are disabled in production to avoid spawning
+  a Solid Queue scheduler process (~150 MB). Until re-enabled, run these manually:
+  ```bash
+  kamal app exec --reuse "bin/rails runner 'SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)'"
+  kamal app exec --reuse "bin/rails runner 'CleanupExpiredTokensJob.perform_now'"
+  ```
+
+The droplet also has a 1 GB swapfile and the Dockerfile preloads jemalloc (cuts Ruby
+RSS ~25-40%). Once on a 2 GB+ host, the right order to undo these is: re-enable
+`recurring.yml` → bump worker threads → enable the `job:` role.
+
 ### Useful Commands
 ```bash
 # View logs
