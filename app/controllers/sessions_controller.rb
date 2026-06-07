@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  allow_unauthenticated_access only: %i[ new create resume ]
+  allow_unauthenticated_access only: %i[ new create resume lookup ]
   rate_limit to: 10, within: 3.minutes, only: [ :create, :new ], with: -> { redirect_to new_session_url, alert: "Try again later." }
 
   def new
@@ -71,6 +71,15 @@ class SessionsController < ApplicationController
     else
       error_message = user.errors[:base].first || "Unable to join room"
       redirect_to new_session_path, alert: error_message
+    end
+  end
+
+  def lookup
+    room = Room.find_by(code: params[:code].downcase)
+    if room
+      redirect_to new_session_path(code: room.code.upcase)
+    else
+      redirect_to new_session_path, alert: "Room not found."
     end
   end
 

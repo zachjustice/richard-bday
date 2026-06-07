@@ -112,6 +112,9 @@ Rails.application.routes.draw do
   # About page
   get "/about", to: "about#show", as: :about
 
+  # Short room-code URL: blanksies.net/ABCD pre-fills the join form
+  get "/:code", to: "sessions#lookup", constraints: { code: /[a-zA-Z0-9]{4}/ }
+
   # Handle 404s
   match "*unmatched", to: "application#not_found_method", via: :all
 end

@@ -34,7 +34,7 @@ export default class extends Controller {
     const roomCode = $('meta[name=room]').attr('code')
 
     const qrcode = encoder.encode(
-      new Byte(`${window.location.origin}/session/new?code=${roomCode}`),
+      new Byte(`${window.location.origin}/${roomCode}`),
     );
 
     qrElement.src = qrcode.toDataURL(8, {

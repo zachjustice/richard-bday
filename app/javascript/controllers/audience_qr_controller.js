@@ -19,7 +19,7 @@ export default class extends Controller {
     const { Byte, Encoder } = await import("@nuintun/qrcode")
     const encoder = new Encoder({ level: "H" })
     const qrcode = encoder.encode(
-      new Byte(`${window.location.origin}/session/new?code=${this.roomCodeValue}`)
+      new Byte(`${window.location.origin}/${this.roomCodeValue}`)
     )
     this.imageTarget.src = qrcode.toDataURL(4, { margin: 0, background: [255, 255, 255] })
   }

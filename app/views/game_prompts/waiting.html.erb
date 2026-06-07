@@ -6,12 +6,6 @@
     <div class="card-primary p-8 m-6 max-sm:p-5 max-sm:m-4 max-w-[500px] w-full animate-fade-in relative z-content">
       <%= render "shared/round_badge" %>
 
-      <div class="text-center mb-6">
-        <% answered = User.players.where(room: @current_room, status: UserStatus::Answered).count %>
-        <% total = User.players.where(room: @current_room).count %>
-        <%= render "shared/players_done_counter", done_count: answered, total_count: total %>
-      </div>
-
       <div class="mb-4">
         <%= render "shared/fun_facts" %>
       </div>
@@ -24,6 +18,10 @@
         </div>
       <% end %>
     </div>
+
+    <% answered = User.players.where(room: @current_room, status: UserStatus::Answered).count %>
+    <% total = User.players.where(room: @current_room).count %>
+    <%= render "shared/players_done_counter", done_count: answered, total_count: total %>
   </div>
 
 <% else %>

@@ -81,6 +81,19 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
+  test "lookup with valid code redirects to join form with code pre-filled" do
+    get "/#{@room.code.upcase}"
+
+    assert_redirected_to new_session_path(code: @room.code.upcase)
+  end
+
+  test "lookup with unknown code redirects to join form with alert" do
+    get "/zzzz"
+
+    assert_redirected_to new_session_path
+    assert_equal "Room not found.", flash[:alert]
+  end
+
   test "existing session with matching room code redirects to game" do
     post "/session", params: { code: @room.code, name: "Returning" }
     assert_redirected_to show_room_path
