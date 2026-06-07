@@ -35,7 +35,7 @@ class VoteSubmittedJob < ApplicationJob
       "rooms:#{room.id}:votes",
       target: "user_list_user_#{user.id}",
       partial: "rooms/partials/user_with_status_item",
-      locals: { user: user, completed: true, color: "indigo" }
+      locals: { user: user, completed: true, color: "indigo", animate_move: true }
     )
 
     # Update roaming avatar status badge

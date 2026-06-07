@@ -27,21 +27,23 @@
   </div>
 
   <%# Bottom Section %>
-  <div class="flex flex-row gap-8">
+  <div class="flex flex-row gap-8 flex-1 min-h-0">
     <%# Player grid - main content with staggered animation %>
     <div id="users-list-container" class="flex flex-1 flex-col min-h-0">
-      <ul id="waiting-room" class="stagger-animation rainbow-cycle playful-tilt list-none p-2 m-0 gap-4 grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
-        <% if users.empty? %>
-          <%# First element is deleted when the first user joins %>
-          <li id="no-users-yet" class="py-8 px-4 text-ink-inverted text-center italic col-span-full">No players yet...</li>
-        <% end %>
+      <div class="flex-1 min-h-0 overflow-y-auto scroll-fade-indicators">
+        <ul id="waiting-room" class="stagger-animation rainbow-cycle playful-tilt list-none p-2 m-0 gap-4 grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
+          <% if users.empty? %>
+            <%# First element is deleted when the first user joins %>
+            <li id="no-users-yet" class="py-8 px-4 text-ink-inverted text-center italic col-span-full">No players yet...</li>
+          <% end %>
 
-        <% users.each do |user| %>
-          <%= render "rooms/partials/user_list_item", user: user %>
-        <% end %>
-      </ul>
+          <% users.each do |user| %>
+            <%= render "rooms/partials/user_list_item", user: user %>
+          <% end %>
+        </ul>
+      </div>
 
-      <div class="flex justify-center mt-auto">
+      <div class="flex justify-center mt-4 flex-shrink-0">
         <%= form_with url: initialize_room_path(room), method: :post do %>
           <%= submit_tag "Let's Go!", class: "btn-primary" %>
         <% end %>

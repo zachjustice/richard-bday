@@ -318,6 +318,11 @@
     50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
   }
 
+  /* Invisible delay before JS moves a completed user pill to end of list */
+  @keyframes move-to-end-delay {
+    0%, 100% { opacity: 1; }
+  }
+
   /* Timer urgency — shake after scale-up when time is low */
   @keyframes timer-urgency-shake {
     0%   { transform: scale(var(--urgency-scale, 3)); }
@@ -328,6 +333,10 @@
     100% { transform: scale(var(--urgency-scale, 3)); }
   }
 
+}
+
+.will-move-to-end {
+  animation: move-to-end-delay 700ms linear forwards;
 }
 
 /* Disable animations for users who prefer reduced motion */
@@ -368,6 +377,10 @@
   .roaming-avatar-nightcap,
   .roaming-avatar-star {
     animation: none !important;
+  }
+
+  .will-move-to-end {
+    animation-duration: 1ms !important;
   }
 
   .countdown-timer-pause-play {

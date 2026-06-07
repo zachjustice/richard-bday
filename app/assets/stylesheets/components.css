@@ -806,7 +806,7 @@
 
 /* Music Player Component */
 .music-player-button {
-  @apply fixed top-4 right-[72px] w-[50px] h-[50px] bg-white rounded-xl;
+  @apply fixed top-4 right-[60px] w-10 h-10 bg-white rounded-xl;
   @apply cursor-pointer transition-all z-music-button flex items-center justify-center;
   border: 3px solid var(--color-ink);
   box-shadow: 3px 3px 0px var(--color-ink);
@@ -1168,6 +1168,18 @@ button.countdown-timer {
     radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) center bottom;
   background-repeat: no-repeat;
   background-size: 100% 60px, 100% 50px, 100% 14px, 100% 14px;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* Horizontal scroll fade — mirrors scroll-fade-indicators but for overflow-x-auto containers */
+.scroll-fade-indicators-x {
+  background:
+    linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)) left center,
+    linear-gradient(to left, white 30%, rgba(255, 255, 255, 0)) right center,
+    radial-gradient(farthest-side at 0% 50%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) left center,
+    radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) right center;
+  background-repeat: no-repeat;
+  background-size: 60px 100%, 60px 100%, 14px 100%, 14px 100%;
   background-attachment: local, local, scroll, scroll;
 }
 
@@ -1621,25 +1633,25 @@ button.countdown-timer {
   }
 
   .card-status-content-blue {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 flex-1 min-h-0 border-l-4;
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 flex-1 min-h-0 flex flex-col border-l-4;
     @apply border-accent-blue/40 border-l-accent-blue;
     border: 2px solid rgba(26, 26, 46, 0.2);
   }
 
   .card-status-content-indigo {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 flex-1 min-h-0 border-l-4;
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 flex-1 min-h-0 flex flex-col border-l-4;
     @apply border-accent-indigo/40 border-l-accent-indigo;
     border: 2px solid rgba(26, 26, 46, 0.2);
   }
 
   .card-status-content-violet {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 flex-1 min-h-0 border-l-4;
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 flex-1 min-h-0 flex flex-col border-l-4;
     @apply border-accent-violet/40 border-l-accent-violet;
     border: 2px solid rgba(26, 26, 46, 0.2);
   }
 
   .card-status-content-green {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 flex-1 min-h-0 border-l-4;
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 flex-1 min-h-0 flex flex-col border-l-4;
     @apply border-accent-green/40 border-l-accent-green bg-accent-green/10;
     border: 2px solid rgba(26, 26, 46, 0.2);
   }
