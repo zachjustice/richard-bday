@@ -432,11 +432,11 @@ class DevPhaseSimulatorServiceTest < ActiveSupport::TestCase
     audience_votes = Vote.by_audience.where(game_prompt_id: game_prompt.id)
     assert audience_votes.any?, "expected at least one audience vote"
 
-    # Every audience member gave between 1 and MAX_AUDIENCE_STARS total stars
+    # Every audience member gave between 1 and MAX_AUDIENCE_KUDOS total stars
     User.audience.where(room: @room).find_each do |aud|
       count = audience_votes.where(user_id: aud.id).count
-      assert count.between?(1, Vote::MAX_AUDIENCE_STARS),
-        "audience #{aud.id} should have 1..#{Vote::MAX_AUDIENCE_STARS} stars (got #{count})"
+      assert count.between?(1, Vote::MAX_AUDIENCE_KUDOS),
+        "audience #{aud.id} should have 1..#{Vote::MAX_AUDIENCE_KUDOS} stars (got #{count})"
     end
   end
 

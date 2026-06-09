@@ -233,7 +233,7 @@ class DevPhaseSimulatorService
 
     audience_members.each do |aud|
       next if voted_audience_ids.include?(aud.id)
-      stars = rand(1..Vote::MAX_AUDIENCE_STARS)
+      stars = rand(1..Vote::MAX_AUDIENCE_KUDOS)
       stars.times do
         records << vote_attrs(aud.id, answers.sample.id, game.id, game_prompt.id, nil, "audience", now)
       end
