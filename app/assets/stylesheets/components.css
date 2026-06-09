@@ -157,6 +157,29 @@
     box-shadow: 3px 3px 0px var(--color-ink);
   }
 
+  /* Floating icon button with brutalist push effect */
+  .btn-icon-push {
+    @apply w-10 h-10 bg-white rounded-xl flex items-center justify-center cursor-pointer transition-all;
+    color: var(--color-ink);
+    border: 3px solid var(--color-ink);
+    box-shadow: 3px 3px 0px var(--color-ink);
+  }
+
+  .btn-icon-push:hover {
+    box-shadow: 5px 5px 0px var(--color-ink);
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-icon-push:active {
+    box-shadow: 2px 2px 0px var(--color-ink);
+    transform: translate(1px, 1px);
+  }
+
+  .btn-icon-push:focus-visible {
+    outline: 3px solid var(--color-accent-secondary);
+    outline-offset: 3px;
+  }
+
   /* Primary title with text shadow */
   .title-primary {
     @apply text-5xl md:text-6xl lg:text-7xl font-black tracking-tight;
@@ -679,7 +702,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .blank-card:hover,
-  .btn-icon:hover {
+  .btn-icon:hover,
+  .btn-icon-push:hover,
+  .btn-icon-push:active {
     transform: none;
   }
 }
@@ -805,24 +830,6 @@
 }
 
 /* Music Player Component */
-.music-player-button {
-  @apply fixed top-4 right-[60px] w-10 h-10 bg-white rounded-xl;
-  @apply cursor-pointer transition-all z-music-button flex items-center justify-center;
-  border: 3px solid var(--color-ink);
-  box-shadow: 3px 3px 0px var(--color-ink);
-  color: var(--color-ink);
-}
-
-.music-player-button:hover {
-  box-shadow: 5px 5px 0px var(--color-ink);
-  transform: translate(-2px, -2px);
-}
-
-.music-player-button:active {
-  box-shadow: 2px 2px 0px var(--color-ink);
-  transform: translate(1px, 1px);
-}
-
 .music-player-modal {
   @apply fixed inset-0 z-modal flex items-center justify-center animate-fade-in;
 }
@@ -1678,7 +1685,7 @@ button.countdown-timer {
 /* Music hint - top right, pointing toward music button */
 .tutorial-hint--music {
   top: 12px;
-  right: 120px;
+  right: 124px;
 }
 
 .tutorial-hint-content {

@@ -61,7 +61,6 @@
   --z-index-overlay: 40;       /* Countdown timer, mobile nav overlay */
   --z-index-controls: 50;      /* Fixed navbar, settings, flash messages */
   --z-index-hints: 60;         /* Tutorial hints */
-  --z-index-music-button: 999; /* Music player button */
   --z-index-modal: 1000;       /* All modals */
   --z-index-tooltip: 1100;     /* Prompt tooltips */
   --z-index-easter-egg: 9999;  /* Konami overlay, skip link */

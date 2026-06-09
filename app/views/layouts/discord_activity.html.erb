@@ -73,7 +73,7 @@
         <%= render "shared/discord_navbar", room: @current_room %>
       <% end %>
       <% if @current_room %>
-        <%= render "shared/music_player", hide_floating_button: true %>
+        <%= render "shared/music_player" %>
         <% if @current_user&.navigator? %>
           <div data-controller="settings-modal"
                data-action="open-settings-modal@window->settings-modal#open">
