@@ -1,10 +1,10 @@
 <%# app/views/game_prompts/_tooltip_content.html.erb %>
-<div id="game-prompt-<%= game_prompt.id %>" class="tooltip-content p-4">
-  <div class="mb-3">
+<div id="game-prompt-<%= game_prompt.id %>" class="tooltip-content">
+  <div class="sticky top-0 z-10 bg-white p-4 border-b-2 border-gray-100">
     <h4 class="text-base font-bold text-gray-900 m-0"><%= game_prompt.prompt.description %></h4>
   </div>
 
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2 p-4">
     <% answers.sort_by { |a| -votes_by_answer[a.id]&.size.to_i }.each do |answer| %>
       <div class="flex justify-between items-center p-3 rounded-lg <%= answer.won ? 'bg-success/10 border border-success/30' : 'bg-gray-50' %>">
         <div class="flex-1 min-w-0">

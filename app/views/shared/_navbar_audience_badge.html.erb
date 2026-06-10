@@ -1,7 +1,8 @@
 <span id="navbar-audience-count"
-      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-sm font-medium
+      class="nav-tooltip nav-tooltip-center inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-sm font-medium
              bg-accent-orange/15 border border-ink/20 text-ink/70 transition-opacity duration-200
              <%= 'hidden!' if !audience_count || audience_count.to_i.zero? %>"
+      data-tooltip="<%= audience_count %> audience <%= 'member'.pluralize(audience_count.to_i) %> watching the game"
       aria-live="polite" aria-atomic="true">
   <%= audience_count %> watching
 </span>
