@@ -3,7 +3,7 @@
 <%# Celebratory doodle decorations %>
 <%= render "shared/credits_doodles" %>
 
-<div class="flex-1 flex flex-col justify-start min-h-0 relative z-avatars">
+<div class="flex flex-col justify-start relative z-avatars w-full">
   <%# Header with dramatic entrance %>
   <div class="text-center mb-6 animate-slide-up">
     <h1 class="text-5xl md:text-6xl font-black mb-2 tracking-tight" style="text-shadow: 4px 4px 0px var(--color-accent-tertiary);">
@@ -12,8 +12,8 @@
     <p class="text-lg text-ink/70 font-medium">Thank you for participating...</p>
   </div>
 
-  <%# Main content area - scrollable %>
-  <div class="flex-1 min-h-0 pb-4">
+  <%# Main content area %>
+  <div class="pb-4">
     <%# Podium Section - The dramatic centerpiece %>
     <% if podium.present? && podium.any? %>
       <%= render "rooms/status/credits/podium", podium: podium %>
@@ -90,19 +90,23 @@
         Players in Room
         <span class="badge-primary text-sm py-1 px-3"><%= users&.size || 0 %></span>
       </h3>
-      <ul id="waiting-room" class="rainbow-cycle playful-tilt list-none p-1 m-0 gap-3 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] overflow-y-auto max-h-[300px]">
-        <% if users.present? %>
-          <% users.each do |user| %>
-            <%= render "rooms/partials/user_list_item", user: user %>
+      <div class="relative w-full" data-controller="scroll-fade">
+        <ul id="waiting-room" data-scroll-fade-target="scrollable" class="rainbow-cycle list-none m-0 gap-3 grid grid-flow-col grid-rows-2 auto-cols-max overflow-x-auto py-2 px-2 justify-start">
+          <% if users.present? %>
+            <% users.each do |user| %>
+              <%= render "rooms/partials/user_list_item", user: user %>
+            <% end %>
+          <% else %>
+            <li class="row-span-2 text-ink/50 italic text-center py-4">No players in room</li>
           <% end %>
-        <% else %>
-          <li class="col-span-full text-ink/50 italic text-center py-4">No players in room</li>
-        <% end %>
-      </ul>
+        </ul>
+        <div data-scroll-fade-target="leftFade" class="pointer-events-none absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-ink/25 to-transparent rounded-l transition-opacity duration-200"></div>
+        <div data-scroll-fade-target="rightFade" class="pointer-events-none absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-ink/25 to-transparent rounded-r transition-opacity duration-200"></div>
+      </div>
     </div>
   </div>
 
-  <%# Action Buttons - Fixed at bottom %>
+  <%# Action Buttons %>
   <div class="flex justify-center gap-4 mt-6 pt-4 border-t-2 border-ink/10 flex-wrap">
     <%= form_with url: room_final_results_path(current_room), method: :post, class: "inline" do |form| %>
       <%= form.submit "View Story", class: "btn-primary bg-accent-blue text-base px-6 py-3" %>

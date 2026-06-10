@@ -16,7 +16,7 @@
 
   <%# Floating music + settings cluster - top right (TV only; Discord navbar provides these) %>
   <% unless discord_authenticated? %>
-    <div class="fixed top-4 right-4 z-controls flex items-center gap-2"
+    <div class="fixed top-3 right-4 z-controls flex items-center gap-2"
          data-controller="nav-events">
       <button type="button"
               class="btn-icon-push"
@@ -61,8 +61,9 @@
         arrow_direction: "right" %>
   <% end %>
 
-  <div id="status-content-inner" class="flex-1 min-h-0 flex items-center justify-center px-6 py-14">
-    <div class="card-primary p-0 m-0 max-w-[1400px] w-full max-h-full flex flex-row min-h-0 z-content">
+  <% credits_view = @status == RoomStatus::Credits %>
+  <div id="status-content-inner" class="flex-1 min-h-0 flex justify-center px-6 py-14 <%= credits_view ? 'overflow-y-auto items-start' : 'items-center' %>">
+    <div class="card-primary p-0 m-0 max-w-[1400px] w-full flex flex-row min-h-0 z-content <%= credits_view ? '' : 'max-h-full' %>">
       <div id="turbo-target-sidebar" class="flex">
         <% if @room.current_game&.story.present? && [RoomStatus::Answering, RoomStatus::Voting, RoomStatus::Results, RoomStatus::FinalResults].include?(@status) %>
           <%= render partial: "rooms/status/sidebar", locals: @status_data %>

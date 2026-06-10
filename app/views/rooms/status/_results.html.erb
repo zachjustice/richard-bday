@@ -40,7 +40,8 @@
   </div>
 
   <div class="card-status-content-violet py-4 flex flex-col overflow-hidden min-w-0">
-    <div class="flex flex-1 min-h-0 min-w-0 flex-col gap-4">
+    <div class="flex-1 min-h-0 min-w-0 overflow-y-auto scroll-fade-indicators">
+      <div class="flex flex-col gap-4">
       <%
         sorted = answers_sorted_by_votes
         first  = sorted[0]
@@ -173,7 +174,7 @@
 
       <%# === COMPACT ROWS (4th+) === %>
       <% if remaining_answers.any? %>
-        <div class="flex-1 min-h-0 overflow-y-auto scroll-fade-indicators stagger-animation">
+        <div class="stagger-animation">
           <div class="flex flex-col gap-1.5 px-1">
             <% remaining_answers.each_with_index do |answer, i| %>
               <% rank = i + 4 %>
@@ -195,6 +196,7 @@
           </div>
         </div>
       <% end %>
+      </div>
     </div>
   </div>
 
