@@ -55,4 +55,11 @@
          story_text: story_text,
          blank_id_to_answer_text: blank_id_to_answer_text %>
   </div>
+
+  <%= render "shared/tutorial_hint",
+      position: "final-story",
+      target: "finalStoryHint",
+      dismiss_action: "dismissFinalStory",
+      text: "Hover over me!",
+      arrow_direction: "down" %>
 </div>

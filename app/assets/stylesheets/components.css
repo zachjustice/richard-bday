@@ -1740,6 +1740,19 @@ button.countdown-timer {
   right: 124px;
 }
 
+/* Final story hint - coordinates set dynamically by tutorial-hints controller */
+.tutorial-hint--final-story {
+  top: 0;
+  left: 0;
+}
+
+/* Only render the final-story hint on devices where hover actually works */
+@media (hover: none), (pointer: coarse) {
+  .tutorial-hint--final-story {
+    display: none !important;
+  }
+}
+
 .tutorial-hint-content {
   @apply relative flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold;
   background-color: var(--color-accent-tertiary);
@@ -1843,6 +1856,30 @@ button.countdown-timer {
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-bottom: 8px solid var(--color-accent-tertiary);
+}
+
+/* Arrow pointing down (hint sits above the pointed-at element) */
+.tutorial-hint-arrow--down {
+  @apply absolute;
+  bottom: -10px;
+  left: 16px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid var(--color-ink);
+}
+
+.tutorial-hint-arrow--down::before {
+  content: '';
+  @apply absolute;
+  bottom: 2px;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid var(--color-accent-tertiary);
 }
 
 /* Hide on very small screens */
