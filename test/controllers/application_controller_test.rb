@@ -27,6 +27,26 @@ class ApplicationControllerDevPhaseShortcutTest < ActionDispatch::IntegrationTes
     assert_equal RoomStatus::StorySelection, @room.status
   end
 
+  test "rs alias triggers the dev shortcut" do
+    @room.update!(status: RoomStatus::Answering)
+
+    get show_room_path, params: { rs: "Wait" }
+
+    @room.reload
+    assert_equal RoomStatus::WaitingRoom, @room.status
+    assert_redirected_to "#{room_status_path(@room)}?roomStatus=Wait"
+  end
+
+  test "RoomStatus alias triggers the dev shortcut and normalizes redirect key" do
+    @room.update!(status: RoomStatus::Answering)
+
+    get show_room_path, params: { RoomStatus: "Story" }
+
+    @room.reload
+    assert_equal RoomStatus::StorySelection, @room.status
+    assert_equal "roomStatus=Story", URI(@response.location).query
+  end
+
   test "ambiguous prefix raises ArgumentError" do
     RoomStatus.stub :constants, [ :Waiting, :Watching ] do
       assert_raises(ArgumentError) do

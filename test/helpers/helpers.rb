@@ -143,6 +143,55 @@ class Helpers
     end
   end
 
+  def go(status)
+    target_status = resolve_room_status_prefix(status)
+    room = Room.find(@room_id)
+
+    result = DevPhaseSimulatorService.new(room: room, target_status: target_status).call
+    if result.is_a?(DevPhaseSimulatorService::Failure)
+      raise "DevPhaseSimulator failed: #{result.error}"
+    end
+
+    room.reload
+    Turbo::StreamsChannel.broadcast_action_to(
+      "rooms:#{room.id}:nav-updates",
+      action: :navigate,
+      target: nav_target_for(room, target_status)
+    )
+    room
+  end
+
+  private def resolve_room_status_prefix(prefix)
+    needle = prefix.to_s.downcase
+    matches = RoomStatus.constants.map(&:to_s).select { |c| c.downcase.start_with?(needle) }
+    if matches.empty?
+      raise ArgumentError, "Unknown roomStatus prefix #{prefix.inspect}: no RoomStatus constant matches"
+    end
+    if matches.size > 1
+      raise ArgumentError, "Ambiguous roomStatus prefix #{prefix.inspect} matches: #{matches.inspect}"
+    end
+    matches.first
+  end
+
+  private def nav_target_for(room, target_status)
+    case target_status
+    when RoomStatus::WaitingRoom
+      Game.exists?(room_id: room.id) ? "/rooms/#{room.id}/waiting_for_new_game" : "/rooms/#{room.id}"
+    when RoomStatus::StorySelection
+      "/rooms/#{room.id}/story"
+    when RoomStatus::Answering
+      "/game_prompts/#{room.current_game.current_game_prompt_id}"
+    when RoomStatus::Voting
+      "/game_prompts/#{room.current_game.current_game_prompt_id}/voting"
+    when RoomStatus::Results
+      "/game_prompts/#{room.current_game.current_game_prompt_id}/results"
+    when RoomStatus::FinalResults
+      "/rooms/#{room.id}/story"
+    when RoomStatus::Credits
+      "/rooms/#{room.id}/game_credits"
+    end
+  end
+
   def move_to_answering(use_times_up_job = false)
     room = Room.find(@room_id)
     current_game_prompt_order = room.current_game.current_game_prompt.order

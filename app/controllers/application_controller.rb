@@ -72,15 +72,20 @@ class ApplicationController < ActionController::Base
     response.headers["Content-Security-Policy"] = "frame-ancestors #{DISCORD_FRAME_ANCESTORS.join(' ')}"
   end
 
+  ROOM_STATUS_PARAM_ALIASES = %w[roomStatus RoomStatus rs].freeze
+
   # Dev-only shortcut: `?roomStatus=Wait` (case-insensitive starts-with) drives the
   # current room to the matched RoomStatus via DevPhaseSimulatorService, then redirects
-  # to the canonical URL for the user's role. See issue #39.
+  # to the canonical URL for the user's role. Also accepts `?RoomStatus=` and `?rs=`.
+  # See issue #39.
   def apply_dev_phase_shortcut
     return if Rails.env.production?
-    return if params[:roomStatus].blank?
     return unless @current_room
 
-    target_status = resolve_room_status_prefix(params[:roomStatus])
+    raw = ROOM_STATUS_PARAM_ALIASES.lazy.map { |k| params[k] }.find(&:present?)
+    return if raw.blank?
+
+    target_status = resolve_room_status_prefix(raw)
     result = DevPhaseSimulatorService.new(
       room: @current_room,
       target_status: target_status,
@@ -97,7 +102,7 @@ class ApplicationController < ActionController::Base
     return if request.path == canonical
 
     separator = canonical.include?("?") ? "&" : "?"
-    target_url = "#{canonical}#{separator}roomStatus=#{CGI.escape(params[:roomStatus].to_s)}"
+    target_url = "#{canonical}#{separator}roomStatus=#{CGI.escape(raw.to_s)}"
     turbo_nav_or_redirect_to(target_url)
   end
 
