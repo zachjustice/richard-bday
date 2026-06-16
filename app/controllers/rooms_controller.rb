@@ -1,5 +1,6 @@
 class RoomsController < ApplicationController
   include ActionController::Live
+  include GamePhaseNavigation
   allow_unauthenticated_access only: %i[ _create create ]
   before_action :in_room?, except: %i[ _create create ]
   before_action :redirect_to_active_game, only: %i[ show waiting_for_new_game ]
@@ -399,14 +400,12 @@ class RoomsController < ApplicationController
 
   def check_navigation
     room = Room.find(params[:id])
-    current_path = params[:current_path]
+    canonical = path_for_current_phase(room, @current_user)
 
-    expected_paths = valid_navigation_paths(room)
-
-    if expected_paths.empty? || expected_paths.include?(current_path)
+    if params[:current_path] == canonical
       render json: { redirect_to: nil }
     else
-      render json: { redirect_to: expected_paths.first }
+      render json: { redirect_to: canonical }
     end
   end
 
@@ -519,38 +518,4 @@ class RoomsController < ApplicationController
     end
   end
 
-  def valid_navigation_paths(room)
-    case room.status
-    when RoomStatus::FinalResults
-      [ "/rooms/#{room.id}/story", "/rooms/#{room.id}/game_credits" ]
-    when RoomStatus::Credits
-      [ "/rooms/#{room.id}/game_credits", "/rooms/#{room.id}/story" ]
-    else
-      current_game_prompt_id = room.current_game&.current_game_prompt&.id
-      return [] unless current_game_prompt_id
-
-      case room.status
-      when RoomStatus::WaitingRoom
-        [ waiting_for_new_game_path(room) ]
-      when RoomStatus::Answering
-        has_answered = @current_user.answered?
-        if has_answered
-          [ "/game_prompts/#{current_game_prompt_id}", "/game_prompts/#{current_game_prompt_id}/waiting" ]
-        else
-          [ "/game_prompts/#{current_game_prompt_id}" ]
-        end
-      when RoomStatus::Voting
-        has_voted = @current_user.voted?
-        if has_voted
-          [ "/game_prompts/#{current_game_prompt_id}/voting", "/game_prompts/#{current_game_prompt_id}/results" ]
-        else
-          [ "/game_prompts/#{current_game_prompt_id}/voting" ]
-        end
-      when RoomStatus::Results
-        [ "/game_prompts/#{current_game_prompt_id}/results" ]
-      else
-        []
-      end
-    end
-  end
 end

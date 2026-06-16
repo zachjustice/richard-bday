@@ -652,12 +652,23 @@ class RoomsControllerCrossRoomAndNavigationTest < ActionDispatch::IntegrationTes
     assert_equal "/game_prompts/#{@prompt_a.id}", response.parsed_body["redirect_to"]
   end
 
-  test "check_navigation returns nil when no current game prompt" do
+  test "check_navigation redirects to waiting page during WaitingRoom with no current prompt" do
     @game_a.update!(current_game_prompt: nil)
     @room_a.update!(status: RoomStatus::WaitingRoom)
     resume_session_as(@room_a.code, @player_a.name)
 
     get check_room_navigation_path(@room_a, current_path: "/some/random/path")
+
+    assert_response :success
+    assert_equal waiting_for_new_game_path(@room_a), response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation returns nil when already on waiting page during WaitingRoom" do
+    @game_a.update!(current_game_prompt: nil)
+    @room_a.update!(status: RoomStatus::WaitingRoom)
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: waiting_for_new_game_path(@room_a))
 
     assert_response :success
     assert_nil response.parsed_body["redirect_to"]
@@ -684,14 +695,55 @@ class RoomsControllerCrossRoomAndNavigationTest < ActionDispatch::IntegrationTes
     assert_nil response.parsed_body["redirect_to"]
   end
 
-  test "check_navigation returns nil for StorySelection status" do
+  test "check_navigation redirects to show_room_path during StorySelection from wrong path" do
     @room_a.update!(status: RoomStatus::StorySelection)
     resume_session_as(@room_a.code, @player_a.name)
 
     get check_room_navigation_path(@room_a, current_path: "/some/path")
 
     assert_response :success
+    assert_equal show_room_path, response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation returns nil when already on show_room_path during StorySelection" do
+    @room_a.update!(status: RoomStatus::StorySelection)
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: show_room_path)
+
+    assert_response :success
     assert_nil response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation snaps answered player from answer page to waiting page" do
+    @player_a.update!(status: UserStatus::Answered)
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/game_prompts/#{@prompt_a.id}")
+
+    assert_response :success
+    assert_equal "/game_prompts/#{@prompt_a.id}/waiting", response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation routes audience member to waiting page during Answering" do
+    audience = User.create!(name: "Aud#{SecureRandom.hex(2)}", room: @room_a, role: User::AUDIENCE)
+    resume_session_as(@room_a.code, audience.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/game_prompts/#{@prompt_a.id}")
+
+    assert_response :success
+    assert_equal "/game_prompts/#{@prompt_a.id}/waiting", response.parsed_body["redirect_to"]
+  end
+
+  test "check_navigation snaps voted player from voting page to results page" do
+    @room_a.update!(status: RoomStatus::Voting)
+    @player_a.update!(status: UserStatus::Voted)
+    resume_session_as(@room_a.code, @player_a.name)
+
+    get check_room_navigation_path(@room_a, current_path: "/game_prompts/#{@prompt_a.id}/voting")
+
+    assert_response :success
+    assert_equal "/game_prompts/#{@prompt_a.id}/results", response.parsed_body["redirect_to"]
   end
 end
 
@@ -1030,14 +1082,14 @@ class RoomsControllerStoryAndCreditsTest < ActionDispatch::IntegrationTest
     assert_nil response.parsed_body["redirect_to"]
   end
 
-  test "check_navigation allows story path during Credits" do
+  test "check_navigation redirects to credits path during Credits" do
     @room.update!(status: RoomStatus::Credits)
     resume_session_as(@room.code, @player.name)
 
     get check_room_navigation_path(@room, current_path: "/rooms/#{@room.id}/story")
 
     assert_response :success
-    assert_nil response.parsed_body["redirect_to"]
+    assert_equal "/rooms/#{@room.id}/game_credits", response.parsed_body["redirect_to"]
   end
 
   #################################################
