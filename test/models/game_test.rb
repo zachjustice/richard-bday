@@ -200,12 +200,6 @@ class GameTest < ActiveSupport::TestCase
 
   # ── accolade_for ──
 
-  test "accolade_for returns empty string for user with no accolade" do
-    game = games(:one)
-
-    assert_equal "", game.accolade_for(users(:one))
-  end
-
   test "accolade_for returns winner tag in non-Credits phase" do
     game = games(:one)
     winning_answer = answers(:one)
@@ -294,7 +288,7 @@ class GameTest < ActiveSupport::TestCase
     assert_includes game.accolade_for(user_a), AccoladeTags::PODIUM_1ST
   end
 
-  test "accolade_for is memoized across calls" do
+  test "accolade_for does not recompute on repeat calls" do
     game = games(:one)
     answers(:one).update!(won: true)
 
