@@ -49,20 +49,8 @@
              data-roaming-avatars-current-user-value="<%= dom_id(@current_user, :waiting_room) if @current_user %>"
              data-turbo-permanent>
           <ul id="waiting-room" class="hidden" data-roaming-avatars-target="source">
-            <% if @current_room.status == RoomStatus::Credits %>
-              <% credits_accolades = @current_room.current_game&.credits_accolades || {} %>
-              <% User.players.where(room: @current_room).each do |user| %>
-                <%= render "rooms/partials/user_list_item", user: user, accolade: credits_accolades[user.id] || "" %>
-              <% end %>
-            <% else %>
-              <% accolades = @current_room.current_game&.last_round_accolades || {} %>
-              <% User.players.where(room: @current_room).each do |user| %>
-                <% accolade = [
-                  (AccoladeTags::WINNER if accolades[:winner_user_id] == user.id),
-                  (AccoladeTags::AUDIENCE_FAVORITE if accolades[:audience_favorite_user_id] == user.id)
-                ].compact.join(" ") %>
-                <%= render "rooms/partials/user_list_item", user: user, accolade: accolade %>
-              <% end %>
+            <% User.players.where(room: @current_room).each do |user| %>
+              <%= render "rooms/partials/user_list_item", user: user %>
             <% end %>
           </ul>
         </div>

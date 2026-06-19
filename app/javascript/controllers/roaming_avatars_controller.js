@@ -176,9 +176,7 @@ export default class extends Controller {
         added.delete(id)
         this.updateAvatarStatus(li)
         this.updateAvatarEmoji(li)
-        if (li.hasAttribute("data-accolade")) {
-          this.updateAvatarAccolade(li)
-        }
+        this.updateAvatarAccolade(li)
       }
     }
 

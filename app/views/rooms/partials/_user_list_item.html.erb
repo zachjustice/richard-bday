@@ -1,8 +1,9 @@
+<% accolade = local_assigns.fetch(:accolade) { user.room.current_game&.accolade_for(user) || "" } %>
 <li id="<%= dom_id(user, :waiting_room) %>"
     class="badge-primary text-nowrap text-ellipsis overflow-hidden max-w-[300px]"
     data-avatar="<%= user.avatar %>"
     data-name="<%= user.name %>"
     data-status="<%= user.status %>"
-    <% if local_assigns.key?(:accolade) %>data-accolade="<%= accolade %>"<% end %>>
+    data-accolade="<%= accolade %>">
   <%= user.avatar_with_name %>
 </li>

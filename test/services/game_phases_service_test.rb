@@ -88,4 +88,24 @@ class GamePhasesServiceTest < ActiveSupport::TestCase
 
     assert_equal "test-voting-job-id", called_with
   end
+
+  test "broadcast_avatar_accolades broadcasts replace_to for each player" do
+    suffix = SecureRandom.hex(4)
+    user_a = User.create!(name: "PA#{suffix}", room: @room, role: User::PLAYER)
+    user_b = User.create!(name: "PB#{suffix}", room: @room, role: User::PLAYER)
+    User.create!(name: "AUD#{suffix}", room: @room, role: User::AUDIENCE)
+
+    calls = []
+    Turbo::StreamsChannel.define_singleton_method(:broadcast_replace_to) do |stream, **opts|
+      calls << { stream: stream, target: opts[:target], locals: opts[:locals] }
+    end
+
+    GamePhasesService.new(@room).broadcast_avatar_accolades
+
+    targets = calls.map { |c| c[:target] }
+    assert_includes targets, "waiting_room_user_#{user_a.id}"
+    assert_includes targets, "waiting_room_user_#{user_b.id}"
+    assert_equal 2, calls.length, "should only broadcast for players"
+    calls.each { |c| assert_equal "rooms:#{@room.id}:avatar-status", c[:stream] }
+  end
 end

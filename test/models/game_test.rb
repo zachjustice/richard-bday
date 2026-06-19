@@ -197,4 +197,111 @@ class GameTest < ActiveSupport::TestCase
 
     assert_includes result[user_a.id], "crowd_pick"
   end
+
+  # ── accolade_for ──
+
+  test "accolade_for returns empty string for user with no accolade" do
+    game = games(:one)
+
+    assert_equal "", game.accolade_for(users(:one))
+  end
+
+  test "accolade_for returns winner tag in non-Credits phase" do
+    game = games(:one)
+    winning_answer = answers(:one)
+    winning_answer.update!(won: true)
+
+    assert_equal AccoladeTags::WINNER, game.accolade_for(winning_answer.user)
+  end
+
+  test "accolade_for returns audience_favorite tag in non-Credits phase" do
+    game = games(:one)
+    winning_answer = answers(:one)
+    winning_answer.update!(won: true)
+
+    other_answer = Answer.create!(
+      game_prompt: game_prompts(:one),
+      game: game,
+      user: users(:two),
+      text: "Other"
+    )
+    Vote.create!(
+      user: users(:two),
+      answer: other_answer,
+      game: game,
+      game_prompt: game_prompts(:one),
+      vote_type: "audience"
+    )
+
+    assert_equal AccoladeTags::AUDIENCE_FAVORITE, game.accolade_for(users(:two))
+  end
+
+  test "accolade_for joins winner and audience_favorite when same user" do
+    game = games(:one)
+    winning_answer = answers(:one)
+    winning_answer.update!(won: true)
+
+    Vote.create!(
+      user: users(:two),
+      answer: winning_answer,
+      game: game,
+      game_prompt: game_prompts(:one),
+      vote_type: "audience"
+    )
+
+    result = game.accolade_for(winning_answer.user)
+    assert_includes result, AccoladeTags::WINNER
+    assert_includes result, AccoladeTags::AUDIENCE_FAVORITE
+  end
+
+  test "accolade_for returns credits tags in FinalResults phase" do
+    suffix = SecureRandom.hex(4)
+    room = Room.create!(code: "fr#{suffix}", status: RoomStatus::FinalResults, voting_style: "vote_once")
+    story = Story.create!(title: "FR #{suffix}", text: "test", original_text: "test", published: true)
+    game = Game.create!(story: story, room: room)
+    blank = Blank.create!(story: story, tags: "noun")
+    editor = Editor.create!(username: "fr#{suffix}", email: "fr#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    prompt = Prompt.create!(description: "FR prompt #{suffix}", tags: "noun", creator: editor)
+    gp = GamePrompt.create!(game: game, prompt: prompt, blank: blank, order: 0)
+    room.update!(current_game: game)
+
+    user_a = User.create!(name: "A#{suffix}", room: room, role: User::PLAYER)
+    user_b = User.create!(name: "B#{suffix}", room: room, role: User::PLAYER)
+    a1 = Answer.create!(game_prompt: gp, game: game, user: user_a, text: "x")
+    Answer.create!(game_prompt: gp, game: game, user: user_b, text: "y")
+    Vote.create!(user: user_b, answer: a1, game: game, game_prompt: gp)
+
+    assert_includes game.accolade_for(user_a), AccoladeTags::PODIUM_1ST
+  end
+
+  test "accolade_for returns credits tags in Credits phase" do
+    suffix = SecureRandom.hex(4)
+    room = Room.create!(code: "af#{suffix}", status: RoomStatus::Credits, voting_style: "vote_once")
+    story = Story.create!(title: "AF #{suffix}", text: "test", original_text: "test", published: true)
+    game = Game.create!(story: story, room: room)
+    blank = Blank.create!(story: story, tags: "noun")
+    editor = Editor.create!(username: "af#{suffix}", email: "af#{suffix}@test.com", password: "password123", password_confirmation: "password123")
+    prompt = Prompt.create!(description: "AF prompt #{suffix}", tags: "noun", creator: editor)
+    gp = GamePrompt.create!(game: game, prompt: prompt, blank: blank, order: 0)
+    room.update!(current_game: game)
+
+    user_a = User.create!(name: "A#{suffix}", room: room, role: User::PLAYER)
+    user_b = User.create!(name: "B#{suffix}", room: room, role: User::PLAYER)
+    a1 = Answer.create!(game_prompt: gp, game: game, user: user_a, text: "x")
+    Answer.create!(game_prompt: gp, game: game, user: user_b, text: "y")
+    Vote.create!(user: user_b, answer: a1, game: game, game_prompt: gp)
+
+    assert_includes game.accolade_for(user_a), AccoladeTags::PODIUM_1ST
+  end
+
+  test "accolade_for is memoized across calls" do
+    game = games(:one)
+    answers(:one).update!(won: true)
+
+    game.accolade_for(users(:one))
+    # Mutate underlying data; memoized result should be unchanged
+    answers(:one).update!(won: false)
+
+    assert_equal AccoladeTags::WINNER, game.accolade_for(users(:one))
+  end
 end

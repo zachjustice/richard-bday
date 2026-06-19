@@ -309,7 +309,7 @@ class RoomsController < ApplicationController
     phases_service = GamePhasesService.new(room)
     status_data = RoomStatusService.new(room).call
     phases_service.update_room_status_view("rooms/status/credits", status_data, true)
-    phases_service.broadcast_credits_avatar_statuses
+    phases_service.broadcast_avatar_accolades
 
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{room.id}:nav-updates",
@@ -331,7 +331,7 @@ class RoomsController < ApplicationController
     phases_service = GamePhasesService.new(room)
     status_data = RoomStatusService.new(room).call
     phases_service.update_room_status_view("rooms/status/final_results", status_data, true)
-    phases_service.broadcast_avatar_statuses
+    phases_service.broadcast_avatar_accolades
 
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{room.id}:nav-updates",
@@ -442,7 +442,7 @@ class RoomsController < ApplicationController
 
   def move_to_next_game_prompt(room, next_game_prompt_id)
     User.players.where(room: room).update_all(status: UserStatus::Answering)
-    GamePhasesService.new(room).broadcast_avatar_statuses
+    GamePhasesService.new(room).broadcast_avatar_accolades
 
     Turbo::StreamsChannel.broadcast_action_to(
       "rooms:#{room.id}:nav-updates",

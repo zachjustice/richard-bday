@@ -33,6 +33,13 @@ class Game < ApplicationRecord
     result
   end
 
+  # Returns the accolade tag string for a single user, derived from current room phase.
+  # Memoized — first call builds the full map, subsequent lookups are O(1).
+  def accolade_for(user)
+    @accolade_map ||= build_accolade_map
+    @accolade_map[user.id] || ""
+  end
+
   # Returns { user_id => "podium_1st naughty" } with space-separated accolade tags
   # per user, computed from CreditsService data. Used for credits-phase avatar decorations.
   def credits_accolades
@@ -62,5 +69,26 @@ class Game < ApplicationRecord
     end
 
     result
+  end
+
+  private
+
+  def build_accolade_map
+    # Post-game phases use credits accolades (podium + superlatives + crowd_pick).
+    # FinalResults is included because Discord players can navigate to the credits
+    # page via a GET link without flipping room.status to Credits.
+    if [ RoomStatus::FinalResults, RoomStatus::Credits ].include?(room.status)
+      credits_accolades
+    else
+      map = {}
+      accolades = last_round_accolades
+      if (winner_id = accolades[:winner_user_id])
+        map[winner_id] = AccoladeTags::WINNER
+      end
+      if (fav_id = accolades[:audience_favorite_user_id])
+        map[fav_id] = [ map[fav_id], AccoladeTags::AUDIENCE_FAVORITE ].compact.join(" ")
+      end
+      map
+    end
   end
 end
