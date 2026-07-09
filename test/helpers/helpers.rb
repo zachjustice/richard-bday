@@ -5,8 +5,7 @@ class Helpers
     @room_id = room_id || Room.last!.id
   end
 
-  def create_users(names_or_num = nil)
-    names_or_num ||= User.available_avatars(@room_id).size
+  def create_users(names_or_num = 5)
     if names_or_num.is_a? Numeric
       names = create_fake_names(names_or_num)
     else

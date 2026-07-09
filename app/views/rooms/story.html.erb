@@ -1,7 +1,7 @@
 <%= turbo_stream_from "rooms:#{@current_room.id}:nav-updates" %>
 <div data-controller="navigation-check" data-navigation-check-room-id-value="<%= @current_room.id %>"
      class="flex flex-col items-center bg-page <%= discord_authenticated? ? 'min-h-[calc(100dvh-var(--spacing-navbar))] justify-center' : 'min-h-screen justify-center' %>">
-  <div class="card-primary animate-fade-in relative z-content m-4 p-8 max-sm:p-5 max-w-xl w-full">
+  <div class="card-primary animate-fade-in relative z-content m-8 p-8 max-sm:p-5 max-w-xl w-full">
     <%# Story title + attribution %>
     <div class="text-center mb-4">
       <h2 class="text-2xl max-sm:text-xl font-bold text-ink mb-2"><%= @story_title %></h2>

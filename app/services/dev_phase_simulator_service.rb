@@ -39,11 +39,11 @@ class DevPhaseSimulatorService
       return Failure.new(error: "Unsupported target_status: #{@target_status.inspect}. Supported: #{SUPPORTED_STATUSES.inspect}")
     end
 
-    if PHASES_THAT_NEED_FULL_GAME.include?(@target_status)
+    if PHASES_THAT_NEED_FULL_GAME.include?(@target_status) && !User.players.where(room: @room).exists?
       @player_count ||= DEFAULT_PLAYER_COUNT_FOR_ANSWERING
     end
 
-    if PHASES_THAT_NEED_AUDIENCE.include?(@target_status)
+    if PHASES_THAT_NEED_AUDIENCE.include?(@target_status) && !User.audience.where(room: @room).exists?
       @audience_count ||= DEFAULT_AUDIENCE_COUNT_FOR_RESULTS
     end
 
