@@ -1404,34 +1404,56 @@ button.countdown-timer {
   margin-bottom: -2px;
 }
 
-/* Trophy — gentle bob for 1st place */
+/* Trophy — bottom-right badge position, gentle bob for 1st place */
 .roaming-avatar-trophy {
+  bottom: -6px;
+  right: -6px;
+  left: auto;
+  top: auto;
+  transform: none;
   animation: avatar-crown-bob 2s ease-in-out infinite;
 }
 
-/* Medal — subtle sway for 2nd/3rd place */
+/* Medal — hangs at bottom of avatar like a necklace */
 .roaming-avatar-medal {
+  bottom: auto;
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
   animation: avatar-medal-sway 3s ease-in-out infinite;
 }
 
-/* Devil horns — no animation, static */
-.roaming-avatar-horns {}
+/* Devil horns — lowered 5px more than base */
+.roaming-avatar-horns {
+  margin-bottom: -7px;
+}
 
 /* Graduation cap — static */
 .roaming-avatar-mortarboard {}
 
-/* Lightning bolt — glow pulse */
+/* Lightning bolt — bottom-right badge position, glow pulse */
 .roaming-avatar-bolt {
+  bottom: -6px;
+  right: -6px;
+  left: auto;
+  top: auto;
+  transform: none;
   animation: avatar-bolt-pulse 2s ease-in-out infinite;
 }
 
-/* Eraser — slight wiggle */
+/* Eraser — bottom-right badge position, slight wiggle */
 .roaming-avatar-eraser {
+  bottom: -6px;
+  right: -6px;
+  left: auto;
+  top: auto;
+  transform: none;
   animation: avatar-hat-tilt 3s ease-in-out infinite;
 }
 
-/* Sleep cap — gentle sway */
+/* Sleep cap — slightly lower than base */
 .roaming-avatar-nightcap {
+  margin-bottom: -8px;
   animation: avatar-medal-sway 4s ease-in-out infinite;
 }
 

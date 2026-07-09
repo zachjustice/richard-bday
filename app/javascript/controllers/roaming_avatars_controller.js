@@ -552,14 +552,19 @@ export default class extends Controller {
     const superlativeTags = tags.filter(t => !t.startsWith("podium_"))
     decoTags.push(...superlativeTags)
 
+    // Tags that use CSS-driven absolute positioning (badge/medal) — don't offset them
+    const FIXED_POSITION_TAGS = new Set([PODIUM_1ST, PODIUM_2ND, PODIUM_3RD, EFFICIENT, MISSPELLER])
+
     // Render up to 2 decorations (primary centered, secondary offset right)
     decoTags.slice(0, 2).forEach((tag, i) => {
       const el = this.createCreditsDecoration(tag)
       if (!el) return
-      if (i === 1) {
-        el.style.transform = "translateX(-20%)"
-      } else if (decoTags.length > 1) {
-        el.style.transform = "translateX(-80%)"
+      if (!FIXED_POSITION_TAGS.has(tag)) {
+        if (i === 1) {
+          el.style.transform = "translateX(-20%)"
+        } else if (decoTags.length > 1) {
+          el.style.transform = "translateX(-80%)"
+        }
       }
       entry.el.appendChild(el)
       entry.creditsDecorations.push(el)
@@ -644,9 +649,9 @@ export default class extends Controller {
   }
 
   svgDevilHorns() {
-    return `<svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 14C2 8 1 2 4 1c2-0.5 3 3 4 6" stroke="#D63040" stroke-width="2" fill="#D63040" stroke-linecap="round"/>
-      <path d="M19 14c1-6 2-12-1-13-2-0.5-3 3-4 6" stroke="#D63040" stroke-width="2" fill="#D63040" stroke-linecap="round"/>
+    return `<svg width="22" height="14" viewBox="0 0 22 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 13 L5 1 L9 13 Z" fill="#D63040" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M13 13 L17 1 L21 13 Z" fill="#D63040" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
     </svg>`
   }
 
