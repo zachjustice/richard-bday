@@ -83,7 +83,7 @@
         <% if @current_user.navigator? %>
           <div class="flex flex-col gap-2">
             <%= link_to "View Story", room_story_path(@room), class: "btn-primary bg-accent-blue w-full text-center" %>
-            <%= form_with url: start_new_room_game_path(@room), method: :post, class: "flex justify-center" do |form| %>
+            <%= form_with url: start_new_room_game_path(@room), method: :post, class: "flex justify-center", data: { controller: "loading-button" } do |form| %>
               <%= form.submit "New Game", class: "btn-primary bg-accent-green w-full" %>
             <% end %>
           </div>
@@ -95,10 +95,10 @@
         <% end %>
       <% elsif @current_user.role == User::NAVIGATOR %>
         <div class="flex flex-col gap-2">
-          <%= form_with url: room_final_results_path(@room), method: :post, class: "flex justify-center" do |form| %>
+          <%= form_with url: room_final_results_path(@room), method: :post, class: "flex justify-center", data: { controller: "loading-button" } do |form| %>
             <%= form.submit "View Story", class: "btn-primary bg-accent-blue w-full" %>
           <% end %>
-          <%= form_with url: start_new_room_game_path(@room), method: :post, class: "flex justify-center" do |form| %>
+          <%= form_with url: start_new_room_game_path(@room), method: :post, class: "flex justify-center", data: { controller: "loading-button" } do |form| %>
             <%= form.submit "Start New Game", class: "btn-primary bg-accent-green w-full" %>
           <% end %>
         </div>

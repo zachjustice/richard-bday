@@ -13,6 +13,11 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
   post "/session/resume", to: "sessions#resume" unless Rails.env.production?
 
+  # Dev-only visual scratchpad for tweaking roaming-avatar decorations.
+  if !Rails.env.production?
+    get "/dev/decorations", to: "dev#decorations", as: :dev_decorations
+  end
+
   # Editor authentication
   get "/editor/login", to: "editor_sessions#new", as: :editor_login
   post "/editor/login", to: "editor_sessions#create"

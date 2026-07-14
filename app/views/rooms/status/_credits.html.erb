@@ -108,10 +108,10 @@
 
   <%# Action Buttons %>
   <div class="flex justify-center gap-4 mt-6 pt-4 border-t-2 border-ink/10 flex-wrap">
-    <%= form_with url: room_final_results_path(current_room), method: :post, class: "inline" do |form| %>
+    <%= form_with url: room_final_results_path(current_room), method: :post, class: "inline", data: { controller: "loading-button" } do |form| %>
       <%= form.submit "View Story", class: "btn-primary bg-accent-blue text-base px-6 py-3" %>
     <% end %>
-    <%= form_with url: start_new_room_game_path(current_room), method: :post, class: "inline" do |form| %>
+    <%= form_with url: start_new_room_game_path(current_room), method: :post, class: "inline", data: { controller: "loading-button" } do |form| %>
       <%= form.submit "Start New Game", class: "btn-primary bg-accent-green text-base px-6 py-3" %>
     <% end %>
   </div>

@@ -508,22 +508,22 @@ export default class extends Controller {
     // Round-based accolades (winner/audience_favorite)
     const isWinner = tokens.includes(WINNER)
     const isFavorite = tokens.includes(AUDIENCE_FAVORITE)
-    const hasBoth = isWinner && isFavorite
 
     // Speed multiplier: winners move 50% faster
     entry.speedMultiplier = isWinner ? 1.5 : 1.0
 
-    if (isWinner) {
-      entry.crownEl = this.createCrownElement()
-      if (hasBoth) entry.crownEl.style.transform = "translateX(-70%)"
-      entry.el.appendChild(entry.crownEl)
-      entry.el.classList.add("roaming-avatar--winner")
-    }
-
+    // Party hat appended first so the crown paints in front of it when both apply.
     if (isFavorite) {
       entry.partyHatEl = this.createPartyHatElement()
-      if (hasBoth) entry.partyHatEl.style.transform = "translateX(-30%)"
       entry.el.appendChild(entry.partyHatEl)
+    }
+
+    if (isWinner) {
+      entry.crownEl = this.createCrownElement()
+      // When both accolades apply, shrink the crown 10% so it sits nicely on the hat.
+      if (isFavorite) entry.crownEl.style.transform = "translateX(-50%) scale(0.9)"
+      entry.el.appendChild(entry.crownEl)
+      entry.el.classList.add("roaming-avatar--winner")
     }
   }
 
@@ -575,7 +575,7 @@ export default class extends Controller {
     const wrap = document.createElement("div")
     wrap.className = "roaming-avatar-crown"
     wrap.setAttribute("aria-hidden", "true")
-    wrap.innerHTML = `<svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    wrap.innerHTML = `<svg width="22" height="19" viewBox="-1 -3 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M1 14L3 4L7 8L11 1L15 8L19 4L21 14H1Z" fill="#FFD60A" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
       <circle cx="3" cy="3.5" r="1.5" fill="#FFD60A" stroke="#1A1A2E" stroke-width="1"/>
       <circle cx="11" cy="0.5" r="1.5" fill="#FFD60A" stroke="#1A1A2E" stroke-width="1"/>
@@ -588,7 +588,7 @@ export default class extends Controller {
     const wrap = document.createElement("div")
     wrap.className = "roaming-avatar-party-hat"
     wrap.setAttribute("aria-hidden", "true")
-    wrap.innerHTML = `<svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+    wrap.innerHTML = `<svg width="19.8" height="27.5" viewBox="0 -3 18 25" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M9 1L2 20H16L9 1Z" fill="#D63040" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
       <path d="M5 13L13 13" stroke="#FFD60A" stroke-width="1.5" stroke-linecap="round"/>
       <path d="M6.5 8L11.5 8" stroke="#2196F3" stroke-width="1.5" stroke-linecap="round"/>
@@ -649,10 +649,7 @@ export default class extends Controller {
   }
 
   svgDevilHorns() {
-    return `<svg width="22" height="14" viewBox="0 0 22 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M2 13 L5 1 L9 13 Z" fill="#D63040" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M13 13 L17 1 L21 13 Z" fill="#D63040" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
-    </svg>`
+    return "😈"
   }
 
   svgMortarboard() {
@@ -671,11 +668,7 @@ export default class extends Controller {
   }
 
   svgEraser() {
-    return `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="12" width="14" height="6" rx="2" fill="#FFB6C1" stroke="#1A1A2E" stroke-width="1.5"/>
-      <rect x="7" y="2" width="4" height="12" rx="1" fill="#FFD60A" stroke="#1A1A2E" stroke-width="1.5"/>
-      <polygon points="7,4 11,4 11,2 7,2" fill="#1A1A2E"/>
-    </svg>`
+    return "🥴"
   }
 
   svgNightcap() {

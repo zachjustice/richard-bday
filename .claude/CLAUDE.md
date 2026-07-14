@@ -35,9 +35,10 @@ Two independent voting systems run during each `Voting` phase:
 - Also using: Turbo, Stimulus, ActiveJob, Tailwind v4, ActionCable
 
 ## Developer Guidelines
-- Frontend styling and design rules are in `.claude/rules/frontend-development.md` 
+- Frontend styling and design rules are in `.claude/rules/frontend-development.md`
 - Use @layer base, @layer components, @layer utilities as appropriate
 - Place CSS animations in application.css
+- Always use `if` over `unless` for readability; Fix existing `unless` usage if necessary.
 
 ## Accessibility
 - All new UI must meet WCAG 2.1 AA. Use `/a11y` to audit changes.
