@@ -1,0 +1,69 @@
+<%
+  # Each row: [emoji, label, accolade tag string]
+  decorations = [
+    [ "🐙", "Winner",             "winner" ],
+    [ "🐸", "Audience Favorite",  "audience_favorite" ],
+    [ "🦄", "Winner + Favorite",  "winner audience_favorite" ],
+    [ "🐝", "Podium 1st",         "podium_1st" ],
+    [ "🐢", "Podium 2nd",         "podium_2nd" ],
+    [ "🦊", "Podium 3rd",         "podium_3rd" ],
+    [ "🐧", "Naughty",            "naughty" ],
+    [ "🦖", "Prolific",           "prolific" ],
+    [ "🐷", "Efficient",          "efficient" ],
+    [ "🦉", "Misspeller",         "misspeller" ],
+    [ "🐳", "Slowpoke",           "slowpoke" ],
+    [ "🦩", "Crowd Pick",         "crowd_pick" ],
+    [ "🐨", "1st + Crowd Pick",   "podium_1st crowd_pick" ],
+    [ "🦁", "2nd + Naughty",      "podium_2nd naughty" ],
+  ]
+%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Dev · Decorations</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="bg-page min-h-screen">
+    <div id="roaming-avatars"
+         class="fixed inset-0 z-avatars pointer-events-none"
+         data-controller="roaming-avatars"
+         data-roaming-avatars-phase-value="Credits">
+      <ul id="waiting-room" class="hidden" data-roaming-avatars-target="source">
+        <% decorations.each_with_index do |(emoji, label, accolade), i| %>
+          <li id="dev_user_<%= i %>"
+              data-avatar="<%= emoji %>"
+              data-name="<%= label %>"
+              data-status=""
+              data-accolade="<%= accolade %>">
+            <%= emoji %> <%= label %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <main class="relative z-overlay p-6 max-w-2xl">
+      <div class="card-primary p-6">
+        <h1 class="text-2xl font-bold text-ink mb-2">Decoration Playground</h1>
+        <p class="text-ink/70 mb-4">
+          Dev-only page for tweaking roaming-avatar decorations. Click an avatar to
+          see its name. Edit <code class="font-mono text-sm">app/javascript/controllers/roaming_avatars_controller.js</code>
+          and reload to iterate on SVGs, positioning, or colors.
+        </p>
+        <ul class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-ink">
+          <% decorations.each do |emoji, label, accolade| %>
+            <li>
+              <span class="text-lg mr-1"><%= emoji %></span>
+              <span class="font-bold"><%= label %></span>
+              <span class="text-ink/50 font-mono text-xs">(<%= accolade %>)</span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </main>
+  </body>
+</html>
