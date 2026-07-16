@@ -1,0 +1,29 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "b082e53655af9a5a0141ef1067185daecd3bae96558b2c81b5fa39a3345bc0f1",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/rooms_controller.rb",
+      "line": 285,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "File.open(Rails.public_path.join(\"uploads\", \"stories\").join(\"#{Room.find(params[:id]).id.to_i}-#{Room.find(params[:id]).current_game_id.to_i}-#{SecureRandom.hex(8)}.png\"), \"wb\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "RoomsController",
+        "method": "upload_story_image"
+      },
+      "user_input": "Room.find(params[:id]).current_game_id",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "room.id and current_game_id are integer primary keys coerced with .to_i, not attacker-controlled strings, so path traversal is not possible."
+    }
+  ],
+  "updated": "2026-07-15 22:01:47 -0400",
+  "brakeman_version": "8.0.5"
+}

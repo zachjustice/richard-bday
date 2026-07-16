@@ -280,7 +280,7 @@ class RoomsController < ApplicationController
     upload_dir = Rails.public_path.join("uploads", "stories")
     FileUtils.mkdir_p(upload_dir)
 
-    filename = "#{room.id}-#{room.current_game_id}-#{SecureRandom.hex(8)}.png"
+    filename = "#{room.id.to_i}-#{room.current_game_id.to_i}-#{SecureRandom.hex(8)}.png"
     filepath = upload_dir.join(filename)
     File.open(filepath, "wb") { |f| f.write(image.read) }
 
