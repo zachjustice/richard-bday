@@ -517,5 +517,4 @@ class RoomsController < ApplicationController
       turbo_nav_or_redirect_to room_game_credits_path(@current_room)
     end
   end
-
 end
