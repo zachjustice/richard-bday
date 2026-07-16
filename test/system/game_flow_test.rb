@@ -190,7 +190,7 @@ class GameFlowTest < ApplicationSystemTestCase
       # Step 16: Navigator (Player1) advances - last prompt triggers FinalResults
       using_session(:player1) do
         assert_text "Round Complete!", wait: 15
-        click_button "Next Round"
+        click_button "Story Time"
         # After the last prompt, room transitions to FinalResults
         assert_text "Game Complete!", wait: 15
       end
